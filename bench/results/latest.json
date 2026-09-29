@@ -3,7 +3,7 @@
   "engine_version": "0.1.0.dev0",
   "rule_pack": {
     "version": "0.1.0",
-    "digest": "3404636b6d1a862e123cee7120030fb7bf445da86edb4182afbca37e802f9919"
+    "digest": "d7368dff51a2384c9250c9ec32bb06382087a4c3fb8b35d3d2ce78ad6f2740d6"
   },
   "date": "2026-09-29",
   "split": "all",
@@ -261,12 +261,12 @@
     }
   },
   "performance": {
-    "total_seconds": 1.138,
-    "mean_ms_per_item": 18.7,
+    "total_seconds": 2.817,
+    "mean_ms_per_item": 46.2,
     "perf_check": {
       "skills": 100,
       "configs": 20,
-      "seconds": 5.729,
+      "seconds": 1.018,
       "target_seconds": 10,
       "met": true,
       "findings": 547
@@ -292,7 +292,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 78.5
+      "ms": 73.7
     },
     {
       "id": "lure-curl-bash",
@@ -313,7 +313,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 12.4
+      "ms": 39.2
     },
     {
       "id": "lure-b64-paste",
@@ -338,7 +338,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 12.1
+      "ms": 36.2
     },
     {
       "id": "lure-quarantine",
@@ -360,7 +360,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 9.4
+      "ms": 32.4
     },
     {
       "id": "lure-msi",
@@ -381,7 +381,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 8.8
+      "ms": 33.4
     },
     {
       "id": "lure-iex",
@@ -402,7 +402,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 8.4
+      "ms": 35.8
     },
     {
       "id": "lure-winr",
@@ -423,7 +423,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 8.1
+      "ms": 34.2
     },
     {
       "id": "envdump-python",
@@ -450,7 +450,7 @@
       "flow_findings": [
         "AG-FLOW-005:critical"
       ],
-      "ms": 15.2
+      "ms": 60.9
     },
     {
       "id": "envdump-shell",
@@ -473,7 +473,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 14.1
+      "ms": 58.7
     },
     {
       "id": "envdump-node",
@@ -496,7 +496,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 14.7
+      "ms": 53.6
     },
     {
       "id": "poison-manifest",
@@ -518,7 +518,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 26.2
+      "ms": 42.3
     },
     {
       "id": "poison-python-source",
@@ -541,7 +541,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 22.4
+      "ms": 52.8
     },
     {
       "id": "poison-ts-hidden",
@@ -563,7 +563,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 15.9
+      "ms": 60.9
     },
     {
       "id": "poison-sidechannel",
@@ -585,7 +585,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 7.6
+      "ms": 31.9
     },
     {
       "id": "shadow-bcc",
@@ -606,7 +606,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 13.2
+      "ms": 63.2
     },
     {
       "id": "shadow-replace",
@@ -628,7 +628,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 32.2
+      "ms": 59.5
     },
     {
       "id": "stdio-curl-sh",
@@ -650,7 +650,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 21.1
+      "ms": 32.3
     },
     {
       "id": "stdio-docker-sock",
@@ -672,7 +672,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 13.6
+      "ms": 31.2
     },
     {
       "id": "stdio-inline-python",
@@ -693,7 +693,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 22.0
+      "ms": 21.7
     },
     {
       "id": "stdio-cmd-enc",
@@ -714,7 +714,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 11.2
+      "ms": 21.9
     },
     {
       "id": "stdio-chain",
@@ -737,7 +737,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 8.8
+      "ms": 32.9
     },
     {
       "id": "exfil-ssh-transfer",
@@ -758,7 +758,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 10.8
+      "ms": 33.6
     },
     {
       "id": "exfil-aws-script",
@@ -780,7 +780,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 23.2
+      "ms": 59.2
     },
     {
       "id": "exfil-browser-discord",
@@ -806,7 +806,7 @@
       "flow_findings": [
         "AG-FLOW-005:critical"
       ],
-      "ms": 26.8
+      "ms": 62.4
     },
     {
       "id": "adv-zero-width",
@@ -828,7 +828,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 7.4
+      "ms": 35.9
     },
     {
       "id": "adv-homoglyph-curl",
@@ -850,7 +850,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 22.1
+      "ms": 38.2
     },
     {
       "id": "adv-tag-smuggle",
@@ -874,7 +874,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 11.6
+      "ms": 43.6
     },
     {
       "id": "adv-b64-comment",
@@ -897,7 +897,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 9.5
+      "ms": 54.4
     },
     {
       "id": "adv-hex-b64",
@@ -920,7 +920,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 9.2
+      "ms": 52.9
     },
     {
       "id": "adv-paraphrase-lure",
@@ -939,7 +939,7 @@
       "expected_hit": false,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 7.0
+      "ms": 37.3
     },
     {
       "id": "adv-paraphrase-override",
@@ -958,7 +958,7 @@
       "expected_hit": false,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 5.4
+      "ms": 31.8
     },
     {
       "id": "adv-split-files",
@@ -979,7 +979,7 @@
       "expected_hit": false,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 11.8
+      "ms": 76.7
     },
     {
       "id": "adv-split-param",
@@ -1000,7 +1000,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 8.1
+      "ms": 35.4
     },
     {
       "id": "rugpull-description",
@@ -1023,7 +1023,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 67.9
+      "ms": 66.7
     },
     {
       "id": "rugpull-new-tool",
@@ -1045,7 +1045,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 32.0
+      "ms": 53.7
     },
     {
       "id": "rugpull-skill-egress",
@@ -1069,7 +1069,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 71.7
+      "ms": 73.5
     },
     {
       "id": "locked-unchanged",
@@ -1088,7 +1088,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 28.2
+      "ms": 47.4
     },
     {
       "id": "pdf-report",
@@ -1107,7 +1107,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 19.5
+      "ms": 55.4
     },
     {
       "id": "git-changelog",
@@ -1128,7 +1128,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 15.9
+      "ms": 36.1
     },
     {
       "id": "github-sync",
@@ -1147,7 +1147,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 21.4
+      "ms": 64.6
     },
     {
       "id": "uv-setup",
@@ -1168,7 +1168,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 14.5
+      "ms": 43.6
     },
     {
       "id": "security-reviewer",
@@ -1187,7 +1187,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 20.1
+      "ms": 43.7
     },
     {
       "id": "docx-builder",
@@ -1206,7 +1206,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 23.9
+      "ms": 90.4
     },
     {
       "id": "sql-helper",
@@ -1225,7 +1225,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 11.3
+      "ms": 35.6
     },
     {
       "id": "k8s-deploy",
@@ -1244,7 +1244,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 14.4
+      "ms": 59.9
     },
     {
       "id": "slack-notifier",
@@ -1263,7 +1263,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 61.6
+      "ms": 82.4
     },
     {
       "id": "csv-analyzer",
@@ -1282,7 +1282,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 12.1
+      "ms": 57.5
     },
     {
       "id": "web-research",
@@ -1301,7 +1301,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 14.5
+      "ms": 57.3
     },
     {
       "id": "commit-lint",
@@ -1324,7 +1324,7 @@
         "AG-SKL-EXEC-002:medium"
       ],
       "flow_findings": [],
-      "ms": 16.5
+      "ms": 42.4
     },
     {
       "id": "cfg-pinned",
@@ -1350,7 +1350,7 @@
         "AG-FLOW-001:high",
         "AG-FLOW-002:high"
       ],
-      "ms": 21.5
+      "ms": 30.1
     },
     {
       "id": "cfg-vscode-inputs",
@@ -1369,7 +1369,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 10.0
+      "ms": 33.4
     },
     {
       "id": "cfg-cursor-remote",
@@ -1392,7 +1392,7 @@
       "flow_findings": [
         "AG-FLOW-002:high"
       ],
-      "ms": 14.5
+      "ms": 33.9
     },
     {
       "id": "cfg-codex-docker",
@@ -1411,7 +1411,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 11.4
+      "ms": 33.5
     },
     {
       "id": "cfg-windows-cmd",
@@ -1430,7 +1430,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 22.9
+      "ms": 28.7
     },
     {
       "id": "cfg-gemini",
@@ -1449,7 +1449,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 8.8
+      "ms": 35.0
     },
     {
       "id": "srv-weather-ts",
@@ -1472,7 +1472,7 @@
         "AG-CODE-040:medium"
       ],
       "flow_findings": [],
-      "ms": 21.6
+      "ms": 57.9
     },
     {
       "id": "srv-notes-py",
@@ -1491,7 +1491,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 15.4
+      "ms": 53.4
     },
     {
       "id": "srv-issues-manifest",
@@ -1510,7 +1510,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 11.7
+      "ms": 35.4
     },
     {
       "id": "agents-md",
@@ -1529,7 +1529,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 8.7
+      "ms": 24.5
     },
     {
       "id": "claude-md",
@@ -1548,7 +1548,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 7.7
+      "ms": 25.6
     },
     {
       "id": "cursor-rules",
@@ -1567,7 +1567,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 8.6
+      "ms": 44.9
     }
   ]
 }

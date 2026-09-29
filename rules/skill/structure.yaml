@@ -10,7 +10,7 @@ rules:
     applies_to: [skill_md, instruction_md]
     match: {type: analyzer, analyzer: skill.exec}
     remediation: Keep injected commands read-only and local (e.g. git status). Never fetch from the network or read secrets in them.
-    references: [https://code.claude.com/docs/en/skills]
+    references: ["https://code.claude.com/docs/en/skills"]
 
   - id: AG-SKL-EXEC-002
     version: 1
@@ -22,7 +22,7 @@ rules:
     applies_to: [skill_md, instruction_md]
     match: {type: analyzer, analyzer: skill.exec}
     remediation: Avoid skill-scoped hooks unless essential; keep hook commands minimal, local and documented.
-    references: [https://code.claude.com/docs/en/skills]
+    references: ["https://code.claude.com/docs/en/skills"]
 
   - id: AG-SKL-EXEC-003
     version: 1
@@ -46,7 +46,7 @@ rules:
     applies_to: [skill_md, instruction_md]
     match: {type: analyzer, analyzer: skill.privilege}
     remediation: Pre-approve only specific commands, e.g. `Bash(git status:*)`, or omit `allowed-tools`.
-    references: [https://code.claude.com/docs/en/skills]
+    references: ["https://code.claude.com/docs/en/skills"]
 
   - id: AG-SKL-PRIV-002
     version: 1

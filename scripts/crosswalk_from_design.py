@@ -17,7 +17,8 @@ out = [
 def ids(value: str, suffix: str = "") -> str:
     if value in ("—", "", "-", "per advisory"):
         return "[]"
-    return "[" + ", ".join(f"{x.strip()}{suffix}" for x in value.split(",")) + "]"
+    # Quoted: libyaml rejects a ':' inside a plain scalar in a flow sequence (e.g. LLM01:2025).
+    return "[" + ", ".join(f'"{x.strip()}{suffix}"' for x in value.split(",")) + "]"
 
 
 for row in rows:

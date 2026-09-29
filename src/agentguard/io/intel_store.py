@@ -36,7 +36,7 @@ def bundled_intel_dir() -> Path:
 
 def trusted_keys() -> dict[str, bytes]:
     kdir = bundled_intel_dir() / "keys"
-    files = {p.name: p.read_bytes() for p in sorted(kdir.glob("*.pub.json"))} if kdir.is_dir() else {}
+    files = {p.name: p.read_bytes() for p in sorted(kdir.glob("*.pub.json"), key=lambda p: p.name)} if kdir.is_dir() else {}
     return load_trusted_keys(files)
 
 
