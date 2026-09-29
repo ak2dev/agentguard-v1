@@ -46,7 +46,7 @@ rules:
     remediation: Use JSON or yaml.safe_load.
 
   - id: AG-CODE-005
-    version: 1
+    version: 2
     title: Tool parameter used as a filesystem path
     description: A model-controlled parameter is used to read, write or delete files without evidence of containment checks.
     why: Path traversal lets injected instructions read secrets or overwrite files outside the intended directory.
@@ -86,7 +86,7 @@ rules:
     remediation: Render fixed templates and pass user input only as data.
 
   - id: AG-CODE-020
-    version: 1
+    version: 2
     title: Server code reads credential stores
     description: MCP server code references SSH keys, cloud CLI credentials, browser profiles, wallets or similar.
     why: A server that reads credential stores can exfiltrate them through any of its outputs.
@@ -96,7 +96,7 @@ rules:
     remediation: Remove credential-store access; take the specific credential the server needs from its configuration.
 
   - id: AG-CODE-021
-    version: 1
+    version: 2
     title: Server code dumps the environment
     description: MCP server code prints, serializes or transmits the whole environment.
     why: The environment of an MCP server typically contains API tokens passed by the client.
@@ -136,9 +136,9 @@ rules:
     remediation: Remove install hooks, or keep them to local build steps with no network access.
 
   - id: AG-CODE-025
-    version: 1
+    version: 2
     title: Runtime fetch or install of code
-    description: Code downloads and executes code, imports from a URL, or installs packages at run time.
+    description: Code downloads and executes code, imports from a URL, or installs a named package at run time (an install command handed to a process runner). Installing the declared dependencies (bare `npm install`, `pip install -r requirements.txt`) and install hints in messages are not reported.
     why: Code fetched at run time bypasses every review and pin.
     severity: high
     confidence: high
@@ -186,7 +186,7 @@ rules:
     remediation: Exchange or obtain a separate upstream token; validate the audience of tokens you receive.
 
   - id: AG-CODE-040
-    version: 1
+    version: 2
     title: Undeclared capability
     description: A tool's handler executes processes, makes network requests or accesses credentials, and the tool's name/description does not say so.
     why: Users approve tools based on their descriptions; undeclared capabilities defeat informed approval.

@@ -63,6 +63,58 @@
       "title": "Confidence",
       "type": "string"
     },
+    "Downgrade": {
+      "additionalProperties": false,
+      "description": "Report a regex match at a lower severity (and one level lower\nconfidence) when it is a *mention* rather than a directive. Every\ncondition given must hold; the first matching downgrade wins. Hidden or\ndecoded matches are still escalated one level afterwards.",
+      "properties": {
+        "severity": {
+          "$ref": "#/$defs/Severity"
+        },
+        "roles": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Roles",
+          "type": "array"
+        },
+        "quoted": {
+          "default": false,
+          "title": "Quoted",
+          "type": "boolean"
+        },
+        "patterns": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Patterns",
+          "type": "array"
+        },
+        "window": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Window"
+        },
+        "declared": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Declared",
+          "type": "array"
+        }
+      },
+      "required": [
+        "severity"
+      ],
+      "title": "Downgrade",
+      "type": "object"
+    },
     "Mapping": {
       "properties": {
         "framework": {
@@ -180,6 +232,13 @@
           "default": false,
           "title": "Lower Confidence In Code",
           "type": "boolean"
+        },
+        "downgrade": {
+          "items": {
+            "$ref": "#/$defs/Downgrade"
+          },
+          "title": "Downgrade",
+          "type": "array"
         },
         "max_matches": {
           "default": 5,

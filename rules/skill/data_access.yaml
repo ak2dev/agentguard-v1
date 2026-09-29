@@ -28,7 +28,7 @@ rules:
     remediation: Do not read credential stores. Request only the scoped credential the task needs, through the platform's secret handling.
 
   - id: AG-SKL-CRED-002
-    version: 1
+    version: 2
     title: Harvests token variables or dumps the environment
     description: Prints, serializes, filters or writes out the whole environment, or greps it for tokens and secrets.
     why: Environment variables hold API keys and tokens; dumping them is the core step of env-harvesting "utility" skills.
@@ -39,8 +39,16 @@ rules:
       type: regex
       scopes: [body, hidden, decoded, command, code]
       patterns:
+        # `env` as a command: at line start, after a shell separator, or as $(env);
+        # not prose ("the `FOO` env var", "the `env` object") or a call like f(env).
+        # A bare `env` code span counts after a run-type verb or as `x=`env``, and
+        # a code span that pipes or redirects it (`env | grep KEY`) always counts.
         - |-
-          (?:^[ \t]*(?:\$\s+)?|[;&|(`]\s*)(?:env|printenv|export\s+-p|Get-ChildItem\s+env:|gci\s+env:|dir\s+env:)[ \t]*(?:$|[|>;&)`])
+          (?:^[ \t]*(?:\$\s+)?|[;&|]\s*|(?<![\w\].])\(\s*)(?:env|printenv|export\s+-p|Get-ChildItem\s+env:|gci\s+env:|dir\s+env:)[ \t]*(?:$|[|>;&)`])
+        - |-
+          `(?:env|printenv|export\s+-p|Get-ChildItem\s+env:|gci\s+env:|dir\s+env:)[ \t]*[|>;&]
+        - |-
+          (?:\b(?:run|runs|running|execute|exec|type|call|invoke|print|paste|dump|echo|output\s+of)\s+(?:the\s+)?|=\s*)`(?:env|printenv|export\s+-p)`
         - |-
           \b(?:env|printenv|set)\s*\|\s*(?:grep|findstr|Select-String)\s+[^\n]*(?:token|key|secret|pass|auth|cred)
         - |-
@@ -50,13 +58,16 @@ rules:
       unless:
         - |-
           \benv\s+(?:-i\b|[A-Z_]+=)|#!/usr/bin/env\b|/usr/bin/env\s
+        # a Markdown heading names the object ("Environment Configuration (`env`)")
+        - |-
+          ^\s*#{1,6}\s
       window: 0
     remediation: Read only the specific variables the task needs, and never print or transmit the environment.
 
   - id: AG-SKL-CRED-010
-    version: 1
+    version: 2
     title: Credential access combined with network egress
-    description: The same file both accesses credentials (credential stores, token variables, environment dumps) and sends data over the network.
+    description: The same file both accesses credentials (credential stores, token variables, environment dumps) and sends data over the network. Copying the environment only to hand it to a child process (subprocess env=, spawn env:) is not an environment dump, and local AF_UNIX sockets are not network egress.
     why: Credential read + egress in one place is the complete exfiltration chain; each half alone may be benign, together they are not.
     severity: critical
     confidence: high
@@ -122,9 +133,9 @@ rules:
     remediation: Use the full destination URL.
 
   - id: AG-SKL-EXF-004
-    version: 1
+    version: 2
     title: DNS exfiltration pattern
-    description: DNS lookups whose hostname is built from variables or command output.
+    description: DNS lookups whose hostname is built from variables or command output. The lookup tool must be in command position and the interpolation inside the hostname argument itself, so prose such as "host the container ..." does not match.
     why: Encoding data into subdomains exfiltrates it through DNS, which is rarely filtered.
     severity: high
     confidence: medium
@@ -133,8 +144,10 @@ rules:
       type: regex
       scopes: [body, hidden, decoded, command, code]
       patterns:
+        # <command position> <tool> [options/record type/@server] <hostname token
+        # containing $(..), `..`, ${..}, $VAR or an f-string {var}> ending in .tld
         - |-
-          \b(?:nslookup|dig|host|ping|Resolve-DnsName)\s+[^\n]*(?:\$\(|\$\{|`|\$[A-Za-z_])[^\n]*\.[a-z]{2,}\b
+          (?:^[ \t]*(?:\$\s+)?|[;&|]\s*|\$\(\s*|`|\b(?:do|then|sudo|exec|xargs(?:\s+-\S+)*)\s+|\b(?:system|popen|run|call|check_output|exec\w*|spawn\w*)\(\s*f?["'`])(?:nslookup|dig|host|ping|Resolve-DnsName)(?:\s+(?:[-+]{1,2}[\w=-]+|\d+|(?-i:[A-Z]{1,5})|@\S+))*\s+["']?(?=[^\s"']*?(?:\$[({A-Za-z_]|`|\{[A-Za-z_]))(?:[\w.-]|\$\([^)\n]*\)|`[^`\n]*`|\$\{[^}\n]*\}|\$env:\w+|\$[A-Za-z_]\w*|\{[A-Za-z_][\w.\[\]'"]*\})+\.[a-z]{2,}\b
         - |-
           \bdns\.(?:resolve\w*|lookup)\(\s*`[^`]*\$\{
         - |-

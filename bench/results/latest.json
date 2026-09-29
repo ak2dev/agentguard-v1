@@ -3,16 +3,17 @@
   "engine_version": "0.1.0.dev0",
   "rule_pack": {
     "version": "0.1.0",
-    "digest": "d7368dff51a2384c9250c9ec32bb06382087a4c3fb8b35d3d2ce78ad6f2740d6"
+    "digest": "2ae207179344628f571b23fed56b22b3b16c19c0cbcb1e21094d547e47e94ff2"
   },
   "date": "2026-09-29",
   "split": "all",
   "corpus": {
-    "items": 61,
-    "benign": 25,
+    "items": 224,
+    "benign": 188,
     "malicious": 27,
     "adversarial": 9,
     "sources": {
+      "real": 163,
       "synthetic": 61
     }
   },
@@ -21,7 +22,7 @@
       "tp": 22,
       "fp": 0,
       "fn": 14,
-      "tn": 25,
+      "tn": 188,
       "precision": 1.0,
       "recall": 0.6111,
       "f1": 0.7586,
@@ -29,23 +30,23 @@
     },
     "high": {
       "tp": 32,
-      "fp": 0,
+      "fp": 3,
       "fn": 4,
-      "tn": 25,
-      "precision": 1.0,
+      "tn": 185,
+      "precision": 0.9143,
       "recall": 0.8889,
-      "f1": 0.9412,
-      "fpr": 0.0
+      "f1": 0.9014,
+      "fpr": 0.016
     },
     "medium": {
       "tp": 34,
-      "fp": 2,
+      "fp": 27,
       "fn": 2,
-      "tn": 23,
-      "precision": 0.9444,
+      "tn": 161,
+      "precision": 0.5574,
       "recall": 0.9444,
-      "f1": 0.9444,
-      "fpr": 0.08
+      "f1": 0.701,
+      "fpr": 0.1436
     }
   },
   "by_split": {
@@ -54,7 +55,7 @@
         "tp": 14,
         "fp": 0,
         "fn": 7,
-        "tn": 17,
+        "tn": 101,
         "precision": 1.0,
         "recall": 0.6667,
         "f1": 0.8,
@@ -62,23 +63,23 @@
       },
       "high": {
         "tp": 20,
-        "fp": 0,
+        "fp": 2,
         "fn": 1,
-        "tn": 17,
-        "precision": 1.0,
+        "tn": 99,
+        "precision": 0.9091,
         "recall": 0.9524,
-        "f1": 0.9756,
-        "fpr": 0.0
+        "f1": 0.9302,
+        "fpr": 0.0198
       },
       "medium": {
         "tp": 21,
-        "fp": 2,
+        "fp": 21,
         "fn": 0,
-        "tn": 15,
-        "precision": 0.913,
+        "tn": 80,
+        "precision": 0.5,
         "recall": 1.0,
-        "f1": 0.9545,
-        "fpr": 0.1176
+        "f1": 0.6667,
+        "fpr": 0.2079
       }
     },
     "heldout": {
@@ -86,7 +87,7 @@
         "tp": 8,
         "fp": 0,
         "fn": 7,
-        "tn": 8,
+        "tn": 87,
         "precision": 1.0,
         "recall": 0.5333,
         "f1": 0.6956,
@@ -94,23 +95,23 @@
       },
       "high": {
         "tp": 12,
-        "fp": 0,
+        "fp": 1,
         "fn": 3,
-        "tn": 8,
-        "precision": 1.0,
+        "tn": 86,
+        "precision": 0.9231,
         "recall": 0.8,
-        "f1": 0.8889,
-        "fpr": 0.0
+        "f1": 0.8572,
+        "fpr": 0.0115
       },
       "medium": {
         "tp": 13,
-        "fp": 0,
+        "fp": 6,
         "fn": 2,
-        "tn": 8,
-        "precision": 1.0,
+        "tn": 81,
+        "precision": 0.6842,
         "recall": 0.8667,
-        "f1": 0.9286,
-        "fpr": 0.0
+        "f1": 0.7647,
+        "fpr": 0.069
       }
     }
   },
@@ -167,6 +168,20 @@
       "fpr_critical": 0.0,
       "fpr_high": 0.0,
       "fpr_medium": 0.0
+    },
+    "benign-real-server": {
+      "label": "benign",
+      "items": 29,
+      "fpr_critical": 0.0,
+      "fpr_high": 0.0,
+      "fpr_medium": 0.4138
+    },
+    "benign-real-skill": {
+      "label": "benign",
+      "items": 134,
+      "fpr_critical": 0.0,
+      "fpr_high": 0.0224,
+      "fpr_medium": 0.097
     },
     "benign-server": {
       "label": "benign",
@@ -240,8 +255,25 @@
     }
   },
   "benign_hits_by_rule": {
+    "AG-MCP-META-020:medium": 6,
+    "AG-CODE-024:medium": 5,
+    "AG-CODE-020:medium": 3,
+    "AG-MCP-META-009:medium": 3,
+    "AG-SKL-INJ-002:medium": 3,
+    "AG-CODE-027:medium": 2,
+    "AG-SKL-CRED-001:medium": 2,
+    "AG-SKL-INJ-004:high": 2,
+    "AG-SKL-INJ-004:medium": 2,
+    "AG-SKL-INJ-007:medium": 2,
+    "AG-CODE-025:high": 1,
     "AG-CODE-040:medium": 1,
-    "AG-SKL-EXEC-002:medium": 1
+    "AG-SKL-BND-002:medium": 1,
+    "AG-SKL-CRED-002:medium": 1,
+    "AG-SKL-EXEC-002:medium": 1,
+    "AG-SKL-HID-004:medium": 1,
+    "AG-SKL-INJ-001:medium": 1,
+    "AG-SKL-INJ-009:medium": 1,
+    "AG-SKL-SE-007:medium": 1
   },
   "targets": {
     "precision_critical": {
@@ -251,22 +283,22 @@
     },
     "precision_high": {
       "target": 0.85,
-      "actual": 1.0,
+      "actual": 0.9143,
       "met": true
     },
     "fpr_high_max": {
       "target": 0.02,
-      "actual": 0.0,
+      "actual": 0.016,
       "met": true
     }
   },
   "performance": {
-    "total_seconds": 2.817,
-    "mean_ms_per_item": 46.2,
+    "total_seconds": 51.681,
+    "mean_ms_per_item": 230.7,
     "perf_check": {
       "skills": 100,
       "configs": 20,
-      "seconds": 1.018,
+      "seconds": 1.116,
       "target_seconds": 10,
       "met": true,
       "findings": 547
@@ -292,7 +324,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 73.7
+      "ms": 80.9
     },
     {
       "id": "lure-curl-bash",
@@ -313,7 +345,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 39.2
+      "ms": 42.1
     },
     {
       "id": "lure-b64-paste",
@@ -338,7 +370,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 36.2
+      "ms": 33.5
     },
     {
       "id": "lure-quarantine",
@@ -360,7 +392,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 32.4
+      "ms": 33.9
     },
     {
       "id": "lure-msi",
@@ -381,7 +413,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 33.4
+      "ms": 31.7
     },
     {
       "id": "lure-iex",
@@ -402,7 +434,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 35.8
+      "ms": 35.7
     },
     {
       "id": "lure-winr",
@@ -423,7 +455,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 34.2
+      "ms": 35.6
     },
     {
       "id": "envdump-python",
@@ -450,7 +482,7 @@
       "flow_findings": [
         "AG-FLOW-005:critical"
       ],
-      "ms": 60.9
+      "ms": 64.2
     },
     {
       "id": "envdump-shell",
@@ -473,7 +505,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 58.7
+      "ms": 59.7
     },
     {
       "id": "envdump-node",
@@ -496,7 +528,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 53.6
+      "ms": 53.3
     },
     {
       "id": "poison-manifest",
@@ -518,7 +550,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 42.3
+      "ms": 44.0
     },
     {
       "id": "poison-python-source",
@@ -541,7 +573,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 52.8
+      "ms": 56.0
     },
     {
       "id": "poison-ts-hidden",
@@ -563,7 +595,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 60.9
+      "ms": 70.2
     },
     {
       "id": "poison-sidechannel",
@@ -585,7 +617,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 31.9
+      "ms": 37.1
     },
     {
       "id": "shadow-bcc",
@@ -606,7 +638,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 63.2
+      "ms": 54.5
     },
     {
       "id": "shadow-replace",
@@ -628,7 +660,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 59.5
+      "ms": 59.0
     },
     {
       "id": "stdio-curl-sh",
@@ -650,7 +682,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 32.3
+      "ms": 39.6
     },
     {
       "id": "stdio-docker-sock",
@@ -672,7 +704,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 31.2
+      "ms": 26.2
     },
     {
       "id": "stdio-inline-python",
@@ -693,7 +725,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 21.7
+      "ms": 25.3
     },
     {
       "id": "stdio-cmd-enc",
@@ -714,7 +746,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 21.9
+      "ms": 26.9
     },
     {
       "id": "stdio-chain",
@@ -737,7 +769,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 32.9
+      "ms": 32.2
     },
     {
       "id": "exfil-ssh-transfer",
@@ -758,7 +790,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 33.6
+      "ms": 35.1
     },
     {
       "id": "exfil-aws-script",
@@ -780,7 +812,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 59.2
+      "ms": 57.1
     },
     {
       "id": "exfil-browser-discord",
@@ -806,7 +838,7 @@
       "flow_findings": [
         "AG-FLOW-005:critical"
       ],
-      "ms": 62.4
+      "ms": 65.2
     },
     {
       "id": "adv-zero-width",
@@ -828,7 +860,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 35.9
+      "ms": 33.7
     },
     {
       "id": "adv-homoglyph-curl",
@@ -850,7 +882,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 38.2
+      "ms": 39.5
     },
     {
       "id": "adv-tag-smuggle",
@@ -874,7 +906,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 43.6
+      "ms": 36.1
     },
     {
       "id": "adv-b64-comment",
@@ -897,7 +929,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 54.4
+      "ms": 31.6
     },
     {
       "id": "adv-hex-b64",
@@ -920,7 +952,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 52.9
+      "ms": 32.0
     },
     {
       "id": "adv-paraphrase-lure",
@@ -939,7 +971,7 @@
       "expected_hit": false,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 37.3
+      "ms": 28.8
     },
     {
       "id": "adv-paraphrase-override",
@@ -958,7 +990,7 @@
       "expected_hit": false,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 31.8
+      "ms": 39.8
     },
     {
       "id": "adv-split-files",
@@ -979,7 +1011,7 @@
       "expected_hit": false,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 76.7
+      "ms": 75.2
     },
     {
       "id": "adv-split-param",
@@ -1000,7 +1032,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 35.4
+      "ms": 34.9
     },
     {
       "id": "rugpull-description",
@@ -1023,7 +1055,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 66.7
+      "ms": 43.8
     },
     {
       "id": "rugpull-new-tool",
@@ -1069,7 +1101,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 73.5
+      "ms": 77.2
     },
     {
       "id": "locked-unchanged",
@@ -1088,7 +1120,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 47.4
+      "ms": 44.9
     },
     {
       "id": "pdf-report",
@@ -1107,7 +1139,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 55.4
+      "ms": 68.3
     },
     {
       "id": "git-changelog",
@@ -1128,7 +1160,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 36.1
+      "ms": 33.9
     },
     {
       "id": "github-sync",
@@ -1147,7 +1179,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 64.6
+      "ms": 55.7
     },
     {
       "id": "uv-setup",
@@ -1168,7 +1200,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 43.6
+      "ms": 35.1
     },
     {
       "id": "security-reviewer",
@@ -1187,7 +1219,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 43.7
+      "ms": 36.6
     },
     {
       "id": "docx-builder",
@@ -1206,7 +1238,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 90.4
+      "ms": 73.0
     },
     {
       "id": "sql-helper",
@@ -1225,7 +1257,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 35.6
+      "ms": 35.2
     },
     {
       "id": "k8s-deploy",
@@ -1244,7 +1276,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 59.9
+      "ms": 57.0
     },
     {
       "id": "slack-notifier",
@@ -1263,7 +1295,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 82.4
+      "ms": 60.1
     },
     {
       "id": "csv-analyzer",
@@ -1282,7 +1314,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 57.5
+      "ms": 36.6
     },
     {
       "id": "web-research",
@@ -1301,7 +1333,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 57.3
+      "ms": 34.0
     },
     {
       "id": "commit-lint",
@@ -1324,7 +1356,7 @@
         "AG-SKL-EXEC-002:medium"
       ],
       "flow_findings": [],
-      "ms": 42.4
+      "ms": 30.4
     },
     {
       "id": "cfg-pinned",
@@ -1350,7 +1382,7 @@
         "AG-FLOW-001:high",
         "AG-FLOW-002:high"
       ],
-      "ms": 30.1
+      "ms": 27.1
     },
     {
       "id": "cfg-vscode-inputs",
@@ -1369,7 +1401,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 33.4
+      "ms": 27.5
     },
     {
       "id": "cfg-cursor-remote",
@@ -1392,7 +1424,7 @@
       "flow_findings": [
         "AG-FLOW-002:high"
       ],
-      "ms": 33.9
+      "ms": 32.0
     },
     {
       "id": "cfg-codex-docker",
@@ -1411,7 +1443,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 33.5
+      "ms": 32.4
     },
     {
       "id": "cfg-windows-cmd",
@@ -1430,7 +1462,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 28.7
+      "ms": 26.2
     },
     {
       "id": "cfg-gemini",
@@ -1449,7 +1481,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 35.0
+      "ms": 33.0
     },
     {
       "id": "srv-weather-ts",
@@ -1472,7 +1504,7 @@
         "AG-CODE-040:medium"
       ],
       "flow_findings": [],
-      "ms": 57.9
+      "ms": 50.9
     },
     {
       "id": "srv-notes-py",
@@ -1491,7 +1523,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 53.4
+      "ms": 40.7
     },
     {
       "id": "srv-issues-manifest",
@@ -1510,7 +1542,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 35.4
+      "ms": 27.3
     },
     {
       "id": "agents-md",
@@ -1529,7 +1561,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 24.5
+      "ms": 21.6
     },
     {
       "id": "claude-md",
@@ -1548,7 +1580,7 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
-      "ms": 25.6
+      "ms": 23.3
     },
     {
       "id": "cursor-rules",
@@ -1567,7 +1599,3329 @@
       "expected_hit": true,
       "benign_hits": [],
       "flow_findings": [],
+      "ms": 41.4
+    },
+    {
+      "id": "real-anthropic-academy-guide",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 84.5
+    },
+    {
+      "id": "real-anthropic-algorithmic-art",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 181.8
+    },
+    {
+      "id": "real-anthropic-brand-guidelines",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 64.1
+    },
+    {
+      "id": "real-anthropic-claude-api",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": true
+      },
+      "max_severity": "medium",
+      "rules": [
+        "AG-FLOW-003",
+        "AG-SKL-BND-003",
+        "AG-SKL-CRED-001",
+        "AG-SKL-INJ-001",
+        "AG-SKL-INJ-002",
+        "AG-SKL-INJ-009",
+        "AG-SKL-SE-007",
+        "AG-SKL-SPEC-004"
+      ],
+      "expected_hit": true,
+      "benign_hits": [
+        "AG-SKL-CRED-001:medium",
+        "AG-SKL-INJ-001:medium",
+        "AG-SKL-INJ-002:medium",
+        "AG-SKL-INJ-002:medium",
+        "AG-SKL-INJ-002:medium",
+        "AG-SKL-INJ-009:medium",
+        "AG-SKL-INJ-009:medium",
+        "AG-SKL-SE-007:medium"
+      ],
+      "flow_findings": [
+        "AG-FLOW-003:high"
+      ],
+      "ms": 6162.6
+    },
+    {
+      "id": "real-anthropic-discernment-nudge",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 93.6
+    },
+    {
+      "id": "real-anthropic-frontend-design",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 83.5
+    },
+    {
+      "id": "real-anthropic-internal-comms",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 153.1
+    },
+    {
+      "id": "real-anthropic-mcp-builder",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": "low",
+      "rules": [
+        "AG-SKL-BND-003"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 433.8
+    },
+    {
+      "id": "real-anthropic-skill-creator",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": "low",
+      "rules": [
+        "AG-FLOW-003",
+        "AG-SKL-BND-003"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [
+        "AG-FLOW-003:high"
+      ],
+      "ms": 736.9
+    },
+    {
+      "id": "real-anthropic-slack-gif-creator",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": "low",
+      "rules": [
+        "AG-SKL-BND-003"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 208.9
+    },
+    {
+      "id": "real-anthropic-theme-factory",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 230.7
+    },
+    {
+      "id": "real-anthropic-web-artifacts-builder",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": true
+      },
+      "max_severity": "medium",
+      "rules": [
+        "AG-SKL-BND-002"
+      ],
+      "expected_hit": true,
+      "benign_hits": [
+        "AG-SKL-BND-002:medium"
+      ],
+      "flow_findings": [],
+      "ms": 159.1
+    },
+    {
+      "id": "real-anthropic-webapp-testing",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 156.2
+    },
+    {
+      "id": "real-openai-aspnet-core",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 382.9
+    },
+    {
+      "id": "real-openai-chatgpt-apps",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 380.9
+    },
+    {
+      "id": "real-openai-cli-creator",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 144.7
+    },
+    {
+      "id": "real-openai-define-goal",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 99.6
+    },
+    {
+      "id": "real-openai-gh-address-comments",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [
+        "AG-FLOW-003"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [
+        "AG-FLOW-003:high"
+      ],
+      "ms": 147.6
+    },
+    {
+      "id": "real-openai-gh-fix-ci",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 172.3
+    },
+    {
+      "id": "real-openai-hatch-pet",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 524.2
+    },
+    {
+      "id": "real-openai-jupyter-notebook",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 251.4
+    },
+    {
+      "id": "real-openai-linear",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 124.7
+    },
+    {
+      "id": "real-openai-migrate-to-codex",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": true
+      },
+      "max_severity": "medium",
+      "rules": [
+        "AG-SKL-BND-003",
+        "AG-SKL-INJ-004",
+        "AG-SKL-INJ-007"
+      ],
+      "expected_hit": true,
+      "benign_hits": [
+        "AG-SKL-INJ-004:medium",
+        "AG-SKL-INJ-007:medium"
+      ],
+      "flow_findings": [],
+      "ms": 668.4
+    },
+    {
+      "id": "real-openai-netlify-deploy",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": true
+      },
+      "max_severity": "medium",
+      "rules": [
+        "AG-SKL-INJ-004"
+      ],
+      "expected_hit": true,
+      "benign_hits": [
+        "AG-SKL-INJ-004:medium"
+      ],
+      "flow_findings": [],
+      "ms": 213.7
+    },
+    {
+      "id": "real-openai-notion-knowledge-capture",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 421.0
+    },
+    {
+      "id": "real-openai-notion-meeting-intelligence",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 398.9
+    },
+    {
+      "id": "real-openai-notion-research-documentation",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 475.2
+    },
+    {
+      "id": "real-openai-notion-spec-to-implementation",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 460.2
+    },
+    {
+      "id": "real-openai-openai-docs",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 347.3
+    },
+    {
+      "id": "real-openai-pdf",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 104.0
+    },
+    {
+      "id": "real-openai-playwright",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 200.1
+    },
+    {
+      "id": "real-openai-playwright-interactive",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 198.4
+    },
+    {
+      "id": "real-openai-render-deploy",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": true
+      },
+      "max_severity": "medium",
+      "rules": [
+        "AG-SKL-INJ-007",
+        "AG-SKL-SE-008"
+      ],
+      "expected_hit": true,
+      "benign_hits": [
+        "AG-SKL-INJ-007:medium"
+      ],
+      "flow_findings": [],
+      "ms": 541.4
+    },
+    {
+      "id": "real-openai-screenshot",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 271.2
+    },
+    {
+      "id": "real-openai-security-best-practices",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": true
+      },
+      "max_severity": "medium",
+      "rules": [
+        "AG-SKL-CRED-002"
+      ],
+      "expected_hit": true,
+      "benign_hits": [
+        "AG-SKL-CRED-002:medium"
+      ],
+      "flow_findings": [],
+      "ms": 1337.6
+    },
+    {
+      "id": "real-openai-security-ownership-map",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": "low",
+      "rules": [
+        "AG-SKL-BND-003"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 340.7
+    },
+    {
+      "id": "real-openai-security-threat-model",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 159.2
+    },
+    {
+      "id": "real-openai-sentry",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": "low",
+      "rules": [
+        "AG-SKL-SE-008"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 160.7
+    },
+    {
+      "id": "real-openai-speech",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "high",
+      "rules": [
+        "AG-SKL-INJ-004"
+      ],
+      "expected_hit": true,
+      "benign_hits": [
+        "AG-SKL-INJ-004:high"
+      ],
+      "flow_findings": [],
+      "ms": 357.4
+    },
+    {
+      "id": "real-openai-transcribe",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 181.9
+    },
+    {
+      "id": "real-openai-vercel-deploy",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 137.4
+    },
+    {
+      "id": "real-openai-winui-app",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 505.2
+    },
+    {
+      "id": "real-openai-yeet",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 133.0
+    },
+    {
+      "id": "real-openai-system-imagegen",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 399.3
+    },
+    {
+      "id": "real-openai-system-openai-docs",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 351.1
+    },
+    {
+      "id": "real-openai-system-plugin-creator",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 174.7
+    },
+    {
+      "id": "real-openai-system-skill-creator",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 252.9
+    },
+    {
+      "id": "real-openai-system-skill-installer",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": "low",
+      "rules": [
+        "AG-SKL-BND-003"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 189.1
+    },
+    {
+      "id": "real-mcp-everything",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": true
+      },
+      "max_severity": "medium",
+      "rules": [
+        "AG-CODE-024",
+        "AG-MCP-META-020",
+        "AG-SKL-HID-008"
+      ],
+      "expected_hit": true,
+      "benign_hits": [
+        "AG-CODE-024:medium",
+        "AG-MCP-META-020:medium",
+        "AG-MCP-META-020:medium",
+        "AG-MCP-META-020:medium",
+        "AG-MCP-META-020:medium",
+        "AG-MCP-META-020:medium",
+        "AG-MCP-META-020:medium",
+        "AG-MCP-META-020:medium",
+        "AG-MCP-META-020:medium",
+        "AG-MCP-META-020:medium"
+      ],
+      "flow_findings": [],
+      "ms": 1243.5
+    },
+    {
+      "id": "real-mcp-fetch",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": "low",
+      "rules": [
+        "AG-SKL-HID-008"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 390.7
+    },
+    {
+      "id": "real-mcp-filesystem",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": true
+      },
+      "max_severity": "medium",
+      "rules": [
+        "AG-CODE-020",
+        "AG-CODE-024",
+        "AG-MCP-META-009",
+        "AG-SKL-HID-008"
+      ],
+      "expected_hit": true,
+      "benign_hits": [
+        "AG-CODE-020:medium",
+        "AG-CODE-020:medium",
+        "AG-CODE-024:medium",
+        "AG-MCP-META-009:medium",
+        "AG-MCP-META-009:medium",
+        "AG-MCP-META-009:medium",
+        "AG-MCP-META-009:medium",
+        "AG-MCP-META-009:medium",
+        "AG-MCP-META-009:medium",
+        "AG-MCP-META-009:medium",
+        "AG-MCP-META-009:medium",
+        "AG-MCP-META-009:medium",
+        "AG-MCP-META-009:medium"
+      ],
+      "flow_findings": [],
+      "ms": 658.1
+    },
+    {
+      "id": "real-mcp-git",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": "low",
+      "rules": [
+        "AG-SKL-HID-008"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 398.3
+    },
+    {
+      "id": "real-mcp-memory",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": true
+      },
+      "max_severity": "medium",
+      "rules": [
+        "AG-CODE-024",
+        "AG-SKL-HID-008"
+      ],
+      "expected_hit": true,
+      "benign_hits": [
+        "AG-CODE-024:medium"
+      ],
+      "flow_findings": [],
+      "ms": 367.5
+    },
+    {
+      "id": "real-mcp-sequentialthinking",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": true
+      },
+      "max_severity": "medium",
+      "rules": [
+        "AG-CODE-024",
+        "AG-MCP-META-019",
+        "AG-SKL-HID-008"
+      ],
+      "expected_hit": true,
+      "benign_hits": [
+        "AG-CODE-024:medium"
+      ],
+      "flow_findings": [],
+      "ms": 216.1
+    },
+    {
+      "id": "real-mcp-time",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": "low",
+      "rules": [
+        "AG-SKL-HID-008"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 311.4
+    },
+    {
+      "id": "real-playwright-mcp",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": true
+      },
+      "max_severity": "medium",
+      "rules": [
+        "AG-CODE-020",
+        "AG-CODE-027",
+        "AG-FLOW-001",
+        "AG-FLOW-002",
+        "AG-FLOW-003",
+        "AG-SKL-HID-008"
+      ],
+      "expected_hit": true,
+      "benign_hits": [
+        "AG-CODE-020:medium",
+        "AG-CODE-020:medium",
+        "AG-CODE-027:medium"
+      ],
+      "flow_findings": [
+        "AG-FLOW-001:high",
+        "AG-FLOW-002:high",
+        "AG-FLOW-003:high"
+      ],
+      "ms": 971.6
+    },
+    {
+      "id": "real-hf-hf-cli",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": "low",
+      "rules": [
+        "AG-SKL-SE-008"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 111.2
+    },
+    {
+      "id": "real-hf-hf-cloud-aws-context-discovery",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": true
+      },
+      "max_severity": "medium",
+      "rules": [
+        "AG-SKL-CRED-001"
+      ],
+      "expected_hit": true,
+      "benign_hits": [
+        "AG-SKL-CRED-001:medium"
+      ],
+      "flow_findings": [],
+      "ms": 39.2
+    },
+    {
+      "id": "real-hf-hf-cloud-python-env-setup",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 107.5
+    },
+    {
+      "id": "real-hf-hf-cloud-sagemaker-deployment-planner",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
       "ms": 44.9
+    },
+    {
+      "id": "real-hf-hf-cloud-sagemaker-iam-preflight",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 149.1
+    },
+    {
+      "id": "real-hf-hf-cloud-sagemaker-production-defaults",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": true
+      },
+      "max_severity": "medium",
+      "rules": [
+        "AG-SKL-BND-003",
+        "AG-SKL-INJ-002"
+      ],
+      "expected_hit": true,
+      "benign_hits": [
+        "AG-SKL-INJ-002:medium"
+      ],
+      "flow_findings": [],
+      "ms": 403.1
+    },
+    {
+      "id": "real-hf-hf-cloud-serving-image-selection",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 151.8
+    },
+    {
+      "id": "real-hf-hf-mem",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 34.4
+    },
+    {
+      "id": "real-hf-huggingface-best",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 38.9
+    },
+    {
+      "id": "real-hf-huggingface-community-evals",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 159.6
+    },
+    {
+      "id": "real-hf-huggingface-datasets",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 35.2
+    },
+    {
+      "id": "real-hf-huggingface-gradio",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 123.8
+    },
+    {
+      "id": "real-hf-huggingface-llm-trainer",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "high",
+      "rules": [
+        "AG-CODE-025"
+      ],
+      "expected_hit": true,
+      "benign_hits": [
+        "AG-CODE-025:high"
+      ],
+      "flow_findings": [],
+      "ms": 729.6
+    },
+    {
+      "id": "real-hf-huggingface-local-models",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 163.3
+    },
+    {
+      "id": "real-hf-huggingface-lora-space-builder",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 440.8
+    },
+    {
+      "id": "real-hf-huggingface-paper-publisher",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": true
+      },
+      "max_severity": "medium",
+      "rules": [
+        "AG-SKL-HID-004"
+      ],
+      "expected_hit": true,
+      "benign_hits": [
+        "AG-SKL-HID-004:medium"
+      ],
+      "flow_findings": [],
+      "ms": 339.1
+    },
+    {
+      "id": "real-hf-huggingface-papers",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 49.0
+    },
+    {
+      "id": "real-hf-huggingface-spaces",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [
+        "AG-FLOW-003"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [
+        "AG-FLOW-003:high"
+      ],
+      "ms": 609.6
+    },
+    {
+      "id": "real-hf-huggingface-tool-builder",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 210.3
+    },
+    {
+      "id": "real-hf-huggingface-trackio",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 127.5
+    },
+    {
+      "id": "real-hf-huggingface-vision-trainer",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 669.2
+    },
+    {
+      "id": "real-hf-huggingface-zerogpu",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 195.5
+    },
+    {
+      "id": "real-hf-train-sentence-transformers",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": "low",
+      "rules": [
+        "AG-SKL-BND-003",
+        "AG-SKL-SE-008"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 1090.3
+    },
+    {
+      "id": "real-hf-transformers-js",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 363.6
+    },
+    {
+      "id": "real-hf-trl-training",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": true
+      },
+      "max_severity": "medium",
+      "rules": [
+        "AG-SKL-INJ-002"
+      ],
+      "expected_hit": true,
+      "benign_hits": [
+        "AG-SKL-INJ-002:medium"
+      ],
+      "flow_findings": [],
+      "ms": 46.3
+    },
+    {
+      "id": "real-supabase-mcp-server-supabase",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": true
+      },
+      "max_severity": "medium",
+      "rules": [
+        "AG-CODE-020",
+        "AG-CODE-022",
+        "AG-CODE-027",
+        "AG-MCP-META-020"
+      ],
+      "expected_hit": true,
+      "benign_hits": [
+        "AG-CODE-020:medium",
+        "AG-CODE-020:medium",
+        "AG-CODE-027:medium",
+        "AG-MCP-META-020:medium",
+        "AG-MCP-META-020:medium"
+      ],
+      "flow_findings": [],
+      "ms": 4012.7
+    },
+    {
+      "id": "real-supabase-mcp-server-postgrest",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": "low",
+      "rules": [
+        "AG-CODE-022"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 199.8
+    },
+    {
+      "id": "real-supabase-mcp-utils",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "dev",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": true
+      },
+      "max_severity": "medium",
+      "rules": [
+        "AG-MCP-META-020"
+      ],
+      "expected_hit": true,
+      "benign_hits": [
+        "AG-MCP-META-020:medium"
+      ],
+      "flow_findings": [],
+      "ms": 265.5
+    },
+    {
+      "id": "real-ms-agent-framework-azure-ai-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "high",
+      "rules": [
+        "AG-SKL-INJ-004"
+      ],
+      "expected_hit": true,
+      "benign_hits": [
+        "AG-SKL-INJ-004:high"
+      ],
+      "flow_findings": [],
+      "ms": 198.5
+    },
+    {
+      "id": "real-ms-applicationinsights-web-ts",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 178.5
+    },
+    {
+      "id": "real-ms-azure-ai-contentsafety-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 88.2
+    },
+    {
+      "id": "real-ms-azure-ai-contentunderstanding-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 101.4
+    },
+    {
+      "id": "real-ms-azure-ai-language-conversations-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 90.3
+    },
+    {
+      "id": "real-ms-azure-ai-ml-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 92.4
+    },
+    {
+      "id": "real-ms-azure-ai-projects-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 437.1
+    },
+    {
+      "id": "real-ms-azure-ai-textanalytics-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 92.2
+    },
+    {
+      "id": "real-ms-azure-ai-transcription-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 83.2
+    },
+    {
+      "id": "real-ms-azure-ai-translation-document-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 105.6
+    },
+    {
+      "id": "real-ms-azure-ai-translation-text-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 97.5
+    },
+    {
+      "id": "real-ms-azure-ai-vision-imageanalysis-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 101.1
+    },
+    {
+      "id": "real-ms-azure-ai-voicelive-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 187.0
+    },
+    {
+      "id": "real-ms-azure-appconfiguration-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 96.0
+    },
+    {
+      "id": "real-ms-azure-containerregistry-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 97.1
+    },
+    {
+      "id": "real-ms-azure-cosmos-db-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 340.1
+    },
+    {
+      "id": "real-ms-azure-cosmos-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 132.2
+    },
+    {
+      "id": "real-ms-azure-cosmos-rust",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 47.5
+    },
+    {
+      "id": "real-ms-azure-data-tables-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 85.9
+    },
+    {
+      "id": "real-ms-azure-eventgrid-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 93.5
+    },
+    {
+      "id": "real-ms-azure-eventhub-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 180.4
+    },
+    {
+      "id": "real-ms-azure-eventhub-rust",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 46.4
+    },
+    {
+      "id": "real-ms-azure-identity-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 150.1
+    },
+    {
+      "id": "real-ms-azure-identity-rust",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 41.5
+    },
+    {
+      "id": "real-ms-azure-keyvault-certificates-rust",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 45.4
+    },
+    {
+      "id": "real-ms-azure-keyvault-keys-rust",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 46.1
+    },
+    {
+      "id": "real-ms-azure-keyvault-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 91.9
+    },
+    {
+      "id": "real-ms-azure-keyvault-secrets-rust",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 48.1
+    },
+    {
+      "id": "real-ms-azure-messaging-webpubsubservice-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 84.4
+    },
+    {
+      "id": "real-ms-azure-mgmt-apicenter-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 90.7
+    },
+    {
+      "id": "real-ms-azure-mgmt-apimanagement-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 90.1
+    },
+    {
+      "id": "real-ms-azure-mgmt-botservice-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 110.0
+    },
+    {
+      "id": "real-ms-azure-mgmt-fabric-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 94.7
+    },
+    {
+      "id": "real-ms-azure-monitor-ingestion-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 97.1
+    },
+    {
+      "id": "real-ms-azure-monitor-opentelemetry-exporter-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 101.9
+    },
+    {
+      "id": "real-ms-azure-monitor-opentelemetry-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 100.3
+    },
+    {
+      "id": "real-ms-azure-monitor-query-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 86.0
+    },
+    {
+      "id": "real-ms-azure-search-documents-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": "low",
+      "rules": [
+        "AG-SKL-BND-003"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 231.0
+    },
+    {
+      "id": "real-ms-azure-servicebus-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 188.4
+    },
+    {
+      "id": "real-ms-azure-speech-to-text-rest-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 93.5
+    },
+    {
+      "id": "real-ms-azure-storage-blob-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 88.8
+    },
+    {
+      "id": "real-ms-azure-storage-blob-rust",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 62.7
+    },
+    {
+      "id": "real-ms-azure-storage-file-datalake-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 86.5
+    },
+    {
+      "id": "real-ms-azure-storage-file-share-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 82.9
+    },
+    {
+      "id": "real-ms-azure-storage-queue-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 83.7
+    },
+    {
+      "id": "real-ms-azure-storage-queue-rust",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 43.7
+    },
+    {
+      "id": "real-ms-cloud-solution-architect",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 441.7
+    },
+    {
+      "id": "real-ms-continual-learning",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 31.9
+    },
+    {
+      "id": "real-ms-copilot-sdk",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 98.4
+    },
+    {
+      "id": "real-ms-debugview",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 200.1
+    },
+    {
+      "id": "real-ms-entra-agent-id",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 157.0
+    },
+    {
+      "id": "real-ms-fastapi-router-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 179.7
+    },
+    {
+      "id": "real-ms-frontend-design-review",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": "info",
+      "rules": [
+        "AG-SKL-SPEC-005"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 119.6
+    },
+    {
+      "id": "real-ms-github-issue-creator",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 37.2
+    },
+    {
+      "id": "real-ms-kql",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 240.0
+    },
+    {
+      "id": "real-ms-m365-agents-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 94.0
+    },
+    {
+      "id": "real-ms-mcp-builder",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": "low",
+      "rules": [
+        "AG-SKL-BND-003"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 492.1
+    },
+    {
+      "id": "real-ms-microsoft-docs",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 34.8
+    },
+    {
+      "id": "real-ms-podcast-generation",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 190.1
+    },
+    {
+      "id": "real-ms-pydantic-models-py",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 120.4
+    },
+    {
+      "id": "real-ms-skill-creator",
+      "label": "benign",
+      "category": "benign-real-skill",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": "low",
+      "rules": [
+        "AG-SKL-BND-003"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 456.7
+    },
+    {
+      "id": "real-cloudflare-ai-gateway",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": true
+      },
+      "max_severity": "medium",
+      "rules": [
+        "AG-CODE-022",
+        "AG-MCP-META-020"
+      ],
+      "expected_hit": true,
+      "benign_hits": [
+        "AG-MCP-META-020:medium"
+      ],
+      "flow_findings": [],
+      "ms": 285.6
+    },
+    {
+      "id": "real-cloudflare-auditlogs",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 212.9
+    },
+    {
+      "id": "real-cloudflare-autorag",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": "low",
+      "rules": [
+        "AG-CODE-022"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 249.0
+    },
+    {
+      "id": "real-cloudflare-browser-rendering",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": true
+      },
+      "max_severity": "medium",
+      "rules": [
+        "AG-CODE-022",
+        "AG-MCP-META-020"
+      ],
+      "expected_hit": true,
+      "benign_hits": [
+        "AG-MCP-META-020:medium"
+      ],
+      "flow_findings": [],
+      "ms": 282.9
+    },
+    {
+      "id": "real-cloudflare-cloudflare-blog",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 180.3
+    },
+    {
+      "id": "real-cloudflare-cloudflare-one-casb",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": "low",
+      "rules": [
+        "AG-CODE-022"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 284.1
+    },
+    {
+      "id": "real-cloudflare-demo-day",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 621.5
+    },
+    {
+      "id": "real-cloudflare-dex-analysis",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 205.5
+    },
+    {
+      "id": "real-cloudflare-dns-analytics",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 189.1
+    },
+    {
+      "id": "real-cloudflare-docs-ai-search",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 133.6
+    },
+    {
+      "id": "real-cloudflare-graphql",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": true
+      },
+      "max_severity": "medium",
+      "rules": [
+        "AG-CODE-022",
+        "AG-MCP-META-009",
+        "AG-MCP-META-020"
+      ],
+      "expected_hit": true,
+      "benign_hits": [
+        "AG-MCP-META-009:medium",
+        "AG-MCP-META-020:medium"
+      ],
+      "flow_findings": [],
+      "ms": 298.2
+    },
+    {
+      "id": "real-cloudflare-logpush",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 182.0
+    },
+    {
+      "id": "real-cloudflare-radar",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": "low",
+      "rules": [
+        "AG-CODE-022"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 655.5
+    },
+    {
+      "id": "real-cloudflare-sandbox-container",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": true
+      },
+      "max_severity": "medium",
+      "rules": [
+        "AG-CODE-022",
+        "AG-CODE-024"
+      ],
+      "expected_hit": true,
+      "benign_hits": [
+        "AG-CODE-024:medium"
+      ],
+      "flow_findings": [],
+      "ms": 589.7
+    },
+    {
+      "id": "real-cloudflare-stack-mcp",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": true
+      },
+      "max_severity": "medium",
+      "rules": [
+        "AG-CODE-022",
+        "AG-MCP-META-009"
+      ],
+      "expected_hit": true,
+      "benign_hits": [
+        "AG-MCP-META-009:medium"
+      ],
+      "flow_findings": [],
+      "ms": 221.4
+    },
+    {
+      "id": "real-cloudflare-workers-bindings",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 458.1
+    },
+    {
+      "id": "real-cloudflare-workers-builds",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 253.0
+    },
+    {
+      "id": "real-cloudflare-workers-observability",
+      "label": "benign",
+      "category": "benign-real-server",
+      "split": "heldout",
+      "source": "real",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 238.0
     }
   ]
 }

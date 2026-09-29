@@ -44,16 +44,23 @@ for (const rule of fs.readdirSync(fixturesRoot).sort()) {
       const dir = path.join(sideDir, c);
       const files = {};
       let skip = false;
+      let maxSeverity = null;
       const walk = (d, rel) => {
         for (const e of fs.readdirSync(d, { withFileTypes: true })) {
           const r = rel ? `${rel}/${e.name}` : e.name;
           if (e.isDirectory()) walk(path.join(d, e.name), r);
-          else if (["_case.yaml", "_archive.zip", "agentguard.lock"].includes(r)) skip = true;
+          else if (r === "_case.yaml") {
+            // A case file holding only max_severity needs no harness; anything else does.
+            const m = fs.readFileSync(path.join(d, e.name), "utf8").trim().match(/^max_severity:\s*(\w+)$/);
+            if (m) maxSeverity = m[1];
+            else skip = true;
+          }
+          else if (["_archive.zip", "agentguard.lock"].includes(r)) skip = true;
           else files[r] = fs.readFileSync(path.join(d, e.name)).toString("base64");
         }
       };
       walk(dir, "");
-      if (!skip) cases.push({ rule, side, name: c, files });
+      if (!skip) cases.push({ rule, side, name: c, files, max_severity: maxSeverity });
     }
   }
 }
@@ -64,6 +71,7 @@ import sys, json, base64
 sys.path.insert(0, "/app")
 from agentguard import ArtifactTree, ScanOptions, scan, render_json
 from agentguard.core.rules.pack import RulePack
+from agentguard.core.models.enums import Severity
 pack = RulePack.default()
 cases = json.loads(CASES_JSON)
 failures = []
@@ -71,7 +79,13 @@ for c in cases:
     tree = ArtifactTree.from_mapping({k: base64.b64decode(v) for k, v in c["files"].items()})
     report = scan(tree, ScanOptions(), pack)
     fired = {f.rule_id for f in report.findings}
-    ok = (c["rule"] in fired) if c["side"] == "positive" else (c["rule"] not in fired)
+    if c["side"] == "positive":
+        ok = c["rule"] in fired
+    elif c.get("max_severity"):
+        cap = Severity(c["max_severity"])
+        ok = not any(f.rule_id == c["rule"] and f.severity.rank > cap.rank for f in report.findings)
+    else:
+        ok = c["rule"] not in fired
     if not ok:
         failures.append(f'{c["rule"]}/{c["side"]}/{c["name"]}')
 # determinism across runs inside Pyodide

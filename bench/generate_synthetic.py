@@ -320,8 +320,11 @@ add("cursor-rules", "benign", "benign-instructions", "a2", {".cursor/rules/style
 
 def main() -> None:
     if CORPUS.exists():
+        # Regenerate synthetic items only; real-* items belong to fetch_real.py.
         for sub in ("benign", "malicious", "adversarial"):
-            shutil.rmtree(CORPUS / sub, ignore_errors=True)
+            for d in (CORPUS / sub).glob("*"):
+                if d.is_dir() and not d.name.startswith("real-"):
+                    shutil.rmtree(d, ignore_errors=True)
     manifest_items = []
     for item in ITEMS:
         base = CORPUS / item["path"]

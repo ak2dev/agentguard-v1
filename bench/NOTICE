@@ -1,0 +1,52 @@
+Agent Guard benchmark corpus: third-party notices
+=================================================
+
+bench/corpus/benign/real-* contains unmodified copies of files from the
+repositories below, at the pinned commits listed in bench/real_sources.yaml,
+used as benign test inputs for the scanner (nothing in them is executed).
+Only the listed directories were copied; individual generated files may be
+left out (see `exclude` in real_sources.yaml). Each item keeps the license
+file shipped in its own directory where the upstream repository licenses per
+directory; repository-level license and notice files are in bench/licenses/.
+
+anthropics/skills (commit 8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4)
+  Copyright Anthropic, PBC. Apache License 2.0, per skill directory
+  (LICENSE.txt inside each real-anthropic-* item). The repository's
+  THIRD_PARTY_NOTICES.md is reproduced in bench/licenses/; none of the
+  third-party components it lists (imageio, FFmpeg, Pillow, fonts) is
+  included in the vendored directories. The proprietary docx, pdf, pptx and
+  xlsx skills are not included.
+
+openai/skills (commit 49f948faa9258a0c61caceaf225e179651397431)
+  Apache License 2.0 or MIT, per skill directory (LICENSE.txt inside each
+  real-openai-* item; the Notion skills are Copyright Notion Labs, Inc. and the
+  vercel-deploy skill Copyright Vercel, both MIT). NOTICE.txt files shipped
+  in skill directories are kept. The Figma skills (Figma Developer Terms) are
+  not included.
+
+modelcontextprotocol/servers (commit f46d9578190b476b3501923ea8977d899e8db2cb)
+  Model Context Protocol contributors. Code under Apache License 2.0 or the
+  MIT License (the project is relicensing from MIT to Apache-2.0),
+  documentation under CC BY 4.0; see
+  bench/licenses/modelcontextprotocol__servers__LICENSE.
+
+microsoft/playwright-mcp (commit f183dad4a52965583e3cc1d59b88cdc279e2e57d)
+  Copyright Microsoft Corporation. Apache License 2.0;
+  see bench/licenses/microsoft__playwright-mcp__LICENSE.
+
+huggingface/skills (commit 80f9fa530e46f4ae642fcb9e1725bad0e1979395)
+  Copyright Hugging Face. Apache License 2.0;
+  see bench/licenses/huggingface__skills__LICENSE.
+
+supabase-community/supabase-mcp (commit 4cc6660f656673eb83f3b80b0c3ae7030b3d2772)
+  Copyright Supabase. Apache License 2.0;
+  see bench/licenses/supabase-community__supabase-mcp__LICENSE.
+
+microsoft/skills (commit 23d0dac5f83f268166a17f0bc7dc6c73dc348a33)
+  Copyright (c) Microsoft Corporation. MIT License;
+  see bench/licenses/microsoft__skills__LICENSE.
+
+cloudflare/mcp-server-cloudflare (commit 1d7a16b25db74ed44539cd5079e2db46b42f08db)
+  Copyright Cloudflare, Inc. Apache License 2.0;
+  see bench/licenses/cloudflare__mcp-server-cloudflare__LICENSE.
+  The generated worker-configuration.d.ts files are not included.

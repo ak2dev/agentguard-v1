@@ -25,7 +25,8 @@ from ..models.enums import ArtifactRole, CapLabel, ComponentKind, Confidence, Ev
 from ..textutil import TIMEOUT
 from . import pytaint
 from .base import Context
-from .heuristics import CREDENTIAL_PATH, EGRESS_CODE, ENV_DUMP, PERSISTENCE, finditer, search
+from .envcopy import env_dumps
+from .heuristics import CREDENTIAL_PATH, EGRESS_CODE, PERSISTENCE, finditer, search
 from .mcp import ToolHandler
 
 TAINT_RULE = {
@@ -74,6 +75,14 @@ def _call_args(text: str, open_idx: int, limit: int = 4000) -> str:
                 in_str = None
             elif in_str == "`" and ch == "$" and i + 1 < end and text[i + 1] == "{":
                 pass
+        elif ch == "/" and text.startswith("//", i):
+            nl = text.find("\n", i)                           # comment: skip, quotes in it are prose
+            i = end if nl < 0 else nl
+            continue
+        elif ch == "/" and text.startswith("/*", i):
+            close = text.find("*/", i + 2)
+            i = end if close < 0 else close + 2
+            continue
         elif ch in "\"'`":
             in_str = ch
         elif ch == "(":
@@ -114,12 +123,25 @@ class _Hit:
     direct: bool
 
 
+# Containment / allowlist evidence in the handler (mirrors pytaint.SANITIZERS):
+# path and url hits are not reported when it is present.
+_JS_SANITIZERS = {
+    "path": regex.compile(r"\b(?:validate\w*Path|isPath\w*(?:Within|Allowed)\w*|is(?:Within|Inside|Contained)\w*|"
+                          r"assert\w*(?:Within|Allowed|Contained)\w*|ensure\w*(?:Within|Allowed|Contained)\w*)\s*\(|"
+                          r"\bpath\.relative\s*\([^)]*\)[^;\n]*startsWith\s*\(\s*['\"]\.\."),
+    "url": regex.compile(r"\b(?:ALLOWED_HOSTS|allowedHosts|ALLOWLIST|allowlist|isAllowed(?:Url|Host)\w*)\b"),
+}
+
+
 def js_taint(handler: str, params: list[str]) -> list[_Hit]:
     names = _js_params(handler, params)
     if not names:
         return []
     hits: list[_Hit] = []
+    contained = {k for k, rx in _JS_SANITIZERS.items() if rx.search(handler, timeout=TIMEOUT)}
     for rx, kind in _JS_SINKS:
+        if kind in contained:
+            continue
         for m in rx.finditer(handler, timeout=TIMEOUT):
             args = _call_args(handler, m.end() - 1)
             if kind == "argv" and regex.search(r"\bshell\s*:\s*true\b", args, timeout=TIMEOUT):
@@ -148,12 +170,24 @@ _OBFUSCATED = regex.compile(
     r"|\bnew\s+Function\s*\(\s*(?:atob|Buffer\.from)|\bFunction\s*\(\s*atob"
     r"|(?:\\x[0-9a-fA-F]{2}){40,}",
 )
+_RUNNER = (r"\b(?:system|popen|run|call|check_call|check_output|Popen|getoutput|execSync|exec|execa|execaSync|spawnSync|spawn)"
+           r"\s*\(\s*(?:shlex\.split\(\s*)?")
+_INSTALL = (r"[ \t]*(?:pip3?|uv[ \t]+pip|npm|pnpm|yarn)[ \t]+(?:install|i|add)\b"
+            r"(?:[ \t]+(?!-r\b|-e\b|--requirement\b|--editable\b)-[-\w=]+)*[ \t]+"
+            r"(?!-r\b|-e\b|--requirement\b|--editable\b|\.)[^\s\"'`-][^\"'`\n]*[\"'`]")
+_INSTALL_VAR = regex.compile(r"\b([A-Za-z_]\w*)\s*=\s*f?[\"'`]" + _INSTALL)
 _REMOTE_CODE = regex.compile(
     r"\b(?:exec|eval)\s*\(\s*(?:requests\.get|urlopen|urllib\.request\.urlopen|httpx\.get)\s*\("
     r"|\beval\s*\(\s*await\s*\(?\s*(?:await\s+)?(?:fetch|axios)"
     r"|\bimport\s*\(\s*[`'\"]https?://|\brequire\s*\(\s*[`'\"]https?://"
-    r"|[\"'`]\s*(?:pip3?|uv\s+pip|npm|pnpm|yarn)\s+(?:install|i|add)\b[^\"'`]*[\"'`]"
-    r"|\[\s*[\"'](?:pip3?|npm|pnpm|yarn)[\"']\s*,\s*[\"'](?:install|i|add)[\"']"
+    # An install command naming a package, handed straight to a process runner (a
+    # string held in a variable counts only if that variable reaches a runner: see
+    # _INSTALL_VAR). One line only, so a closing quote (echo "...") never pairs with
+    # the next line; an error message saying "install with `pip install x`" is not
+    # a runner; bare `npm install` / `pip install -r req.txt` installs the declared,
+    # locked dependencies.
+    r"|" + _RUNNER + r"f?[\"'`]" + _INSTALL
+    + r"|\[\s*[\"'](?:pip3?|npm|pnpm|yarn)[\"']\s*,\s*[\"'](?:install|i|add)[\"']\s*,(?!\s*[\"'](?:-r|-e|--requirement|\.)[\"'])"
     r"|\b(?:npx|uvx)\s+-y\s",
 )
 _ANTI_ANALYSIS = regex.compile(
@@ -264,7 +298,7 @@ class CodeAnalyzer:
                                  hit.sink, hit.source, Confidence.medium if hit.sanitized else Confidence.high, caps,
                                  [Span(path=at.path, start_line=ln) for ln in hit.path[:5]])
             body = ast.get_source_segment(at.text, fn) or ""
-            self._handler_caps(body, (at.artifact.component_id, tool), caps)
+            self._handler_caps(body, (at.artifact.component_id, tool), caps, "python")
 
     # -- JS / TS -----------------------------------------------------------------
     def _js(self, ctx: Context, at: ArtifactText, hs: list[ToolHandler], caps: dict) -> None:
@@ -275,7 +309,7 @@ class CodeAnalyzer:
                 sl, sc = at.index.line_col(off)
                 self._emit_taint(ctx, at, h.tool, hit.kind, Span(path=at.path, start_line=sl, start_col=sc), hit.sink,
                                  hit.source, Confidence.high if hit.direct else Confidence.medium, caps, [])
-            self._handler_caps(body, (at.artifact.component_id, h.tool), caps)
+            self._handler_caps(body, (at.artifact.component_id, h.tool), caps, at.artifact.language)
 
     def _emit_taint(self, ctx: Context, at: ArtifactText, tool: str, kind: str, span: Span, sink: str, source: str,
                     conf: Confidence, caps: dict, chain: list[Span]) -> None:
@@ -289,7 +323,7 @@ class CodeAnalyzer:
         ctx.add_capability(cid, TAINT_LABEL[kind], subject=f"{cid}#{tool}", confidence=Confidence.high, span=span,
                            snippet=line.strip(), reason=f"tool parameter {TAINT_TEXT[kind]}", kind=EvidenceKind.taint)
 
-    def _handler_caps(self, body: str, key: tuple[str, str], caps: dict) -> None:
+    def _handler_caps(self, body: str, key: tuple[str, str], caps: dict, language: str | None) -> None:
         s = caps.setdefault(key, set())
         if search(EGRESS_CODE, body):
             s.add(CapLabel.external_egress)
@@ -297,7 +331,7 @@ class CodeAnalyzer:
             s.add(CapLabel.code_exec)
         if search(_DELETE_EVIDENCE, body):
             s.add(CapLabel.destructive)
-        if search(CREDENTIAL_PATH, body) or search(ENV_DUMP, body):
+        if search(CREDENTIAL_PATH, body) or env_dumps(body, language):
             s.add(CapLabel.credential_access)
         if search(_WRITE_EVIDENCE, body):
             s.add("writes")  # type: ignore[arg-type]  # pseudo-label used only for readOnlyHint checks
@@ -322,7 +356,7 @@ class CodeAnalyzer:
                                    snippet=line.strip(), reason="reads a credential store", kind=EvidenceKind.ast)
                 ctx.add_capability(cid, CapLabel.credential_access, confidence=Confidence.high, span=at.span(m.start()),
                                    snippet=line.strip(), reason="reads a credential store", kind=EvidenceKind.ast)
-            for m in finditer(ENV_DUMP, text)[:2]:
+            for m in env_dumps(text, at.artifact.language)[:2]:
                 line = _line_of(text, m.start())
                 ctx.emit("AG-CODE-021", component_ids=cid, span=at.span(m.start(), m.end()), snippet=line.strip(),
                          match=line.strip(), kind=EvidenceKind.ast, message="Server code serializes or dumps the whole environment.")
@@ -347,7 +381,11 @@ class CodeAnalyzer:
         ):
             if rid == "AG-CODE-029" and not is_server:
                 continue
-            for m in finditer(pattern, text)[:2]:
+            hits = finditer(pattern, text)
+            if rid == "AG-CODE-025":
+                hits += [v for v in finditer(_INSTALL_VAR, text)
+                         if search(regex.compile(_RUNNER + regex.escape(v.group(1)) + r"\b"), text)]
+            for m in hits[:2]:
                 line = _line_of(text, m.start())
                 if _is_comment(line) and rid != "AG-CODE-023":
                     continue

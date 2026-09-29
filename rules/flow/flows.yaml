@@ -3,7 +3,7 @@
 # Flow confidence = the lowest confidence of the labels on the path.
 rules:
   - id: AG-FLOW-001
-    version: 1
+    version: 2
     title: Lethal trifecta across components in one session
     description: Within one agent session, one component can bring in untrusted content, another can read private data, and another can send data out.
     why: A prompt injection delivered through the untrusted-content source can direct the agent to read private data and exfiltrate it through the egress sink. Most real exfiltration chains combine several individually reasonable tools.
@@ -14,9 +14,9 @@ rules:
     references: ["https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/"]
 
   - id: AG-FLOW-002
-    version: 1
+    version: 2
     title: Lethal trifecta inside a single component
-    description: One skill or server alone can ingest untrusted content, read private data and send data out.
+    description: One skill or server alone can ingest untrusted content, read private data and send data out. For skills and instruction files, the private-data read and the egress must be evidenced by code, a command or a fenced snippet, not by words in the prose.
     why: The whole exfiltration chain is available through a single component; one injected instruction is enough.
     severity: high
     confidence: high
@@ -24,7 +24,7 @@ rules:
     remediation: Scope the component's credentials to public data only, or disable its write/egress tools for this agent.
 
   - id: AG-FLOW-003
-    version: 1
+    version: 2
     title: Untrusted content can reach code execution
     description: Within one session, a component that ingests untrusted content coexists with one that executes code or commands.
     why: Injection-to-RCE is the most damaging agent attack path.
@@ -34,7 +34,7 @@ rules:
     remediation: Require approval for every command execution, or do not combine code execution with untrusted-content sources.
 
   - id: AG-FLOW-004
-    version: 1
+    version: 2
     title: Untrusted content can reach an auto-approved destructive tool
     description: A destructive tool (delete/overwrite/modify) is auto-approved in a session that also ingests untrusted content.
     why: Injected instructions can destroy data without any human seeing the call.
@@ -44,7 +44,7 @@ rules:
     remediation: Remove auto-approval from destructive tools.
 
   - id: AG-FLOW-005
-    version: 1
+    version: 2
     title: Private data can reach a known exfiltration sink
     description: Within one session, a component reads private data and a component sends data to a known exfiltration sink (request catchers, paste sites, chat webhooks, tunnels).
     why: The egress destination is a drop point, not a business service.
@@ -55,7 +55,7 @@ rules:
     remediation: Remove the component that references the exfiltration sink.
 
   - id: AG-FLOW-006
-    version: 1
+    version: 2
     title: Lethal trifecta with no human approval on any hop
     description: Every component on a lethal-trifecta path runs without per-call approval.
     why: The full chain can complete silently.
@@ -65,7 +65,7 @@ rules:
     remediation: Remove auto-approval from at least one hop, preferably the egress tool.
 
   - id: AG-FLOW-007
-    version: 1
+    version: 2
     title: Untrusted content can reach memory or instruction files
     description: A session combines an untrusted-content source with a component that writes agent memory/instruction files or startup locations.
     why: Memory poisoning persists injected instructions into future sessions (ASI06).

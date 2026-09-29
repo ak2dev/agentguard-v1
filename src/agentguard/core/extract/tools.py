@@ -165,6 +165,15 @@ def _handler_end(text: str, start: int, limit: int = 20_000) -> int:
                 continue
             if ch == in_str:
                 in_str = None
+        elif ch == "/" and text.startswith("//", i):
+            # a comment; an apostrophe in "the SDK's shape" must not open a string
+            nl = text.find("\n", i)
+            i = end if nl < 0 else nl
+            continue
+        elif ch == "/" and text.startswith("/*", i):
+            close = text.find("*/", i + 2)
+            i = end if close < 0 else close + 2
+            continue
         elif ch in "\"'`":
             in_str = ch
         elif ch in "([{":

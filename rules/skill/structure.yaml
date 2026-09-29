@@ -60,7 +60,7 @@ rules:
     remediation: Remove tools the skill does not need, or update the description to state what it modifies.
 
   - id: AG-SKL-MIS-001
-    version: 1
+    version: 2
     title: Description/behavior mismatch
     description: A bundled script makes network requests, reads credentials, dumps the environment or writes persistence locations, and the description does not mention anything like it.
     why: A mismatch between what a skill says and what its code does is the defining trait of trojanized "utility" skills.

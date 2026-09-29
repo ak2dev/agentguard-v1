@@ -3,16 +3,17 @@
   "engine_version": "0.1.0.dev0",
   "rule_pack": {
     "version": "0.1.0",
-    "digest": "d7368dff51a2384c9250c9ec32bb06382087a4c3fb8b35d3d2ce78ad6f2740d6"
+    "digest": "2ae207179344628f571b23fed56b22b3b16c19c0cbcb1e21094d547e47e94ff2"
   },
   "date": "2026-09-29",
   "split": "all",
   "corpus": {
-    "items": 61,
-    "benign": 25,
+    "items": 224,
+    "benign": 188,
     "malicious": 27,
     "adversarial": 9,
     "sources": {
+      "real": 163,
       "synthetic": 61
     }
   },
@@ -21,7 +22,7 @@
       "tp": 22,
       "fp": 0,
       "fn": 14,
-      "tn": 25,
+      "tn": 188,
       "precision": 1.0,
       "recall": 0.6111,
       "f1": 0.7586,
@@ -29,23 +30,23 @@
     },
     "high": {
       "tp": 32,
-      "fp": 0,
+      "fp": 3,
       "fn": 4,
-      "tn": 25,
-      "precision": 1.0,
+      "tn": 185,
+      "precision": 0.9143,
       "recall": 0.8889,
-      "f1": 0.9412,
-      "fpr": 0.0
+      "f1": 0.9014,
+      "fpr": 0.016
     },
     "medium": {
       "tp": 34,
-      "fp": 2,
+      "fp": 27,
       "fn": 2,
-      "tn": 23,
-      "precision": 0.9444,
+      "tn": 161,
+      "precision": 0.5574,
       "recall": 0.9444,
-      "f1": 0.9444,
-      "fpr": 0.08
+      "f1": 0.701,
+      "fpr": 0.1436
     }
   },
   "by_split": {
@@ -54,7 +55,7 @@
         "tp": 14,
         "fp": 0,
         "fn": 7,
-        "tn": 17,
+        "tn": 101,
         "precision": 1.0,
         "recall": 0.6667,
         "f1": 0.8,
@@ -62,23 +63,23 @@
       },
       "high": {
         "tp": 20,
-        "fp": 0,
+        "fp": 2,
         "fn": 1,
-        "tn": 17,
-        "precision": 1.0,
+        "tn": 99,
+        "precision": 0.9091,
         "recall": 0.9524,
-        "f1": 0.9756,
-        "fpr": 0.0
+        "f1": 0.9302,
+        "fpr": 0.0198
       },
       "medium": {
         "tp": 21,
-        "fp": 2,
+        "fp": 21,
         "fn": 0,
-        "tn": 15,
-        "precision": 0.913,
+        "tn": 80,
+        "precision": 0.5,
         "recall": 1.0,
-        "f1": 0.9545,
-        "fpr": 0.1176
+        "f1": 0.6667,
+        "fpr": 0.2079
       }
     },
     "heldout": {
@@ -86,7 +87,7 @@
         "tp": 8,
         "fp": 0,
         "fn": 7,
-        "tn": 8,
+        "tn": 87,
         "precision": 1.0,
         "recall": 0.5333,
         "f1": 0.6956,
@@ -94,23 +95,23 @@
       },
       "high": {
         "tp": 12,
-        "fp": 0,
+        "fp": 1,
         "fn": 3,
-        "tn": 8,
-        "precision": 1.0,
+        "tn": 86,
+        "precision": 0.9231,
         "recall": 0.8,
-        "f1": 0.8889,
-        "fpr": 0.0
+        "f1": 0.8572,
+        "fpr": 0.0115
       },
       "medium": {
         "tp": 13,
-        "fp": 0,
+        "fp": 6,
         "fn": 2,
-        "tn": 8,
-        "precision": 1.0,
+        "tn": 81,
+        "precision": 0.6842,
         "recall": 0.8667,
-        "f1": 0.9286,
-        "fpr": 0.0
+        "f1": 0.7647,
+        "fpr": 0.069
       }
     }
   },
@@ -167,6 +168,20 @@
       "fpr_critical": 0.0,
       "fpr_high": 0.0,
       "fpr_medium": 0.0
+    },
+    "benign-real-server": {
+      "label": "benign",
+      "items": 29,
+      "fpr_critical": 0.0,
+      "fpr_high": 0.0,
+      "fpr_medium": 0.4138
+    },
+    "benign-real-skill": {
+      "label": "benign",
+      "items": 134,
+      "fpr_critical": 0.0,
+      "fpr_high": 0.0224,
+      "fpr_medium": 0.097
     },
     "benign-server": {
       "label": "benign",
@@ -240,8 +255,25 @@
     }
   },
   "benign_hits_by_rule": {
+    "AG-MCP-META-020:medium": 6,
+    "AG-CODE-024:medium": 5,
+    "AG-CODE-020:medium": 3,
+    "AG-MCP-META-009:medium": 3,
+    "AG-SKL-INJ-002:medium": 3,
+    "AG-CODE-027:medium": 2,
+    "AG-SKL-CRED-001:medium": 2,
+    "AG-SKL-INJ-004:high": 2,
+    "AG-SKL-INJ-004:medium": 2,
+    "AG-SKL-INJ-007:medium": 2,
+    "AG-CODE-025:high": 1,
     "AG-CODE-040:medium": 1,
-    "AG-SKL-EXEC-002:medium": 1
+    "AG-SKL-BND-002:medium": 1,
+    "AG-SKL-CRED-002:medium": 1,
+    "AG-SKL-EXEC-002:medium": 1,
+    "AG-SKL-HID-004:medium": 1,
+    "AG-SKL-INJ-001:medium": 1,
+    "AG-SKL-INJ-009:medium": 1,
+    "AG-SKL-SE-007:medium": 1
   },
   "targets": {
     "precision_critical": {
@@ -251,22 +283,22 @@
     },
     "precision_high": {
       "target": 0.85,
-      "actual": 1.0,
+      "actual": 0.9143,
       "met": true
     },
     "fpr_high_max": {
       "target": 0.02,
-      "actual": 0.0,
+      "actual": 0.016,
       "met": true
     }
   },
   "performance": {
-    "total_seconds": 2.817,
-    "mean_ms_per_item": 46.2,
+    "total_seconds": 51.681,
+    "mean_ms_per_item": 230.7,
     "perf_check": {
       "skills": 100,
       "configs": 20,
-      "seconds": 1.018,
+      "seconds": 1.116,
       "target_seconds": 10,
       "met": true,
       "findings": 547

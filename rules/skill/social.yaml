@@ -23,7 +23,7 @@ rules:
     remediation: Do not ask users or agents to download and run binaries. Depend on packages from official registries with pinned versions and verified signatures.
 
   - id: AG-SKL-SE-002
-    version: 1
+    version: 2
     title: Pipe-to-shell from a non-allowlisted host
     description: A remote script is piped straight into a shell (curl | sh, iwr | iex) from a host that is not a known vendor installer.
     why: Pipe-to-shell executes whatever the server returns at that moment, with no integrity check and no review.
@@ -49,7 +49,7 @@ rules:
           \bsource\s+<\(\s*(?:curl|wget)\b
       unless:
         - |-
-          (?:https?://(?:[a-z0-9-]+\.)*(?:astral\.sh|rustup\.rs|sh\.rustup\.rs|get\.docker\.com|brew\.sh|deno\.land|deno\.com|bun\.sh|nodejs\.org|deb\.nodesource\.com|rpm\.nodesource\.com|get\.pnpm\.io|install\.python-poetry\.org|pyenv\.run|get\.sdkman\.io|ollama\.com|claude\.ai/install|get\.helm\.sh|starship\.rs|tailscale\.com/install|fly\.io/install|get\.volta\.sh|sh\.vector\.dev|install\.determinate\.systems|nixos\.org/nix/install|mise\.run|get\.jetify\.com|opencode\.ai/install|cursor\.com/install)\b)|(?:https?://raw\.githubusercontent\.com/(?:Homebrew/install|nvm-sh/nvm|ohmyzsh/ohmyzsh|pyenv/pyenv-installer)/)
+          (?:https?://(?:[a-z0-9-]+\.)*(?:astral\.sh|rustup\.rs|sh\.rustup\.rs|get\.docker\.com|brew\.sh|deno\.land|deno\.com|bun\.sh|nodejs\.org|deb\.nodesource\.com|rpm\.nodesource\.com|get\.pnpm\.io|install\.python-poetry\.org|pyenv\.run|get\.sdkman\.io|ollama\.com|claude\.ai/install|get\.helm\.sh|starship\.rs|tailscale\.com/install|fly\.io/install|get\.volta\.sh|sh\.vector\.dev|install\.determinate\.systems|nixos\.org/nix/install|mise\.run|get\.jetify\.com|opencode\.ai/install|cursor\.com/install|cli\.sentry\.dev/install|hf\.co/cli/install\.sh)\b)|(?:https?://raw\.githubusercontent\.com/(?:Homebrew/install|nvm-sh/nvm|ohmyzsh/ohmyzsh|pyenv/pyenv-installer|render-oss/cli)/)
       window: 0
     remediation: Replace pipe-to-shell with a pinned package from an official registry, or download a versioned artifact and verify its checksum/signature before running it.
 
@@ -150,10 +150,10 @@ rules:
     remediation: Never collect passwords, seed phrases or private keys. Use the platform's credential store or OAuth.
 
   - id: AG-SKL-SE-007
-    version: 1
+    version: 2
     title: OS protection bypass
-    description: Removes macOS quarantine, disables Gatekeeper/SIP, adds Microsoft Defender exclusions or disables real-time protection.
-    why: Disabling OS protections is a hallmark of malware installers, not of agent skills.
+    description: Removes macOS quarantine, disables Gatekeeper/SIP, adds Microsoft Defender exclusions or disables real-time protection. Removing quarantine from a binary under a package manager's prefix (`$(brew --prefix)`, /opt/homebrew, /usr/local/Cellar, linuxbrew) is reported at MEDIUM instead of CRITICAL.
+    why: Disabling OS protections is a hallmark of malware installers, not of agent skills. Clearing quarantine on a package-manager-installed binary (a vendor tap shipping an unnotarized CLI) still skips Gatekeeper, so it is reported, but it is not the download-and-unquarantine lure that CRITICAL is reserved for; the trust decision there is the tap itself.
     severity: critical
     confidence: high
     applies_to: [skill_md, instruction_md, reference, script]
@@ -172,10 +172,16 @@ rules:
           \bAdd-MpPreference\b[^\n]*-Exclusion(?:Path|Process|Extension|IpAddress)\b
         - |-
           \bSet-MpPreference\b[^\n]*-Disable(?:RealtimeMonitoring|IOAVProtection|BehaviorMonitoring|ScriptScanning)\s+\$?(?:true|1)\b
+      window: 0
+      downgrade:
+        - severity: medium
+          patterns:
+            - |-
+              \bxattr\s+(?:-[a-z]+\s+)*(?:com\.apple\.quarantine\s+)?["']?(?:\$\(brew\s+--prefix[^)\n]*\)|/opt/homebrew/|/usr/local/(?:Cellar|Caskroom|opt)/|/home/linuxbrew/\.linuxbrew/)
     remediation: Remove steps that weaken OS protections. Distribute signed, notarized software instead.
 
   - id: AG-SKL-SE-008
-    version: 1
+    version: 2
     title: Pipe-to-shell from an allowlisted vendor installer
     description: A vendor's official installer script is piped into a shell.
     why: Common and usually legitimate, but it still executes unpinned remote code with no integrity check. Reported for visibility.
@@ -192,6 +198,6 @@ rules:
           \b(?:iwr|irm|Invoke-WebRequest|Invoke-RestMethod)\b[^\n|]*\|\s*(?:iex|Invoke-Expression)\b
       require:
         - |-
-          (?:https?://(?:[a-z0-9-]+\.)*(?:astral\.sh|rustup\.rs|sh\.rustup\.rs|get\.docker\.com|brew\.sh|deno\.land|deno\.com|bun\.sh|nodejs\.org|deb\.nodesource\.com|rpm\.nodesource\.com|get\.pnpm\.io|install\.python-poetry\.org|pyenv\.run|get\.sdkman\.io|ollama\.com|claude\.ai/install|get\.helm\.sh|starship\.rs|tailscale\.com/install|fly\.io/install|get\.volta\.sh|sh\.vector\.dev|install\.determinate\.systems|nixos\.org/nix/install|mise\.run|get\.jetify\.com|opencode\.ai/install|cursor\.com/install)\b)|(?:https?://raw\.githubusercontent\.com/(?:Homebrew/install|nvm-sh/nvm|ohmyzsh/ohmyzsh|pyenv/pyenv-installer)/)
+          (?:https?://(?:[a-z0-9-]+\.)*(?:astral\.sh|rustup\.rs|sh\.rustup\.rs|get\.docker\.com|brew\.sh|deno\.land|deno\.com|bun\.sh|nodejs\.org|deb\.nodesource\.com|rpm\.nodesource\.com|get\.pnpm\.io|install\.python-poetry\.org|pyenv\.run|get\.sdkman\.io|ollama\.com|claude\.ai/install|get\.helm\.sh|starship\.rs|tailscale\.com/install|fly\.io/install|get\.volta\.sh|sh\.vector\.dev|install\.determinate\.systems|nixos\.org/nix/install|mise\.run|get\.jetify\.com|opencode\.ai/install|cursor\.com/install|cli\.sentry\.dev/install|hf\.co/cli/install\.sh)\b)|(?:https?://raw\.githubusercontent\.com/(?:Homebrew/install|nvm-sh/nvm|ohmyzsh/ohmyzsh|pyenv/pyenv-installer|render-oss/cli)/)
       window: 0
     remediation: Prefer a package manager with pinned versions, or verify the installer checksum before running it.

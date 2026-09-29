@@ -17,12 +17,13 @@ AGENT_DIRECTED = regex.compile(
     _F,
 )
 
-EXECUTABLE_CONTENT = regex.compile(
+_COMMANDS = (
     r"\b(?:curl|wget|bash|zsh|powershell|pwsh|iex|invoke-expression|invoke-webrequest|eval|exec|chmod\s+\+x|"
     r"python3?\s+-c|node\s+-e|nc\s+-[a-z]|/dev/tcp/|base64\s+-d|certutil|mshta|rundll32|osascript)\b"
-    r"|https?://[^\s\"'<>]+",
-    _F,
 )
+EXECUTABLE_CONTENT = regex.compile(_COMMANDS + r"|https?://[^\s\"'<>]+", _F)
+# For percent-encoded text inside a URL, where decoding a URL trivially yields a URL.
+EXECUTABLE_COMMANDS = regex.compile(_COMMANDS, _F)
 
 NETWORK_FETCH = regex.compile(
     r"\b(?:curl|wget|invoke-webrequest|iwr|invoke-restmethod|irm|nc|ncat|netcat|aria2c|fetch)\b[^\n]{0,200}"
@@ -36,7 +37,10 @@ CREDENTIAL_PATH = regex.compile(
     r"\.config[/\\]gcloud|\.azure[/\\]|\.kube[/\\]config|\.docker[/\\]config\.json|\.npmrc|\.pypirc|\.netrc|"
     r"\.git-credentials|\.gnupg[/\\]|\.password-store|Login Data|Cookies\.sqlite|key4\.db|logins\.json|"
     r"Local State|wallet\.dat|\.electrum|\.ethereum[/\\]keystore|Exodus[/\\]|MetaMask|nkbihfbeogaeaoehlefnkodbefgpgknn|"
-    r"keychain|login\.keychain-db|\.config[/\\]gh[/\\]hosts\.yml|\.claude[/\\]\.credentials\.json|\.env(?:\.[a-z]+)?\b)",
+    # `.env` the file, not an attribute (self.env, process.env, or regex-escaped
+    # process\.env) and not a template (.env.example)
+    r"keychain|login\.keychain-db|\.config[/\\]gh[/\\]hosts\.yml|\.claude[/\\]\.credentials\.json|"
+    r"(?<![\w$)\]?])(?<!\b(?:process|os|self|this|meta)\\)\.env(?!\.(?:example|sample|template|dist)\b)(?:\.[a-z]+)?\b)",
     _F,
 )
 
@@ -47,9 +51,16 @@ READ_VERB = regex.compile(
     _F,
 )
 
+# Environment copies handed only to a child process are filtered out by
+# envcopy.env_dumps(); use that instead of matching ENV_DUMP directly on code.
 ENV_DUMP = regex.compile(
-    r"(?:^[ \t]*(?:\$\s+)?|[;&|(`]\s*)(?:env|printenv|export\s+-p|Get-ChildItem\s+env:|gci\s+env:|dir\s+env:)[ \t]*(?:$|[|>;&)`])"
-    r"|\bos\.environ(?:\.copy\(\)|\.items\(\)|\b(?!\s*[\[.]))|dict\(os\.environ\)|json\.dumps\(\s*(?:dict\()?os\.environ"
+    # same command forms as AG-SKL-CRED-002
+    r"(?:^[ \t]*(?:\$\s+)?|[;&|]\s*|(?<![\w\].])\(\s*)(?:env|printenv|export\s+-p|Get-ChildItem\s+env:|gci\s+env:|dir\s+env:)[ \t]*(?:$|[|>;&)`])"
+    r"|`(?:env|printenv|export\s+-p|Get-ChildItem\s+env:|gci\s+env:|dir\s+env:)[ \t]*[|>;&]"
+    r"|(?:\b(?:run|runs|running|execute|exec|type|call|invoke|print|paste|dump|echo|output\s+of)\s+(?:the\s+)?|=\s*)`(?:env|printenv|export\s+-p)`"
+    # ("X" in os.environ is a membership test, not a dump)
+    r"|(?<![\"']\s+(?:not\s+)?in\s+)\bos\.environ(?:\.copy\(\)|\.items\(\)|\b(?!\s*[\[.]))|dict\(os\.environ\)"
+    r"|json\.dumps\(\s*(?:dict\()?os\.environ"
     r"|JSON\.stringify\(\s*process\.env\s*\)|Object\.(?:entries|keys|assign)\(\s*(?:\{\}\s*,\s*)?process\.env\s*\)"
     r"|\{\s*\.\.\.process\.env\s*\}",
     _F,
@@ -65,8 +76,13 @@ EGRESS_CODE = regex.compile(
     r"\b(?:curl|wget|Invoke-WebRequest|Invoke-RestMethod|iwr|irm)\b"
     r"|\brequests\.(?:get|post|put|patch|request|Session)\b|\bhttpx\.(?:get|post|put|AsyncClient|Client)\b"
     r"|\burllib\.request\.(?:urlopen|Request)\b|\burlopen\(|\bhttp\.client\.|\baiohttp\.ClientSession\b"
-    r"|\bfetch\(\s*[`'\"]?https?:|\bfetch\(|\baxios(?:\.(?:get|post|put|request))?\(|\bhttps?\.(?:get|request)\("
-    r"|\bnet\.(?:connect|createConnection)\(|\bsocket\.(?:socket|create_connection)\(|\bsmtplib\.|\bnc\s+-|/dev/tcp/"
+    # fetch("/api/x") / fetch("./data.json") is same-origin, not egress
+    r"|\bfetch\((?!\s*[`'\"](?:/(?!/)|\.\.?/))|\baxios(?:\.(?:get|post|put|request))?\((?!\s*[`'\"](?:/(?!/)|\.\.?/))"
+    r"|\bhttps?\.(?:get|request)\("
+    # local IPC (AF_UNIX) and loopback connections are not egress
+    r"|\bnet\.(?:connect|createConnection)\(|\bsocket\.socket\((?!\s*(?:socket\.)?AF_UNIX\b)"
+    r"|\bsocket\.create_connection\((?!\s*\(\s*[\"'](?:localhost|127\.0\.0\.1|::1)[\"'])"
+    r"|\bsmtplib\.|\bnc\s+-|/dev/tcp/"
     r"|\bdns\.resolve|\bnslookup\b|\bdig\s",
     regex.MULTILINE,
 )

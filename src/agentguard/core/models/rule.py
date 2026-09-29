@@ -23,6 +23,28 @@ TextScope = Literal[
 ]
 
 
+class Downgrade(BaseModel):
+    """Report a regex match at a lower severity (and one level lower
+    confidence) when it is a *mention* rather than a directive. Every
+    condition given must hold; the first matching downgrade wins. Hidden or
+    decoded matches are still escalated one level afterwards."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    severity: Severity
+    # Only for artifacts in these roles (empty: any role).
+    roles: list[str] = Field(default_factory=list)
+    # Only when the match sits inside "double quotes", “curly quotes”, an
+    # inline `code span`, or 'single quotes' hugging the match, on its line.
+    quoted: bool = False
+    # Only when one of these matches within `window` lines (default: the rule's).
+    patterns: list[str] = Field(default_factory=list)
+    window: int | None = None
+    # Only when one of these matches the component's declared purpose (its
+    # SKILL.md `description`): the behavior is what the skill says it does.
+    declared: list[str] = Field(default_factory=list)
+
+
 class RegexMatch(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -39,6 +61,7 @@ class RegexMatch(BaseModel):
     sections: list[str] = Field(default_factory=list)
     # Confidence is lowered one level when the match sits in a fenced code block.
     lower_confidence_in_code: bool = False
+    downgrade: list[Downgrade] = Field(default_factory=list)
     max_matches: int = 5
 
 

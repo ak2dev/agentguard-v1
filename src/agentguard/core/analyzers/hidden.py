@@ -14,7 +14,7 @@ from ..normalize.unicode import (
     tag_character_runs,
 )
 from .base import Context
-from .heuristics import AGENT_DIRECTED, EXECUTABLE_CONTENT, search, word_count
+from .heuristics import AGENT_DIRECTED, EXECUTABLE_COMMANDS, EXECUTABLE_CONTENT, search, word_count
 
 _TOOL_ROLES = {"tool_manifest", "server_json"}
 
@@ -132,7 +132,11 @@ class HiddenContentAnalyzer:
                 ctx.emit("AG-SKL-HID-008", component_ids=cid, span=span, snippet=unit.text[:200],
                          match=f"blob:{at.text[unit.anchor[0]:unit.anchor[1]][:200]}", decode_path=unit.decode_path,
                          detail=f"decoded via {layers}", message=f"Encoded blob ({layers}) decoded and rescanned.")
-            m = search(AGENT_DIRECTED, unit.norm.text) or search(EXECUTABLE_CONTENT, unit.norm.text)
+            # Percent-encoding inside a URL (an install badge's ?config=%7B...%7D) is
+            # ordinary URL encoding: only instructions or commands in it count.
+            in_url = unit.decode_path[:1] == ("percent",) and "://" in at.text[unit.anchor[0]:unit.anchor[1]]
+            m = search(AGENT_DIRECTED, unit.norm.text) or search(EXECUTABLE_COMMANDS if in_url else EXECUTABLE_CONTENT,
+                                                                 unit.norm.text)
             if m:
                 ctx.emit("AG-SKL-HID-009", component_ids=cid, span=span, snippet=unit.text[:240],
                          match=f"decoded:{unit.text[:200]}", decode_path=unit.decode_path,

@@ -244,7 +244,7 @@ rules:
     remediation: Keep descriptions concise.
 
   - id: AG-MCP-META-011
-    version: 1
+    version: 2
     title: readOnlyHint contradicted by code
     description: A tool annotated readOnlyHint=true has a handler that writes, deletes or executes.
     why: Clients may auto-approve read-only tools; a false annotation turns that into unattended writes.
