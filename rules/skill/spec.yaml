@@ -9,7 +9,7 @@ rules:
     applies_to: [skill_md]
     match: {type: analyzer, analyzer: skill.spec}
     remediation: Add YAML frontmatter with a `name` (matching the directory) and a `description` of what the skill does and when to use it.
-    references: [https://agentskills.io/specification]
+    references: ["https://agentskills.io/specification"]
 
   - id: AG-SKL-SPEC-002
     version: 1
@@ -21,7 +21,7 @@ rules:
     applies_to: [skill_md]
     match: {type: analyzer, analyzer: skill.spec}
     remediation: Rename the skill using only `a-z`, `0-9` and single hyphens, at most 64 characters.
-    references: [https://agentskills.io/specification]
+    references: ["https://agentskills.io/specification"]
 
   - id: AG-SKL-SPEC-003
     version: 1
@@ -33,7 +33,7 @@ rules:
     applies_to: [skill_md]
     match: {type: analyzer, analyzer: skill.spec}
     remediation: Make the directory name and the frontmatter `name` identical.
-    references: [https://agentskills.io/specification]
+    references: ["https://agentskills.io/specification"]
 
   - id: AG-SKL-SPEC-004
     version: 1
@@ -45,7 +45,7 @@ rules:
     applies_to: [skill_md]
     match: {type: analyzer, analyzer: skill.spec}
     remediation: Shorten the field; move detail into the SKILL.md body or references/.
-    references: [https://agentskills.io/specification]
+    references: ["https://agentskills.io/specification"]
 
   - id: AG-SKL-SPEC-005
     version: 1
@@ -57,7 +57,7 @@ rules:
     applies_to: [skill_md]
     match: {type: analyzer, analyzer: skill.spec}
     remediation: Remove the key or move it under `metadata` (string values only).
-    references: [https://agentskills.io/specification, https://code.claude.com/docs/en/skills]
+    references: ["https://agentskills.io/specification", "https://code.claude.com/docs/en/skills"]
 
   - id: AG-SKL-SPEC-006
     version: 1

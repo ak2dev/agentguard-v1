@@ -8,7 +8,7 @@ rules:
     confidence: high
     match: {type: analyzer, analyzer: text.hidden}
     remediation: Remove all tag characters. Legitimate text never needs them (flag emoji sequences excepted, which are not used in skill text).
-    references: [https://unicode.org/charts/PDF/UE0000.pdf]
+    references: ["https://unicode.org/charts/PDF/UE0000.pdf"]
 
   - id: AG-SKL-HID-002
     version: 1
@@ -19,7 +19,7 @@ rules:
     confidence: high
     match: {type: analyzer, analyzer: text.hidden}
     remediation: Remove bidi control characters (U+202A–202E, U+2066–2069).
-    references: [https://trojansource.codes/]
+    references: ["https://trojansource.codes/"]
 
   - id: AG-SKL-HID-003
     version: 1

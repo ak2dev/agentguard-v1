@@ -15,7 +15,11 @@ MAX_EXAMPLE = 1200
 
 
 def _example(case_dir: Path) -> dict[str, str] | None:
-    files = sorted(p for p in case_dir.rglob("*") if p.is_file() and not p.name.startswith("_") and p.name != "agentguard.lock")
+    files = sorted(
+        (p for p in case_dir.rglob("*") if p.is_file() and not p.name.startswith("_") and p.name != "agentguard.lock"),
+        # Sort by the POSIX string, not Path: Windows paths compare case-insensitively.
+        key=lambda p: p.relative_to(case_dir).as_posix(),
+    )
     if not files:
         return None
     for f in files:
@@ -53,7 +57,7 @@ def export_rules(pack: RulePack, fixtures_dir: Path | None = None) -> dict[str, 
             for side, label in (("positive", "unsafe"), ("negative", "safe")):
                 d = fixtures_dir / r.id / side
                 if d.is_dir():
-                    case = next((c for c in sorted(d.iterdir()) if c.is_dir()), None)
+                    case = next((c for c in sorted(d.iterdir(), key=lambda p: p.name) if c.is_dir()), None)
                     ex = _example(case) if case else None
                     if ex:
                         entry["examples"][label] = ex

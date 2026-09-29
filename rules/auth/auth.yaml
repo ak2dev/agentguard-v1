@@ -23,7 +23,7 @@ rules:
     network: true
     match: {type: analyzer, analyzer: auth}
     remediation: Serve /.well-known/oauth-protected-resource and reference it from WWW-Authenticate.
-    references: [https://www.rfc-editor.org/rfc/rfc9728]
+    references: ["https://www.rfc-editor.org/rfc/rfc9728"]
 
   - id: AG-AUTH-003
     version: 1
@@ -46,7 +46,7 @@ rules:
     network: true
     match: {type: analyzer, analyzer: auth}
     remediation: Publish authorization server metadata whose issuer exactly matches the advertised issuer.
-    references: [https://www.rfc-editor.org/rfc/rfc8414]
+    references: ["https://www.rfc-editor.org/rfc/rfc8414"]
 
   - id: AG-AUTH-005
     version: 1
@@ -58,7 +58,7 @@ rules:
     network: true
     match: {type: analyzer, analyzer: auth}
     remediation: Support PKCE S256 and advertise it in authorization server metadata.
-    references: [https://www.rfc-editor.org/rfc/rfc7636]
+    references: ["https://www.rfc-editor.org/rfc/rfc7636"]
 
   - id: AG-AUTH-006
     version: 1
@@ -70,7 +70,7 @@ rules:
     network: true
     match: {type: analyzer, analyzer: auth}
     remediation: Return `iss` in authorization responses and advertise it.
-    references: [https://www.rfc-editor.org/rfc/rfc9207]
+    references: ["https://www.rfc-editor.org/rfc/rfc9207"]
 
   - id: AG-AUTH-007
     version: 1
@@ -82,7 +82,7 @@ rules:
     network: true
     match: {type: analyzer, analyzer: auth}
     remediation: Support Client ID Metadata Documents.
-    references: [https://modelcontextprotocol.io/specification/2026-07-28/changelog]
+    references: ["https://modelcontextprotocol.io/specification/2026-07-28/changelog"]
 
   - id: AG-AUTH-008
     version: 1
@@ -94,7 +94,7 @@ rules:
     network: true
     match: {type: analyzer, analyzer: auth}
     remediation: Publish `resource` in PRM and validate token audience on every request.
-    references: [https://www.rfc-editor.org/rfc/rfc8707]
+    references: ["https://www.rfc-editor.org/rfc/rfc8707"]
 
   - id: AG-AUTH-009
     version: 1

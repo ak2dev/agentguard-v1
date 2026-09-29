@@ -236,4 +236,4 @@ rules:
     confidence: high
     match: {type: analyzer, analyzer: mcp.config}
     remediation: Migrate to Streamable HTTP.
-    references: [https://modelcontextprotocol.io/specification/2026-07-28/changelog]
+    references: ["https://modelcontextprotocol.io/specification/2026-07-28/changelog"]

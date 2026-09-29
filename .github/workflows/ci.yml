@@ -32,7 +32,7 @@ jobs:
         shell: bash
         run: |
           python -m pip install --disable-pip-version-check "uv==0.12.19"
-          if [ -f uv.lock ]; then uv sync --frozen --group dev; else uv sync --group dev; fi
+          uv sync --frozen --group dev
       - name: Unit, rule-fixture and safety tests
         run: uv run pytest -q
       - name: Every rule has positive and negative fixtures; crosswalk has no orphans
@@ -48,7 +48,7 @@ jobs:
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.12"
-      - run: python -m pip install --disable-pip-version-check "uv==0.12.19" && uv sync --group dev
+      - run: python -m pip install --disable-pip-version-check "uv==0.12.19" && uv sync --frozen --group dev
       - name: Regenerate schemas and site data
         run: uv run python scripts/gen_site_data.py
       - name: Fail if anything changed
@@ -64,7 +64,7 @@ jobs:
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.12"
-      - run: python -m pip install --disable-pip-version-check "uv==0.12.19" && uv sync --group dev
+      - run: python -m pip install --disable-pip-version-check "uv==0.12.19" && uv sync --frozen --group dev
       - run: uv run agentguard bench --output bench-results.json
       - name: Compare with committed results
         run: uv run python scripts/check_bench.py bench-results.json bench/results/latest.json

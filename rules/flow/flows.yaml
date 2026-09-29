@@ -11,7 +11,7 @@ rules:
     confidence: medium
     match: {type: analyzer, analyzer: flows}
     remediation: Remove one leg of the trifecta for this session (for example disable the untrusted-content source or the egress tool), require approval for each call, or split the tools across separate agent profiles.
-    references: [https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/]
+    references: ["https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/"]
 
   - id: AG-FLOW-002
     version: 1

@@ -60,7 +60,7 @@ Pull requests run in PR mode (only components touched by the change; configurati
 
 ## Benchmark
 
-`agentguard bench` reports precision, recall, F1 and false-positive rate per category and severity on `bench/`. Latest committed results (`bench/results/latest.json`): precision 1.0 at CRITICAL and at HIGH, benign false-positive rate 0.0 at HIGH, 100 skills + 20 server configs scanned in about 4 seconds. See the caveats below before quoting these numbers.
+`agentguard bench` reports precision, recall, F1 and false-positive rate per category and severity on `bench/`. Latest committed results (`bench/results/latest.json`): precision 1.0 at CRITICAL and at HIGH, benign false-positive rate 0.0 at HIGH, 100 skills + 20 server configs scanned in about 1 second (target: under 10). See the caveats below before quoting these numbers.
 
 ## Limitations
 

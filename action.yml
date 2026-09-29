@@ -13,7 +13,7 @@ inputs:
     description: Fail the step when a finding is at or above this severity (critical, high, medium, low, info).
     default: high
   pr-mode:
-    description: On pull requests, report only components touched by the PR (needs `fetch-depth: 0`). Config is read from the base commit.
+    description: "On pull requests, report only components touched by the PR (needs `fetch-depth: 0`). Config is read from the base commit."
     default: "true"
   upload-sarif:
     description: Upload results to GitHub code scanning.

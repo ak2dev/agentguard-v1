@@ -12,7 +12,7 @@ rules:
     aivss: {threat: attacked}
     match: {type: analyzer, analyzer: code}
     remediation: Do not build shell strings. Call the program directly with an argument array, validate the argument against an allowlist, and never set shell=True.
-    references: [https://cwe.mitre.org/data/definitions/78.html]
+    references: ["https://cwe.mitre.org/data/definitions/78.html"]
 
   - id: AG-CODE-002
     version: 1
