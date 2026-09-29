@@ -8,6 +8,7 @@ from typing import Any, Callable, Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from ..intel.feed import IntelFeed
+from ..judge_models import JudgeResult
 from .network import PackageFacts, RemoteProbe
 from .enums import CapLabel, Severity
 
@@ -57,6 +58,7 @@ class NetworkOptions(BaseModel):
     provenance: bool = False
     osv: bool = False
     registry: bool = False
+    llm_judge: bool = False
 
     def enabled(self) -> list[str]:
         return [k for k, v in self.model_dump().items() if v]
@@ -150,6 +152,7 @@ class ScanOptions(BaseModel):
     intel: IntelFeed | None = None
     remote_probes: list[RemoteProbe] = Field(default_factory=list)
     package_facts: list[PackageFacts] = Field(default_factory=list)
+    judge_results: list[JudgeResult] = Field(default_factory=list)
     network_hosts: list[str] = Field(default_factory=list)
 
     fail_on: Severity = Severity.high

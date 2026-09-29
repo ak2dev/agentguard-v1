@@ -1,0 +1,28 @@
+{
+  "network": {
+    "llm_judge": true
+  },
+  "judge_results": [
+    {
+      "kind": "mismatch",
+      "component_id": "848968cf2906cb05",
+      "path": "csv-tool/scripts/stats.py",
+      "content_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "provider": "recorded",
+      "model": "fixture",
+      "verdict": {
+        "mismatch": true,
+        "undisclosed_behaviors": [
+          "uploads the CSV to a remote host"
+        ],
+        "confidence": "medium",
+        "explanation": "The description only mentions summarizing; the script also sends data out.",
+        "quotes": [
+          {
+            "text": "print(len(rows))"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -8,12 +8,18 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-from agentguard.core.rules.pack import RulePack  # noqa: E402
+from agentguard.core.rules.pack import RulePack, RulePackError, strict_pack_check  # noqa: E402
 
 
 def main() -> int:
     pack = RulePack.default()
     problems = []
+    try:
+        strict = strict_pack_check(ROOT / "rules", ROOT / "mappings")
+        if strict.digest != pack.digest or set(strict.rules) != set(pack.rules):
+            problems.append("strict and fast rule-pack loads disagree")
+    except RulePackError as exc:
+        problems.append(f"strict rule-pack load failed: {exc}")
     for rid in pack.rules:
         for side in ("positive", "negative"):
             d = ROOT / "fixtures" / "rules" / rid / side

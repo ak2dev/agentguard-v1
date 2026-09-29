@@ -1,7 +1,7 @@
 {
   "rule_pack": {
     "version": "0.1.0",
-    "digest": "7fbc299e2124ba76dc1040c6c269f05834b937d7078b3257a19589a47cfc3547"
+    "digest": "3404636b6d1a862e123cee7120030fb7bf445da86edb4182afbca37e802f9919"
   },
   "rules": [
     {
@@ -1690,6 +1690,99 @@
         "safe": {
           "path": "claude_desktop_config.json",
           "text": "{\n  \"mcpServers\": {\n    \"memory\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"-y\",\n        \"@modelcontextprotocol/server-memory@2025.8.4\"\n      ]\n    }\n  }\n}"
+        }
+      }
+    },
+    {
+      "id": "AG-LLM-001",
+      "version": 1,
+      "title": "Judge: description/behavior mismatch",
+      "description": "An LLM judge reviewing the declared description and the bundled code reports behavior the description does not disclose.",
+      "why": "Pattern rules catch known shapes of undisclosed behavior; the judge can spot a mismatch in code that looks ordinary line by line.",
+      "severity": "medium",
+      "confidence": "medium",
+      "remediation": "Review the quoted code. Remove the undisclosed behavior or describe it so users can decide.",
+      "references": [],
+      "network": true,
+      "mappings": [
+        {
+          "framework": "owasp-asi-2026",
+          "id": "ASI02",
+          "title": "Tool Misuse & Exploitation"
+        },
+        {
+          "framework": "owasp-mcp-2025-beta",
+          "id": "MCP03:2025",
+          "title": "Tool Poisoning"
+        },
+        {
+          "framework": "owasp-ast-1.0",
+          "id": "AST04",
+          "title": "Insecure Metadata"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+        }
+      ],
+      "match_type": "analyzer",
+      "examples": {
+        "unsafe": {
+          "path": "csv-tool/scripts/stats.py",
+          "text": "import csv, sys\nrows = list(csv.reader(open(sys.argv[1])))\nprint(len(rows))"
+        },
+        "safe": {
+          "path": "csv-tool/scripts/stats.py",
+          "text": "import csv, sys\nrows = list(csv.reader(open(sys.argv[1])))\nprint(len(rows))"
+        }
+      }
+    },
+    {
+      "id": "AG-LLM-002",
+      "version": 1,
+      "title": "Judge: subtle agent manipulation",
+      "description": "An LLM judge reports paraphrased or subtle attempts to manipulate an agent (override, concealment, false authority, secret requests, persistence) that pattern rules did not match.",
+      "why": "Paraphrased injections are the main known gap of pattern rules.",
+      "severity": "high",
+      "confidence": "medium",
+      "remediation": "Review the quoted text and remove instructions aimed at the agent that the skill's task does not need.",
+      "references": [],
+      "network": true,
+      "mappings": [
+        {
+          "framework": "owasp-asi-2026",
+          "id": "ASI01",
+          "title": "Agent Goal Hijack"
+        },
+        {
+          "framework": "owasp-mcp-2025-beta",
+          "id": "MCP03:2025",
+          "title": "Tool Poisoning"
+        },
+        {
+          "framework": "owasp-ast-1.0",
+          "id": "AST01",
+          "title": "Malicious Skills"
+        },
+        {
+          "framework": "owasp-llm-2025",
+          "id": "LLM01:2025",
+          "title": "Prompt Injection"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+        }
+      ],
+      "match_type": "analyzer",
+      "examples": {
+        "unsafe": {
+          "path": "csv-tool/scripts/stats.py",
+          "text": "import csv, sys\nrows = list(csv.reader(open(sys.argv[1])))\nprint(len(rows))"
+        },
+        "safe": {
+          "path": "csv-tool/scripts/stats.py",
+          "text": "import csv, sys\nrows = list(csv.reader(open(sys.argv[1])))\nprint(len(rows))"
         }
       }
     },

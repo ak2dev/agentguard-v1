@@ -187,6 +187,18 @@ class RulePack:
 
 
 _DEFAULT: RulePack | None = None
+_STRICT = False
+
+
+def strict_pack_check(rules_dir: Path, mappings_dir: Path) -> RulePack:
+    """Load the pack with the hardened YAML loader (no aliases/tags, duplicate
+    keys rejected). Used by CI so the fast runtime path loads vetted files."""
+    global _STRICT
+    _STRICT = True
+    try:
+        return RulePack.load_dirs(rules_dir, mappings_dir)
+    finally:
+        _STRICT = False
 
 
 def data_dirs() -> tuple[Path, Path]:
@@ -202,6 +214,18 @@ def data_dirs() -> tuple[Path, Path]:
 
 
 def _yaml(path: str, text: str) -> Any:
+    """Load rule-pack YAML. The pack ships with Agent Guard (it is not scanned
+    input), so at run time the fast C safe loader is used when available; CI
+    validates the same files with the hardened loader (``strict_pack_check``)."""
+    if not _STRICT:
+        try:
+            import yaml
+
+            loader = getattr(yaml, "CSafeLoader", None)
+            if loader is not None:
+                return yaml.load(text, Loader=loader)  # noqa: S506 - safe loader
+        except Exception as exc:  # noqa: BLE001
+            raise RulePackError(f"{path}: YAML error: {str(exc).splitlines()[0][:200]}") from exc
     res = safe_load(text, max_nodes=500_000)
     if res.error:
         raise RulePackError(f"{path}: {res.error}")

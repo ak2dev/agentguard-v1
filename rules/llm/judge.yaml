@@ -1,0 +1,25 @@
+# Optional LLM judge (off by default; opt-in with --llm-judge). Verdicts are
+# schema-validated, cached by content hash, capped at HIGH, and never lower or
+# remove deterministic findings.
+rules:
+  - id: AG-LLM-001
+    version: 1
+    title: "Judge: description/behavior mismatch"
+    description: An LLM judge reviewing the declared description and the bundled code reports behavior the description does not disclose.
+    why: Pattern rules catch known shapes of undisclosed behavior; the judge can spot a mismatch in code that looks ordinary line by line.
+    severity: medium
+    confidence: medium
+    network: true
+    match: {type: analyzer, analyzer: judge}
+    remediation: Review the quoted code. Remove the undisclosed behavior or describe it so users can decide.
+
+  - id: AG-LLM-002
+    version: 1
+    title: "Judge: subtle agent manipulation"
+    description: An LLM judge reports paraphrased or subtle attempts to manipulate an agent (override, concealment, false authority, secret requests, persistence) that pattern rules did not match.
+    why: Paraphrased injections are the main known gap of pattern rules.
+    severity: high
+    confidence: medium
+    network: true
+    match: {type: analyzer, analyzer: judge}
+    remediation: Review the quoted text and remove instructions aimed at the agent that the skill's task does not need.

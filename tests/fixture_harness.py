@@ -63,6 +63,10 @@ def load_case(rule_id: str, side: str, case_dir: Path) -> Case:
         opts["remote_probes"] = [RemoteProbe.model_validate(x) for x in cfg["remote_probes"]]
     if "package_facts" in cfg:
         opts["package_facts"] = [PackageFacts.model_validate(x) for x in cfg["package_facts"]]
+    if "judge_results" in cfg:
+        from agentguard.core.judge_models import JudgeResult
+
+        opts["judge_results"] = [JudgeResult.model_validate(x) for x in cfg["judge_results"]]
     if cfg.get("intel"):
         from agentguard.io.intel_store import bundled_intel_dir, trusted_keys
         from agentguard.core.intel.feed import verify_feed

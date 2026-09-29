@@ -1,0 +1,26 @@
+{
+  "network": {
+    "llm_judge": true
+  },
+  "judge_results": [
+    {
+      "kind": "mismatch",
+      "component_id": "848968cf2906cb05",
+      "path": "csv-tool/scripts/stats.py",
+      "content_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "provider": "recorded",
+      "model": "fixture",
+      "verdict": {
+        "mismatch": false,
+        "undisclosed_behaviors": [],
+        "confidence": "medium",
+        "explanation": "Behavior matches the description.",
+        "quotes": [
+          {
+            "text": "print(len(rows))"
+          }
+        ]
+      }
+    }
+  ]
+}

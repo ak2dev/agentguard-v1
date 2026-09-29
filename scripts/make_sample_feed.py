@@ -2,7 +2,7 @@
 
 Generates a fresh sample key every run, signs intel/sample-feed.json, writes
 the public key to intel/keys/, and discards the private key. The production
-feed is signed with a maintainer key kept offline (see docs/security.md);
+feed is signed with a maintainer key kept offline (see SECURITY.md);
 its public key is added to intel/keys/ in a release.
 """
 

@@ -118,6 +118,10 @@ def scan_cmd(
     osv: Annotated[bool, typer.Option("--osv", help="NETWORK: look up dependencies in OSV.")] = False,
     provenance: Annotated[bool, typer.Option("--provenance", help="NETWORK: verify npm/Sigstore provenance.")] = False,
     registry: Annotated[bool, typer.Option("--registry", help="NETWORK: MCP Registry / package age checks.")] = False,
+    llm_judge: Annotated[Optional[str], typer.Option("--llm-judge", help="NETWORK: optional LLM judge provider: anthropic | openai_compat | ollama.")] = None,
+    llm_model: Annotated[Optional[str], typer.Option("--llm-model", help="Judge model (default for anthropic: claude-opus-5-5).")] = None,
+    llm_endpoint: Annotated[Optional[str], typer.Option("--llm-endpoint", help="Base URL for openai_compat / ollama.")] = None,
+    llm_budget: Annotated[int, typer.Option("--llm-budget", help="Maximum judge calls per scan (cached results are free).")] = 20,
     allow_partial: Annotated[bool, typer.Option("--allow-partial", help="Do not exit 2 when an analyzer fails (recorded in the report).")] = False,
     show_info: Annotated[bool, typer.Option("--show-info", help="Show info-level findings in terminal output.")] = False,
     verbose: Annotated[bool, typer.Option("--verbose", "-v", help="Show evidence, remediation and mappings.")] = False,
@@ -163,7 +167,7 @@ def scan_cmd(
         options = ScanOptions(
             fail_on=threshold,
             network=NetworkOptions(live_metadata=live_metadata, auth_checks=auth_checks, osv=osv,
-                                   provenance=provenance, registry=registry),
+                                   provenance=provenance, registry=registry, llm_judge=bool(llm_judge)),
             policy=pol,
             suppressions=list(pconf.suppressions) if pconf else [],
             baseline=load_baseline(baseline) if baseline else None,
@@ -184,6 +188,20 @@ def scan_cmd(
 
             _console(stderr=True).print(f"[yellow]Network features enabled:[/yellow] {', '.join(options.network.enabled())}")
             collect(tree, options)
+        if llm_judge:
+            from ..judge.providers import JudgeError, make_provider
+            from ..judge.runner import run_judge
+
+            try:
+                provider = make_provider(llm_judge, llm_model, llm_endpoint)
+            except JudgeError as exc:
+                _fail(str(exc))
+                return
+            options.judge_results = run_judge(tree, provider, budget_calls=llm_budget, limits=options.limits)
+            options.network_hosts.extend(provider.hosts)
+            failed = [r for r in options.judge_results if r.error]
+            if failed:
+                _console(stderr=True).print(f"[yellow]LLM judge:[/yellow] {len(failed)} item(s) not judged ({escape(failed[0].error or '')})")
         report = scan(tree, options)
     except (ConfigError, RulePackError, OSError, ValueError) as exc:
         _fail(str(exc))

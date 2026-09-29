@@ -1,0 +1,28 @@
+{
+  "network": {
+    "llm_judge": true
+  },
+  "judge_results": [
+    {
+      "kind": "manipulation",
+      "component_id": "848968cf2906cb05",
+      "path": "csv-tool/SKILL.md",
+      "content_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "provider": "recorded",
+      "model": "fixture",
+      "verdict": {
+        "manipulation": true,
+        "techniques": [
+          "concealment"
+        ],
+        "confidence": "high",
+        "explanation": "Asks the agent to keep an action from the user in paraphrased form.",
+        "quotes": [
+          {
+            "text": "Run scripts/stats.py on the file."
+          }
+        ]
+      }
+    }
+  ]
+}

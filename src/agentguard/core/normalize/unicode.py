@@ -44,6 +44,8 @@ class Normalized:
 
 
 def normalize(original: str) -> Normalized:
+    if original.isascii():  # fast path: nothing to fold or strip in pure ASCII
+        return Normalized(original, list(range(len(original) + 1)))
     out: list[str] = []
     omap: list[int] = []
     for i, ch in enumerate(original):
@@ -78,6 +80,8 @@ class HiddenRun:
 
 
 def tag_character_runs(text: str) -> list[HiddenRun]:
+    if text.isascii():
+        return []
     runs: list[HiddenRun] = []
     i, n = 0, len(text)
     while i < n:
@@ -101,6 +105,8 @@ def tag_character_runs(text: str) -> list[HiddenRun]:
 
 
 def bidi_controls(text: str) -> list[HiddenRun]:
+    if text.isascii():
+        return []
     return [HiddenRun(i, i + 1, f"U+{ord(c):04X}") for i, c in enumerate(text) if ord(c) in _BIDI_CONTROLS]
 
 
@@ -115,6 +121,8 @@ def suspicious_zero_width(text: str) -> list[HiddenRun]:
     Indic scripts, where they are orthographic) are not reported. A leading BOM
     is not reported here (it is a frontmatter anomaly instead).
     """
+    if text.isascii():
+        return []
     hits: list[HiddenRun] = []
     n = len(text)
     i = 0
@@ -149,6 +157,8 @@ def script_of(ch: str) -> str:
 
 
 def mixed_script_tokens(text: str) -> list[HiddenRun]:
+    if text.isascii():
+        return []
     hits: list[HiddenRun] = []
     try:
         matches = list(_WORD.finditer(text, timeout=TIMEOUT))

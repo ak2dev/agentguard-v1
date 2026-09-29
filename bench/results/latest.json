@@ -3,113 +3,113 @@
   "engine_version": "0.1.0.dev0",
   "rule_pack": {
     "version": "0.1.0",
-    "digest": "d6aee478941c62f567c035b3068530cf290455e17f8a5f605f95281cd9553bb1"
+    "digest": "3404636b6d1a862e123cee7120030fb7bf445da86edb4182afbca37e802f9919"
   },
-  "date": "2026-09-28",
+  "date": "2026-09-29",
   "split": "all",
   "corpus": {
-    "items": 57,
-    "benign": 24,
-    "malicious": 24,
+    "items": 61,
+    "benign": 25,
+    "malicious": 27,
     "adversarial": 9,
     "sources": {
-      "synthetic": 57
+      "synthetic": 61
     }
   },
   "overall": {
     "critical": {
-      "tp": 20,
+      "tp": 22,
       "fp": 0,
-      "fn": 13,
-      "tn": 24,
+      "fn": 14,
+      "tn": 25,
       "precision": 1.0,
-      "recall": 0.6061,
-      "f1": 0.7547,
+      "recall": 0.6111,
+      "f1": 0.7586,
       "fpr": 0.0
     },
     "high": {
-      "tp": 30,
+      "tp": 32,
       "fp": 0,
-      "fn": 3,
-      "tn": 24,
+      "fn": 4,
+      "tn": 25,
       "precision": 1.0,
-      "recall": 0.9091,
-      "f1": 0.9524,
+      "recall": 0.8889,
+      "f1": 0.9412,
       "fpr": 0.0
     },
     "medium": {
-      "tp": 31,
-      "fp": 1,
+      "tp": 34,
+      "fp": 2,
       "fn": 2,
       "tn": 23,
-      "precision": 0.9688,
-      "recall": 0.9394,
-      "f1": 0.9539,
-      "fpr": 0.0417
+      "precision": 0.9444,
+      "recall": 0.9444,
+      "f1": 0.9444,
+      "fpr": 0.08
     }
   },
   "by_split": {
     "dev": {
       "critical": {
-        "tp": 13,
+        "tp": 14,
         "fp": 0,
-        "fn": 6,
-        "tn": 16,
+        "fn": 7,
+        "tn": 17,
         "precision": 1.0,
-        "recall": 0.6842,
-        "f1": 0.8125,
+        "recall": 0.6667,
+        "f1": 0.8,
         "fpr": 0.0
       },
       "high": {
-        "tp": 19,
+        "tp": 20,
         "fp": 0,
-        "fn": 0,
-        "tn": 16,
+        "fn": 1,
+        "tn": 17,
         "precision": 1.0,
-        "recall": 1.0,
-        "f1": 1.0,
+        "recall": 0.9524,
+        "f1": 0.9756,
         "fpr": 0.0
       },
       "medium": {
-        "tp": 19,
-        "fp": 1,
+        "tp": 21,
+        "fp": 2,
         "fn": 0,
         "tn": 15,
-        "precision": 0.95,
+        "precision": 0.913,
         "recall": 1.0,
-        "f1": 0.9744,
-        "fpr": 0.0625
+        "f1": 0.9545,
+        "fpr": 0.1176
       }
     },
     "heldout": {
       "critical": {
-        "tp": 7,
+        "tp": 8,
         "fp": 0,
         "fn": 7,
         "tn": 8,
         "precision": 1.0,
-        "recall": 0.5,
-        "f1": 0.6667,
+        "recall": 0.5333,
+        "f1": 0.6956,
         "fpr": 0.0
       },
       "high": {
-        "tp": 11,
+        "tp": 12,
         "fp": 0,
         "fn": 3,
         "tn": 8,
         "precision": 1.0,
-        "recall": 0.7857,
-        "f1": 0.88,
+        "recall": 0.8,
+        "f1": 0.8889,
         "fpr": 0.0
       },
       "medium": {
-        "tp": 12,
+        "tp": 13,
         "fp": 0,
         "fn": 2,
         "tn": 8,
         "precision": 1.0,
-        "recall": 0.8571,
-        "f1": 0.9231,
+        "recall": 0.8667,
+        "f1": 0.9286,
         "fpr": 0.0
       }
     }
@@ -161,12 +161,19 @@
       "fpr_high": 0.0,
       "fpr_medium": 0.0
     },
+    "benign-locked": {
+      "label": "benign",
+      "items": 1,
+      "fpr_critical": 0.0,
+      "fpr_high": 0.0,
+      "fpr_medium": 0.0
+    },
     "benign-server": {
       "label": "benign",
       "items": 3,
       "fpr_critical": 0.0,
       "fpr_high": 0.0,
-      "fpr_medium": 0.0
+      "fpr_medium": 0.3333
     },
     "benign-skill": {
       "label": "benign",
@@ -199,6 +206,14 @@
       "recall_medium": 1.0,
       "expected_rule_hit_rate": 1.0
     },
+    "rug-pull": {
+      "label": "malicious",
+      "items": 3,
+      "recall_critical": 0.6667,
+      "recall_high": 0.6667,
+      "recall_medium": 1.0,
+      "expected_rule_hit_rate": 1.0
+    },
     "stdio-injection": {
       "label": "malicious",
       "items": 5,
@@ -225,6 +240,7 @@
     }
   },
   "benign_hits_by_rule": {
+    "AG-CODE-040:medium": 1,
     "AG-SKL-EXEC-002:medium": 1
   },
   "targets": {
@@ -245,12 +261,12 @@
     }
   },
   "performance": {
-    "total_seconds": 0.269,
-    "mean_ms_per_item": 4.7,
+    "total_seconds": 1.138,
+    "mean_ms_per_item": 18.7,
     "perf_check": {
       "skills": 100,
       "configs": 20,
-      "seconds": 1.606,
+      "seconds": 5.729,
       "target_seconds": 10,
       "met": true,
       "findings": 547
@@ -275,7 +291,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 40.4
+      "flow_findings": [],
+      "ms": 78.5
     },
     {
       "id": "lure-curl-bash",
@@ -295,7 +312,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 5.1
+      "flow_findings": [],
+      "ms": 12.4
     },
     {
       "id": "lure-b64-paste",
@@ -319,7 +337,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 5.5
+      "flow_findings": [],
+      "ms": 12.1
     },
     {
       "id": "lure-quarantine",
@@ -340,7 +359,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 4.6
+      "flow_findings": [],
+      "ms": 9.4
     },
     {
       "id": "lure-msi",
@@ -360,7 +380,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 3.4
+      "flow_findings": [],
+      "ms": 8.8
     },
     {
       "id": "lure-iex",
@@ -380,7 +401,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 4.0
+      "flow_findings": [],
+      "ms": 8.4
     },
     {
       "id": "lure-winr",
@@ -400,7 +422,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 3.0
+      "flow_findings": [],
+      "ms": 8.1
     },
     {
       "id": "envdump-python",
@@ -416,6 +439,7 @@
       },
       "max_severity": "critical",
       "rules": [
+        "AG-FLOW-005",
         "AG-SKL-CRED-002",
         "AG-SKL-CRED-010",
         "AG-SKL-EXF-001",
@@ -423,7 +447,10 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 6.1
+      "flow_findings": [
+        "AG-FLOW-005:critical"
+      ],
+      "ms": 15.2
     },
     {
       "id": "envdump-shell",
@@ -445,7 +472,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 6.0
+      "flow_findings": [],
+      "ms": 14.1
     },
     {
       "id": "envdump-node",
@@ -467,7 +495,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 6.0
+      "flow_findings": [],
+      "ms": 14.7
     },
     {
       "id": "poison-manifest",
@@ -488,7 +517,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 12.3
+      "flow_findings": [],
+      "ms": 26.2
     },
     {
       "id": "poison-python-source",
@@ -504,12 +534,14 @@
       },
       "max_severity": "critical",
       "rules": [
+        "AG-CODE-020",
         "AG-MCP-META-002",
         "AG-MCP-META-003"
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 14.9
+      "flow_findings": [],
+      "ms": 22.4
     },
     {
       "id": "poison-ts-hidden",
@@ -530,7 +562,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 4.9
+      "flow_findings": [],
+      "ms": 15.9
     },
     {
       "id": "poison-sidechannel",
@@ -551,7 +584,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 3.5
+      "flow_findings": [],
+      "ms": 7.6
     },
     {
       "id": "shadow-bcc",
@@ -571,7 +605,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 4.7
+      "flow_findings": [],
+      "ms": 13.2
     },
     {
       "id": "shadow-replace",
@@ -592,7 +627,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 4.5
+      "flow_findings": [],
+      "ms": 32.2
     },
     {
       "id": "stdio-curl-sh",
@@ -613,7 +649,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 4.0
+      "flow_findings": [],
+      "ms": 21.1
     },
     {
       "id": "stdio-docker-sock",
@@ -634,7 +671,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 3.1
+      "flow_findings": [],
+      "ms": 13.6
     },
     {
       "id": "stdio-inline-python",
@@ -654,7 +692,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 2.4
+      "flow_findings": [],
+      "ms": 22.0
     },
     {
       "id": "stdio-cmd-enc",
@@ -674,7 +713,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 2.2
+      "flow_findings": [],
+      "ms": 11.2
     },
     {
       "id": "stdio-chain",
@@ -696,7 +736,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 2.9
+      "flow_findings": [],
+      "ms": 8.8
     },
     {
       "id": "exfil-ssh-transfer",
@@ -716,7 +757,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 4.0
+      "flow_findings": [],
+      "ms": 10.8
     },
     {
       "id": "exfil-aws-script",
@@ -737,7 +779,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 6.1
+      "flow_findings": [],
+      "ms": 23.2
     },
     {
       "id": "exfil-browser-discord",
@@ -753,13 +796,17 @@
       },
       "max_severity": "critical",
       "rules": [
+        "AG-FLOW-005",
         "AG-SKL-CRED-010",
         "AG-SKL-EXF-001",
         "AG-SKL-MIS-001"
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 6.8
+      "flow_findings": [
+        "AG-FLOW-005:critical"
+      ],
+      "ms": 26.8
     },
     {
       "id": "adv-zero-width",
@@ -780,7 +827,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 3.2
+      "flow_findings": [],
+      "ms": 7.4
     },
     {
       "id": "adv-homoglyph-curl",
@@ -801,7 +849,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 4.1
+      "flow_findings": [],
+      "ms": 22.1
     },
     {
       "id": "adv-tag-smuggle",
@@ -824,7 +873,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 4.8
+      "flow_findings": [],
+      "ms": 11.6
     },
     {
       "id": "adv-b64-comment",
@@ -846,7 +896,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 4.6
+      "flow_findings": [],
+      "ms": 9.5
     },
     {
       "id": "adv-hex-b64",
@@ -868,7 +919,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 4.3
+      "flow_findings": [],
+      "ms": 9.2
     },
     {
       "id": "adv-paraphrase-lure",
@@ -886,7 +938,8 @@
       "rules": [],
       "expected_hit": false,
       "benign_hits": [],
-      "ms": 2.7
+      "flow_findings": [],
+      "ms": 7.0
     },
     {
       "id": "adv-paraphrase-override",
@@ -904,7 +957,8 @@
       "rules": [],
       "expected_hit": false,
       "benign_hits": [],
-      "ms": 3.0
+      "flow_findings": [],
+      "ms": 5.4
     },
     {
       "id": "adv-split-files",
@@ -924,7 +978,8 @@
       ],
       "expected_hit": false,
       "benign_hits": [],
-      "ms": 4.5
+      "flow_findings": [],
+      "ms": 11.8
     },
     {
       "id": "adv-split-param",
@@ -944,7 +999,96 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 3.6
+      "flow_findings": [],
+      "ms": 8.1
+    },
+    {
+      "id": "rugpull-description",
+      "label": "malicious",
+      "category": "rug-pull",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": true,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "critical",
+      "rules": [
+        "AG-MCP-META-003",
+        "AG-SC-001",
+        "AG-SC-005"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 67.9
+    },
+    {
+      "id": "rugpull-new-tool",
+      "label": "malicious",
+      "category": "rug-pull",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": true
+      },
+      "max_severity": "medium",
+      "rules": [
+        "AG-MCP-META-009",
+        "AG-SC-003"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 32.0
+    },
+    {
+      "id": "rugpull-skill-egress",
+      "label": "malicious",
+      "category": "rug-pull",
+      "split": "heldout",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": true,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "critical",
+      "rules": [
+        "AG-SC-002",
+        "AG-SC-005",
+        "AG-SKL-CRED-010",
+        "AG-SKL-MIS-001"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 71.7
+    },
+    {
+      "id": "locked-unchanged",
+      "label": "benign",
+      "category": "benign-locked",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "flow_findings": [],
+      "ms": 28.2
     },
     {
       "id": "pdf-report",
@@ -962,7 +1106,8 @@
       "rules": [],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 4.0
+      "flow_findings": [],
+      "ms": 19.5
     },
     {
       "id": "git-changelog",
@@ -982,7 +1127,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 4.2
+      "flow_findings": [],
+      "ms": 15.9
     },
     {
       "id": "github-sync",
@@ -1000,7 +1146,8 @@
       "rules": [],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 5.2
+      "flow_findings": [],
+      "ms": 21.4
     },
     {
       "id": "uv-setup",
@@ -1020,7 +1167,8 @@
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 3.2
+      "flow_findings": [],
+      "ms": 14.5
     },
     {
       "id": "security-reviewer",
@@ -1038,7 +1186,8 @@
       "rules": [],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 4.7
+      "flow_findings": [],
+      "ms": 20.1
     },
     {
       "id": "docx-builder",
@@ -1056,7 +1205,8 @@
       "rules": [],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 4.9
+      "flow_findings": [],
+      "ms": 23.9
     },
     {
       "id": "sql-helper",
@@ -1074,7 +1224,8 @@
       "rules": [],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 2.8
+      "flow_findings": [],
+      "ms": 11.3
     },
     {
       "id": "k8s-deploy",
@@ -1092,7 +1243,8 @@
       "rules": [],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 3.6
+      "flow_findings": [],
+      "ms": 14.4
     },
     {
       "id": "slack-notifier",
@@ -1110,7 +1262,8 @@
       "rules": [],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 4.1
+      "flow_findings": [],
+      "ms": 61.6
     },
     {
       "id": "csv-analyzer",
@@ -1128,7 +1281,8 @@
       "rules": [],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 2.6
+      "flow_findings": [],
+      "ms": 12.1
     },
     {
       "id": "web-research",
@@ -1146,7 +1300,8 @@
       "rules": [],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 3.0
+      "flow_findings": [],
+      "ms": 14.5
     },
     {
       "id": "commit-lint",
@@ -1168,7 +1323,8 @@
       "benign_hits": [
         "AG-SKL-EXEC-002:medium"
       ],
-      "ms": 4.1
+      "flow_findings": [],
+      "ms": 16.5
     },
     {
       "id": "cfg-pinned",
@@ -1184,11 +1340,17 @@
       },
       "max_severity": "low",
       "rules": [
+        "AG-FLOW-001",
+        "AG-FLOW-002",
         "AG-MCP-CFG-020"
       ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 3.0
+      "flow_findings": [
+        "AG-FLOW-001:high",
+        "AG-FLOW-002:high"
+      ],
+      "ms": 21.5
     },
     {
       "id": "cfg-vscode-inputs",
@@ -1206,7 +1368,8 @@
       "rules": [],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 1.9
+      "flow_findings": [],
+      "ms": 10.0
     },
     {
       "id": "cfg-cursor-remote",
@@ -1221,10 +1384,15 @@
         "medium": false
       },
       "max_severity": null,
-      "rules": [],
+      "rules": [
+        "AG-FLOW-002"
+      ],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 2.0
+      "flow_findings": [
+        "AG-FLOW-002:high"
+      ],
+      "ms": 14.5
     },
     {
       "id": "cfg-codex-docker",
@@ -1242,7 +1410,8 @@
       "rules": [],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 2.1
+      "flow_findings": [],
+      "ms": 11.4
     },
     {
       "id": "cfg-windows-cmd",
@@ -1260,7 +1429,8 @@
       "rules": [],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 1.7
+      "flow_findings": [],
+      "ms": 22.9
     },
     {
       "id": "cfg-gemini",
@@ -1278,7 +1448,8 @@
       "rules": [],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 1.5
+      "flow_findings": [],
+      "ms": 8.8
     },
     {
       "id": "srv-weather-ts",
@@ -1290,13 +1461,18 @@
       "flags": {
         "critical": false,
         "high": false,
-        "medium": false
+        "medium": true
       },
-      "max_severity": null,
-      "rules": [],
+      "max_severity": "medium",
+      "rules": [
+        "AG-CODE-040"
+      ],
       "expected_hit": true,
-      "benign_hits": [],
-      "ms": 3.9
+      "benign_hits": [
+        "AG-CODE-040:medium"
+      ],
+      "flow_findings": [],
+      "ms": 21.6
     },
     {
       "id": "srv-notes-py",
@@ -1314,7 +1490,8 @@
       "rules": [],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 2.8
+      "flow_findings": [],
+      "ms": 15.4
     },
     {
       "id": "srv-issues-manifest",
@@ -1332,7 +1509,8 @@
       "rules": [],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 2.9
+      "flow_findings": [],
+      "ms": 11.7
     },
     {
       "id": "agents-md",
@@ -1350,7 +1528,8 @@
       "rules": [],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 1.8
+      "flow_findings": [],
+      "ms": 8.7
     },
     {
       "id": "claude-md",
@@ -1368,7 +1547,8 @@
       "rules": [],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 1.4
+      "flow_findings": [],
+      "ms": 7.7
     },
     {
       "id": "cursor-rules",
@@ -1386,7 +1566,8 @@
       "rules": [],
       "expected_hit": true,
       "benign_hits": [],
-      "ms": 2.1
+      "flow_findings": [],
+      "ms": 8.6
     }
   ]
 }

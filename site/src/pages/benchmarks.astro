@@ -12,7 +12,7 @@ const cats = Object.entries(b.categories);
   <h2>Corpus</h2>
   <p>{b.corpus.items} items: {b.corpus.malicious} malicious, {b.corpus.adversarial} adversarial, {b.corpus.benign} benign. Sources: {Object.entries(b.corpus.sources).map(([k, v]) => `${v} ${k}`).join(", ")}.
   All malicious and adversarial items are inert synthetic reproductions of documented patterns (reserved domains, no working payloads). The held-out split shares no author or template with the items used while writing rules.</p>
-  {!b.corpus.sources.real && <p class="gap">Caveat: the benign set is currently synthetic. Real-world benign corpora (official and popular skills and servers at pinned revisions) are fetched by <code>bench/fetch_real.py</code>; until they are included, false-positive rates here are optimistic.</p>}
+  {!b.corpus.sources.real && <p class="gap">Caveat: the benign set is currently synthetic. Real-world benign corpora (official and popular skills and servers at pinned revisions) are added with <code>bench/fetch_real.py</code> once sources are approved in <code>bench/real_sources.yaml</code>; until then, false-positive rates here are optimistic.</p>}
 
   <h2>Targets</h2>
   <div class="table-scroll"><table>

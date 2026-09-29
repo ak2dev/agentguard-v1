@@ -1,0 +1,17 @@
+{
+  "entries": [
+    {
+      "capability_labels": [],
+      "content_hash": "a429b96f8c8248acf3866790b4fbcd4260062dd3b0c4556ce5e34f8bc46c507b",
+      "key": "skill:report-writer@report-writer",
+      "kind": "skill",
+      "name": "report-writer",
+      "skill_files": {
+        "SKILL.md": "e5416065cd747842609e5699ee9f9e5f12510b4755ca045f4acb44405defa8aa",
+        "scripts/build.py": "4a86239400ce87d67e33040ad22346cdc45b324b1b93f4829fd76a075e10f6a5"
+      }
+    }
+  ],
+  "generator": "agentguard",
+  "lock_version": 1
+}

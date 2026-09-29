@@ -11,6 +11,7 @@ from ..policy.analyzer import PolicyAnalyzer
 from .capabilities import CapabilityAnalyzer
 from .code import CodeAnalyzer
 from .hidden import HiddenContentAnalyzer
+from .judge_rules import JudgeAnalyzer
 from .mcp import McpConfigAnalyzer, McpMetaAnalyzer, McpUnitsBuilder
 from .network_rules import AuthAnalyzer, OsvAnalyzer, PackageAgeAnalyzer, ProvenanceAnalyzer
 from .regex_rules import RegexRuleAnalyzer
@@ -44,6 +45,7 @@ ANALYZERS: list[type] = [
     ProvenanceAnalyzer,
     OsvAnalyzer,
     PackageAgeAnalyzer,
+    JudgeAnalyzer,
 ]
 
 CORRELATORS: list[type] = [

@@ -420,6 +420,46 @@
           "required": false
         },
         {
+          "name": "llm_judge",
+          "kind": "option",
+          "opts": [
+            "--llm-judge"
+          ],
+          "help": "NETWORK: optional LLM judge provider: anthropic | openai_compat | ollama.",
+          "default": null,
+          "required": false
+        },
+        {
+          "name": "llm_model",
+          "kind": "option",
+          "opts": [
+            "--llm-model"
+          ],
+          "help": "Judge model (default for anthropic: claude-opus-5-5).",
+          "default": null,
+          "required": false
+        },
+        {
+          "name": "llm_endpoint",
+          "kind": "option",
+          "opts": [
+            "--llm-endpoint"
+          ],
+          "help": "Base URL for openai_compat / ollama.",
+          "default": null,
+          "required": false
+        },
+        {
+          "name": "llm_budget",
+          "kind": "option",
+          "opts": [
+            "--llm-budget"
+          ],
+          "help": "Maximum judge calls per scan (cached results are free).",
+          "default": "20",
+          "required": false
+        },
+        {
           "name": "allow_partial",
           "kind": "option",
           "opts": [

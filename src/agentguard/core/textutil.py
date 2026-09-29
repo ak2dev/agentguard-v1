@@ -62,9 +62,11 @@ INVISIBLE_RANGES: tuple[tuple[int, int], ...] = (
 )
 
 
+INVISIBLE_CODEPOINTS: frozenset[int] = frozenset(cp for lo, hi in INVISIBLE_RANGES for cp in range(lo, hi + 1))
+
+
 def is_invisible(ch: str) -> bool:
-    cp = ord(ch)
-    return any(lo <= cp <= hi for lo, hi in INVISIBLE_RANGES)
+    return ord(ch) in INVISIBLE_CODEPOINTS
 
 
 def visible_escape(text: str) -> str:

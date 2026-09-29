@@ -1,0 +1,4 @@
+# Real-world benign benchmark sources (pinned). Empty until the project
+# maintainers approve which third-party skills/servers may be fetched or
+# vendored, and under which licenses. See bench/fetch_real.py for the format.
+sources: []
