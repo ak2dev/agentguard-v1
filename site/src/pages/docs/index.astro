@@ -1,0 +1,23 @@
+---
+import Base from "../../layouts/Base.astro";
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const docs = [
+  ["Install", "install", "uvx, pipx, and what Agent Guard needs (and never does)."],
+  ["Quickstart", "quickstart", "Scan your machine, a skill, a repo or an MCP config; read the results."],
+  ["How it works", "how-it-works", "The pipeline, severity rules, capability labels and toxic flows."],
+  ["CLI reference", "cli", "Every command and option, generated from the CLI."],
+  ["Configuration", "config", "The .agentguard.yaml file."],
+  ["Policy", "policy", "Allow/deny servers and publishers, pinning, maximum severity."],
+  ["Suppressions", "suppressions", "Accepting findings with a reason and an expiry."],
+  ["CI integration", "ci", "GitHub Action with SARIF alerts, PR mode, pre-commit."],
+  ["Output formats", "output", "JSON, SARIF, Markdown, HTML, CycloneDX; determinism and redaction."],
+  ["Library API", "library-api", "Use the engine from Python, workers or Pyodide."],
+  ["Limitations", "limitations", "What Agent Guard does not do."],
+];
+---
+<Base title="Documentation">
+  <h1>Documentation</h1>
+  <div class="cards">
+    {docs.map(([t, slug, d]) => (<section class="card"><h3><a href={`${base}/docs/${slug}/`}>{t}</a></h3><p class="muted">{d}</p></section>))}
+  </div>
+</Base>

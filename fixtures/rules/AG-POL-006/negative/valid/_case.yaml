@@ -1,0 +1,4 @@
+suppressions:
+  - rule_id: AG-MCP-CFG-004
+    reason: accepted for the prototype phase
+    expires: 2099-01-01

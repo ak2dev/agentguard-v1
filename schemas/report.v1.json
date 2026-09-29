@@ -1,0 +1,1410 @@
+{
+  "$defs": {
+    "AnalyzerRun": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "ran",
+            "skipped",
+            "errored"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "reason": {
+          "default": "",
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "status"
+      ],
+      "title": "AnalyzerRun",
+      "type": "object"
+    },
+    "Artifact": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "component_id": {
+          "title": "Component Id",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "role": {
+          "$ref": "#/$defs/ArtifactRole"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        },
+        "size": {
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "component_id",
+        "path",
+        "role",
+        "sha256",
+        "size"
+      ],
+      "title": "Artifact",
+      "type": "object"
+    },
+    "ArtifactRole": {
+      "enum": [
+        "skill_md",
+        "instruction_md",
+        "script",
+        "reference",
+        "asset",
+        "client_config",
+        "server_json",
+        "tool_manifest",
+        "source_code",
+        "package_manifest",
+        "lockfile",
+        "ui_resource",
+        "binary",
+        "archive",
+        "other"
+      ],
+      "title": "ArtifactRole",
+      "type": "string"
+    },
+    "CapLabel": {
+      "enum": [
+        "reads_private_data",
+        "ingests_untrusted_content",
+        "external_egress",
+        "destructive",
+        "code_exec",
+        "credential_access",
+        "persistence",
+        "auto_approved"
+      ],
+      "title": "CapLabel",
+      "type": "string"
+    },
+    "Capability": {
+      "properties": {
+        "label": {
+          "$ref": "#/$defs/CapLabel"
+        },
+        "subject": {
+          "title": "Subject",
+          "type": "string"
+        },
+        "declared": {
+          "default": false,
+          "title": "Declared",
+          "type": "boolean"
+        },
+        "observed": {
+          "default": false,
+          "title": "Observed",
+          "type": "boolean"
+        },
+        "confidence": {
+          "$ref": "#/$defs/Confidence",
+          "default": "medium"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "reason": {
+          "default": "",
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "subject"
+      ],
+      "title": "Capability",
+      "type": "object"
+    },
+    "Component": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/ComponentKind"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        },
+        "publisher": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Publisher"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourceRef"
+            },
+            {
+              "$ref": "#/$defs/ImmutableRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "root": {
+          "default": "",
+          "title": "Root",
+          "type": "string"
+        },
+        "server": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/McpServerSpec"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "artifact_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Artifact Ids",
+          "type": "array"
+        },
+        "tools": {
+          "items": {
+            "$ref": "#/$defs/ToolDef"
+          },
+          "title": "Tools",
+          "type": "array"
+        },
+        "prompts": {
+          "items": {
+            "$ref": "#/$defs/PromptDef"
+          },
+          "title": "Prompts",
+          "type": "array"
+        },
+        "resources": {
+          "items": {
+            "$ref": "#/$defs/ResourceDef"
+          },
+          "title": "Resources",
+          "type": "array"
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instructions"
+        },
+        "capabilities": {
+          "items": {
+            "$ref": "#/$defs/Capability"
+          },
+          "title": "Capabilities",
+          "type": "array"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "name"
+      ],
+      "title": "Component",
+      "type": "object"
+    },
+    "ComponentKind": {
+      "enum": [
+        "agent_host",
+        "skill",
+        "instruction_file",
+        "subagent",
+        "command",
+        "mcp_server",
+        "mcp_client_config",
+        "package"
+      ],
+      "title": "ComponentKind",
+      "type": "string"
+    },
+    "Confidence": {
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ],
+      "title": "Confidence",
+      "type": "string"
+    },
+    "Evidence": {
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/EvidenceKind"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Span"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "snippet": {
+          "default": "",
+          "title": "Snippet",
+          "type": "string"
+        },
+        "detail": {
+          "default": "",
+          "title": "Detail",
+          "type": "string"
+        },
+        "hidden": {
+          "default": false,
+          "title": "Hidden",
+          "type": "boolean"
+        },
+        "decode_path": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Decode Path",
+          "type": "array"
+        },
+        "taint_path": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Span"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Taint Path"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "EvidenceKind": {
+      "enum": [
+        "regex",
+        "yara",
+        "ast",
+        "taint",
+        "schema",
+        "config",
+        "metadata",
+        "intel",
+        "lock_diff",
+        "llm",
+        "policy",
+        "loader"
+      ],
+      "title": "EvidenceKind",
+      "type": "string"
+    },
+    "Finding": {
+      "properties": {
+        "fingerprint": {
+          "title": "Fingerprint",
+          "type": "string"
+        },
+        "rule_id": {
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "rule_version": {
+          "title": "Rule Version",
+          "type": "integer"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/$defs/Severity"
+        },
+        "confidence": {
+          "$ref": "#/$defs/Confidence"
+        },
+        "score": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Score"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source": {
+          "$ref": "#/$defs/FindingSource",
+          "default": "deterministic"
+        },
+        "component_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Component Ids",
+          "type": "array"
+        },
+        "primary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Span"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "related": {
+          "items": {
+            "$ref": "#/$defs/Span"
+          },
+          "title": "Related",
+          "type": "array"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "explanation": {
+          "default": "",
+          "title": "Explanation",
+          "type": "string"
+        },
+        "remediation": {
+          "default": "",
+          "title": "Remediation",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "mappings": {
+          "items": {
+            "$ref": "#/$defs/Mapping"
+          },
+          "title": "Mappings",
+          "type": "array"
+        },
+        "references": {
+          "items": {
+            "type": "string"
+          },
+          "title": "References",
+          "type": "array"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Tags",
+          "type": "array"
+        },
+        "flow": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FlowPath"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "suppression": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SuppressionState"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "baseline_state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Baseline State"
+        }
+      },
+      "required": [
+        "fingerprint",
+        "rule_id",
+        "rule_version",
+        "title",
+        "severity",
+        "confidence",
+        "message"
+      ],
+      "title": "Finding",
+      "type": "object"
+    },
+    "FindingSource": {
+      "enum": [
+        "deterministic",
+        "llm",
+        "intel",
+        "policy"
+      ],
+      "title": "FindingSource",
+      "type": "string"
+    },
+    "FlowPath": {
+      "properties": {
+        "nodes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Nodes",
+          "type": "array"
+        },
+        "edges": {
+          "items": {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Edges",
+          "type": "array"
+        },
+        "labels": {
+          "additionalProperties": {
+            "items": {
+              "$ref": "#/$defs/CapLabel"
+            },
+            "type": "array"
+          },
+          "title": "Labels",
+          "type": "object"
+        },
+        "narrative": {
+          "default": "",
+          "title": "Narrative",
+          "type": "string"
+        }
+      },
+      "required": [
+        "nodes"
+      ],
+      "title": "FlowPath",
+      "type": "object"
+    },
+    "ImmutableRef": {
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/SourceKind"
+        },
+        "locator": {
+          "title": "Locator",
+          "type": "string"
+        },
+        "resolved": {
+          "title": "Resolved",
+          "type": "string"
+        },
+        "integrity": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Integrity"
+        },
+        "source_url_template": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Url Template"
+        }
+      },
+      "required": [
+        "kind",
+        "locator",
+        "resolved"
+      ],
+      "title": "ImmutableRef",
+      "type": "object"
+    },
+    "LimitEvent": {
+      "properties": {
+        "kind": {
+          "title": "Kind",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "detail": {
+          "default": "",
+          "title": "Detail",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "path"
+      ],
+      "title": "LimitEvent",
+      "type": "object"
+    },
+    "Mapping": {
+      "properties": {
+        "framework": {
+          "title": "Framework",
+          "type": "string"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "todo": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Todo"
+        }
+      },
+      "required": [
+        "framework"
+      ],
+      "title": "Mapping",
+      "type": "object"
+    },
+    "McpServerSpec": {
+      "properties": {
+        "transport": {
+          "$ref": "#/$defs/Transport"
+        },
+        "command": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Command"
+        },
+        "args": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Args",
+          "type": "array"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "env_names": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Env Names",
+          "type": "array"
+        },
+        "header_names": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Header Names",
+          "type": "array"
+        },
+        "pinned": {
+          "default": false,
+          "title": "Pinned",
+          "type": "boolean"
+        },
+        "pin_detail": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pin Detail"
+        },
+        "client": {
+          "default": "unknown",
+          "title": "Client",
+          "type": "string"
+        },
+        "scope": {
+          "default": "unknown",
+          "title": "Scope",
+          "type": "string"
+        },
+        "config_path": {
+          "default": "",
+          "title": "Config Path",
+          "type": "string"
+        },
+        "config_span": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Span"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "transport"
+      ],
+      "title": "McpServerSpec",
+      "type": "object"
+    },
+    "PromptDef": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "arguments": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Arguments",
+          "type": "array"
+        },
+        "messages": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Messages",
+          "type": "array"
+        },
+        "span": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Span"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "PromptDef",
+      "type": "object"
+    },
+    "ReportStats": {
+      "properties": {
+        "files_scanned": {
+          "default": 0,
+          "title": "Files Scanned",
+          "type": "integer"
+        },
+        "bytes_scanned": {
+          "default": 0,
+          "title": "Bytes Scanned",
+          "type": "integer"
+        },
+        "components": {
+          "default": 0,
+          "title": "Components",
+          "type": "integer"
+        },
+        "rules_evaluated": {
+          "default": 0,
+          "title": "Rules Evaluated",
+          "type": "integer"
+        },
+        "findings_by_severity": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Findings By Severity",
+          "type": "object"
+        },
+        "suppressed": {
+          "default": 0,
+          "title": "Suppressed",
+          "type": "integer"
+        },
+        "limit_events": {
+          "items": {
+            "$ref": "#/$defs/LimitEvent"
+          },
+          "title": "Limit Events",
+          "type": "array"
+        }
+      },
+      "title": "ReportStats",
+      "type": "object"
+    },
+    "ResourceDef": {
+      "properties": {
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "mime_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mime Type"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "span": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Span"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "uri"
+      ],
+      "title": "ResourceDef",
+      "type": "object"
+    },
+    "RulePackInfo": {
+      "properties": {
+        "version": {
+          "title": "Version",
+          "type": "string"
+        },
+        "digest": {
+          "title": "Digest",
+          "type": "string"
+        },
+        "rule_count": {
+          "title": "Rule Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "version",
+        "digest",
+        "rule_count"
+      ],
+      "title": "RulePackInfo",
+      "type": "object"
+    },
+    "Score": {
+      "properties": {
+        "scorer": {
+          "title": "Scorer",
+          "type": "string"
+        },
+        "scorer_version": {
+          "title": "Scorer Version",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "vector": {
+          "default": "",
+          "title": "Vector",
+          "type": "string"
+        },
+        "components": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Components",
+          "type": "object"
+        }
+      },
+      "required": [
+        "scorer",
+        "scorer_version",
+        "value"
+      ],
+      "title": "Score",
+      "type": "object"
+    },
+    "Severity": {
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low",
+        "info"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "SourceKind": {
+      "enum": [
+        "local",
+        "npm",
+        "pypi",
+        "oci",
+        "github",
+        "gist",
+        "raw_url",
+        "mcp_registry",
+        "marketplace",
+        "remote_mcp",
+        "pasted"
+      ],
+      "title": "SourceKind",
+      "type": "string"
+    },
+    "SourceRef": {
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/SourceKind"
+        },
+        "locator": {
+          "title": "Locator",
+          "type": "string"
+        },
+        "subpath": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subpath"
+        }
+      },
+      "required": [
+        "kind",
+        "locator"
+      ],
+      "title": "SourceRef",
+      "type": "object"
+    },
+    "Span": {
+      "properties": {
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "start_line": {
+          "default": 1,
+          "title": "Start Line",
+          "type": "integer"
+        },
+        "start_col": {
+          "default": 1,
+          "title": "Start Col",
+          "type": "integer"
+        },
+        "end_line": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Line"
+        },
+        "end_col": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Col"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "title": "Span",
+      "type": "object"
+    },
+    "SuppressionState": {
+      "properties": {
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "expires": {
+          "title": "Expires",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "reason",
+        "expires"
+      ],
+      "title": "SuppressionState",
+      "type": "object"
+    },
+    "ToolDef": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "input_schema": {
+          "additionalProperties": true,
+          "title": "Input Schema",
+          "type": "object"
+        },
+        "output_schema": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Schema"
+        },
+        "annotations": {
+          "additionalProperties": true,
+          "title": "Annotations",
+          "type": "object"
+        },
+        "origin": {
+          "default": "manifest",
+          "title": "Origin",
+          "type": "string"
+        },
+        "span": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Span"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ToolDef",
+      "type": "object"
+    },
+    "Transport": {
+      "enum": [
+        "stdio",
+        "streamable_http",
+        "sse_deprecated",
+        "unknown"
+      ],
+      "title": "Transport",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "engine_version": {
+      "title": "Engine Version",
+      "type": "string"
+    },
+    "rule_pack": {
+      "$ref": "#/$defs/RulePackInfo"
+    },
+    "target": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SourceRef"
+        },
+        {
+          "$ref": "#/$defs/ImmutableRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Target"
+    },
+    "network_features_used": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Network Features Used",
+      "type": "array"
+    },
+    "network_hosts": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Network Hosts",
+      "type": "array"
+    },
+    "analyzers": {
+      "items": {
+        "$ref": "#/$defs/AnalyzerRun"
+      },
+      "title": "Analyzers",
+      "type": "array"
+    },
+    "inventory": {
+      "items": {
+        "$ref": "#/$defs/Component"
+      },
+      "title": "Inventory",
+      "type": "array"
+    },
+    "artifacts": {
+      "items": {
+        "$ref": "#/$defs/Artifact"
+      },
+      "title": "Artifacts",
+      "type": "array"
+    },
+    "findings": {
+      "items": {
+        "$ref": "#/$defs/Finding"
+      },
+      "title": "Findings",
+      "type": "array"
+    },
+    "suppressed_findings": {
+      "items": {
+        "$ref": "#/$defs/Finding"
+      },
+      "title": "Suppressed Findings",
+      "type": "array"
+    },
+    "flows": {
+      "items": {
+        "$ref": "#/$defs/FlowPath"
+      },
+      "title": "Flows",
+      "type": "array"
+    },
+    "stats": {
+      "$ref": "#/$defs/ReportStats"
+    },
+    "fail_on": {
+      "$ref": "#/$defs/Severity",
+      "default": "high"
+    },
+    "summary": {
+      "default": "",
+      "title": "Summary",
+      "type": "string"
+    },
+    "generated_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Generated At"
+    }
+  },
+  "required": [
+    "engine_version",
+    "rule_pack"
+  ],
+  "title": "Report",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentguard.dev/schemas/report.v1.json"
+}

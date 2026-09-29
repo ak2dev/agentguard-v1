@@ -1,0 +1,42 @@
+# Popular public skill names used for typosquatting checks.
+# Format: <name> [publisher]. A publisher enables AG-SKL-TYP-002 (same name,
+# different declared publisher). Source: public skill catalogs; see docs/sources.md.
+algorithmic-art anthropic
+brand-guidelines anthropic
+canvas-design anthropic
+doc-coauthoring anthropic
+docx anthropic
+frontend-design anthropic
+internal-comms anthropic
+mcp-builder anthropic
+pdf anthropic
+pptx anthropic
+skill-creator anthropic
+slack-gif-creator anthropic
+theme-factory anthropic
+web-artifacts-builder anthropic
+webapp-testing anthropic
+xlsx anthropic
+code-review
+git-workflow
+github-actions
+google-workspace
+gmail-assistant
+google-calendar
+notion-sync
+slack-assistant
+jira-helper
+database-query
+csv-analyzer
+data-analysis
+web-scraper
+browser-automation
+playwright-testing
+docker-helper
+kubernetes-helper
+terraform-helper
+aws-helper
+crypto-wallet
+solana-trader
+youtube-summarizer
+pdf-processing

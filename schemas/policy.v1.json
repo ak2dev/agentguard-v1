@@ -1,0 +1,90 @@
+{
+  "$defs": {
+    "Severity": {
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low",
+        "info"
+      ],
+      "title": "Severity",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "const": 1,
+      "default": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "engine": {
+      "const": "builtin",
+      "default": "builtin",
+      "title": "Engine",
+      "type": "string"
+    },
+    "deny_servers": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Deny Servers",
+      "type": "array"
+    },
+    "deny_publishers": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Deny Publishers",
+      "type": "array"
+    },
+    "allow_servers": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Allow Servers"
+    },
+    "require_pinning": {
+      "default": false,
+      "title": "Require Pinning",
+      "type": "boolean"
+    },
+    "max_severity": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Severity"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "severity_overrides": {
+      "additionalProperties": {
+        "$ref": "#/$defs/Severity"
+      },
+      "title": "Severity Overrides",
+      "type": "object"
+    },
+    "trifecta_severity": {
+      "$ref": "#/$defs/Severity",
+      "default": "high"
+    }
+  },
+  "title": "Policy",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentguard.dev/schemas/policy.v1.json"
+}

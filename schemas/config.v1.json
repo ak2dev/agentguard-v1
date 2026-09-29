@@ -1,0 +1,208 @@
+{
+  "$defs": {
+    "Policy": {
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "const": 1,
+          "default": 1,
+          "title": "Version",
+          "type": "integer"
+        },
+        "engine": {
+          "const": "builtin",
+          "default": "builtin",
+          "title": "Engine",
+          "type": "string"
+        },
+        "deny_servers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Deny Servers",
+          "type": "array"
+        },
+        "deny_publishers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Deny Publishers",
+          "type": "array"
+        },
+        "allow_servers": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Allow Servers"
+        },
+        "require_pinning": {
+          "default": false,
+          "title": "Require Pinning",
+          "type": "boolean"
+        },
+        "max_severity": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Severity"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "severity_overrides": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Severity"
+          },
+          "title": "Severity Overrides",
+          "type": "object"
+        },
+        "trifecta_severity": {
+          "$ref": "#/$defs/Severity",
+          "default": "high"
+        }
+      },
+      "title": "Policy",
+      "type": "object"
+    },
+    "Severity": {
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low",
+        "info"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "Suppression": {
+      "additionalProperties": false,
+      "properties": {
+        "rule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rule Id"
+        },
+        "fingerprint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fingerprint"
+        },
+        "path_glob": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Path Glob"
+        },
+        "reason": {
+          "default": "",
+          "title": "Reason",
+          "type": "string"
+        },
+        "expires": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expires"
+        }
+      },
+      "title": "Suppression",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Contents of .agentguard.yaml.",
+  "properties": {
+    "version": {
+      "const": 1,
+      "default": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "fail_on": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Severity"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "exclude": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Exclude",
+      "type": "array"
+    },
+    "suppressions": {
+      "items": {
+        "$ref": "#/$defs/Suppression"
+      },
+      "title": "Suppressions",
+      "type": "array"
+    },
+    "policy": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Policy"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "popular_skills": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Popular Skills",
+      "type": "array"
+    }
+  },
+  "title": "ProjectConfig",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentguard.dev/schemas/config.v1.json"
+}

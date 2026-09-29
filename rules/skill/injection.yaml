@@ -1,0 +1,221 @@
+# Instruction-layer threats. Regex rules run on the NFKC/confusable-folded
+# text with invisible characters removed; matches inside hidden or decoded
+# content are escalated one severity level by the engine.
+rules:
+  - id: AG-SKL-INJ-001
+    version: 1
+    title: Override / ignore-previous-instructions directive
+    description: Text tells the agent to ignore, disregard or replace its existing instructions.
+    why: Override directives are the classic prompt-injection primitive; legitimate skills add behavior, they do not revoke the agent's instructions.
+    severity: high
+    confidence: medium
+    applies_to: [skill_md, instruction_md, reference, script]
+    match:
+      type: regex
+      scopes: [body, hidden, decoded, frontmatter, code]
+      lower_confidence_in_code: true
+      patterns:
+        - |-
+          \b(?:ignore|disregard|forget|override|bypass)\s+(?:all\s+|any\s+|the\s+|your\s+|my\s+|these\s+)?(?:previous|prior|above|earlier|preceding|former|original|system|safety|developer|existing)\s+(?:instructions?|prompts?|rules?|guidelines?|directives?|messages?|context|constraints?|guardrails?)
+        - |-
+          \byour\s+(?:new|real|true|actual)\s+(?:task|goal|objective|instructions?|purpose|role)\s+(?:is|are)\b
+        - |-
+          \bfrom\s+now\s+on,?\s+you\s+(?:are|will|must|shall)\s+(?:no\s+longer|ignore|only|act\s+as)\b
+        - |-
+          \byou\s+are\s+no\s+longer\s+(?:bound|restricted|an?\s+(?:assistant|ai))\b
+      unless:
+        - |-
+          \b(?:example|detects?|detection|attacks?|injection|such as|e\.g\.|for instance|payloads?|red[- ]?team|test cases?|flag(?:s|ged)?|scanner|patterns?)\b
+      window: 0
+    remediation: Remove override language. Describe what the skill adds instead of what the agent should ignore.
+
+  - id: AG-SKL-INJ-002
+    version: 1
+    title: Forged role or context delimiters
+    description: Chat-template tokens, fake system/tool tags or role labels that imitate the agent's own context structure.
+    why: Forged delimiters try to make injected text look like it came from the system, the developer or a tool result.
+    severity: high
+    confidence: high
+    applies_to: [skill_md, instruction_md, reference, script]
+    match:
+      type: regex
+      scopes: [body, hidden, decoded, frontmatter]
+      lower_confidence_in_code: true
+      patterns:
+        - |-
+          <\|(?:im_start|im_end|system|user|assistant|endoftext|begin_of_text|start_header_id|end_header_id|eot_id)\|>
+        - |-
+          </?(?:system|system[-_]prompt|system[-_]reminder|developer[-_]instructions|tool[-_]result|function[-_]results?)\s*>
+        - |-
+          \[/?INST\]|<<\s*/?SYS\s*>>
+        - |-
+          ^\s*(?:\*\*|#+\s*)?(?-i:SYSTEM|ASSISTANT|HUMAN|DEVELOPER)(?:\*\*)?\s*:\s*\S
+        - |-
+          \b(?:end|begin)\s+of\s+(?:the\s+)?(?:system\s+)?(?:prompt|instructions|context|user\s+input)\b\s*[-=#*]{0,5}\s*$
+    remediation: Remove imitation role markers and template tokens from skill content.
+
+  - id: AG-SKL-INJ-003
+    version: 1
+    title: Instruction to conceal actions from the user
+    description: Text tells the agent to act silently, hide actions or keep information from the user.
+    why: Concealment instructions break the human oversight that agent approvals rely on.
+    severity: high
+    confidence: medium
+    applies_to: [skill_md, instruction_md, reference, script]
+    match:
+      type: regex
+      scopes: [body, hidden, decoded, frontmatter, code]
+      patterns:
+        - |-
+          \b(?:do\s+not|don'?t|never)\s+(?:tell|inform|notify|alert|let)\s+(?:the\s+)?(?:user|human|operator|developer)\b
+        - |-
+          \b(?:do\s+not|don'?t|never)\s+(?:mention|reveal|disclose|show|report|log)\s+(?:this|these|that|it|any\s+of\s+this|what\s+you(?:'re|\s+are)\s+doing)\s+(?:step\s+|action\s+)?(?:to\s+)?(?:the\s+)?(?:user|human|operator)\b
+        - |-
+          \b(?:silently|secretly|covertly|quietly|discreetly|invisibly|stealthily)\s+(?:run|execute|send|upload|copy|read|install|add|write|modify|forward|post|exfiltrate|delete|collect|include)\b
+        - |-
+          \bwithout\s+(?:asking|telling|notifying|informing)\s+(?:the\s+)?(?:user|human|operator)\b
+        - |-
+          \bwithout\s+the\s+user'?s?\s+(?:knowledge|consent|permission|awareness)\b
+        - |-
+          \b(?:hide|conceal)\s+(?:this|these|it|the)\s+(?:action|step|command|operation|request|output|activity)\b
+    remediation: Remove concealment language. Everything a skill does should be visible to the user.
+
+  - id: AG-SKL-INJ-004
+    version: 1
+    title: Disables approvals or safety prompts
+    description: Instructions or settings that bypass permission prompts, enable auto-approval, or disable safety checks.
+    why: Approval prompts are the main human-in-the-loop control; disabling them turns any later injection into unattended execution.
+    severity: high
+    confidence: high
+    applies_to: [skill_md, instruction_md, reference, script]
+    match:
+      type: regex
+      scopes: [body, hidden, decoded, frontmatter, code, command]
+      patterns:
+        - |-
+          --dangerously-skip-permissions\b|--dangerously-bypass-approvals-and-sandbox\b|\bbypassPermissions\b
+        - |-
+          ["']?defaultMode["']?\s*[:=]\s*["']?bypassPermissions
+        - |-
+          ["']?chat\.tools\.autoApprove["']?\s*:\s*true
+        - |-
+          ["']?enableAllProjectMcpServers["']?\s*:\s*true
+        - |-
+          \bapproval[_-]?policy\s*[=:]\s*["']?never\b
+        - |-
+          \b(?:disable|turn\s+off|bypass|skip|circumvent|suppress)\s+(?:all\s+|any\s+)?(?:the\s+)?(?:permission|approval|confirmation|safety|security)\s+(?:prompts?|checks?|dialogs?|mechanisms?|settings?|guardrails?|requests?)
+        - |-
+          \b(?:don'?t|do\s+not|never)\s+ask\s+(?:the\s+user\s+)?(?:for\s+)?(?:permission|confirmation|approval)\b
+        - |-
+          \bauto[- ]?approve\s+(?:all|every|any)\b
+      unless:
+        - |-
+          \b(?:never\s+use|do\s+not\s+use|don'?t\s+use|avoid|warning|dangerous|not\s+recommended|unsafe)\b
+      window: 0
+    remediation: Remove instructions and settings that bypass approvals. Let the user grant permissions explicitly.
+
+  - id: AG-SKL-INJ-005
+    version: 1
+    title: Self-modification
+    description: The skill edits its own or other skills' instructions, or installs additional skills or servers from a URL.
+    why: Self-modifying skills can change behavior after review (a local rug pull).
+    severity: high
+    confidence: medium
+    applies_to: [skill_md, instruction_md, reference, script]
+    match:
+      type: regex
+      scopes: [body, hidden, decoded, code, command]
+      patterns:
+        - |-
+          \b(?:modify|edit|update|rewrite|overwrite|append\s+to|change|replace)\s+(?:this|your\s+own|its\s+own|the)\s+(?:SKILL\.md|skill\s+file|skill\s+definition|own\s+instructions|system\s+prompt)\b
+        - |-
+          (?:>>?|\btee\s+(?:-a\s+)?)\s*\S*SKILL\.md\b
+        - |-
+          \b(?:install|download|add|fetch)\s+(?:a\s+|another\s+|new\s+|additional\s+)?(?:skills?|plugins?|mcp\s+servers?|extensions?)\s+(?:from|at|via)\s+https?://
+        - |-
+          \b(?:cp|mv|curl\s+[^\n]*-o|wget\s+[^\n]*-O|Copy-Item|Move-Item)\b[^\n]{0,80}(?:\.claude|\.codex|\.cursor|\.openclaw|\.agents)[/\\]skills\b
+    remediation: Skills should not modify skills or install new ones. Ship updates through the normal, reviewable update path.
+
+  - id: AG-SKL-INJ-006
+    version: 1
+    title: Persistence via memory, instruction, shell or startup files
+    description: Writes to agent memory/instruction files (AGENTS.md, CLAUDE.md, MEMORY.md, SOUL.md, Cursor rules), shell rc files, cron, launchd, systemd user units, Run keys or Startup items.
+    why: Persistence outlives the skill; poisoned memory or instruction files keep influencing future sessions after uninstall.
+    severity: high
+    confidence: medium
+    applies_to: [skill_md, instruction_md, reference, script]
+    match:
+      type: regex
+      scopes: [body, hidden, decoded, code, command]
+      patterns:
+        - |-
+          (?:>>|\btee\s+-a\b|\becho\b[^\n]{0,200}>>|\bappend(?:ing|s)?\s+(?:this\s+|the\s+following\s+|it\s+)?to|\badd(?:ing|s)?\s+(?:this|the\s+following|a\s+line|these\s+lines)\s+to|\bwrite(?:s)?\s+(?:this\s+|it\s+)?(?:in)?to|\binsert(?:s)?\s+(?:this\s+)?into|\bmodif(?:y|ies)|\bopen\([^)]*,\s*["']a)[^\n]{0,80}(?:\.bashrc|\.zshrc|\.bash_profile|\.zprofile|\.profile\b|config\.fish|\$PROFILE\b|PowerShell_profile|crontab|/etc/cron|LaunchAgents|LaunchDaemons|systemd/user|\\CurrentVersion\\Run\b|Startup\\|\.config/autostart|MEMORY\.md|SOUL\.md|IDENTITY\.md|AGENTS\.md|CLAUDE\.md|GEMINI\.md|\.cursorrules|\.cursor/rules|copilot-instructions\.md)
+        - |-
+          \bcrontab\s+-l\b[^\n]*\|\s*crontab\s+-\s*$|\(crontab\s+-l[^\n]*;\s*echo\b
+        - |-
+          \blaunchctl\s+(?:load|bootstrap)\b|\bschtasks(?:\.exe)?\s+/create\b|\bRegister-ScheduledTask\b|\bsystemctl\s+--user\s+enable\b
+        - |-
+          \breg(?:\.exe)?\s+add\s+[^\n]*\\CurrentVersion\\Run\b|\bNew-ItemProperty\b[^\n]*\\CurrentVersion\\Run\b
+      unless:
+        - |-
+          \bexport\s+PATH=|\bPATH\s*=|\bcompletion\b|\beval\s+"\$\(\w+\s+(?:init|env|activate)|\bsource\s+\S*(?:venv|nvm|sdkman|cargo/env)
+      window: 0
+    remediation: Do not write to agent memory/instruction files or OS persistence locations. If configuration is required, show it to the user to apply.
+
+  - id: AG-SKL-INJ-007
+    version: 1
+    title: Tampers with agent/IDE settings or MCP configuration
+    description: Writes to agent settings, hook configuration or MCP client configs, or instructs the agent to register new servers/hooks.
+    why: Adding servers or hooks through a skill silently expands what the agent can do and runs on every session.
+    severity: high
+    confidence: medium
+    applies_to: [skill_md, instruction_md, script]
+    match:
+      type: regex
+      scopes: [body, hidden, decoded, code, command]
+      patterns:
+        - |-
+          (?:>>?|\btee\b|\bwrite(?:s|_text|FileSync)?\b|\badd(?:s)?\b|\bappend(?:s)?\b|\bmodif(?:y|ies)\b|\bedit(?:s)?\b|\bupdate(?:s)?\b|\binsert(?:s)?\b|\bregister(?:s)?\b|\bjson\.dump)[^\n]{0,80}(?:\.claude/settings(?:\.local)?\.json|\.claude\.json|\.mcp\.json|claude_desktop_config\.json|\.cursor/mcp\.json|\.vscode/(?:settings|mcp)\.json|\.gemini/settings\.json|\.codex/config\.toml|mcp_config\.json)
+        - |-
+          \b(?:add|register|install|inject)\s+(?:the\s+following\s+|this\s+|a\s+new\s+|an?\s+)?(?:mcp\s+server|hook|pre(?:tool)?use\s+hook|post(?:tool)?use\s+hook)\s+(?:to|in|into)\s+(?:your\s+|the\s+user'?s?\s+|the\s+)?(?:config|settings|claude|cursor|client)
+    remediation: Skills should not change agent settings or MCP configuration. Document required setup for the user to review and apply.
+
+  - id: AG-SKL-INJ-008
+    version: 1
+    title: Loads remote instructions
+    description: Tells the agent to fetch a URL and follow whatever it says, or pipes remote text into an agent CLI.
+    why: Remote instructions can change at any time after review, bypassing every scan (AST05).
+    severity: high
+    confidence: medium
+    applies_to: [skill_md, instruction_md, reference, script]
+    match:
+      type: regex
+      scopes: [body, hidden, decoded, code, command]
+      patterns:
+        - |-
+          \b(?:fetch|download|retrieve|load|read|get|curl|wget|visit|open)\b[^\n]{0,60}https?://[^\s)>\]"']+[^\n]{0,80}\b(?:follow|execute|obey|apply|carry\s+out|do\s+what|run)\b[^\n]{0,30}\b(?:instructions?|steps|commands?|it\s+says|contents?|directions)\b
+        - |-
+          \b(?:follow|execute|obey|apply)\s+(?:the\s+|any\s+)?(?:instructions?|steps|commands?|directions)\s+(?:at|from|in|found\s+at|served\s+(?:at|by))\s+(?:https?://|the\s+(?:url|link|page|gist|pastebin|remote))
+        - |-
+          \b(?:curl|wget|iwr|irm)\b[^\n|]*https?://[^\n|]*\|\s*(?:claude|codex|gemini|llm|aider|ollama\s+run)\b
+    remediation: Bundle the instructions in the skill so they are reviewed and hashed, instead of loading them at run time.
+
+  - id: AG-SKL-INJ-009
+    version: 1
+    title: Authority or urgency impersonation
+    description: Claims to be an official instruction from a vendor, administrator or "the system", or uses urgency to force compliance.
+    why: Impersonating authority is a social-engineering technique aimed at both agents and users.
+    severity: medium
+    confidence: low
+    applies_to: [skill_md, instruction_md, reference]
+    match:
+      type: regex
+      scopes: [body, hidden, decoded, frontmatter]
+      patterns:
+        - |-
+          \bthis\s+is\s+(?:an?\s+)?(?:official|mandatory|required|urgent|authorized)\s+(?:instruction|update|requirement|directive|message|notice)\s+from\s+(?:anthropic|openai|google|github|microsoft|the\s+system|your\s+(?:developer|administrator|admin)|the\s+(?:administrator|security\s+team))
+        - |-
+          \b(?:anthropic|openai|the\s+system\s+administrator|your\s+developers?|the\s+security\s+team)\s+(?:requires?|has\s+authorized|instructs?|mandates?|approved)\s+(?:you|the\s+assistant|the\s+agent|claude)\s+to\b
+        - |-
+          \b(?:urgent|critical|mandatory)\s*[:!]+\s*(?:you\s+must|immediately|the\s+(?:assistant|agent)\s+must)\b
+    remediation: Remove claims of special authority; skills cannot grant themselves authority.

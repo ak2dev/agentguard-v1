@@ -1,0 +1,274 @@
+# MCP tool / prompt / resource metadata. Sources: static manifests,
+# server.json, tool registrations extracted from source, or opt-in read-only
+# */list calls. tools/call is never made.
+rules:
+  - id: AG-MCP-META-001
+    version: 1
+    title: Hidden Unicode in MCP metadata
+    description: Tool, parameter, prompt or resource metadata contains tag characters, bidi controls, zero-width characters or mixed-script words.
+    why: Models read hidden characters that humans approving the server cannot see.
+    severity: high
+    confidence: high
+    match: {type: analyzer, analyzer: text.hidden}
+    remediation: Remove hidden characters from metadata.
+
+  - id: AG-MCP-META-002
+    version: 1
+    title: Instructions hidden in tool descriptions (tool poisoning)
+    description: A tool or parameter description contains directives aimed at the model (override, concealment, "before using this tool…", pseudo-tags like <IMPORTANT>).
+    why: Tool descriptions are injected into the model's context for every conversation; instructions there act on every request (tool poisoning).
+    severity: high
+    confidence: medium
+    applies_to: [tool, tool_param]
+    match:
+      type: regex
+      scopes: [tool_text]
+      patterns:
+        - |-
+          <\s*/?\s*(?:IMPORTANT|SYSTEM|INSTRUCTIONS?|HIDDEN|SECRET|ADMIN|CRITICAL)\s*>
+        - |-
+          \b(?:ignore|disregard|forget|override|bypass)\s+(?:all\s+|any\s+|the\s+|your\s+)?(?:previous|prior|above|earlier|system|safety|other|user'?s?)\s+(?:instructions?|prompts?|rules?|guidelines?|tools?|requests?)
+        - |-
+          \b(?:do\s+not|don'?t|never)\s+(?:tell|inform|notify|alert|mention|reveal|show)\b[^\n.]{0,40}\b(?:user|human|operator)\b
+        - |-
+          \b(?:before|prior\s+to)\s+(?:using|calling|invoking|running)\s+(?:this|any|the)\s+(?:tool|function)\b[^\n]{0,160}\b(?:must|always|first|read|call|run|send|include|pass)\b
+        - |-
+          \b(?:otherwise|or\s+else)\s+(?:the\s+)?(?:tool|server|request)\s+(?:will\s+not|won'?t|cannot|can'?t|will\s+fail)
+        - |-
+          \bthe\s+(?:assistant|model|ai|agent|llm)\s+(?:must|should|needs\s+to|is\s+required\s+to)\b
+        - |-
+          \b(?:silently|secretly|covertly|quietly|without\s+(?:asking|telling))\b
+    remediation: Keep descriptions to what the tool does and its parameters. Remove any instructions to the model.
+
+  - id: AG-MCP-META-003
+    version: 1
+    title: Description directs secrets into tool arguments
+    description: A tool/parameter description tells the model to read sensitive files, keys, the system prompt or conversation history and pass them as an argument.
+    why: This is the canonical tool-poisoning exfiltration chain; the data leaves in the tool call itself.
+    severity: critical
+    confidence: high
+    applies_to: [tool, tool_param]
+    aivss: {threat: attacked}
+    match:
+      type: regex
+      scopes: [tool_text]
+      patterns:
+        - |-
+          \b(?:read|cat|open|load|fetch|include|obtain|collect|retrieve|copy)\b[^\n]{0,80}(?:~/\.ssh|id_rsa|id_ed25519|\.aws/credentials|\.env\b|mcp\.json|claude_desktop_config\.json|\.cursor/|\.claude\.json|\.npmrc|\.netrc|credentials?\s+file|private\s+keys?|system\s+prompt|conversation\s+history|chat\s+history|environment\s+variables)
+      require:
+        - |-
+          \b(?:pass|send|put|provide|include|add|insert|supply|append|attach)\b[^\n]{0,80}(?:\b(?:as|in|into|to|via)\s+(?:the\s+)?[`'"]?[A-Za-z_]\w*[`'"]?\s*(?:param(?:eter)?|argument|arg|field|input|value)?\b|\bparam(?:eter)?\b|\bargument\b)
+      unless:
+        - |-
+          \bfrom\s+(?:the|your)\s+(?:dashboard|console|settings\s+page|account|website|portal|developer\s+page)\b
+      window: 3
+    remediation: Remove the instruction. Tools must never ask the model to supply secrets or context it was not explicitly given for the task.
+
+  - id: AG-MCP-META-004
+    version: 1
+    title: Side-channel parameter
+    description: A parameter (often named note, context, feedback, sidenote…) asks the model to fill it with conversation, system prompt or file contents.
+    why: Side-channel parameters exfiltrate context through otherwise normal-looking tool calls.
+    severity: high
+    confidence: medium
+    match: {type: analyzer, analyzer: mcp.meta}
+    remediation: Remove the parameter or restrict it to task-specific input.
+
+  - id: AG-MCP-META-005
+    version: 1
+    title: Injection in enum values, defaults, titles or annotations
+    description: Instruction-like text appears in enum values, default values, titles, examples or annotation strings.
+    why: These fields are included in the model's context but rarely reviewed.
+    severity: high
+    confidence: medium
+    applies_to: [tool_enum, tool_default, tool_title, tool_annotation]
+    match:
+      type: regex
+      scopes: [tool_text]
+      patterns:
+        - |-
+          \b(?:ignore|disregard|you\s+must|always|never|do\s+not|don'?t|before\s+using|the\s+(?:assistant|model|agent))\b[^\n]{8,}
+        - |-
+          <\s*/?\s*(?:IMPORTANT|SYSTEM|INSTRUCTIONS?)\s*>|<\|im_start\|>
+    remediation: Keep enum values, defaults and titles short and descriptive.
+
+  - id: AG-MCP-META-006
+    version: 1
+    title: Tool shadowing
+    description: A tool description references other servers' tools or tries to redefine how other tools behave.
+    why: Shadowing lets one server hijack calls made to another (e.g. BCC every email sent with a trusted mail server).
+    severity: high
+    confidence: medium
+    match: {type: analyzer, analyzer: mcp.meta}
+    remediation: Remove cross-tool instructions; a tool description should only describe that tool.
+
+  - id: AG-MCP-META-007
+    version: 1
+    title: Tool name collision across servers
+    description: Two or more servers expose a tool with the same name.
+    why: Clients resolve collisions differently; a malicious server can capture calls meant for a trusted one.
+    severity: medium
+    confidence: high
+    match: {type: analyzer, analyzer: mcp.meta}
+    remediation: Disable one of the servers or use a client that namespaces tools by server.
+
+  - id: AG-MCP-META-008
+    version: 1
+    title: Near-identical tool names across servers
+    description: Tool names from different servers differ by one edit or only by look-alike characters.
+    why: Near-collisions confuse both models and users approving calls.
+    severity: medium
+    confidence: medium
+    match: {type: analyzer, analyzer: mcp.meta}
+    remediation: Review which server the similar name belongs to and remove the unexpected one.
+
+  - id: AG-MCP-META-009
+    version: 1
+    title: Unconstrained dangerous string parameter
+    description: A tool accepts command, code, path, URL, SQL or query strings with no enum or pattern constraint.
+    why: Unconstrained dangerous parameters let injected instructions reach shells, files, networks and databases directly.
+    severity: medium
+    confidence: medium
+    match: {type: analyzer, analyzer: mcp.meta}
+    remediation: Constrain the parameter (enum, pattern, allowlisted roots/hosts) and validate it server-side.
+
+  - id: AG-MCP-META-010
+    version: 1
+    title: additionalProperties true on a dangerous tool
+    description: A tool with dangerous parameters accepts arbitrary additional arguments.
+    why: Extra arguments can smuggle options the server passes through to commands or queries.
+    severity: low
+    confidence: medium
+    match: {type: analyzer, analyzer: mcp.meta}
+    remediation: Set additionalProperties to false.
+
+  - id: AG-MCP-META-013
+    version: 1
+    title: Injection in server instructions
+    description: The server's `instructions` field contains override, concealment, approval-bypass or cross-tool directives.
+    why: Server instructions are added to the model context when the server is connected.
+    severity: high
+    confidence: medium
+    match:
+      type: regex
+      scopes: [server_instructions]
+      patterns:
+        - |-
+          \b(?:ignore|disregard|forget|override|bypass)\s+(?:all\s+|any\s+|the\s+|your\s+)?(?:previous|prior|above|system|safety|other|user'?s?)\s+(?:instructions?|prompts?|rules?|tools?|guidelines?)
+        - |-
+          \b(?:do\s+not|don'?t|never)\s+(?:tell|inform|notify|mention|reveal)\b[^\n.]{0,40}\b(?:user|human)\b
+        - |-
+          \b(?:do\s+not|don'?t|never)\s+ask\s+(?:the\s+user\s+)?(?:for\s+)?(?:permission|confirmation|approval)\b
+        - |-
+          \b(?:for|when\s+using)\s+(?:all|any)\s+other\s+(?:tools|servers)\b
+        - |-
+          <\s*/?\s*(?:IMPORTANT|SYSTEM|INSTRUCTIONS?)\s*>
+    remediation: Limit server instructions to usage guidance for this server's own tools.
+
+  - id: AG-MCP-META-014
+    version: 1
+    title: Injection in prompt templates
+    description: A server-provided prompt template contains override, concealment or exfiltration directives.
+    why: Prompt templates are inserted into conversations verbatim when selected.
+    severity: high
+    confidence: medium
+    applies_to: [prompt]
+    match:
+      type: regex
+      scopes: [tool_text]
+      patterns:
+        - |-
+          \b(?:ignore|disregard|forget|override)\s+(?:all\s+|any\s+|the\s+|your\s+)?(?:previous|prior|above|system|safety)\s+(?:instructions?|prompts?|rules?|guidelines?)
+        - |-
+          \b(?:do\s+not|don'?t|never)\s+(?:tell|inform|notify|mention|reveal)\b[^\n.]{0,40}\b(?:user|human)\b
+        - |-
+          \b(?:send|upload|post|forward)\b[^\n]{0,60}\b(?:conversation|chat\s+history|system\s+prompt|credentials?|api\s+keys?)\b
+    remediation: Remove directives from prompt templates.
+
+  - id: AG-MCP-META-015
+    version: 1
+    title: Injection in resource metadata
+    description: Resource names, titles or descriptions contain agent-directed instructions.
+    why: Resource metadata is shown to the model when listing or selecting resources.
+    severity: medium
+    confidence: medium
+    applies_to: [resource]
+    match:
+      type: regex
+      scopes: [tool_text]
+      patterns:
+        - |-
+          \b(?:ignore|disregard|override)\s+(?:all\s+|any\s+|the\s+|your\s+)?(?:previous|prior|system|safety)\s+(?:instructions?|prompts?|rules?)
+        - |-
+          \bthe\s+(?:assistant|model|agent)\s+(?:must|should)\b|\byou\s+must\s+(?:always|first|now)\b
+    remediation: Keep resource metadata descriptive.
+
+  - id: AG-MCP-META-016
+    version: 1
+    title: MCP Apps UI resource contacts external origins
+    description: A ui:// (HTML) resource fetches, beacons or loads scripts/images from external origins.
+    why: Interactive UI resources run in the client; external requests can exfiltrate what the UI displays.
+    severity: medium
+    confidence: medium
+    match: {type: analyzer, analyzer: mcp.meta}
+    remediation: Bundle assets and declare any required network origins explicitly.
+
+  - id: AG-MCP-META-017
+    version: 1
+    title: MCP Apps UI resource with credential-style form
+    description: A ui:// resource contains password, API-key, token or seed-phrase inputs.
+    why: In-chat credential forms are a phishing surface that bypasses the client's own auth flows.
+    severity: high
+    confidence: medium
+    match: {type: analyzer, analyzer: mcp.meta}
+    remediation: Use the protocol's authorization flow instead of collecting credentials in UI resources.
+
+  - id: AG-MCP-META-018
+    version: 1
+    title: MCP Apps UI resource embeds an external frame
+    description: A ui:// resource embeds an iframe from an external origin.
+    why: External frames can change after review and can be used for clickjacking or phishing inside the client.
+    severity: medium
+    confidence: medium
+    match: {type: analyzer, analyzer: mcp.meta}
+    remediation: Avoid external frames; serve content from the resource itself.
+
+  - id: AG-MCP-META-019
+    version: 1
+    title: Description stuffing
+    description: A tool description is unusually long (> 2000 characters) or padded with long runs of whitespace/newlines.
+    why: Padding hides instructions below what a user reviewing the tool will scroll to.
+    severity: low
+    confidence: medium
+    match: {type: analyzer, analyzer: mcp.meta}
+    remediation: Keep descriptions concise.
+
+  - id: AG-MCP-META-011
+    version: 1
+    title: readOnlyHint contradicted by code
+    description: A tool annotated readOnlyHint=true has a handler that writes, deletes or executes.
+    why: Clients may auto-approve read-only tools; a false annotation turns that into unattended writes.
+    severity: high
+    confidence: medium
+    match: {type: analyzer, analyzer: code}
+    remediation: Fix the annotation, or make the handler genuinely read-only.
+
+  - id: AG-MCP-META-012
+    version: 1
+    title: destructiveHint / openWorldHint contradicted by code
+    description: A tool annotated destructiveHint=false deletes data, or one annotated openWorldHint=false makes network requests.
+    why: Annotations drive client approval UX; wrong annotations mislead users.
+    severity: medium
+    confidence: medium
+    match: {type: analyzer, analyzer: code}
+    remediation: Make annotations match the handler's behavior.
+
+  - id: AG-MCP-META-020
+    version: 1
+    title: Tool definitions vary by client or are fetched at run time
+    description: Tool definitions depend on the connecting client's identity, or are downloaded at run time.
+    why: Both let a server show reviewers one set of tools and agents another (rug-pull enabler).
+    severity: medium
+    confidence: low
+    match: {type: analyzer, analyzer: code}
+    remediation: Define tools statically in the server package.

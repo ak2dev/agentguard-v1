@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "files": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@example/server-files@latest"
+      ]
+    }
+  }
+}

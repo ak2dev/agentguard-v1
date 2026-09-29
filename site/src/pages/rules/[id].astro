@@ -1,0 +1,56 @@
+---
+import Base from "../../layouts/Base.astro";
+import data from "../../data/generated/rules.json";
+
+export function getStaticPaths() {
+  return data.rules.map((rule) => ({ params: { id: rule.id.toLowerCase() }, props: { rule } }));
+}
+const { rule } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const fwName = Object.fromEntries(Object.entries(data.frameworks).map(([k, v]) => [k, v.name]));
+---
+<Base title={rule.id} description={rule.title}>
+  <p><a href={`${base}/rules/`}>← All rules</a></p>
+  <h1><code>{rule.id}</code> {rule.title}</h1>
+  <dl class="kv">
+    <dt>Severity</dt><dd><span class={`sev ${rule.severity}`}>{rule.severity}</span></dd>
+    <dt>Confidence</dt><dd>{rule.confidence}</dd>
+    <dt>Rule version</dt><dd>{rule.version} (rule pack {data.rule_pack.version})</dd>
+    <dt>Detection</dt><dd>{rule.match_type === "regex" ? "data-defined pattern rule" : "analyzer rule"}{rule.network && " · requires an opt-in network feature"}</dd>
+  </dl>
+
+  <h2>What it detects</h2>
+  <p>{rule.description}</p>
+  {rule.why && (<><h2>Why it matters</h2><p>{rule.why}</p></>)}
+
+  {rule.examples.unsafe && (
+    <>
+      <h2>Unsafe example</h2>
+      <p class="muted">From the inert positive fixture <code>{rule.examples.unsafe.path}</code> (reserved domains, fake tokens; secrets redacted).</p>
+      <pre><code>{rule.examples.unsafe.text}</code></pre>
+    </>
+  )}
+  {rule.examples.safe && (
+    <>
+      <h2>Safe example</h2>
+      <p class="muted">From the negative fixture <code>{rule.examples.safe.path}</code> — this does not trigger the rule.</p>
+      <pre><code>{rule.examples.safe.text}</code></pre>
+    </>
+  )}
+
+  <h2>Remediation</h2>
+  <p>{rule.remediation}</p>
+
+  <h2>Standards</h2>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th scope="col">Framework</th><th scope="col">ID</th><th scope="col">Title</th></tr></thead>
+      <tbody>
+        {rule.mappings.map((m) => (
+          <tr><td>{fwName[m.framework] ?? m.framework}</td><td>{m.id ? <code>{m.id}</code> : <span class="muted">—</span>}</td><td>{m.title ?? (m.todo ? <span class="muted">TODO: {m.todo}</span> : "")}</td></tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  {rule.references.length > 0 && (<><h2>References</h2><ul>{rule.references.map((r) => <li><a href={r} rel="noreferrer">{r}</a></li>)}</ul></>)}
+</Base>

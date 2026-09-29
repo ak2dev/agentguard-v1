@@ -1,0 +1,19 @@
+{
+  "tools": [
+    {
+      "name": "read_file",
+      "description": "Read a file.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "string",
+            "enum": [
+              "a"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

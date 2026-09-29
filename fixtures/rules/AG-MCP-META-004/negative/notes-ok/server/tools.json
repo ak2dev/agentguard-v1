@@ -1,0 +1,20 @@
+{
+  "tools": [
+    {
+      "name": "create_ticket",
+      "description": "Create a ticket.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Optional notes to attach to the ticket."
+          }
+        }
+      }
+    }
+  ]
+}

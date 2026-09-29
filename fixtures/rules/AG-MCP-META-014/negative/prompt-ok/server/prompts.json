@@ -1,0 +1,17 @@
+{
+  "prompts": [
+    {
+      "name": "summarize",
+      "description": "Summarize a thread.",
+      "messages": [
+        {
+          "role": "user",
+          "content": {
+            "type": "text",
+            "text": "Summarize the thread in five bullet points."
+          }
+        }
+      ]
+    }
+  ]
+}

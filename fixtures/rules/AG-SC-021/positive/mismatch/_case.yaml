@@ -1,0 +1,17 @@
+{
+  "network": {
+    "provenance": true
+  },
+  "package_facts": [
+    {
+      "ecosystem": "npm",
+      "name": "@example/server-files",
+      "version": "1.2.3",
+      "created": "2024-01-10",
+      "provenance": "present",
+      "provenance_mismatch": true,
+      "provenance_detail": "attestation subject digest does not match the published tarball"
+    }
+  ],
+  "today": "2026-09-28"
+}

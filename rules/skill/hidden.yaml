@@ -1,0 +1,102 @@
+rules:
+  - id: AG-SKL-HID-001
+    version: 1
+    title: Unicode tag characters
+    description: Characters from the Unicode tag block (U+E0000–E007F) are invisible but encode ASCII text that models read.
+    why: '"ASCII smuggling" with tag characters hides instructions from human reviewers while models still process them.'
+    severity: high
+    confidence: high
+    match: {type: analyzer, analyzer: text.hidden}
+    remediation: Remove all tag characters. Legitimate text never needs them (flag emoji sequences excepted, which are not used in skill text).
+    references: [https://unicode.org/charts/PDF/UE0000.pdf]
+
+  - id: AG-SKL-HID-002
+    version: 1
+    title: Bidirectional control characters (Trojan Source)
+    description: Bidi override/embedding/isolate controls reorder how text is displayed.
+    why: Displayed text can differ from the text the agent processes, so a reviewer approves something other than what runs.
+    severity: high
+    confidence: high
+    match: {type: analyzer, analyzer: text.hidden}
+    remediation: Remove bidi control characters (U+202A–202E, U+2066–2069).
+    references: [https://trojansource.codes/]
+
+  - id: AG-SKL-HID-003
+    version: 1
+    title: Zero-width characters inside words
+    description: Zero-width characters split words or appear in runs.
+    why: Splitting keywords with invisible characters evades keyword review and filters while models still read the word.
+    severity: medium
+    confidence: medium
+    match: {type: analyzer, analyzer: text.hidden}
+    remediation: Remove zero-width characters from instructions and metadata.
+
+  - id: AG-SKL-HID-004
+    version: 1
+    title: Mixed-script homoglyph words
+    description: A single word mixes Latin letters with look-alike Cyrillic, Greek, Armenian or Cherokee letters.
+    why: Homoglyphs make a name, host or command look like something trusted while being different.
+    severity: medium
+    confidence: medium
+    match: {type: analyzer, analyzer: text.hidden}
+    remediation: Replace look-alike characters with their ASCII equivalents.
+
+  - id: AG-SKL-HID-005
+    version: 1
+    title: Agent-directed text in an HTML comment
+    description: An HTML comment (invisible when rendered) contains instructions or commands aimed at the agent.
+    why: Reviewers read rendered Markdown; agents read the raw text, including comments.
+    severity: medium
+    confidence: medium
+    match: {type: analyzer, analyzer: text.hidden}
+    remediation: Remove the comment or move its content into visible text so reviewers can see it.
+
+  - id: AG-SKL-HID-006
+    version: 1
+    title: Text hidden after a long whitespace run
+    description: Text pushed far to the right by a long run of spaces or tabs.
+    why: Most viewers do not scroll horizontally, so appended instructions go unnoticed.
+    severity: medium
+    confidence: medium
+    match: {type: analyzer, analyzer: text.hidden}
+    remediation: Remove the padding and review the trailing text.
+
+  - id: AG-SKL-HID-007
+    version: 1
+    title: Agent-directed text in link references, alt text or titles
+    description: Link-reference definitions, image alt text or link titles contain instructions aimed at the agent.
+    why: These fields are rarely visible when Markdown is rendered.
+    severity: low
+    confidence: medium
+    match: {type: analyzer, analyzer: text.hidden}
+    remediation: Keep alt text and titles descriptive; move instructions into visible text.
+
+  - id: AG-SKL-HID-008
+    version: 1
+    title: Encoded blob decoded and rescanned
+    description: A base64, hex, percent-encoded or compressed blob decoded to readable text.
+    why: Encoding hides content from reviewers. Agent Guard decodes (bounded depth) and rescans it; this finding records that it did.
+    severity: low
+    confidence: high
+    match: {type: analyzer, analyzer: text.hidden}
+    remediation: Store content in plain text, or document why the encoding is needed.
+
+  - id: AG-SKL-HID-009
+    version: 1
+    title: Encoded blob contains instructions or executable content
+    description: A decoded blob contains agent-directed instructions, shell commands or URLs.
+    why: Instructions or commands that only exist in encoded form are a strong sign of deliberate concealment.
+    severity: high
+    confidence: high
+    match: {type: analyzer, analyzer: text.hidden}
+    remediation: Remove the encoded payload; if it is legitimate, store it in plain text with an explanation.
+
+  - id: AG-SKL-HID-010
+    version: 1
+    title: Text hidden with HTML/CSS
+    description: Text inside elements hidden with display:none, visibility:hidden, zero font size, invisible color or the `hidden` attribute.
+    why: Hidden elements are invisible to reviewers but read by agents.
+    severity: medium
+    confidence: medium
+    match: {type: analyzer, analyzer: text.hidden}
+    remediation: Remove hidden elements from agent-facing Markdown.

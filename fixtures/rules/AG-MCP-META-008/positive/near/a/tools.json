@@ -1,0 +1,19 @@
+{
+  "tools": [
+    {
+      "name": "get_weather",
+      "description": "Weather.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "a": {
+            "type": "number"
+          },
+          "b": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  ]
+}

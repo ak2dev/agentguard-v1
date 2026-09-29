@@ -1,0 +1,17 @@
+framework: owasp-ast-1.0
+name: OWASP Agentic Skills Top 10
+version: "1.0"
+source: https://owasp.github.io/www-project-agentic-skills-top-10/
+verified: "2026-09-28"
+notes: Upstream sources disagree on the release date (March 2026 vs 2026-08-17); ids and titles agree.
+items:
+  - {id: AST01, title: Malicious Skills}
+  - {id: AST02, title: Supply Chain Compromise}
+  - {id: AST03, title: Over-Privileged Skills}
+  - {id: AST04, title: Insecure Metadata}
+  - {id: AST05, title: Untrusted External Instructions}
+  - {id: AST06, title: Weak Isolation}
+  - {id: AST07, title: Update Drift}
+  - {id: AST08, title: Poor Scanning}
+  - {id: AST09, title: No Governance}
+  - {id: AST10, title: Cross-Platform Reuse}

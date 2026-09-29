@@ -1,0 +1,19 @@
+{
+  "tools": [
+    {
+      "name": "add",
+      "description": "Adds two numbers. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. Details. ",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "a": {
+            "type": "number"
+          },
+          "b": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  ]
+}

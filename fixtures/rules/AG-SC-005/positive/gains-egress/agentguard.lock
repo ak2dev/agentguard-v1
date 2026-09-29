@@ -1,0 +1,16 @@
+{
+  "entries": [
+    {
+      "capability_labels": [],
+      "content_hash": "8d88a1207522de6c52b8294d739063636459d3f9d6bb602bb0916eb44a843dbb",
+      "key": "skill:csv-tool@csv-tool",
+      "kind": "skill",
+      "name": "csv-tool",
+      "skill_files": {
+        "SKILL.md": "0b4015830eb839a8881511be02e09001c38dc8dbc3c950dcbf1cd8975be6538b"
+      }
+    }
+  ],
+  "generator": "agentguard",
+  "lock_version": 1
+}

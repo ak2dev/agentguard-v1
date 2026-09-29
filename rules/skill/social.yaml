@@ -1,0 +1,197 @@
+# Social-engineering install steps ("Prerequisites" lures, ClickFix, etc.).
+rules:
+  - id: AG-SKL-SE-001
+    version: 1
+    title: Instructions to download and run a binary
+    description: Setup text downloads an executable (or script) and runs it.
+    why: '"Prerequisites" that download and run a binary are the most common delivery step in malicious-skill campaigns.'
+    severity: high
+    confidence: medium
+    applies_to: [skill_md, instruction_md, reference, script]
+    match:
+      type: regex
+      scopes: [body, hidden, decoded, command, code]
+      patterns:
+        - |-
+          \b(?:curl|wget|iwr|Invoke-WebRequest|certutil(?:\.exe)?\s+-urlcache)\b[^\n]{0,200}(?:\s-o\s|\s-O\s|--output|-OutFile|\s>\s*\S)[^\n]{0,200}(?:&&|;|\|\|)\s*(?:sudo\s+)?(?:chmod\s+\+x|\./|start\s|Start-Process|open\s|bash\s|sh\s|\.\\)
+        - |-
+          https?://[^\s)>\]"']+\.(?:exe|msi|dmg|pkg|appimage|scr|bat|cmd|vbs|jar|run)\b
+      require:
+        - |-
+          \b(?:run|execute|launch|open|double[- ]click|install|chmod|start)\b
+      window: 3
+    remediation: Do not ask users or agents to download and run binaries. Depend on packages from official registries with pinned versions and verified signatures.
+
+  - id: AG-SKL-SE-002
+    version: 1
+    title: Pipe-to-shell from a non-allowlisted host
+    description: A remote script is piped straight into a shell (curl | sh, iwr | iex) from a host that is not a known vendor installer.
+    why: Pipe-to-shell executes whatever the server returns at that moment, with no integrity check and no review.
+    severity: critical
+    confidence: high
+    applies_to: [skill_md, instruction_md, reference, script]
+    aivss: {threat: attacked}
+    match:
+      type: regex
+      scopes: [body, hidden, decoded, command, code]
+      patterns:
+        - |-
+          \b(?:curl|wget|fetch)\b[^\n|]{0,300}https?://[^\n|]*\|\s*(?:sudo\s+)?(?:-E\s+)?(?:ba|z|k|da)?sh\b
+        - |-
+          \b(?:iwr|irm|Invoke-WebRequest|Invoke-RestMethod)\b[^\n|]*\|\s*(?:iex|Invoke-Expression)\b
+        - |-
+          \b(?:iex|Invoke-Expression)\s*\(?\s*(?:\(\s*)?(?:New-Object\s+(?:System\.)?Net\.WebClient\)?\.DownloadString|iwr|irm|Invoke-WebRequest|Invoke-RestMethod)
+        - |-
+          \b(?:ba|z)?sh\s+(?:-c\s+)?["']?\$\(\s*(?:curl|wget)\b[^)]*https?://
+        - |-
+          \b(?:python3?|node|perl|ruby)\s+(?:-c\s+)?["']?(?:<\(|\$\()\s*(?:curl|wget)\b
+        - |-
+          \bsource\s+<\(\s*(?:curl|wget)\b
+      unless:
+        - |-
+          (?:https?://(?:[a-z0-9-]+\.)*(?:astral\.sh|rustup\.rs|sh\.rustup\.rs|get\.docker\.com|brew\.sh|deno\.land|deno\.com|bun\.sh|nodejs\.org|deb\.nodesource\.com|rpm\.nodesource\.com|get\.pnpm\.io|install\.python-poetry\.org|pyenv\.run|get\.sdkman\.io|ollama\.com|claude\.ai/install|get\.helm\.sh|starship\.rs|tailscale\.com/install|fly\.io/install|get\.volta\.sh|sh\.vector\.dev|install\.determinate\.systems|nixos\.org/nix/install|mise\.run|get\.jetify\.com|opencode\.ai/install|cursor\.com/install)\b)|(?:https?://raw\.githubusercontent\.com/(?:Homebrew/install|nvm-sh/nvm|ohmyzsh/ohmyzsh|pyenv/pyenv-installer)/)
+      window: 0
+    remediation: Replace pipe-to-shell with a pinned package from an official registry, or download a versioned artifact and verify its checksum/signature before running it.
+
+  - id: AG-SKL-SE-003
+    version: 1
+    title: Password-protected archive with the password in the text
+    description: Instructions to extract an archive using a password given alongside it.
+    why: Password-protected archives are used to get malware past scanners; publishing the password defeats any legitimate reason for it.
+    severity: critical
+    confidence: high
+    applies_to: [skill_md, instruction_md, reference, script]
+    aivss: {threat: attacked}
+    match:
+      type: regex
+      scopes: [body, hidden, decoded, command, code]
+      patterns:
+        - |-
+          \b(?:archive|zip|rar|7z|extraction|unzip)\s+(?:password|passcode|pass|pwd)\s*(?:is|:|=)\s*[`"'*]*[^\s`"'*]{3,}
+        - |-
+          \b(?:password|passcode|pwd)\s*(?:is|:|=)\s*[`"'*]*[^\s`"'*]{3,}
+        - |-
+          \b7z\s+[xe]\b[^\n]*\s-p\S+|\bunzip\s+[^\n]*-P\s+\S+|\bunrar\s+[xe]\b[^\n]*-p\S+
+      require:
+        - |-
+          \.(?:zip|7z|rar)\b|\barchive\b|\bextract\b|\bunzip\b|\bunrar\b|\b7z\b
+      window: 3
+    remediation: Remove password-protected archives. Distribute code as reviewable source or signed packages.
+
+  - id: AG-SKL-SE-004
+    version: 1
+    title: '"Paste this into your terminal" (ClickFix-style) instruction'
+    description: Tells the user to paste a command into a terminal, PowerShell or the Run dialog.
+    why: ClickFix lures get users to run attacker commands themselves, bypassing the agent's approval flow entirely.
+    severity: high
+    confidence: medium
+    applies_to: [skill_md, instruction_md, reference]
+    match:
+      type: regex
+      scopes: [body, hidden, decoded]
+      patterns:
+        - |-
+          \b(?:copy\s+(?:and|&)\s+)?paste\b[^\n]{0,80}\b(?:into|in)\s+(?:your\s+|a\s+|the\s+)?(?:terminal|shell|command\s+prompt|cmd|powershell|run\s+(?:dialog|box)|console)\b
+        - |-
+          \b(?:press|hit)\s+(?:Win(?:dows)?(?:\s+key)?\s*\+\s*R)\b
+        - |-
+          \bopen\s+(?:the\s+)?(?:Terminal|PowerShell|cmd|command\s+prompt)\s+(?:and|then)\s+paste\b
+    remediation: Do not ask users to paste commands. Provide installable, pinned packages, or let the agent run commands through its approval flow.
+
+  - id: AG-SKL-SE-005
+    version: 1
+    title: Encoded command execution
+    description: A command decodes base64/hex content and executes it (PowerShell -EncodedCommand, base64 -d | sh, FromBase64String | iex, eval(atob(...))).
+    why: Encoding the command hides what runs from the user and the reviewer; legitimate setup steps have no reason to do this.
+    severity: critical
+    confidence: high
+    applies_to: [skill_md, instruction_md, reference, script]
+    aivss: {threat: attacked}
+    match:
+      type: regex
+      scopes: [body, hidden, decoded, command, code]
+      patterns:
+        - |-
+          \b(?:powershell|pwsh)(?:\.exe)?\b[^\n]*\s-(?:e|en|enc|enco|encod|encode|encoded|encodedcommand|ec)\s+[A-Za-z0-9+/=]{16,}
+        - |-
+          \bbase64\s+(?:-d|--decode|-D)\b[^\n]*\|\s*(?:sudo\s+)?(?:ba|z|da|k)?sh\b
+        - |-
+          \becho\s+["']?[A-Za-z0-9+/=]{16,}["']?\s*\|\s*base64\s+(?:-d|--decode|-D)\s*(?:\|\s*(?:ba|z)?sh|>\s*\S+\s*(?:&&|;)\s*(?:chmod|bash|sh|\./))
+        - |-
+          \bxxd\s+-r\s+-p\b[^\n]*\|\s*(?:ba|z)?sh\b
+        - |-
+          FromBase64String[^\n]*\|\s*(?:iex|Invoke-Expression)|(?:iex|Invoke-Expression)[^\n]*FromBase64String
+        - |-
+          \b(?:exec|eval)\s*\(\s*(?:base64\.b64decode|codecs\.decode|bytes\.fromhex|zlib\.decompress|__import__\(\s*["']base64)
+        - |-
+          \beval\s*\(\s*(?:atob|Buffer\.from)\s*\(
+    remediation: Remove encoded execution. If a command is needed, write it in plain text so users and reviewers can read it.
+
+  - id: AG-SKL-SE-006
+    version: 1
+    title: Fake credential prompt
+    description: Asks the user (via the agent or a fake dialog) for their system password, keychain password, seed phrase or private key.
+    why: Credential-harvesting prompts are a standard infostealer technique delivered through skills.
+    severity: high
+    confidence: medium
+    applies_to: [skill_md, instruction_md, reference, script]
+    match:
+      type: regex
+      scopes: [body, hidden, decoded, command, code]
+      patterns:
+        - |-
+          \b(?:ask|prompt|request)\s+(?:the\s+)?user\s+(?:for|to\s+(?:enter|provide|type|paste))\s+(?:their|his|her|the|your)\s+(?:(?:system|admin|administrator|sudo|login|keychain|macos|mac|root|windows|account)\s+)?(?:password|passphrase|seed\s+phrase|recovery\s+phrase|mnemonic|private\s+key)\b
+        - |-
+          \becho\s+["']?\$?\{?\w*(?:pass|PASS|pwd|PWD)\w*\}?["']?\s*\|\s*sudo\s+-S\b
+        - |-
+          \bosascript\b[^\n]*display\s+dialog[^\n]*(?:password|hidden\s+answer)
+        - |-
+          \b(?:enter|paste|type|provide|send|share)\s+(?:your\s+)?(?:wallet\s+)?(?:seed|recovery|mnemonic)\s+(?:phrase|words)\b
+    remediation: Never collect passwords, seed phrases or private keys. Use the platform's credential store or OAuth.
+
+  - id: AG-SKL-SE-007
+    version: 1
+    title: OS protection bypass
+    description: Removes macOS quarantine, disables Gatekeeper/SIP, adds Microsoft Defender exclusions or disables real-time protection.
+    why: Disabling OS protections is a hallmark of malware installers, not of agent skills.
+    severity: critical
+    confidence: high
+    applies_to: [skill_md, instruction_md, reference, script]
+    aivss: {threat: attacked}
+    match:
+      type: regex
+      scopes: [body, hidden, decoded, command, code]
+      patterns:
+        - |-
+          \bxattr\s+(?:-[a-z]*d[a-z]*\s+)?(?:-r\s+)?com\.apple\.quarantine\b|\bxattr\s+-[a-z]*c[a-z]*r?\s+\S
+        - |-
+          \bspctl\s+--(?:master|global)-disable\b|\bcsrutil\s+disable\b
+        - |-
+          \bdefaults\s+write\s+com\.apple\.LaunchServices\s+LSQuarantine\s+-bool\s+(?:NO|false)\b
+        - |-
+          \bAdd-MpPreference\b[^\n]*-Exclusion(?:Path|Process|Extension|IpAddress)\b
+        - |-
+          \bSet-MpPreference\b[^\n]*-Disable(?:RealtimeMonitoring|IOAVProtection|BehaviorMonitoring|ScriptScanning)\s+\$?(?:true|1)\b
+    remediation: Remove steps that weaken OS protections. Distribute signed, notarized software instead.
+
+  - id: AG-SKL-SE-008
+    version: 1
+    title: Pipe-to-shell from an allowlisted vendor installer
+    description: A vendor's official installer script is piped into a shell.
+    why: Common and usually legitimate, but it still executes unpinned remote code with no integrity check. Reported for visibility.
+    severity: low
+    confidence: high
+    applies_to: [skill_md, instruction_md, reference, script]
+    match:
+      type: regex
+      scopes: [body, hidden, decoded, command, code]
+      patterns:
+        - |-
+          \b(?:curl|wget|fetch)\b[^\n|]{0,300}https?://[^\n|]*\|\s*(?:sudo\s+)?(?:-E\s+)?(?:ba|z|k|da)?sh\b
+        - |-
+          \b(?:iwr|irm|Invoke-WebRequest|Invoke-RestMethod)\b[^\n|]*\|\s*(?:iex|Invoke-Expression)\b
+      require:
+        - |-
+          (?:https?://(?:[a-z0-9-]+\.)*(?:astral\.sh|rustup\.rs|sh\.rustup\.rs|get\.docker\.com|brew\.sh|deno\.land|deno\.com|bun\.sh|nodejs\.org|deb\.nodesource\.com|rpm\.nodesource\.com|get\.pnpm\.io|install\.python-poetry\.org|pyenv\.run|get\.sdkman\.io|ollama\.com|claude\.ai/install|get\.helm\.sh|starship\.rs|tailscale\.com/install|fly\.io/install|get\.volta\.sh|sh\.vector\.dev|install\.determinate\.systems|nixos\.org/nix/install|mise\.run|get\.jetify\.com|opencode\.ai/install|cursor\.com/install)\b)|(?:https?://raw\.githubusercontent\.com/(?:Homebrew/install|nvm-sh/nvm|ohmyzsh/ohmyzsh|pyenv/pyenv-installer)/)
+      window: 0
+    remediation: Prefer a package manager with pinned versions, or verify the installer checksum before running it.

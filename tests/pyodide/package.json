@@ -1,0 +1,8 @@
+{
+  "name": "agentguard-pyodide-check",
+  "private": true,
+  "type": "module",
+  "description": "Runs the Agent Guard core rule engine under Pyodide (CI job).",
+  "scripts": { "check": "node run_core.mjs ../.." },
+  "dependencies": { "pyodide": "0.28.3" }
+}

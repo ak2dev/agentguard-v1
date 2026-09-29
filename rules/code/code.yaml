@@ -1,0 +1,196 @@
+# Code analyzer rules. Taint rules (001–008) track MCP tool-handler parameters
+# to dangerous sinks within one function. Capability rules (020+) report
+# evidence regardless of taint.
+rules:
+  - id: AG-CODE-001
+    version: 1
+    title: Tool parameter reaches a shell command
+    description: A tool handler passes a model-controlled parameter into a shell (exec, shell=True, os.system, spawn with shell:true).
+    why: Any prompt injection that reaches the model becomes arbitrary command execution on the host — the most common MCP CVE class.
+    severity: critical
+    confidence: high
+    aivss: {threat: attacked}
+    match: {type: analyzer, analyzer: code}
+    remediation: Do not build shell strings. Call the program directly with an argument array, validate the argument against an allowlist, and never set shell=True.
+    references: [https://cwe.mitre.org/data/definitions/78.html]
+
+  - id: AG-CODE-002
+    version: 1
+    title: Tool parameter passed as a process argument
+    description: A model-controlled parameter becomes an argument of a spawned process (no shell).
+    why: Argument injection (e.g. a value starting with "--") can change what the program does.
+    severity: medium
+    confidence: medium
+    match: {type: analyzer, analyzer: code}
+    remediation: Validate the value, reject leading dashes, and insert "--" before positional arguments.
+
+  - id: AG-CODE-003
+    version: 1
+    title: Tool parameter reaches eval/exec
+    description: A model-controlled parameter is evaluated as code (eval, exec, compile, new Function, vm.run*).
+    why: Direct code execution from model output.
+    severity: critical
+    confidence: high
+    aivss: {threat: attacked}
+    match: {type: analyzer, analyzer: code}
+    remediation: Remove dynamic evaluation; parse structured input instead.
+
+  - id: AG-CODE-004
+    version: 1
+    title: Unsafe deserialization of tool input
+    description: A model-controlled value is deserialized with pickle, marshal, unsafe YAML or similar.
+    why: Unsafe deserialization executes code embedded in the data.
+    severity: high
+    confidence: high
+    match: {type: analyzer, analyzer: code}
+    remediation: Use JSON or yaml.safe_load.
+
+  - id: AG-CODE-005
+    version: 1
+    title: Tool parameter used as a filesystem path
+    description: A model-controlled parameter is used to read, write or delete files without evidence of containment checks.
+    why: Path traversal lets injected instructions read secrets or overwrite files outside the intended directory.
+    severity: high
+    confidence: medium
+    match: {type: analyzer, analyzer: code}
+    remediation: Resolve the path and verify it stays inside an allowed root (Path.resolve().is_relative_to(root)).
+
+  - id: AG-CODE-006
+    version: 1
+    title: Tool parameter controls an outbound request URL (SSRF)
+    description: A model-controlled value determines the scheme/host of an outbound HTTP request.
+    why: SSRF reaches internal services and cloud metadata endpoints from the server's network position.
+    severity: high
+    confidence: medium
+    match: {type: analyzer, analyzer: code}
+    remediation: Allowlist hosts, block private/link-local ranges after DNS resolution, and pin the resolved IP.
+
+  - id: AG-CODE-007
+    version: 1
+    title: Tool parameter concatenated into SQL
+    description: A model-controlled value is interpolated into an SQL string that is executed.
+    why: SQL injection through tool calls exposes or destroys data.
+    severity: high
+    confidence: medium
+    match: {type: analyzer, analyzer: code}
+    remediation: Use parameterized queries.
+
+  - id: AG-CODE-008
+    version: 1
+    title: Tool parameter compiled as a template (SSTI)
+    description: A model-controlled value is used as template source (Jinja2 Template, from_string, render_template_string, ejs/handlebars compile).
+    why: Server-side template injection usually leads to code execution.
+    severity: high
+    confidence: medium
+    match: {type: analyzer, analyzer: code}
+    remediation: Render fixed templates and pass user input only as data.
+
+  - id: AG-CODE-020
+    version: 1
+    title: Server code reads credential stores
+    description: MCP server code references SSH keys, cloud CLI credentials, browser profiles, wallets or similar.
+    why: A server that reads credential stores can exfiltrate them through any of its outputs.
+    severity: medium
+    confidence: high
+    match: {type: analyzer, analyzer: code}
+    remediation: Remove credential-store access; take the specific credential the server needs from its configuration.
+
+  - id: AG-CODE-021
+    version: 1
+    title: Server code dumps the environment
+    description: MCP server code prints, serializes or transmits the whole environment.
+    why: The environment of an MCP server typically contains API tokens passed by the client.
+    severity: medium
+    confidence: high
+    match: {type: analyzer, analyzer: code}
+    remediation: Read only the variables the server needs.
+
+  - id: AG-CODE-022
+    version: 1
+    title: Hardcoded outbound host
+    description: Server code contains a hardcoded URL to an external host (known exfiltration sinks escalate to high).
+    why: Inventory of where a server can send data; unexpected hosts deserve review.
+    severity: low
+    confidence: high
+    match: {type: analyzer, analyzer: code}
+    remediation: Document every external endpoint the server contacts, or make it configurable.
+
+  - id: AG-CODE-023
+    version: 1
+    title: Obfuscated execution
+    description: Code executes decoded, decompressed or character-code-built content (eval(atob(…)), exec(base64.b64decode(…)), long hex escape strings).
+    why: Legitimate code has no reason to hide what it executes; this is a hallmark of malicious packages.
+    severity: high
+    confidence: high
+    match: {type: analyzer, analyzer: code}
+    remediation: Remove the obfuscated code path.
+
+  - id: AG-CODE-024
+    version: 1
+    title: Install-time hook
+    description: npm lifecycle scripts (preinstall/install/postinstall/prepare) or custom setup.py commands run code at install time. Network or inline-code hooks escalate to high.
+    why: Install hooks run before any review of the running server and are a common supply-chain vector.
+    severity: medium
+    confidence: high
+    match: {type: analyzer, analyzer: code}
+    remediation: Remove install hooks, or keep them to local build steps with no network access.
+
+  - id: AG-CODE-025
+    version: 1
+    title: Runtime fetch or install of code
+    description: Code downloads and executes code, imports from a URL, or installs packages at run time.
+    why: Code fetched at run time bypasses every review and pin.
+    severity: high
+    confidence: high
+    match: {type: analyzer, analyzer: code}
+    remediation: Declare dependencies in the package manifest with pinned versions.
+
+  - id: AG-CODE-026
+    version: 1
+    title: Code writes persistence locations
+    description: Code writes shell rc files, crontab, LaunchAgents, systemd user units, Run keys, scheduled tasks or startup folders.
+    why: Persistence outlives the tool and survives uninstall.
+    severity: high
+    confidence: high
+    match: {type: analyzer, analyzer: code}
+    remediation: Remove persistence; document any required setup for the user to perform.
+
+  - id: AG-CODE-027
+    version: 1
+    title: Anti-analysis behavior
+    description: Code checks for CI, sandboxes, virtual machines or debuggers, or delays execution for long periods.
+    why: Malicious code gates its payload to avoid automated analysis.
+    severity: medium
+    confidence: low
+    match: {type: analyzer, analyzer: code}
+    remediation: Remove environment-dependent behavior from the server.
+
+  - id: AG-CODE-028
+    version: 1
+    title: Native binary downloaded or referenced at run time
+    description: Code downloads or references a native executable/library by URL.
+    why: Runtime binaries are unreviewable and unpinned.
+    severity: high
+    confidence: medium
+    match: {type: analyzer, analyzer: code}
+    remediation: Ship reviewed source or depend on a signed, pinned package.
+
+  - id: AG-CODE-029
+    version: 1
+    title: Token passthrough
+    description: The server forwards the incoming Authorization header (the client's token) to upstream services.
+    why: The MCP authorization spec forbids token passthrough; it breaks audience binding and lets tokens reach services they were not issued for.
+    severity: high
+    confidence: medium
+    match: {type: analyzer, analyzer: code}
+    remediation: Exchange or obtain a separate upstream token; validate the audience of tokens you receive.
+
+  - id: AG-CODE-040
+    version: 1
+    title: Undeclared capability
+    description: A tool's handler executes processes, makes network requests or accesses credentials, and the tool's name/description does not say so.
+    why: Users approve tools based on their descriptions; undeclared capabilities defeat informed approval.
+    severity: medium
+    confidence: medium
+    match: {type: analyzer, analyzer: code}
+    remediation: Describe the capability in the tool description (and annotations), or remove it.

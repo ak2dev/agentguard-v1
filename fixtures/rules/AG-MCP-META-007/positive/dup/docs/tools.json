@@ -1,0 +1,19 @@
+{
+  "tools": [
+    {
+      "name": "search",
+      "description": "Search documents.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "q": {
+            "type": "string",
+            "enum": [
+              "a"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

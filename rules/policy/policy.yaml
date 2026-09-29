@@ -1,0 +1,61 @@
+# Policy rules (active only when a policy / suppressions / PR mode is configured).
+rules:
+  - id: AG-POL-001
+    version: 1
+    title: Denied server or publisher present
+    description: A server or package matches a deny rule in the policy (by name, command, URL or publisher).
+    why: Organizations deny known-bad or unapproved servers; this enforces it before installation or merge.
+    severity: high
+    confidence: high
+    match: {type: analyzer, analyzer: policy}
+    remediation: Remove the server, or change the policy through review if the denial is wrong.
+
+  - id: AG-POL-002
+    version: 1
+    title: Server not on the allowlist
+    description: The policy defines an allowlist and this server does not match it.
+    why: Allowlists keep the set of agent tools reviewed and intentional.
+    severity: medium
+    confidence: high
+    match: {type: analyzer, analyzer: policy}
+    remediation: Get the server reviewed and added to the allowlist, or remove it.
+
+  - id: AG-POL-003
+    version: 1
+    title: Version not pinned (policy requires pinning)
+    description: The policy requires pinned versions and this server is launched unpinned.
+    why: Pinning makes updates deliberate and reviewable.
+    severity: medium
+    confidence: high
+    match: {type: analyzer, analyzer: policy}
+    remediation: Pin an exact version or image digest.
+
+  - id: AG-POL-005
+    version: 1
+    title: Suppression expired
+    description: A suppression in .agentguard.yaml passed its expiry date; the finding it covered is reported again.
+    why: Expiring suppressions force periodic re-review instead of permanent silence.
+    severity: info
+    confidence: high
+    match: {type: analyzer, analyzer: engine}
+    remediation: Fix the finding, or renew the suppression with a new reason and expiry.
+
+  - id: AG-POL-006
+    version: 1
+    title: Suppression missing reason or expiry
+    description: A suppression has no reason (at least 10 characters) or no expires date, so it is ignored.
+    why: Every suppression must say why and until when.
+    severity: medium
+    confidence: high
+    match: {type: analyzer, analyzer: engine}
+    remediation: 'Add `reason:` and `expires: YYYY-MM-DD` to the suppression.'
+
+  - id: AG-POL-010
+    version: 1
+    title: Security configuration changed in this change set
+    description: The pull request changes .agentguard.yaml, the lockfile or the baseline. PR mode evaluates policy and suppressions from the base ref instead.
+    why: A PR must not be able to approve itself by adding suppressions or lock entries.
+    severity: medium
+    confidence: high
+    match: {type: analyzer, analyzer: policy}
+    remediation: Have a maintainer review the configuration change separately.

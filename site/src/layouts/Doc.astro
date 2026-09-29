@@ -1,0 +1,18 @@
+---
+import Base from "./Base.astro";
+const { frontmatter } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const docs = [
+  ["Install", "install"], ["Quickstart", "quickstart"], ["How it works", "how-it-works"], ["CLI reference", "cli"],
+  ["Configuration", "config"], ["Policy", "policy"], ["Suppressions", "suppressions"], ["CI integration", "ci"],
+  ["Output formats", "output"], ["Library API", "library-api"], ["Limitations", "limitations"],
+];
+---
+<Base title={frontmatter.title} description={frontmatter.description}>
+  <nav aria-label="Documentation" class="muted">
+    {docs.map(([label, slug], i) => (<><a href={`${base}/docs/${slug}/`}>{label}</a>{i < docs.length - 1 ? " · " : ""}</>))}
+  </nav>
+  <article class="doc">
+    <slot />
+  </article>
+</Base>

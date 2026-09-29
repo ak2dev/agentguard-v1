@@ -1,0 +1,31 @@
+# Capability labels for well-known MCP server packages / images, used when a
+# config names a server but its tools or code are not available to scan.
+# Matching is by package or image name (version stripped), case-insensitive,
+# fnmatch-style. Labels: reads_private_data, ingests_untrusted_content,
+# external_egress, destructive, code_exec, persistence.
+# Inferred labels are medium confidence; evidence from code or tool metadata wins.
+servers:
+  - match: ["@modelcontextprotocol/server-filesystem", "*server-filesystem*", "*filesystem-mcp*"]
+    labels: [reads_private_data, destructive]
+  - match: ["@modelcontextprotocol/server-github", "*github-mcp-server*", "ghcr.io/github/github-mcp-server", "*server-github*"]
+    labels: [reads_private_data, ingests_untrusted_content, external_egress]
+  - match: ["@modelcontextprotocol/server-gitlab", "*gitlab-mcp*"]
+    labels: [reads_private_data, ingests_untrusted_content, external_egress]
+  - match: ["mcp-server-fetch", "*server-fetch*", "*fetch-mcp*"]
+    labels: [ingests_untrusted_content, external_egress]
+  - match: ["@modelcontextprotocol/server-brave-search", "*brave-search*", "*tavily*", "*exa-mcp*", "*web-search*"]
+    labels: [ingests_untrusted_content, external_egress]
+  - match: ["@modelcontextprotocol/server-puppeteer", "*puppeteer*", "@playwright/mcp", "*playwright-mcp*", "*browser*"]
+    labels: [ingests_untrusted_content, external_egress]
+  - match: ["@modelcontextprotocol/server-slack", "*slack-mcp*", "*server-slack*"]
+    labels: [reads_private_data, ingests_untrusted_content, external_egress]
+  - match: ["*gmail*", "*google-workspace*", "*outlook*", "*email-mcp*"]
+    labels: [reads_private_data, ingests_untrusted_content, external_egress]
+  - match: ["@modelcontextprotocol/server-postgres", "*postgres*", "*mysql*", "*sqlite*", "*mongodb*", "*supabase*"]
+    labels: [reads_private_data, destructive]
+  - match: ["@modelcontextprotocol/server-memory", "*memory*"]
+    labels: [persistence]
+  - match: ["*desktop-commander*", "*shell-mcp*", "*mcp-shell*", "*terminal*", "*code-runner*"]
+    labels: [code_exec, reads_private_data, destructive]
+  - match: ["*notion*", "*google-drive*", "*gdrive*", "*confluence*", "*jira*", "*linear*"]
+    labels: [reads_private_data, ingests_untrusted_content, external_egress]

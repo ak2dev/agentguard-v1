@@ -1,0 +1,9 @@
+# Agent Guard's own configuration (dogfooding). The fixtures and benchmark
+# corpus are deliberately malicious samples, so they are excluded here and
+# exercised by the test suite instead.
+version: 1
+fail_on: high
+exclude:
+  - fixtures
+  - bench
+  - tests

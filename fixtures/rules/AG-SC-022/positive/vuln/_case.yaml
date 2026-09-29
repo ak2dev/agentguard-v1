@@ -1,0 +1,22 @@
+{
+  "network": {
+    "osv": true
+  },
+  "package_facts": [
+    {
+      "ecosystem": "npm",
+      "name": "@example/server-files",
+      "version": "1.2.3",
+      "created": "2024-01-10",
+      "provenance": "present",
+      "vulns": [
+        {
+          "id": "GHSA-0000-bench-0001",
+          "severity": "high",
+          "summary": "Synthetic advisory (fixture)"
+        }
+      ]
+    }
+  ],
+  "today": "2026-09-28"
+}

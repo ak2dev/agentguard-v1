@@ -1,0 +1,550 @@
+{
+  "program": "agentguard",
+  "version": "0.1.0.dev0",
+  "commands": [
+    {
+      "name": "bench",
+      "help": "Measure precision, recall, F1 and false-positive rate on the benchmark corpus.",
+      "params": [
+        {
+          "name": "corpus",
+          "kind": "option",
+          "opts": [
+            "--corpus"
+          ],
+          "help": "Benchmark root containing manifest.yaml and corpus/.",
+          "default": "bench",
+          "required": false
+        },
+        {
+          "name": "split",
+          "kind": "option",
+          "opts": [
+            "--split"
+          ],
+          "help": "all | dev | heldout",
+          "default": "all",
+          "required": false
+        },
+        {
+          "name": "output",
+          "kind": "option",
+          "opts": [
+            "--output",
+            "-o"
+          ],
+          "help": "Write results JSON here.",
+          "default": null,
+          "required": false
+        },
+        {
+          "name": "perf",
+          "kind": "option",
+          "opts": [
+            "--perf"
+          ],
+          "help": "Also time 100 skills + 20 configs.",
+          "default": "True",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "discover",
+      "help": "Inventory agents, MCP servers, skills and instruction files (no findings).",
+      "params": [
+        {
+          "name": "format",
+          "kind": "option",
+          "opts": [
+            "--format",
+            "-f"
+          ],
+          "help": "",
+          "default": "DiscoverFormat.table",
+          "required": false
+        },
+        {
+          "name": "output",
+          "kind": "option",
+          "opts": [
+            "--output",
+            "-o"
+          ],
+          "help": "",
+          "default": null,
+          "required": false
+        },
+        {
+          "name": "no_user",
+          "kind": "option",
+          "opts": [
+            "--no-user"
+          ],
+          "help": "Skip user-level configuration.",
+          "default": "False",
+          "required": false
+        },
+        {
+          "name": "project",
+          "kind": "option",
+          "opts": [
+            "--project"
+          ],
+          "help": "Project root (default: current directory).",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "intel",
+      "help": "Manage the local, signed IOC feed.",
+      "params": []
+    },
+    {
+      "name": "intel status",
+      "help": "Show which IOC feed is active.",
+      "params": []
+    },
+    {
+      "name": "intel update",
+      "help": "Install a newer signed IOC feed (signature and rollback checks enforced).",
+      "params": [
+        {
+          "name": "source",
+          "kind": "option",
+          "opts": [
+            "--from"
+          ],
+          "help": "Path to feed.json (a feed.json.sig must sit next to it), or an https:// URL (NETWORK).",
+          "default": null,
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "lock",
+      "help": "Write agentguard.lock: hashes of skill files and normalized tool definitions.",
+      "params": [
+        {
+          "name": "path",
+          "kind": "argument",
+          "opts": [
+            "path"
+          ],
+          "help": "Target to lock (default: discover this machine + project).",
+          "default": null,
+          "required": false
+        },
+        {
+          "name": "output",
+          "kind": "option",
+          "opts": [
+            "--output",
+            "-o"
+          ],
+          "help": "Lockfile path.",
+          "default": "agentguard.lock",
+          "required": false
+        },
+        {
+          "name": "no_user",
+          "kind": "option",
+          "opts": [
+            "--no-user"
+          ],
+          "help": "",
+          "default": "False",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "report",
+      "help": "Re-render a JSON report as SARIF, Markdown, HTML or terminal output (no rescan).",
+      "params": [
+        {
+          "name": "input",
+          "kind": "option",
+          "opts": [
+            "--input",
+            "-i"
+          ],
+          "help": "An Agent Guard JSON report.",
+          "default": null,
+          "required": true
+        },
+        {
+          "name": "format",
+          "kind": "option",
+          "opts": [
+            "--format",
+            "-f"
+          ],
+          "help": "",
+          "default": "OutputFormat.sarif",
+          "required": false
+        },
+        {
+          "name": "output",
+          "kind": "option",
+          "opts": [
+            "--output",
+            "-o"
+          ],
+          "help": "",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "rules",
+      "help": "Inspect the rule pack.",
+      "params": []
+    },
+    {
+      "name": "rules explain",
+      "help": "Explain one rule: what it detects, why it matters, how to fix it.",
+      "params": [
+        {
+          "name": "rule_id",
+          "kind": "argument",
+          "opts": [
+            "rule_id"
+          ],
+          "help": "Rule ID, e.g. AG-SKL-SE-002",
+          "default": null,
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "rules export",
+      "help": "Export the rule pack (with mappings and fixtures) as JSON for the website.",
+      "params": [
+        {
+          "name": "format",
+          "kind": "option",
+          "opts": [
+            "--format"
+          ],
+          "help": "Only 'json' is supported.",
+          "default": "json",
+          "required": false
+        },
+        {
+          "name": "output",
+          "kind": "option",
+          "opts": [
+            "--output",
+            "-o"
+          ],
+          "help": "",
+          "default": null,
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "rules list",
+      "help": "List every rule in the rule pack.",
+      "params": [
+        {
+          "name": "json_out",
+          "kind": "option",
+          "opts": [
+            "--json"
+          ],
+          "help": "JSON output.",
+          "default": "False",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "scan",
+      "help": "Scan skills, instruction files and MCP configuration. Never executes the target.",
+      "params": [
+        {
+          "name": "path",
+          "kind": "argument",
+          "opts": [
+            "path"
+          ],
+          "help": "Skill folder, repository, or MCP config file. Omit to discover this machine's agent configuration plus the current project.",
+          "default": null,
+          "required": false
+        },
+        {
+          "name": "format",
+          "kind": "option",
+          "opts": [
+            "--format",
+            "-f"
+          ],
+          "help": "Output format.",
+          "default": "OutputFormat.terminal",
+          "required": false
+        },
+        {
+          "name": "output",
+          "kind": "option",
+          "opts": [
+            "--output",
+            "-o"
+          ],
+          "help": "Write output to a file.",
+          "default": null,
+          "required": false
+        },
+        {
+          "name": "fail_on",
+          "kind": "option",
+          "opts": [
+            "--fail-on"
+          ],
+          "help": "Exit 1 if any finding is at or above this severity (default: high).",
+          "default": null,
+          "required": false
+        },
+        {
+          "name": "config",
+          "kind": "option",
+          "opts": [
+            "--config"
+          ],
+          "help": "Path to .agentguard.yaml (default: next to the target).",
+          "default": null,
+          "required": false
+        },
+        {
+          "name": "policy",
+          "kind": "option",
+          "opts": [
+            "--policy"
+          ],
+          "help": "Policy YAML file (overrides the policy in .agentguard.yaml).",
+          "default": null,
+          "required": false
+        },
+        {
+          "name": "baseline",
+          "kind": "option",
+          "opts": [
+            "--baseline"
+          ],
+          "help": "Previous JSON report or baseline file; only new findings are reported.",
+          "default": null,
+          "required": false
+        },
+        {
+          "name": "changed_since",
+          "kind": "option",
+          "opts": [
+            "--changed-since"
+          ],
+          "help": "PR mode: report only components touched since this git ref. Config is read from the ref.",
+          "default": null,
+          "required": false
+        },
+        {
+          "name": "lock",
+          "kind": "option",
+          "opts": [
+            "--lock"
+          ],
+          "help": "agentguard.lock to check for drift.",
+          "default": null,
+          "required": false
+        },
+        {
+          "name": "no_user",
+          "kind": "option",
+          "opts": [
+            "--no-user"
+          ],
+          "help": "When discovering, skip user-level (home directory) configuration.",
+          "default": "False",
+          "required": false
+        },
+        {
+          "name": "live_metadata",
+          "kind": "option",
+          "opts": [
+            "--live-metadata"
+          ],
+          "help": "NETWORK: fetch read-only tool lists from remote MCP servers.",
+          "default": "False",
+          "required": false
+        },
+        {
+          "name": "auth_checks",
+          "kind": "option",
+          "opts": [
+            "--auth-checks"
+          ],
+          "help": "NETWORK: check remote servers' OAuth/TLS conformance.",
+          "default": "False",
+          "required": false
+        },
+        {
+          "name": "osv",
+          "kind": "option",
+          "opts": [
+            "--osv"
+          ],
+          "help": "NETWORK: look up dependencies in OSV.",
+          "default": "False",
+          "required": false
+        },
+        {
+          "name": "provenance",
+          "kind": "option",
+          "opts": [
+            "--provenance"
+          ],
+          "help": "NETWORK: verify npm/Sigstore provenance.",
+          "default": "False",
+          "required": false
+        },
+        {
+          "name": "registry",
+          "kind": "option",
+          "opts": [
+            "--registry"
+          ],
+          "help": "NETWORK: MCP Registry / package age checks.",
+          "default": "False",
+          "required": false
+        },
+        {
+          "name": "allow_partial",
+          "kind": "option",
+          "opts": [
+            "--allow-partial"
+          ],
+          "help": "Do not exit 2 when an analyzer fails (recorded in the report).",
+          "default": "False",
+          "required": false
+        },
+        {
+          "name": "show_info",
+          "kind": "option",
+          "opts": [
+            "--show-info"
+          ],
+          "help": "Show info-level findings in terminal output.",
+          "default": "False",
+          "required": false
+        },
+        {
+          "name": "verbose",
+          "kind": "option",
+          "opts": [
+            "--verbose",
+            "-v"
+          ],
+          "help": "Show evidence, remediation and mappings.",
+          "default": "False",
+          "required": false
+        },
+        {
+          "name": "timestamps",
+          "kind": "option",
+          "opts": [
+            "--timestamps"
+          ],
+          "help": "Include a generation timestamp (makes output non-deterministic).",
+          "default": "False",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "schema",
+      "help": "Print a JSON Schema for one of Agent Guard's data formats.",
+      "params": [
+        {
+          "name": "name",
+          "kind": "argument",
+          "opts": [
+            "name"
+          ],
+          "help": "report | rule | lock | policy | config",
+          "default": "report",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "verify",
+      "help": "Report rug-pull / update-drift findings against agentguard.lock, with diffs.",
+      "params": [
+        {
+          "name": "path",
+          "kind": "argument",
+          "opts": [
+            "path"
+          ],
+          "help": "Target to verify (default: discover this machine + project).",
+          "default": null,
+          "required": false
+        },
+        {
+          "name": "lock",
+          "kind": "option",
+          "opts": [
+            "--lock"
+          ],
+          "help": "Lockfile to compare against.",
+          "default": "agentguard.lock",
+          "required": false
+        },
+        {
+          "name": "fail_on",
+          "kind": "option",
+          "opts": [
+            "--fail-on"
+          ],
+          "help": "",
+          "default": "SeverityOpt.low",
+          "required": false
+        },
+        {
+          "name": "format",
+          "kind": "option",
+          "opts": [
+            "--format",
+            "-f"
+          ],
+          "help": "",
+          "default": "OutputFormat.terminal",
+          "required": false
+        },
+        {
+          "name": "output",
+          "kind": "option",
+          "opts": [
+            "--output",
+            "-o"
+          ],
+          "help": "",
+          "default": null,
+          "required": false
+        },
+        {
+          "name": "no_user",
+          "kind": "option",
+          "opts": [
+            "--no-user"
+          ],
+          "help": "",
+          "default": "False",
+          "required": false
+        }
+      ]
+    }
+  ]
+}

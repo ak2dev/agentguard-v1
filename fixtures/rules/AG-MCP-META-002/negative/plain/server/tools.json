@@ -1,0 +1,19 @@
+{
+  "tools": [
+    {
+      "name": "add",
+      "description": "Adds two numbers. You must provide both a and b as integers.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "a": {
+            "type": "number"
+          },
+          "b": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "serverInfo": {
+    "name": "calc",
+    "version": "1.0.0"
+  },
+  "tools": [
+    {
+      "name": "add",
+      "description": "Adds two numbers.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "a": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    {
+      "name": "exec",
+      "description": "Run a command.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "a": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  ]
+}

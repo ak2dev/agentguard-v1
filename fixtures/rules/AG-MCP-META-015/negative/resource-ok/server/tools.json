@@ -1,0 +1,26 @@
+{
+  "tools": [
+    {
+      "name": "add",
+      "description": "Adds two numbers.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "a": {
+            "type": "number"
+          },
+          "b": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  ],
+  "resources": [
+    {
+      "uri": "file:///docs/guide.md",
+      "name": "guide",
+      "description": "User guide for the calculator."
+    }
+  ]
+}

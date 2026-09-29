@@ -1,0 +1,44 @@
+---
+import Base from "../../layouts/Base.astro";
+import data from "../../data/generated/rules.json";
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const groups = [
+  ["AG-SKL-", "Skills and instruction files"], ["AG-MCP-CFG-", "MCP client configuration"], ["AG-MCP-META-", "MCP tool, prompt and resource metadata"],
+  ["AG-CODE-", "Server and script code"], ["AG-FLOW-", "Toxic flows"], ["AG-SC-", "Supply chain and drift"], ["AG-AUTH-", "Remote auth conformance"],
+  ["AG-POL-", "Policy"], ["AG-SYS-", "Coverage and loader safety"], ["AG-LLM-", "Optional LLM judge"],
+];
+const ids = (m) => m.filter((x) => x.id && x.framework !== "cwe").map((x) => x.id).join(", ");
+---
+<Base title="Rule catalog" wide>
+  <h1>Rule catalog</h1>
+  <p class="lead">{data.rules.length} rules in rule pack {data.rule_pack.version}. Every rule has unsafe and safe fixtures that CI runs on every change. Rules marked <span class="pill">network</span> run only with an opt-in network flag.</p>
+  <div class="filter" id="rule-filter-host" hidden>
+    <label for="rule-filter">Filter</label>
+    <input id="rule-filter" type="search" placeholder="ID, title or standard (e.g. ASI01)" />
+  </div>
+  {groups.map(([prefix, label]) => {
+    const rules = data.rules.filter((r) => r.id.startsWith(prefix));
+    return rules.length ? (
+      <section>
+        <h2>{label}</h2>
+        <div class="table-scroll">
+          <table class="rules-table">
+            <thead><tr><th scope="col">ID</th><th scope="col">Title</th><th scope="col">Severity</th><th scope="col">Confidence</th><th scope="col">Standards</th></tr></thead>
+            <tbody>
+              {rules.map((r) => (
+                <tr data-search={`${r.id} ${r.title} ${ids(r.mappings)}`.toLowerCase()}>
+                  <td><a href={`${base}/rules/${r.id.toLowerCase()}/`}><code>{r.id}</code></a></td>
+                  <td>{r.title}{r.network && <> <span class="pill">network</span></>}</td>
+                  <td><span class={`sev ${r.severity}`}>{r.severity}</span></td>
+                  <td>{r.confidence}</td>
+                  <td class="muted">{ids(r.mappings)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    ) : null;
+  })}
+  <script is:inline src={`${base}/js/rule-filter.js`} defer></script>
+</Base>

@@ -1,0 +1,17 @@
+framework: owasp-mcp-2025-beta
+name: OWASP MCP Top 10
+version: "2025 (beta)"
+source: https://owasp.org/www-project-mcp-top-10/
+verified: "2026-09-28"
+notes: Beta list; ids and titles may change. Keep this file versioned with the upstream beta.
+items:
+  - {id: "MCP01:2025", title: Token Mismanagement & Secret Exposure}
+  - {id: "MCP02:2025", title: Privilege Escalation via Scope Creep}
+  - {id: "MCP03:2025", title: Tool Poisoning}
+  - {id: "MCP04:2025", title: Software Supply Chain Attacks & Dependency Tampering}
+  - {id: "MCP05:2025", title: Command Injection & Execution}
+  - {id: "MCP06:2025", title: Prompt Injection via Contextual Payloads}
+  - {id: "MCP07:2025", title: Insufficient Authentication & Authorization}
+  - {id: "MCP08:2025", title: Lack of Audit and Telemetry}
+  - {id: "MCP09:2025", title: Shadow MCP Servers}
+  - {id: "MCP10:2025", title: Context Injection & Over-Sharing}

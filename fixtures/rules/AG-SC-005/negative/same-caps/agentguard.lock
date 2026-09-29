@@ -1,0 +1,19 @@
+{
+  "entries": [
+    {
+      "capability_labels": [
+        "external_egress"
+      ],
+      "content_hash": "87f746463edbe5d19e6b8b1bc07f6611ec78c1f112b6d4f4820618ee40ac79af",
+      "key": "skill:csv-tool@csv-tool",
+      "kind": "skill",
+      "name": "csv-tool",
+      "skill_files": {
+        "SKILL.md": "0b4015830eb839a8881511be02e09001c38dc8dbc3c950dcbf1cd8975be6538b",
+        "scripts/sync.py": "3d81573e6ec0c8e08115a40bc9c90cb48a664fe87afd7047b1c18a025ae437e9"
+      }
+    }
+  ],
+  "generator": "agentguard",
+  "lock_version": 1
+}

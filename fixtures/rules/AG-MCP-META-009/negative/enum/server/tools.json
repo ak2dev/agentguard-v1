@@ -1,0 +1,20 @@
+{
+  "tools": [
+    {
+      "name": "run_command",
+      "description": "Run an allowed command.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "command": {
+            "type": "string",
+            "enum": [
+              "status",
+              "log"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

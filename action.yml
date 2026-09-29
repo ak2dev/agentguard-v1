@@ -1,0 +1,82 @@
+name: Agent Guard
+description: Scan AI agent skills, instruction files and MCP configuration, and upload findings to GitHub code scanning. Never executes scanned code.
+author: Agent Guard contributors
+branding:
+  icon: shield
+  color: blue
+
+inputs:
+  path:
+    description: Directory or file to scan (relative to the workspace).
+    default: "."
+  fail-on:
+    description: Fail the step when a finding is at or above this severity (critical, high, medium, low, info).
+    default: high
+  pr-mode:
+    description: On pull requests, report only components touched by the PR (needs `fetch-depth: 0`). Config is read from the base commit.
+    default: "true"
+  upload-sarif:
+    description: Upload results to GitHub code scanning.
+    default: "true"
+  sarif-file:
+    description: Where to write the SARIF file.
+    default: agentguard.sarif
+  python-version:
+    description: Python used to run Agent Guard.
+    default: "3.12"
+
+outputs:
+  exit-code:
+    description: 0 = nothing at/above the threshold, 1 = findings at/above it, 2 = scanner error.
+    value: ${{ steps.scan.outputs.exit-code }}
+  report:
+    description: Path of the JSON report.
+    value: agentguard-report.json
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install Agent Guard from this action's pinned source
+      shell: bash
+      run: python -m pip install --disable-pip-version-check --no-input "$GITHUB_ACTION_PATH"
+
+    - name: Scan
+      id: scan
+      shell: bash
+      env:
+        AG_PATH: ${{ inputs.path }}
+        AG_FAIL_ON: ${{ inputs.fail-on }}
+        AG_PR_MODE: ${{ inputs.pr-mode }}
+        AG_SARIF: ${{ inputs.sarif-file }}
+        AG_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+      run: |
+        set +e
+        args=(scan "$AG_PATH" --format json --output agentguard-report.json --fail-on "$AG_FAIL_ON")
+        if [ "$AG_PR_MODE" = "true" ] && [ -n "$AG_BASE_SHA" ]; then
+          args+=(--changed-since "$AG_BASE_SHA")
+        fi
+        agentguard "${args[@]}"
+        code=$?
+        echo "exit-code=$code" >> "$GITHUB_OUTPUT"
+        if [ -f agentguard-report.json ]; then
+          agentguard report --input agentguard-report.json --format sarif --output "$AG_SARIF"
+          agentguard report --input agentguard-report.json --format markdown >> "$GITHUB_STEP_SUMMARY"
+        fi
+        exit 0
+
+    - name: Upload SARIF
+      if: ${{ always() && inputs.upload-sarif == 'true' && hashFiles(inputs.sarif-file) != '' }}
+      uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4
+      with:
+        sarif_file: ${{ inputs.sarif-file }}
+        category: agentguard
+
+    - name: Enforce threshold
+      shell: bash
+      env:
+        AG_CODE: ${{ steps.scan.outputs.exit-code }}
+      run: exit "${AG_CODE:-2}"

@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "calc": {
+      "command": "$(which node)",
+      "args": [
+        "server.js"
+      ]
+    }
+  }
+}

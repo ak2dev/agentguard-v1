@@ -1,0 +1,11 @@
+{
+  "servers": {
+    "calc": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "${workspaceFolder}/server.js"
+      ]
+    }
+  }
+}

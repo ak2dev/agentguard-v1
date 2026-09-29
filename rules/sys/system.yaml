@@ -1,0 +1,42 @@
+# Coverage and loader-safety findings. These keep results honest: anything
+# not scanned is reported, never silently skipped.
+rules:
+  - id: AG-SYS-001
+    version: 1
+    title: Content skipped by safety limits
+    description: A file or archive member was not scanned because it exceeded a size, count or depth limit, was encrypted, unreadable, or not a regular file.
+    why: Unscanned content is not "clean"; this finding keeps coverage gaps visible.
+    severity: info
+    confidence: high
+    match: {type: analyzer, analyzer: sys.limits}
+    remediation: Review the skipped content manually, or raise limits deliberately for trusted inputs.
+
+  - id: AG-SYS-002
+    version: 1
+    title: Analyzer error (coverage reduced)
+    description: An analyzer failed on this input; the scan exits with code 2.
+    why: A failed analyzer must never produce a silent pass.
+    severity: info
+    confidence: high
+    match: {type: analyzer, analyzer: engine}
+    remediation: Report the error (with the input redacted) to the Agent Guard maintainers.
+
+  - id: AG-SYS-003
+    version: 1
+    title: Link or path escape blocked
+    description: A symlink, hardlink, junction or path that escapes the scan root was found and not followed.
+    why: Links in skill bundles or archives can point at files outside the bundle (for example your SSH keys) when an agent or installer follows them.
+    severity: medium
+    confidence: high
+    match: {type: analyzer, analyzer: sys.limits}
+    remediation: Remove links from skill bundles and archives; ship regular files only.
+
+  - id: AG-SYS-004
+    version: 1
+    title: Archive bomb detected
+    description: An archive exceeded the decompression-ratio, member-count or stream-size caps.
+    why: Decompression bombs exhaust disk and memory in scanners and installers.
+    severity: high
+    confidence: high
+    match: {type: analyzer, analyzer: sys.limits}
+    remediation: Do not distribute this archive; rebuild it from reviewed source.

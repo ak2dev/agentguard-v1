@@ -1,0 +1,156 @@
+# Supply-chain and drift rules.
+rules:
+  - id: AG-SC-001
+    version: 1
+    title: Tool definition changed without a version change (rug pull)
+    description: A server's normalized tool definition (name, title, description, input schema, annotations) differs from agentguard.lock while the server version is unchanged.
+    why: Rug pulls change tool behavior or instructions after users approved the server, without an update anyone would review.
+    severity: high
+    confidence: high
+    match: {type: analyzer, analyzer: supply.drift}
+    remediation: Review the diff. If the change is legitimate, re-run `agentguard lock`; otherwise remove or pin the server.
+
+  - id: AG-SC-002
+    version: 1
+    title: Skill or component content changed since lock
+    description: Files of a locked skill or component changed.
+    why: Changes after review should be reviewed again before use.
+    severity: medium
+    confidence: high
+    match: {type: analyzer, analyzer: supply.drift}
+    remediation: Review the changes, then update the lock with `agentguard lock`.
+
+  - id: AG-SC-003
+    version: 1
+    title: Tools added or removed since lock
+    description: A server exposes tools that were not locked, or no longer exposes locked tools.
+    why: New tools expand what the agent can do without review.
+    severity: medium
+    confidence: high
+    match: {type: analyzer, analyzer: supply.drift}
+    remediation: Review the new tools, then update the lock.
+
+  - id: AG-SC-004
+    version: 1
+    title: Version changed without a lock update
+    description: The component version (or a tool definition with it) changed and agentguard.lock was not updated.
+    why: Updates should be deliberate and reviewed.
+    severity: low
+    confidence: high
+    match: {type: analyzer, analyzer: supply.drift}
+    remediation: Review the update and re-run `agentguard lock`.
+
+  - id: AG-SC-005
+    version: 1
+    title: Drift adds new capabilities
+    description: Since the lock, the component gained capability labels (for example network egress or code execution).
+    why: A capability change is the part of an update that matters for security.
+    severity: high
+    confidence: high
+    match: {type: analyzer, analyzer: supply.drift}
+    remediation: Review why the component now needs the new capability before accepting the update.
+
+  - id: AG-SC-006
+    version: 1
+    title: Component not in the lockfile
+    description: A component is present that agentguard.lock does not know about.
+    why: Unlocked components have not been through the lock review.
+    severity: low
+    confidence: high
+    match: {type: analyzer, analyzer: supply.drift}
+    remediation: Review the component and run `agentguard lock`.
+
+  - id: AG-SC-010
+    version: 1
+    title: Content hash matches the IOC feed
+    description: A file or component content hash matches an entry in the signed local IOC feed.
+    why: The exact content has been reported as malicious by the feed maintainers.
+    severity: critical
+    confidence: high
+    aivss: {threat: attacked}
+    match: {type: analyzer, analyzer: supply.intel}
+    remediation: Remove the component and review the host for other indicators.
+
+  - id: AG-SC-011
+    version: 1
+    title: Domain or IP matches the IOC feed
+    description: A referenced host or IP matches an entry in the signed local IOC feed.
+    why: The destination is known infrastructure of a reported campaign.
+    severity: high
+    confidence: high
+    match: {type: analyzer, analyzer: supply.intel}
+    remediation: Remove the reference and the component that contains it.
+
+  - id: AG-SC-012
+    version: 1
+    title: Publisher matches the IOC feed
+    description: The component's publisher, package scope or registry namespace matches the IOC feed.
+    why: Publishers behind prior malicious releases are likely to publish more.
+    severity: high
+    confidence: medium
+    match: {type: analyzer, analyzer: supply.intel}
+    remediation: Avoid components from this publisher until the listing is reviewed.
+
+  - id: AG-SC-024
+    version: 1
+    title: MCP Registry namespace does not match repository owner
+    description: A server.json uses an io.github.<owner>/ namespace that differs from the owner of its declared repository.
+    why: Namespace/repository mismatches are how impersonating registry entries point at someone else's code.
+    severity: medium
+    confidence: medium
+    match: {type: analyzer, analyzer: supply.offline}
+    remediation: Verify who publishes the server and use the entry from the repository owner's namespace.
+
+  - id: AG-SC-025
+    version: 1
+    title: Package name imitates a popular MCP server
+    description: A configured package name is within a small edit distance of, or re-scopes, a popular MCP server package.
+    why: Typosquatted and re-scoped packages are a common supply-chain attack on MCP users.
+    severity: medium
+    confidence: medium
+    match: {type: analyzer, analyzer: supply.offline}
+    remediation: Check the exact package name and publisher before installing.
+
+  - id: AG-SC-020
+    version: 1
+    title: No provenance attestation
+    description: The npm package version has no provenance attestation (opt-in --provenance).
+    why: Provenance ties a package to the source repository and CI build that produced it.
+    severity: low
+    confidence: high
+    network: true
+    match: {type: analyzer, analyzer: supply.provenance}
+    remediation: Prefer versions published with provenance, or ask the maintainer to enable it.
+
+  - id: AG-SC-021
+    version: 1
+    title: Provenance present but inconsistent
+    description: The package's provenance attestation does not match the published tarball (subject digest mismatch). Full Sigstore certificate-chain verification is not yet performed (see limitations).
+    why: A mismatched attestation means the published artifact is not the one the build attested to.
+    severity: high
+    confidence: high
+    network: true
+    match: {type: analyzer, analyzer: supply.provenance}
+    remediation: Do not install this version; report it to the registry and maintainer.
+
+  - id: AG-SC-022
+    version: 1
+    title: Dependency with a known vulnerability (OSV)
+    description: The package version is affected by a published advisory (severity taken from the advisory).
+    why: Known vulnerabilities in MCP servers are actively exploited.
+    severity: medium
+    confidence: high
+    network: true
+    match: {type: analyzer, analyzer: supply.osv}
+    remediation: Upgrade to a fixed version.
+
+  - id: AG-SC-023
+    version: 1
+    title: Very new package
+    description: The package was first published less than 30 days ago (opt-in --registry).
+    why: Malicious packages are typically very young; age is a weak but useful signal.
+    severity: low
+    confidence: medium
+    network: true
+    match: {type: analyzer, analyzer: supply.age}
+    remediation: Wait, or review the package and its publisher before use.

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "calc": {
+      "command": "python",
+      "args": [
+        "-m",
+        "calc_server"
+      ]
+    }
+  }
+}

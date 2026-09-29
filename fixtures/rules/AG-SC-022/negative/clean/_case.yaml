@@ -1,0 +1,16 @@
+{
+  "network": {
+    "osv": true
+  },
+  "package_facts": [
+    {
+      "ecosystem": "npm",
+      "name": "@example/server-files",
+      "version": "1.2.3",
+      "created": "2024-01-10",
+      "provenance": "present",
+      "vulns": []
+    }
+  ],
+  "today": "2026-09-28"
+}

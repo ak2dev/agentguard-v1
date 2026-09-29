@@ -1,0 +1,1082 @@
+{
+  "rule_pack": "0.1.0",
+  "frameworks": [
+    {
+      "framework": "owasp-asi-2026",
+      "name": "OWASP Top 10 for Agentic Applications",
+      "version": "2026",
+      "source": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/",
+      "notes": "",
+      "items": [
+        {
+          "id": "ASI01",
+          "title": "Agent Goal Hijack",
+          "rules": [
+            "AG-FLOW-001",
+            "AG-FLOW-002",
+            "AG-FLOW-006",
+            "AG-MCP-META-001",
+            "AG-MCP-META-002",
+            "AG-MCP-META-005",
+            "AG-MCP-META-013",
+            "AG-MCP-META-014",
+            "AG-MCP-META-015",
+            "AG-MCP-META-019",
+            "AG-SKL-EXF-005",
+            "AG-SKL-HID-001",
+            "AG-SKL-HID-002",
+            "AG-SKL-HID-003",
+            "AG-SKL-HID-004",
+            "AG-SKL-HID-005",
+            "AG-SKL-HID-006",
+            "AG-SKL-HID-007",
+            "AG-SKL-HID-009",
+            "AG-SKL-HID-010",
+            "AG-SKL-INJ-001",
+            "AG-SKL-INJ-002",
+            "AG-SKL-INJ-008",
+            "AG-SKL-SPEC-006"
+          ]
+        },
+        {
+          "id": "ASI02",
+          "title": "Tool Misuse & Exploitation",
+          "rules": [
+            "AG-CODE-005",
+            "AG-CODE-006",
+            "AG-CODE-007",
+            "AG-CODE-022",
+            "AG-CODE-040",
+            "AG-FLOW-004",
+            "AG-FLOW-005",
+            "AG-MCP-META-003",
+            "AG-MCP-META-004",
+            "AG-MCP-META-006",
+            "AG-MCP-META-007",
+            "AG-MCP-META-008",
+            "AG-MCP-META-009",
+            "AG-MCP-META-010",
+            "AG-MCP-META-016",
+            "AG-SKL-EXF-001",
+            "AG-SKL-EXF-002",
+            "AG-SKL-EXF-003",
+            "AG-SKL-EXF-004",
+            "AG-SKL-MIS-001"
+          ]
+        },
+        {
+          "id": "ASI03",
+          "title": "Identity & Privilege Abuse",
+          "rules": [
+            "AG-AUTH-002",
+            "AG-AUTH-003",
+            "AG-AUTH-004",
+            "AG-AUTH-005",
+            "AG-AUTH-006",
+            "AG-AUTH-008",
+            "AG-CODE-020",
+            "AG-CODE-021",
+            "AG-CODE-029",
+            "AG-MCP-CFG-007",
+            "AG-MCP-CFG-008",
+            "AG-MCP-CFG-009",
+            "AG-MCP-CFG-020",
+            "AG-MCP-CFG-021",
+            "AG-SKL-CRED-001",
+            "AG-SKL-CRED-002",
+            "AG-SKL-CRED-010",
+            "AG-SKL-INJ-004",
+            "AG-SKL-INJ-007",
+            "AG-SKL-PRIV-001",
+            "AG-SKL-PRIV-002"
+          ]
+        },
+        {
+          "id": "ASI04",
+          "title": "Agentic Supply Chain Vulnerabilities",
+          "rules": [
+            "AG-CODE-024",
+            "AG-CODE-025",
+            "AG-CODE-028",
+            "AG-MCP-CFG-004",
+            "AG-MCP-CFG-010",
+            "AG-MCP-CFG-017",
+            "AG-MCP-CFG-018",
+            "AG-MCP-CFG-022",
+            "AG-MCP-META-020",
+            "AG-POL-003",
+            "AG-SC-001",
+            "AG-SC-002",
+            "AG-SC-003",
+            "AG-SC-004",
+            "AG-SC-005",
+            "AG-SC-006",
+            "AG-SC-010",
+            "AG-SC-011",
+            "AG-SC-012",
+            "AG-SC-020",
+            "AG-SC-021",
+            "AG-SC-022",
+            "AG-SC-023",
+            "AG-SC-024",
+            "AG-SC-025",
+            "AG-SKL-BND-001",
+            "AG-SKL-BND-002",
+            "AG-SKL-TYP-001",
+            "AG-SKL-TYP-002"
+          ]
+        },
+        {
+          "id": "ASI05",
+          "title": "Unexpected Code Execution (RCE)",
+          "rules": [
+            "AG-CODE-001",
+            "AG-CODE-002",
+            "AG-CODE-003",
+            "AG-CODE-004",
+            "AG-CODE-008",
+            "AG-CODE-023",
+            "AG-FLOW-003",
+            "AG-MCP-CFG-001",
+            "AG-MCP-CFG-002",
+            "AG-MCP-CFG-003",
+            "AG-MCP-CFG-006",
+            "AG-SKL-EXEC-001",
+            "AG-SKL-EXEC-002",
+            "AG-SKL-EXEC-003",
+            "AG-SKL-SE-002",
+            "AG-SKL-SE-005",
+            "AG-SKL-SE-007"
+          ]
+        },
+        {
+          "id": "ASI06",
+          "title": "Memory & Context Poisoning",
+          "rules": [
+            "AG-CODE-026",
+            "AG-FLOW-007",
+            "AG-SKL-INJ-006"
+          ]
+        },
+        {
+          "id": "ASI07",
+          "title": "Insecure Inter-Agent Communication",
+          "rules": []
+        },
+        {
+          "id": "ASI08",
+          "title": "Cascading Failures",
+          "rules": []
+        },
+        {
+          "id": "ASI09",
+          "title": "Human-Agent Trust Exploitation",
+          "rules": [
+            "AG-MCP-META-011",
+            "AG-MCP-META-012",
+            "AG-MCP-META-017",
+            "AG-MCP-META-018",
+            "AG-SKL-INJ-003",
+            "AG-SKL-INJ-009",
+            "AG-SKL-SE-001",
+            "AG-SKL-SE-003",
+            "AG-SKL-SE-004",
+            "AG-SKL-SE-006"
+          ]
+        },
+        {
+          "id": "ASI10",
+          "title": "Rogue Agents",
+          "rules": [
+            "AG-CODE-027",
+            "AG-SKL-INJ-005"
+          ]
+        }
+      ],
+      "rules_pending_mapping": [],
+      "gaps": [
+        "ASI07",
+        "ASI08"
+      ]
+    },
+    {
+      "framework": "owasp-mcp-2025-beta",
+      "name": "OWASP MCP Top 10",
+      "version": "2025 (beta)",
+      "source": "https://owasp.org/www-project-mcp-top-10/",
+      "notes": "Beta list; ids and titles may change. Keep this file versioned with the upstream beta.",
+      "items": [
+        {
+          "id": "MCP01:2025",
+          "title": "Token Mismanagement & Secret Exposure",
+          "rules": [
+            "AG-CODE-020",
+            "AG-CODE-021",
+            "AG-MCP-CFG-011",
+            "AG-MCP-CFG-012",
+            "AG-MCP-CFG-019",
+            "AG-MCP-META-017"
+          ]
+        },
+        {
+          "id": "MCP02:2025",
+          "title": "Privilege Escalation via Scope Creep",
+          "rules": [
+            "AG-CODE-005",
+            "AG-CODE-040",
+            "AG-FLOW-004",
+            "AG-FLOW-006",
+            "AG-MCP-CFG-007",
+            "AG-MCP-CFG-008",
+            "AG-MCP-CFG-009",
+            "AG-MCP-CFG-020",
+            "AG-MCP-CFG-021",
+            "AG-MCP-META-011",
+            "AG-MCP-META-012"
+          ]
+        },
+        {
+          "id": "MCP03:2025",
+          "title": "Tool Poisoning",
+          "rules": [
+            "AG-MCP-META-001",
+            "AG-MCP-META-002",
+            "AG-MCP-META-003",
+            "AG-MCP-META-005",
+            "AG-MCP-META-006",
+            "AG-MCP-META-019",
+            "AG-MCP-META-020",
+            "AG-SC-001",
+            "AG-SC-003",
+            "AG-SC-005"
+          ]
+        },
+        {
+          "id": "MCP04:2025",
+          "title": "Software Supply Chain Attacks & Dependency Tampering",
+          "rules": [
+            "AG-CODE-023",
+            "AG-CODE-024",
+            "AG-CODE-025",
+            "AG-CODE-027",
+            "AG-CODE-028",
+            "AG-MCP-CFG-004",
+            "AG-MCP-CFG-010",
+            "AG-POL-003",
+            "AG-SC-004",
+            "AG-SC-010",
+            "AG-SC-011",
+            "AG-SC-012",
+            "AG-SC-020",
+            "AG-SC-021",
+            "AG-SC-022",
+            "AG-SC-023",
+            "AG-SC-025"
+          ]
+        },
+        {
+          "id": "MCP05:2025",
+          "title": "Command Injection & Execution",
+          "rules": [
+            "AG-CODE-001",
+            "AG-CODE-002",
+            "AG-CODE-003",
+            "AG-CODE-004",
+            "AG-CODE-006",
+            "AG-CODE-007",
+            "AG-CODE-008",
+            "AG-MCP-CFG-001",
+            "AG-MCP-CFG-002",
+            "AG-MCP-CFG-003",
+            "AG-MCP-CFG-006",
+            "AG-MCP-META-009",
+            "AG-MCP-META-010"
+          ]
+        },
+        {
+          "id": "MCP06:2025",
+          "title": "Prompt Injection via Contextual Payloads",
+          "rules": [
+            "AG-FLOW-003",
+            "AG-MCP-META-013",
+            "AG-MCP-META-014"
+          ]
+        },
+        {
+          "id": "MCP07:2025",
+          "title": "Insufficient Authentication & Authorization",
+          "rules": [
+            "AG-AUTH-001",
+            "AG-AUTH-002",
+            "AG-AUTH-003",
+            "AG-AUTH-004",
+            "AG-AUTH-005",
+            "AG-AUTH-006",
+            "AG-AUTH-007",
+            "AG-AUTH-008",
+            "AG-AUTH-009",
+            "AG-AUTH-011",
+            "AG-CODE-029",
+            "AG-MCP-CFG-013",
+            "AG-MCP-CFG-015",
+            "AG-MCP-CFG-016",
+            "AG-MCP-CFG-023"
+          ]
+        },
+        {
+          "id": "MCP08:2025",
+          "title": "Lack of Audit and Telemetry",
+          "rules": []
+        },
+        {
+          "id": "MCP09:2025",
+          "title": "Shadow MCP Servers",
+          "rules": [
+            "AG-MCP-CFG-014",
+            "AG-MCP-CFG-017",
+            "AG-MCP-CFG-018",
+            "AG-MCP-CFG-022",
+            "AG-MCP-META-007",
+            "AG-MCP-META-008",
+            "AG-POL-001",
+            "AG-POL-002",
+            "AG-SC-006",
+            "AG-SC-024",
+            "AG-SKL-INJ-007"
+          ]
+        },
+        {
+          "id": "MCP10:2025",
+          "title": "Context Injection & Over-Sharing",
+          "rules": [
+            "AG-CODE-022",
+            "AG-FLOW-001",
+            "AG-FLOW-002",
+            "AG-FLOW-005",
+            "AG-FLOW-007",
+            "AG-MCP-META-004",
+            "AG-MCP-META-015",
+            "AG-MCP-META-016",
+            "AG-MCP-META-018"
+          ]
+        }
+      ],
+      "rules_pending_mapping": [],
+      "gaps": [
+        "MCP08:2025"
+      ]
+    },
+    {
+      "framework": "owasp-ast-1.0",
+      "name": "OWASP Agentic Skills Top 10",
+      "version": "1.0",
+      "source": "https://owasp.github.io/www-project-agentic-skills-top-10/",
+      "notes": "Upstream sources disagree on the release date (March 2026 vs 2026-08-17); ids and titles agree.",
+      "items": [
+        {
+          "id": "AST01",
+          "title": "Malicious Skills",
+          "rules": [
+            "AG-CODE-023",
+            "AG-CODE-026",
+            "AG-CODE-027",
+            "AG-CODE-028",
+            "AG-FLOW-005",
+            "AG-SC-010",
+            "AG-SC-011",
+            "AG-SC-025",
+            "AG-SKL-BND-001",
+            "AG-SKL-BND-002",
+            "AG-SKL-CRED-010",
+            "AG-SKL-EXEC-003",
+            "AG-SKL-EXF-001",
+            "AG-SKL-EXF-002",
+            "AG-SKL-EXF-003",
+            "AG-SKL-EXF-004",
+            "AG-SKL-EXF-005",
+            "AG-SKL-HID-001",
+            "AG-SKL-HID-002",
+            "AG-SKL-HID-004",
+            "AG-SKL-HID-009",
+            "AG-SKL-INJ-001",
+            "AG-SKL-INJ-002",
+            "AG-SKL-INJ-003",
+            "AG-SKL-INJ-005",
+            "AG-SKL-INJ-006",
+            "AG-SKL-INJ-007",
+            "AG-SKL-INJ-009",
+            "AG-SKL-SE-001",
+            "AG-SKL-SE-002",
+            "AG-SKL-SE-003",
+            "AG-SKL-SE-004",
+            "AG-SKL-SE-005",
+            "AG-SKL-SE-006",
+            "AG-SKL-SE-007",
+            "AG-SKL-TYP-001"
+          ]
+        },
+        {
+          "id": "AST02",
+          "title": "Supply Chain Compromise",
+          "rules": [
+            "AG-CODE-024",
+            "AG-CODE-025",
+            "AG-SC-012",
+            "AG-SC-020",
+            "AG-SC-021",
+            "AG-SC-022",
+            "AG-SC-023",
+            "AG-SC-024",
+            "AG-SKL-SE-008",
+            "AG-SKL-TYP-002"
+          ]
+        },
+        {
+          "id": "AST03",
+          "title": "Over-Privileged Skills",
+          "rules": [
+            "AG-CODE-020",
+            "AG-CODE-021",
+            "AG-FLOW-002",
+            "AG-FLOW-004",
+            "AG-FLOW-006",
+            "AG-SKL-CRED-001",
+            "AG-SKL-CRED-002",
+            "AG-SKL-INJ-004",
+            "AG-SKL-PRIV-001",
+            "AG-SKL-PRIV-002"
+          ]
+        },
+        {
+          "id": "AST04",
+          "title": "Insecure Metadata",
+          "rules": [
+            "AG-CODE-040",
+            "AG-SKL-BND-003",
+            "AG-SKL-HID-003",
+            "AG-SKL-HID-005",
+            "AG-SKL-HID-006",
+            "AG-SKL-HID-007",
+            "AG-SKL-HID-008",
+            "AG-SKL-HID-010",
+            "AG-SKL-MIS-001",
+            "AG-SKL-SPEC-001",
+            "AG-SKL-SPEC-002",
+            "AG-SKL-SPEC-003",
+            "AG-SKL-SPEC-004",
+            "AG-SKL-SPEC-005",
+            "AG-SKL-SPEC-006",
+            "AG-SKL-SPEC-007"
+          ]
+        },
+        {
+          "id": "AST05",
+          "title": "Untrusted External Instructions",
+          "rules": [
+            "AG-FLOW-007",
+            "AG-SKL-INJ-008"
+          ]
+        },
+        {
+          "id": "AST06",
+          "title": "Weak Isolation",
+          "rules": [
+            "AG-CODE-001",
+            "AG-CODE-003",
+            "AG-FLOW-001",
+            "AG-FLOW-003",
+            "AG-SKL-EXEC-001",
+            "AG-SKL-EXEC-002",
+            "AG-SYS-003"
+          ]
+        },
+        {
+          "id": "AST07",
+          "title": "Update Drift",
+          "rules": [
+            "AG-MCP-CFG-004",
+            "AG-MCP-META-020",
+            "AG-POL-003",
+            "AG-SC-001",
+            "AG-SC-002",
+            "AG-SC-003",
+            "AG-SC-004",
+            "AG-SC-005"
+          ]
+        },
+        {
+          "id": "AST08",
+          "title": "Poor Scanning",
+          "rules": [
+            "AG-SYS-001",
+            "AG-SYS-002"
+          ]
+        },
+        {
+          "id": "AST09",
+          "title": "No Governance",
+          "rules": [
+            "AG-POL-001",
+            "AG-POL-002",
+            "AG-POL-005",
+            "AG-POL-006",
+            "AG-POL-010",
+            "AG-SC-006"
+          ]
+        },
+        {
+          "id": "AST10",
+          "title": "Cross-Platform Reuse",
+          "rules": []
+        }
+      ],
+      "rules_pending_mapping": [],
+      "gaps": [
+        "AST10"
+      ]
+    },
+    {
+      "framework": "owasp-llm-2025",
+      "name": "OWASP Top 10 for LLM Applications",
+      "version": "2025",
+      "source": "https://genai.owasp.org/llm-top-10/",
+      "notes": "",
+      "items": [
+        {
+          "id": "LLM01:2025",
+          "title": "Prompt Injection",
+          "rules": [
+            "AG-FLOW-001",
+            "AG-FLOW-002",
+            "AG-FLOW-003",
+            "AG-FLOW-007",
+            "AG-MCP-META-001",
+            "AG-MCP-META-002",
+            "AG-MCP-META-005",
+            "AG-MCP-META-006",
+            "AG-MCP-META-013",
+            "AG-MCP-META-014",
+            "AG-MCP-META-015",
+            "AG-MCP-META-019",
+            "AG-SKL-HID-001",
+            "AG-SKL-HID-002",
+            "AG-SKL-HID-003",
+            "AG-SKL-HID-004",
+            "AG-SKL-HID-005",
+            "AG-SKL-HID-006",
+            "AG-SKL-HID-007",
+            "AG-SKL-HID-009",
+            "AG-SKL-HID-010",
+            "AG-SKL-INJ-001",
+            "AG-SKL-INJ-002",
+            "AG-SKL-INJ-003",
+            "AG-SKL-INJ-008",
+            "AG-SKL-INJ-009",
+            "AG-SKL-SPEC-006"
+          ]
+        },
+        {
+          "id": "LLM02:2025",
+          "title": "Sensitive Information Disclosure",
+          "rules": [
+            "AG-CODE-020",
+            "AG-CODE-021",
+            "AG-CODE-022",
+            "AG-FLOW-005",
+            "AG-MCP-CFG-009",
+            "AG-MCP-CFG-011",
+            "AG-MCP-CFG-012",
+            "AG-MCP-CFG-019",
+            "AG-MCP-META-003",
+            "AG-MCP-META-004",
+            "AG-MCP-META-016",
+            "AG-MCP-META-017",
+            "AG-SKL-CRED-001",
+            "AG-SKL-CRED-002",
+            "AG-SKL-CRED-010",
+            "AG-SKL-EXF-001",
+            "AG-SKL-EXF-004",
+            "AG-SKL-EXF-005",
+            "AG-SKL-SE-006"
+          ]
+        },
+        {
+          "id": "LLM03:2025",
+          "title": "Supply Chain",
+          "rules": [
+            "AG-CODE-024",
+            "AG-CODE-025",
+            "AG-CODE-028",
+            "AG-MCP-CFG-004",
+            "AG-MCP-CFG-006",
+            "AG-MCP-CFG-010",
+            "AG-MCP-CFG-022",
+            "AG-SC-001",
+            "AG-SC-002",
+            "AG-SC-005",
+            "AG-SC-010",
+            "AG-SC-012",
+            "AG-SC-020",
+            "AG-SC-021",
+            "AG-SC-022",
+            "AG-SC-023",
+            "AG-SC-024",
+            "AG-SC-025",
+            "AG-SKL-BND-001",
+            "AG-SKL-SE-001",
+            "AG-SKL-SE-002",
+            "AG-SKL-SE-008",
+            "AG-SKL-TYP-001",
+            "AG-SKL-TYP-002"
+          ]
+        },
+        {
+          "id": "LLM04:2025",
+          "title": "Data and Model Poisoning",
+          "rules": []
+        },
+        {
+          "id": "LLM05:2025",
+          "title": "Improper Output Handling",
+          "rules": [
+            "AG-CODE-001",
+            "AG-CODE-002",
+            "AG-CODE-003",
+            "AG-CODE-004",
+            "AG-CODE-005",
+            "AG-CODE-006",
+            "AG-CODE-007",
+            "AG-CODE-008"
+          ]
+        },
+        {
+          "id": "LLM06:2025",
+          "title": "Excessive Agency",
+          "rules": [
+            "AG-CODE-040",
+            "AG-FLOW-004",
+            "AG-FLOW-006",
+            "AG-MCP-CFG-021",
+            "AG-MCP-META-009",
+            "AG-MCP-META-011",
+            "AG-MCP-META-012",
+            "AG-SKL-INJ-004",
+            "AG-SKL-INJ-005",
+            "AG-SKL-INJ-007",
+            "AG-SKL-PRIV-001",
+            "AG-SKL-PRIV-002"
+          ]
+        },
+        {
+          "id": "LLM07:2025",
+          "title": "System Prompt Leakage",
+          "rules": []
+        },
+        {
+          "id": "LLM08:2025",
+          "title": "Vector and Embedding Weaknesses",
+          "rules": []
+        },
+        {
+          "id": "LLM09:2025",
+          "title": "Misinformation",
+          "rules": []
+        },
+        {
+          "id": "LLM10:2025",
+          "title": "Unbounded Consumption",
+          "rules": [
+            "AG-SYS-004"
+          ]
+        }
+      ],
+      "rules_pending_mapping": [],
+      "gaps": [
+        "LLM04:2025",
+        "LLM07:2025",
+        "LLM08:2025",
+        "LLM09:2025"
+      ]
+    },
+    {
+      "framework": "nsa-csi-mcp-2026-05",
+      "name": "NSA AISC CSI — Model Context Protocol (MCP): Security Design Considerations for AI-Driven Automation",
+      "version": "2026-05",
+      "source": "https://www.nsa.gov/Press-Room/Press-Releases-Statements/Press-Release-View/Article/4496698/",
+      "notes": "TODO: the CSI PDF could not be retrieved (HTTP 403 to automated fetch). Section identifiers are unverified, so no items are listed and every rule maps to null with a TODO. Add items (section id + title) once the document has been read.",
+      "items": [],
+      "rules_pending_mapping": [
+        "AG-AUTH-001",
+        "AG-AUTH-002",
+        "AG-AUTH-003",
+        "AG-AUTH-004",
+        "AG-AUTH-005",
+        "AG-AUTH-006",
+        "AG-AUTH-007",
+        "AG-AUTH-008",
+        "AG-AUTH-009",
+        "AG-AUTH-010",
+        "AG-AUTH-011",
+        "AG-CODE-001",
+        "AG-CODE-002",
+        "AG-CODE-003",
+        "AG-CODE-004",
+        "AG-CODE-005",
+        "AG-CODE-006",
+        "AG-CODE-007",
+        "AG-CODE-008",
+        "AG-CODE-020",
+        "AG-CODE-021",
+        "AG-CODE-022",
+        "AG-CODE-023",
+        "AG-CODE-024",
+        "AG-CODE-025",
+        "AG-CODE-026",
+        "AG-CODE-027",
+        "AG-CODE-028",
+        "AG-CODE-029",
+        "AG-CODE-040",
+        "AG-FLOW-001",
+        "AG-FLOW-002",
+        "AG-FLOW-003",
+        "AG-FLOW-004",
+        "AG-FLOW-005",
+        "AG-FLOW-006",
+        "AG-FLOW-007",
+        "AG-MCP-CFG-001",
+        "AG-MCP-CFG-002",
+        "AG-MCP-CFG-003",
+        "AG-MCP-CFG-004",
+        "AG-MCP-CFG-006",
+        "AG-MCP-CFG-007",
+        "AG-MCP-CFG-008",
+        "AG-MCP-CFG-009",
+        "AG-MCP-CFG-010",
+        "AG-MCP-CFG-011",
+        "AG-MCP-CFG-012",
+        "AG-MCP-CFG-013",
+        "AG-MCP-CFG-014",
+        "AG-MCP-CFG-015",
+        "AG-MCP-CFG-016",
+        "AG-MCP-CFG-017",
+        "AG-MCP-CFG-018",
+        "AG-MCP-CFG-019",
+        "AG-MCP-CFG-020",
+        "AG-MCP-CFG-021",
+        "AG-MCP-CFG-022",
+        "AG-MCP-CFG-023",
+        "AG-MCP-META-001",
+        "AG-MCP-META-002",
+        "AG-MCP-META-003",
+        "AG-MCP-META-004",
+        "AG-MCP-META-005",
+        "AG-MCP-META-006",
+        "AG-MCP-META-007",
+        "AG-MCP-META-008",
+        "AG-MCP-META-009",
+        "AG-MCP-META-010",
+        "AG-MCP-META-011",
+        "AG-MCP-META-012",
+        "AG-MCP-META-013",
+        "AG-MCP-META-014",
+        "AG-MCP-META-015",
+        "AG-MCP-META-016",
+        "AG-MCP-META-017",
+        "AG-MCP-META-018",
+        "AG-MCP-META-019",
+        "AG-MCP-META-020",
+        "AG-POL-001",
+        "AG-POL-002",
+        "AG-POL-003",
+        "AG-POL-005",
+        "AG-POL-006",
+        "AG-POL-010",
+        "AG-SC-001",
+        "AG-SC-002",
+        "AG-SC-003",
+        "AG-SC-004",
+        "AG-SC-005",
+        "AG-SC-006",
+        "AG-SC-010",
+        "AG-SC-011",
+        "AG-SC-012",
+        "AG-SC-020",
+        "AG-SC-021",
+        "AG-SC-022",
+        "AG-SC-023",
+        "AG-SC-024",
+        "AG-SC-025",
+        "AG-SKL-BND-001",
+        "AG-SKL-BND-002",
+        "AG-SKL-BND-003",
+        "AG-SKL-CRED-001",
+        "AG-SKL-CRED-002",
+        "AG-SKL-CRED-010",
+        "AG-SKL-EXEC-001",
+        "AG-SKL-EXEC-002",
+        "AG-SKL-EXEC-003",
+        "AG-SKL-EXF-001",
+        "AG-SKL-EXF-002",
+        "AG-SKL-EXF-003",
+        "AG-SKL-EXF-004",
+        "AG-SKL-EXF-005",
+        "AG-SKL-HID-001",
+        "AG-SKL-HID-002",
+        "AG-SKL-HID-003",
+        "AG-SKL-HID-004",
+        "AG-SKL-HID-005",
+        "AG-SKL-HID-006",
+        "AG-SKL-HID-007",
+        "AG-SKL-HID-008",
+        "AG-SKL-HID-009",
+        "AG-SKL-HID-010",
+        "AG-SKL-INJ-001",
+        "AG-SKL-INJ-002",
+        "AG-SKL-INJ-003",
+        "AG-SKL-INJ-004",
+        "AG-SKL-INJ-005",
+        "AG-SKL-INJ-006",
+        "AG-SKL-INJ-007",
+        "AG-SKL-INJ-008",
+        "AG-SKL-INJ-009",
+        "AG-SKL-MIS-001",
+        "AG-SKL-PRIV-001",
+        "AG-SKL-PRIV-002",
+        "AG-SKL-SE-001",
+        "AG-SKL-SE-002",
+        "AG-SKL-SE-003",
+        "AG-SKL-SE-004",
+        "AG-SKL-SE-005",
+        "AG-SKL-SE-006",
+        "AG-SKL-SE-007",
+        "AG-SKL-SE-008",
+        "AG-SKL-SPEC-001",
+        "AG-SKL-SPEC-002",
+        "AG-SKL-SPEC-003",
+        "AG-SKL-SPEC-004",
+        "AG-SKL-SPEC-005",
+        "AG-SKL-SPEC-006",
+        "AG-SKL-SPEC-007",
+        "AG-SKL-TYP-001",
+        "AG-SKL-TYP-002",
+        "AG-SYS-001",
+        "AG-SYS-002",
+        "AG-SYS-003",
+        "AG-SYS-004"
+      ],
+      "gaps": []
+    },
+    {
+      "framework": "cwe",
+      "name": "Common Weakness Enumeration",
+      "version": "4.x",
+      "source": "https://cwe.mitre.org/",
+      "notes": "Titles to be re-checked against the current CWE list during release review.",
+      "items": [
+        {
+          "id": "CWE-20",
+          "title": "Improper Input Validation",
+          "rules": [
+            "AG-MCP-META-009",
+            "AG-MCP-META-010",
+            "AG-SKL-SPEC-007"
+          ]
+        },
+        {
+          "id": "CWE-22",
+          "title": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')",
+          "rules": [
+            "AG-CODE-005"
+          ]
+        },
+        {
+          "id": "CWE-59",
+          "title": "Improper Link Resolution Before File Access ('Link Following')",
+          "rules": [
+            "AG-SYS-003"
+          ]
+        },
+        {
+          "id": "CWE-74",
+          "title": "Improper Neutralization of Special Elements in Output Used by a Downstream Component ('Injection')",
+          "rules": [
+            "AG-SKL-INJ-002"
+          ]
+        },
+        {
+          "id": "CWE-78",
+          "title": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')",
+          "rules": [
+            "AG-CODE-001",
+            "AG-MCP-CFG-001",
+            "AG-MCP-CFG-003",
+            "AG-SKL-EXEC-001"
+          ]
+        },
+        {
+          "id": "CWE-88",
+          "title": "Improper Neutralization of Argument Delimiters in a Command ('Argument Injection')",
+          "rules": [
+            "AG-CODE-002"
+          ]
+        },
+        {
+          "id": "CWE-89",
+          "title": "Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')",
+          "rules": [
+            "AG-CODE-007"
+          ]
+        },
+        {
+          "id": "CWE-94",
+          "title": "Improper Control of Generation of Code ('Code Injection')",
+          "rules": [
+            "AG-MCP-CFG-002"
+          ]
+        },
+        {
+          "id": "CWE-95",
+          "title": "Improper Neutralization of Directives in Dynamically Evaluated Code ('Eval Injection')",
+          "rules": [
+            "AG-CODE-003"
+          ]
+        },
+        {
+          "id": "CWE-250",
+          "title": "Execution with Unnecessary Privileges",
+          "rules": [
+            "AG-MCP-CFG-007",
+            "AG-MCP-CFG-008",
+            "AG-MCP-CFG-009",
+            "AG-SKL-PRIV-001",
+            "AG-SKL-PRIV-002"
+          ]
+        },
+        {
+          "id": "CWE-295",
+          "title": "Improper Certificate Validation",
+          "rules": [
+            "AG-AUTH-009"
+          ]
+        },
+        {
+          "id": "CWE-319",
+          "title": "Cleartext Transmission of Sensitive Information",
+          "rules": [
+            "AG-MCP-CFG-013"
+          ]
+        },
+        {
+          "id": "CWE-409",
+          "title": "Improper Handling of Highly Compressed Data (Data Amplification)",
+          "rules": [
+            "AG-SYS-001",
+            "AG-SYS-004"
+          ]
+        },
+        {
+          "id": "CWE-451",
+          "title": "User Interface (UI) Misrepresentation of Critical Information",
+          "rules": [
+            "AG-MCP-META-001",
+            "AG-SKL-HID-001",
+            "AG-SKL-HID-002",
+            "AG-SKL-HID-003",
+            "AG-SKL-HID-005",
+            "AG-SKL-HID-006",
+            "AG-SKL-HID-010"
+          ]
+        },
+        {
+          "id": "CWE-494",
+          "title": "Download of Code Without Integrity Check",
+          "rules": [
+            "AG-CODE-025",
+            "AG-CODE-028",
+            "AG-MCP-CFG-006",
+            "AG-SKL-EXEC-003",
+            "AG-SKL-SE-001",
+            "AG-SKL-SE-002",
+            "AG-SKL-SE-008"
+          ]
+        },
+        {
+          "id": "CWE-502",
+          "title": "Deserialization of Untrusted Data",
+          "rules": [
+            "AG-CODE-004"
+          ]
+        },
+        {
+          "id": "CWE-506",
+          "title": "Embedded Malicious Code",
+          "rules": [
+            "AG-CODE-023",
+            "AG-SKL-BND-001",
+            "AG-SKL-HID-009",
+            "AG-SKL-SE-003",
+            "AG-SKL-SE-005"
+          ]
+        },
+        {
+          "id": "CWE-598",
+          "title": "Use of GET Request Method With Sensitive Query Strings",
+          "rules": [
+            "AG-MCP-CFG-019"
+          ]
+        },
+        {
+          "id": "CWE-798",
+          "title": "Use of Hard-coded Credentials",
+          "rules": [
+            "AG-MCP-CFG-011",
+            "AG-MCP-CFG-012"
+          ]
+        },
+        {
+          "id": "CWE-829",
+          "title": "Inclusion of Functionality from Untrusted Control Sphere",
+          "rules": [
+            "AG-CODE-024",
+            "AG-MCP-CFG-004",
+            "AG-MCP-CFG-010",
+            "AG-MCP-CFG-022",
+            "AG-MCP-META-016"
+          ]
+        },
+        {
+          "id": "CWE-918",
+          "title": "Server-Side Request Forgery (SSRF)",
+          "rules": [
+            "AG-CODE-006",
+            "AG-MCP-CFG-015"
+          ]
+        },
+        {
+          "id": "CWE-1007",
+          "title": "Insufficient Visual Distinction of Homoglyphs Presented to User",
+          "rules": [
+            "AG-MCP-META-008",
+            "AG-SKL-HID-004"
+          ]
+        },
+        {
+          "id": "CWE-1327",
+          "title": "Binding to an Unrestricted IP Address",
+          "rules": [
+            "AG-MCP-CFG-016"
+          ]
+        },
+        {
+          "id": "CWE-1336",
+          "title": "Improper Neutralization of Special Elements Used in a Template Engine",
+          "rules": [
+            "AG-CODE-008"
+          ]
+        }
+      ],
+      "rules_pending_mapping": [],
+      "gaps": []
+    }
+  ]
+}

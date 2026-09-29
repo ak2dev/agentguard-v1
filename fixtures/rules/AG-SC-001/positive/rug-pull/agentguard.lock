@@ -1,0 +1,33 @@
+{
+  "entries": [
+    {
+      "capability_labels": [],
+      "content_hash": "6e5aec8e7ac35ce1eafe0f9d6672d09c3eb36ea2c45cb6bcccc30718cd8178c2",
+      "key": "mcp_server:calc@server/tools.json",
+      "kind": "mcp_server",
+      "name": "calc",
+      "tools": {
+        "add": {
+          "definition": {
+            "annotations": {},
+            "description": "Adds two numbers.",
+            "input_schema": {
+              "properties": {
+                "a": {
+                  "type": "number"
+                }
+              },
+              "type": "object"
+            },
+            "name": "add",
+            "title": null
+          },
+          "hash": "8feea8a31dd32738073516935fa503faa643aa4d4c727c68599306d2a2515312"
+        }
+      },
+      "version": "1.0.0"
+    }
+  ],
+  "generator": "agentguard",
+  "lock_version": 1
+}

@@ -1,0 +1,17 @@
+{
+  "network": {
+    "auth_checks": true
+  },
+  "remote_probes": [
+    {
+      "server_name": "docs",
+      "url": "https://mcp.example.invalid/mcp",
+      "config_path": "claude_desktop_config.json",
+      "status_unauth": 401,
+      "prm": null,
+      "prm_url": null,
+      "as_metadata": {},
+      "tls_version": "TLSv1.3"
+    }
+  ]
+}

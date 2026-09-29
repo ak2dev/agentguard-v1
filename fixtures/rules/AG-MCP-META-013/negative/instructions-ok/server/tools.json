@@ -1,0 +1,20 @@
+{
+  "tools": [
+    {
+      "name": "add",
+      "description": "Adds two numbers.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "a": {
+            "type": "number"
+          },
+          "b": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  ],
+  "instructions": "Use search before fetch to reduce latency."
+}

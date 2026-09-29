@@ -1,0 +1,11 @@
+---
+// Placeholder wordmark (original artwork). Swap this single component when
+// the name and brand are cleared.
+const { label = "Agent Guard" } = Astro.props;
+---
+<svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+  <path d="M16 2 4 7v8c0 7.5 5.1 13.3 12 15 6.9-1.7 12-7.5 12-15V7L16 2z" fill="currentColor" opacity=".14"></path>
+  <path d="M16 2 4 7v8c0 7.5 5.1 13.3 12 15 6.9-1.7 12-7.5 12-15V7L16 2z" fill="none" stroke="currentColor" stroke-width="2"></path>
+  <path d="m10.5 16.2 3.6 3.6 7.4-7.6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>{label}</span>

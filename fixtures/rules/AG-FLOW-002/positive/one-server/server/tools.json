@@ -1,0 +1,49 @@
+{
+  "tools": [
+    {
+      "name": "fetch_url",
+      "description": "Fetch a web page.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "string",
+            "enum": [
+              "a"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "read_file",
+      "description": "Read a file.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "string",
+            "enum": [
+              "a"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "send_email",
+      "description": "Send an email.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "string",
+            "enum": [
+              "a"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "network": {
+    "auth_checks": true
+  },
+  "remote_probes": [
+    {
+      "server_name": "docs",
+      "url": "https://mcp.example.invalid/mcp",
+      "config_path": "claude_desktop_config.json",
+      "status_unauth": 401,
+      "prm": {
+        "resource": "https://mcp.example.invalid/mcp",
+        "authorization_servers": [
+          "https://auth.example.invalid"
+        ]
+      },
+      "prm_url": "https://mcp.example.invalid/.well-known/oauth-protected-resource/mcp",
+      "as_metadata": {
+        "https://auth.example.invalid": {
+          "issuer": "https://auth.example.invalid",
+          "code_challenge_methods_supported": [
+            "S256"
+          ],
+          "authorization_response_iss_parameter_supported": true,
+          "client_id_metadata_document_supported": true
+        }
+      },
+      "tls_version": "TLSv1.3",
+      "reachable": false,
+      "error": "TLS certificate verification failed",
+      "tls_error": "certificate verify failed: self-signed certificate"
+    }
+  ]
+}

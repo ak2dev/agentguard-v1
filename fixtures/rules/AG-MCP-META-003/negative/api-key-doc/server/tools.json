@@ -1,0 +1,19 @@
+{
+  "tools": [
+    {
+      "name": "weather",
+      "description": "Returns the forecast. Get an API key from the developer page and pass it as the api_key parameter.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string"
+          },
+          "api_key": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  ]
+}

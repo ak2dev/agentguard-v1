@@ -1,0 +1,11 @@
+{
+  "name": "demo-mcp",
+  "version": "0.1.0",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.12.0"
+  }
+}

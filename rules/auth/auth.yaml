@@ -1,0 +1,130 @@
+# Remote MCP auth conformance (opt-in: --auth-checks). Evaluated over
+# recorded, unauthenticated probe results; no credentials are ever sent.
+# References: MCP 2026-07-28 authorization; RFC 9728, 8414, 9207, 8707, 7636.
+rules:
+  - id: AG-AUTH-001
+    version: 1
+    title: Server answers without authentication
+    description: The remote server answered discovery or listing requests without any authorization.
+    why: Reported as a fact, not a verdict — public servers are legitimate. Know which remote servers anyone can use.
+    severity: info
+    confidence: high
+    network: true
+    match: {type: analyzer, analyzer: auth}
+    remediation: If the server exposes private data or actions, require OAuth authorization per the MCP spec.
+
+  - id: AG-AUTH-002
+    version: 1
+    title: Missing Protected Resource Metadata (RFC 9728)
+    description: The server requires authorization (401/403) but neither the WWW-Authenticate resource_metadata parameter nor the well-known URI yields Protected Resource Metadata.
+    why: Without PRM, clients cannot discover the correct authorization server and fall back to guesses that enable token mix-ups.
+    severity: medium
+    confidence: high
+    network: true
+    match: {type: analyzer, analyzer: auth}
+    remediation: Serve /.well-known/oauth-protected-resource and reference it from WWW-Authenticate.
+    references: [https://www.rfc-editor.org/rfc/rfc9728]
+
+  - id: AG-AUTH-003
+    version: 1
+    title: Protected Resource Metadata 'resource' does not match the server
+    description: The PRM `resource` identifier differs from the MCP server URL.
+    why: Clients bind tokens to the advertised resource; a mismatch breaks audience validation or points tokens elsewhere.
+    severity: high
+    confidence: high
+    network: true
+    match: {type: analyzer, analyzer: auth}
+    remediation: Set `resource` to the server's canonical URL.
+
+  - id: AG-AUTH-004
+    version: 1
+    title: Authorization server metadata missing or inconsistent
+    description: The authorization server listed in PRM has no RFC 8414/OIDC metadata, or its `issuer` does not match.
+    why: Issuer mismatches enable authorization-server mix-up attacks.
+    severity: medium
+    confidence: high
+    network: true
+    match: {type: analyzer, analyzer: auth}
+    remediation: Publish authorization server metadata whose issuer exactly matches the advertised issuer.
+    references: [https://www.rfc-editor.org/rfc/rfc8414]
+
+  - id: AG-AUTH-005
+    version: 1
+    title: PKCE S256 not advertised
+    description: The authorization server's `code_challenge_methods_supported` does not include S256.
+    why: The MCP spec requires PKCE with S256; clients are expected to refuse authorization servers that do not advertise it.
+    severity: high
+    confidence: high
+    network: true
+    match: {type: analyzer, analyzer: auth}
+    remediation: Support PKCE S256 and advertise it in authorization server metadata.
+    references: [https://www.rfc-editor.org/rfc/rfc7636]
+
+  - id: AG-AUTH-006
+    version: 1
+    title: RFC 9207 'iss' response parameter not advertised
+    description: The authorization server does not advertise `authorization_response_iss_parameter_supported`.
+    why: MCP 2026-07-28 says authorization servers SHOULD return `iss`, which clients use to detect mix-up attacks.
+    severity: low
+    confidence: high
+    network: true
+    match: {type: analyzer, analyzer: auth}
+    remediation: Return `iss` in authorization responses and advertise it.
+    references: [https://www.rfc-editor.org/rfc/rfc9207]
+
+  - id: AG-AUTH-007
+    version: 1
+    title: Dynamic Client Registration only
+    description: The authorization server offers Dynamic Client Registration but not Client ID Metadata Documents.
+    why: DCR is deprecated as an MCP client registration mechanism in 2026-07-28 in favor of Client ID Metadata Documents.
+    severity: low
+    confidence: high
+    network: true
+    match: {type: analyzer, analyzer: auth}
+    remediation: Support Client ID Metadata Documents.
+    references: [https://modelcontextprotocol.io/specification/2026-07-28/changelog]
+
+  - id: AG-AUTH-008
+    version: 1
+    title: No evidence of resource indicators / audience binding
+    description: Protected Resource Metadata has no `resource` identifier, so clients cannot send an RFC 8707 resource parameter bound to this server.
+    why: Tokens without audience binding can be replayed against other services.
+    severity: medium
+    confidence: low
+    network: true
+    match: {type: analyzer, analyzer: auth}
+    remediation: Publish `resource` in PRM and validate token audience on every request.
+    references: [https://www.rfc-editor.org/rfc/rfc8707]
+
+  - id: AG-AUTH-009
+    version: 1
+    title: TLS weakness
+    description: Certificate verification failed or a protocol older than TLS 1.2 was negotiated.
+    why: Broken TLS exposes tool traffic and tokens.
+    severity: high
+    confidence: high
+    network: true
+    match: {type: analyzer, analyzer: auth}
+    remediation: Serve a valid certificate and require TLS 1.2 or newer.
+
+  - id: AG-AUTH-010
+    version: 1
+    title: Old or unrecognized protocol version
+    description: The server advertises an MCP protocol version older than 2025-06-18 or one Agent Guard does not recognize. (The advertised version is always recorded in the inventory.)
+    why: Older revisions lack current authorization and security requirements.
+    severity: info
+    confidence: high
+    network: true
+    match: {type: analyzer, analyzer: auth}
+    remediation: Upgrade the server to a current protocol revision.
+
+  - id: AG-AUTH-011
+    version: 1
+    title: Metadata endpoint redirects cross-origin or to insecure scheme
+    description: A protected-resource or authorization-server metadata request was redirected to another origin or to plain HTTP.
+    why: Redirected metadata can point clients at attacker-controlled authorization servers.
+    severity: medium
+    confidence: high
+    network: true
+    match: {type: analyzer, analyzer: auth}
+    remediation: Serve metadata directly at the well-known URIs over HTTPS.

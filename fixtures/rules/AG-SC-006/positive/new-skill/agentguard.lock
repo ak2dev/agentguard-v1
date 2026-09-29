@@ -1,0 +1,16 @@
+{
+  "entries": [
+    {
+      "capability_labels": [],
+      "content_hash": "ebb1e26527385a08aeb9ceed07011623f8e167018652f5315aaf063b58a60c34",
+      "key": "skill:old-tool@old-tool",
+      "kind": "skill",
+      "name": "old-tool",
+      "skill_files": {
+        "SKILL.md": "01d3344855e8b2172466e8b11fb31c545d06125adde4ac6c853acbc866bc7714"
+      }
+    }
+  ],
+  "generator": "agentguard",
+  "lock_version": 1
+}

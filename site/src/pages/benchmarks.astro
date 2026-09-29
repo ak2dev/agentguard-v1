@@ -1,0 +1,58 @@
+---
+import Base from "../layouts/Base.astro";
+import b from "../data/generated/bench.json";
+const sevs = ["critical", "high", "medium"];
+const pct = (x) => (x === null || x === undefined ? "—" : `${(x * 100).toFixed(1)}%`);
+const cats = Object.entries(b.categories);
+---
+<Base title="Benchmarks">
+  <h1>Benchmark results</h1>
+  <p class="lead">Generated from <code>bench/results/latest.json</code> (engine {b.engine_version}, rule pack {b.rule_pack.version}, {b.date}). CI reruns the benchmark on every change and fails on regressions.</p>
+
+  <h2>Corpus</h2>
+  <p>{b.corpus.items} items: {b.corpus.malicious} malicious, {b.corpus.adversarial} adversarial, {b.corpus.benign} benign. Sources: {Object.entries(b.corpus.sources).map(([k, v]) => `${v} ${k}`).join(", ")}.
+  All malicious and adversarial items are inert synthetic reproductions of documented patterns (reserved domains, no working payloads). The held-out split shares no author or template with the items used while writing rules.</p>
+  {!b.corpus.sources.real && <p class="gap">Caveat: the benign set is currently synthetic. Real-world benign corpora (official and popular skills and servers at pinned revisions) are fetched by <code>bench/fetch_real.py</code>; until they are included, false-positive rates here are optimistic.</p>}
+
+  <h2>Targets</h2>
+  <div class="table-scroll"><table>
+    <thead><tr><th scope="col">Target</th><th scope="col">Required</th><th scope="col">Actual</th><th scope="col">Status</th></tr></thead>
+    <tbody>
+      {Object.entries(b.targets).map(([k, t]) => (
+        <tr><td>{k}</td><td>{k.startsWith("fpr") ? `≤ ${pct(t.target)}` : `≥ ${pct(t.target)}`}</td><td>{pct(t.actual)}</td><td>{t.met ? <span class="ok">met</span> : <span class="gap">not met</span>}</td></tr>
+      ))}
+    </tbody>
+  </table></div>
+
+  <h2>Overall (item level)</h2>
+  <p class="muted">An item counts as flagged at a threshold when it has at least one finding at or above that severity. Coverage (AG-SYS), policy (AG-POL) and configuration-posture flow findings (AG-FLOW) are reported separately and not counted as detections.</p>
+  <div class="table-scroll"><table>
+    <thead><tr><th scope="col">Threshold</th><th scope="col">Precision</th><th scope="col">Recall</th><th scope="col">F1</th><th scope="col">FPR</th><th scope="col">TP / FP / FN / TN</th></tr></thead>
+    <tbody>
+      {sevs.map((s) => { const m = b.overall[s]; return (
+        <tr><td>≥ {s}</td><td>{pct(m.precision)}</td><td>{pct(m.recall)}</td><td>{pct(m.f1)}</td><td>{pct(m.fpr)}</td><td>{m.tp} / {m.fp} / {m.fn} / {m.tn}</td></tr>
+      ); })}
+    </tbody>
+  </table></div>
+
+  <h2>Held-out split only</h2>
+  {b.by_split.heldout && (
+  <div class="table-scroll"><table>
+    <thead><tr><th scope="col">Threshold</th><th scope="col">Precision</th><th scope="col">Recall</th><th scope="col">FPR</th></tr></thead>
+    <tbody>{sevs.map((s) => { const m = b.by_split.heldout[s]; return (<tr><td>≥ {s}</td><td>{pct(m.precision)}</td><td>{pct(m.recall)}</td><td>{pct(m.fpr)}</td></tr>); })}</tbody>
+  </table></div>)}
+
+  <h2>Per category</h2>
+  <p class="muted">Recall for malicious/adversarial categories; false-positive rate for benign ones. Weak categories are listed as they are.</p>
+  <div class="table-scroll"><table>
+    <thead><tr><th scope="col">Category</th><th scope="col">Label</th><th scope="col">Items</th><th scope="col">@critical</th><th scope="col">@high</th><th scope="col">@medium</th><th scope="col">Expected rule hit</th></tr></thead>
+    <tbody>
+      {cats.map(([name, e]) => { const k = e.label === "benign" ? "fpr" : "recall"; return (
+        <tr><td>{name}</td><td>{e.label}</td><td>{e.items}</td>{sevs.map((s) => <td>{k} {pct(e[`${k}_${s}`])}</td>)}<td>{e.expected_rule_hit_rate !== undefined ? pct(e.expected_rule_hit_rate) : "—"}</td></tr>
+      ); })}
+    </tbody>
+  </table></div>
+
+  <h2>Performance</h2>
+  {b.performance.perf_check && <p>{b.performance.perf_check.skills} skills + {b.performance.perf_check.configs} server configs scanned in {b.performance.perf_check.seconds}s (target &lt; {b.performance.perf_check.target_seconds}s).</p>}
+</Base>

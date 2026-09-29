@@ -1,0 +1,31 @@
+---
+import Doc from "../../layouts/Doc.astro";
+import cli from "../../data/generated/cli.json";
+const frontmatter = { title: "CLI reference", description: "Every agentguard command and option, generated from the CLI itself." };
+---
+<Doc frontmatter={frontmatter}>
+  <h1>CLI reference</h1>
+  <p>Generated from the <code>agentguard</code> {cli.version} command-line app. Exit codes for <code>scan</code>: <code>0</code> no findings at or above the threshold, <code>1</code> findings at or above it, <code>2</code> scanner error.</p>
+  {cli.commands.map((c) => (
+    <section>
+      <h2 id={c.name.replace(/ /g, "-")}><code>agentguard {c.name}</code></h2>
+      <p>{c.help}</p>
+      {c.params.length > 0 && (
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th scope="col">Argument / option</th><th scope="col">Description</th><th scope="col">Default</th></tr></thead>
+            <tbody>
+              {c.params.map((p) => (
+                <tr>
+                  <td><code>{p.kind === "argument" ? p.name.toUpperCase() : p.opts.join(", ")}</code>{p.required && " (required)"}</td>
+                  <td>{p.help}</td>
+                  <td>{p.default !== null && p.default !== "False" ? <code>{p.default}</code> : ""}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
+  ))}
+</Doc>

@@ -1,0 +1,8 @@
+- id: agentguard
+  name: Agent Guard
+  description: Scan agent skills, instruction files and MCP configs (never executes scanned code).
+  entry: agentguard scan . --fail-on high
+  language: python
+  pass_filenames: false
+  always_run: false
+  files: (SKILL\.md|AGENTS\.md|CLAUDE\.md|GEMINI\.md|\.mdc|mcp\.json|\.mcp\.json|settings\.json|config\.toml|server\.json|\.agentguard\.yaml)$

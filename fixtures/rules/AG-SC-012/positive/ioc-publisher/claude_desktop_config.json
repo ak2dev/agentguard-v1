@@ -1,0 +1,1 @@
+{"mcpServers": {"t": {"command": "npx", "args": ["-y", "@ioc-sample-publisher/tool@1.0.0"]}}}

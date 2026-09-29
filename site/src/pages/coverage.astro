@@ -1,0 +1,36 @@
+---
+import Base from "../layouts/Base.astro";
+import cov from "../data/generated/coverage.json";
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+---
+<Base title="Standards coverage">
+  <h1>Standards coverage</h1>
+  <p class="lead">Which rules address each item of each framework, generated from <code>mappings/*.yaml</code>. Gaps are shown, not hidden. Mappings Agent Guard is unsure of stay empty with a TODO rather than being invented.</p>
+  {cov.frameworks.map((fw) => (
+    <section>
+      <h2>{fw.name} <span class="muted">{fw.version}</span></h2>
+      {fw.source && <p class="muted">Source: <a href={fw.source} rel="noreferrer">{fw.source}</a></p>}
+      {fw.notes && <p class="muted">{fw.notes}</p>}
+      {fw.items.length > 0 ? (
+        <div class="table-scroll">
+          <table class="matrix">
+            <thead><tr><th scope="col">ID</th><th scope="col">Title</th><th scope="col">Rules</th></tr></thead>
+            <tbody>
+              {fw.items.map((it) => (
+                <tr>
+                  <td><code>{it.id}</code></td>
+                  <td>{it.title}</td>
+                  <td class="rules">{it.rules.length ? it.rules.map((r) => <a class="pill" href={`${base}/rules/${r.toLowerCase()}/`}>{r}</a>) : <span class="gap">Gap — no rule yet</span>}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : <p class="gap">No items listed yet.</p>}
+      {fw.rules_pending_mapping.length > 0 && (
+        <p class="muted">{fw.rules_pending_mapping.length} rules have no mapping to this framework yet (TODO pending review).</p>
+      )}
+      <p>{fw.gaps.length ? <span class="gap">{fw.gaps.length} gap(s): {fw.gaps.join(", ")}</span> : fw.items.length ? <span class="ok">Every item has at least one rule.</span> : null}</p>
+    </section>
+  ))}
+</Base>

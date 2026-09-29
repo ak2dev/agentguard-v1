@@ -1,0 +1,126 @@
+# Execution surfaces, privilege, mismatch, typosquatting, bundled content.
+rules:
+  - id: AG-SKL-EXEC-001
+    version: 1
+    title: Dynamic context injection runs a shell command at invocation
+    description: The skill uses Claude Code dynamic context injection (!`cmd` or a ```! block), which runs a shell command before the model sees the skill.
+    why: These commands run as part of loading the skill, outside the model's normal tool-approval flow; the command itself is analyzed separately.
+    severity: medium
+    confidence: high
+    applies_to: [skill_md, instruction_md]
+    match: {type: analyzer, analyzer: skill.exec}
+    remediation: Keep injected commands read-only and local (e.g. git status). Never fetch from the network or read secrets in them.
+    references: [https://code.claude.com/docs/en/skills]
+
+  - id: AG-SKL-EXEC-002
+    version: 1
+    title: Skill registers shell hooks
+    description: The skill's frontmatter defines `hooks`, which register shell commands that run on agent events for the rest of the session.
+    why: Hooks keep running after the skill finishes and fire on every matching event.
+    severity: medium
+    confidence: high
+    applies_to: [skill_md, instruction_md]
+    match: {type: analyzer, analyzer: skill.exec}
+    remediation: Avoid skill-scoped hooks unless essential; keep hook commands minimal, local and documented.
+    references: [https://code.claude.com/docs/en/skills]
+
+  - id: AG-SKL-EXEC-003
+    version: 1
+    title: Invocation-time command fetches from the network or reads credentials
+    description: A dynamic-injection or hook command downloads content or reads credential files.
+    why: This runs automatically when the skill loads, so it is equivalent to executing remote code or stealing credentials on use.
+    severity: critical
+    confidence: high
+    applies_to: [skill_md, instruction_md]
+    aivss: {threat: poc}
+    match: {type: analyzer, analyzer: skill.exec}
+    remediation: Remove network access and credential reads from injected and hook commands.
+
+  - id: AG-SKL-PRIV-001
+    version: 1
+    title: allowed-tools pre-approves unrestricted shell
+    description: '`allowed-tools` pre-approves Bash/PowerShell without a command restriction, or with an interpreter that allows arbitrary code.'
+    why: '`allowed-tools` pre-approves tools (it does not restrict them), so unrestricted shell here means commands run without a permission prompt while the skill is active.'
+    severity: medium
+    confidence: high
+    applies_to: [skill_md, instruction_md]
+    match: {type: analyzer, analyzer: skill.privilege}
+    remediation: Pre-approve only specific commands, e.g. `Bash(git status:*)`, or omit `allowed-tools`.
+    references: [https://code.claude.com/docs/en/skills]
+
+  - id: AG-SKL-PRIV-002
+    version: 1
+    title: Pre-approved tools exceed the stated purpose
+    description: The description reads as read-only (summarize, review, explain…) but `allowed-tools` pre-approves write, shell or network tools.
+    why: Over-privileged skills turn any injection into write/exec capability (least privilege, AST03).
+    severity: medium
+    confidence: medium
+    applies_to: [skill_md, instruction_md]
+    match: {type: analyzer, analyzer: skill.privilege}
+    remediation: Remove tools the skill does not need, or update the description to state what it modifies.
+
+  - id: AG-SKL-MIS-001
+    version: 1
+    title: Description/behavior mismatch
+    description: A bundled script makes network requests, reads credentials, dumps the environment or writes persistence locations, and the description does not mention anything like it.
+    why: A mismatch between what a skill says and what its code does is the defining trait of trojanized "utility" skills.
+    severity: medium
+    confidence: low
+    applies_to: [skill_md, script]
+    match: {type: analyzer, analyzer: capabilities}
+    remediation: Remove the undeclared behavior, or describe it explicitly so users can decide.
+
+  - id: AG-SKL-TYP-001
+    version: 1
+    title: Name imitates a popular skill
+    description: The skill name is within a small edit distance of, or homoglyph-identical to, a popular skill name.
+    why: Typosquatting is a primary distribution technique on public skill registries.
+    severity: medium
+    confidence: medium
+    applies_to: [skill_md]
+    match: {type: analyzer, analyzer: skill.typosquat}
+    remediation: Verify the skill's source and publisher; rename it if it is not the popular skill.
+
+  - id: AG-SKL-TYP-002
+    version: 1
+    title: Popular skill name from a different publisher
+    description: The skill uses the exact name of a popular skill but declares a different publisher/author.
+    why: Name reuse with a different publisher is how impersonating skills blend in.
+    severity: medium
+    confidence: medium
+    applies_to: [skill_md]
+    match: {type: analyzer, analyzer: skill.typosquat}
+    remediation: Install the skill from its original publisher, or rename your own skill.
+
+  - id: AG-SKL-BND-001
+    version: 1
+    title: Bundled native binary or compiled artifact
+    description: The bundle contains an executable, shared library, compiled bytecode, JAR or WebAssembly module.
+    why: Compiled artifacts cannot be reviewed like source and are a common way to ship malware inside skills and packages.
+    severity: high
+    confidence: medium
+    applies_to: [binary]
+    match: {type: analyzer, analyzer: skill.bundle}
+    remediation: Ship source code, or depend on a signed package from an official registry.
+
+  - id: AG-SKL-BND-002
+    version: 1
+    title: Bundled archive
+    description: The bundle contains an archive (zip, 7z, rar, tar.gz…). Password-protected archives escalate to high.
+    why: Archive contents are not scanned, and password protection is used to get payloads past scanners.
+    severity: medium
+    confidence: high
+    applies_to: [archive]
+    match: {type: analyzer, analyzer: skill.bundle}
+    remediation: Unpack the archive contents into the bundle as reviewable files.
+
+  - id: AG-SKL-BND-003
+    version: 1
+    title: Unreferenced or hidden script
+    description: A script in the skill is not referenced from SKILL.md, or is a hidden dotfile.
+    why: Scripts nobody is told about are easy to overlook in review.
+    severity: low
+    confidence: medium
+    applies_to: [script]
+    match: {type: analyzer, analyzer: skill.bundle}
+    remediation: Reference every script from SKILL.md, or remove unused ones.

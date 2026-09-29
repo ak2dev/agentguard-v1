@@ -1,0 +1,353 @@
+{
+  "$defs": {
+    "AivssDefaults": {
+      "additionalProperties": false,
+      "properties": {
+        "threat": {
+          "default": "poc",
+          "enum": [
+            "attacked",
+            "poc",
+            "unreported"
+          ],
+          "title": "Threat",
+          "type": "string"
+        },
+        "cvss_base": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cvss Base"
+        }
+      },
+      "title": "AivssDefaults",
+      "type": "object"
+    },
+    "AnalyzerMatch": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "analyzer",
+          "default": "analyzer",
+          "title": "Type",
+          "type": "string"
+        },
+        "analyzer": {
+          "title": "Analyzer",
+          "type": "string"
+        },
+        "params": {
+          "additionalProperties": true,
+          "title": "Params",
+          "type": "object"
+        }
+      },
+      "required": [
+        "analyzer"
+      ],
+      "title": "AnalyzerMatch",
+      "type": "object"
+    },
+    "Confidence": {
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ],
+      "title": "Confidence",
+      "type": "string"
+    },
+    "Mapping": {
+      "properties": {
+        "framework": {
+          "title": "Framework",
+          "type": "string"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "todo": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Todo"
+        }
+      },
+      "required": [
+        "framework"
+      ],
+      "title": "Mapping",
+      "type": "object"
+    },
+    "RegexMatch": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "regex",
+          "default": "regex",
+          "title": "Type",
+          "type": "string"
+        },
+        "patterns": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Patterns",
+          "type": "array"
+        },
+        "scopes": {
+          "items": {
+            "enum": [
+              "body",
+              "frontmatter",
+              "hidden",
+              "decoded",
+              "code",
+              "tool_text",
+              "server_instructions",
+              "command"
+            ],
+            "type": "string"
+          },
+          "title": "Scopes",
+          "type": "array"
+        },
+        "require": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Require",
+          "type": "array"
+        },
+        "unless": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Unless",
+          "type": "array"
+        },
+        "window": {
+          "default": 3,
+          "title": "Window",
+          "type": "integer"
+        },
+        "ignore_case": {
+          "default": true,
+          "title": "Ignore Case",
+          "type": "boolean"
+        },
+        "sections": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Sections",
+          "type": "array"
+        },
+        "lower_confidence_in_code": {
+          "default": false,
+          "title": "Lower Confidence In Code",
+          "type": "boolean"
+        },
+        "max_matches": {
+          "default": 5,
+          "title": "Max Matches",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "patterns"
+      ],
+      "title": "RegexMatch",
+      "type": "object"
+    },
+    "Severity": {
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low",
+        "info"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "YaraMatch": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "yara",
+          "default": "yara",
+          "title": "Type",
+          "type": "string"
+        },
+        "rule_file": {
+          "title": "Rule File",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_file"
+      ],
+      "title": "YaraMatch",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "pattern": "^AG-[A-Z]+(?:-[A-Z]+)?-\\d{3}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "version": {
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "severity": {
+      "$ref": "#/$defs/Severity"
+    },
+    "confidence": {
+      "$ref": "#/$defs/Confidence"
+    },
+    "applies_to": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Applies To",
+      "type": "array"
+    },
+    "match": {
+      "discriminator": {
+        "mapping": {
+          "analyzer": "#/$defs/AnalyzerMatch",
+          "regex": "#/$defs/RegexMatch",
+          "yara": "#/$defs/YaraMatch"
+        },
+        "propertyName": "type"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/RegexMatch"
+        },
+        {
+          "$ref": "#/$defs/AnalyzerMatch"
+        },
+        {
+          "$ref": "#/$defs/YaraMatch"
+        }
+      ],
+      "title": "Match"
+    },
+    "mappings": {
+      "items": {
+        "$ref": "#/$defs/Mapping"
+      },
+      "title": "Mappings",
+      "type": "array"
+    },
+    "remediation": {
+      "title": "Remediation",
+      "type": "string"
+    },
+    "why": {
+      "default": "",
+      "title": "Why",
+      "type": "string"
+    },
+    "references": {
+      "items": {
+        "type": "string"
+      },
+      "title": "References",
+      "type": "array"
+    },
+    "cvss4_vector": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cvss4 Vector"
+    },
+    "aivss": {
+      "$ref": "#/$defs/AivssDefaults"
+    },
+    "tags": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Tags",
+      "type": "array"
+    },
+    "network": {
+      "default": false,
+      "title": "Network",
+      "type": "boolean"
+    },
+    "enabled": {
+      "default": true,
+      "title": "Enabled",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "version",
+    "title",
+    "description",
+    "severity",
+    "confidence",
+    "match",
+    "remediation"
+  ],
+  "title": "RuleDef",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentguard.dev/schemas/rule.v1.json"
+}

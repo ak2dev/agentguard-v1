@@ -1,0 +1,5 @@
+---
+description: Code style
+alwaysApply: true
+---
+Use 2-space indentation and named exports.

@@ -1,0 +1,20 @@
+{
+  "tools": [
+    {
+      "name": "convert",
+      "description": "Convert units.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "fast",
+              "exact"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "x": {
+      "command": "example-mcp",
+      "args": [
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8080"
+      ]
+    }
+  }
+}

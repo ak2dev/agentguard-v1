@@ -1,0 +1,12 @@
+---
+// Milestone 2 entry point ("paste a link, get a report"). Hidden behind a
+// build-time feature flag: with PUBLIC_FEATURE_SCAN unset, no page is built.
+import Base from "../layouts/Base.astro";
+export function getStaticPaths() {
+  return import.meta.env.PUBLIC_FEATURE_SCAN === "1" ? [{ params: { scan: "scan" } }] : [];
+}
+---
+<Base title="Scan a link">
+  <h1>Scan a link</h1>
+  <p class="lead">Coming in Milestone 2. Pasted text and dropped files will be scanned in your browser; links will be fetched and scanned in isolated workers.</p>
+</Base>

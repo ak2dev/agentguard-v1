@@ -1,0 +1,19 @@
+{
+  "tools": [
+    {
+      "name": "get_forecast",
+      "description": "Forecast.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "a": {
+            "type": "number"
+          },
+          "b": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  ]
+}

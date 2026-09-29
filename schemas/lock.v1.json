@@ -1,0 +1,138 @@
+{
+  "$defs": {
+    "CapLabel": {
+      "enum": [
+        "reads_private_data",
+        "ingests_untrusted_content",
+        "external_egress",
+        "destructive",
+        "code_exec",
+        "credential_access",
+        "persistence",
+        "auto_approved"
+      ],
+      "title": "CapLabel",
+      "type": "string"
+    },
+    "LockEntry": {
+      "properties": {
+        "key": {
+          "title": "Key",
+          "type": "string"
+        },
+        "kind": {
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        },
+        "content_hash": {
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "skill_files": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Skill Files"
+        },
+        "tools": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/ToolSnapshot"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tools"
+        },
+        "capability_labels": {
+          "items": {
+            "$ref": "#/$defs/CapLabel"
+          },
+          "title": "Capability Labels",
+          "type": "array"
+        }
+      },
+      "required": [
+        "key",
+        "kind",
+        "name",
+        "content_hash"
+      ],
+      "title": "LockEntry",
+      "type": "object"
+    },
+    "ToolSnapshot": {
+      "properties": {
+        "hash": {
+          "title": "Hash",
+          "type": "string"
+        },
+        "definition": {
+          "additionalProperties": true,
+          "title": "Definition",
+          "type": "object"
+        }
+      },
+      "required": [
+        "hash",
+        "definition"
+      ],
+      "title": "ToolSnapshot",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "lock_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Lock Version",
+      "type": "integer"
+    },
+    "generator": {
+      "default": "agentguard",
+      "title": "Generator",
+      "type": "string"
+    },
+    "entries": {
+      "items": {
+        "$ref": "#/$defs/LockEntry"
+      },
+      "title": "Entries",
+      "type": "array"
+    }
+  },
+  "title": "Lockfile",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentguard.dev/schemas/lock.v1.json"
+}

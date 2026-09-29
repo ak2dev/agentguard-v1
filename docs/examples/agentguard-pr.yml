@@ -1,0 +1,27 @@
+# Example: scan agent skills and MCP configs on every pull request and show
+# findings as GitHub code scanning alerts. Copy to .github/workflows/.
+name: Agent Guard
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  agentguard:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write   # upload SARIF
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          fetch-depth: 0             # PR mode compares against the base commit
+          persist-credentials: false
+      - uses: agentguard/agentguard@v0.1.0   # pin to a release tag or commit SHA
+        with:
+          path: .
+          fail-on: high

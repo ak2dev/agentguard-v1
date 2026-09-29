@@ -1,0 +1,1392 @@
+{
+  "schema": "agentguard-bench/1",
+  "engine_version": "0.1.0.dev0",
+  "rule_pack": {
+    "version": "0.1.0",
+    "digest": "d6aee478941c62f567c035b3068530cf290455e17f8a5f605f95281cd9553bb1"
+  },
+  "date": "2026-09-28",
+  "split": "all",
+  "corpus": {
+    "items": 57,
+    "benign": 24,
+    "malicious": 24,
+    "adversarial": 9,
+    "sources": {
+      "synthetic": 57
+    }
+  },
+  "overall": {
+    "critical": {
+      "tp": 20,
+      "fp": 0,
+      "fn": 13,
+      "tn": 24,
+      "precision": 1.0,
+      "recall": 0.6061,
+      "f1": 0.7547,
+      "fpr": 0.0
+    },
+    "high": {
+      "tp": 30,
+      "fp": 0,
+      "fn": 3,
+      "tn": 24,
+      "precision": 1.0,
+      "recall": 0.9091,
+      "f1": 0.9524,
+      "fpr": 0.0
+    },
+    "medium": {
+      "tp": 31,
+      "fp": 1,
+      "fn": 2,
+      "tn": 23,
+      "precision": 0.9688,
+      "recall": 0.9394,
+      "f1": 0.9539,
+      "fpr": 0.0417
+    }
+  },
+  "by_split": {
+    "dev": {
+      "critical": {
+        "tp": 13,
+        "fp": 0,
+        "fn": 6,
+        "tn": 16,
+        "precision": 1.0,
+        "recall": 0.6842,
+        "f1": 0.8125,
+        "fpr": 0.0
+      },
+      "high": {
+        "tp": 19,
+        "fp": 0,
+        "fn": 0,
+        "tn": 16,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "fpr": 0.0
+      },
+      "medium": {
+        "tp": 19,
+        "fp": 1,
+        "fn": 0,
+        "tn": 15,
+        "precision": 0.95,
+        "recall": 1.0,
+        "f1": 0.9744,
+        "fpr": 0.0625
+      }
+    },
+    "heldout": {
+      "critical": {
+        "tp": 7,
+        "fp": 0,
+        "fn": 7,
+        "tn": 8,
+        "precision": 1.0,
+        "recall": 0.5,
+        "f1": 0.6667,
+        "fpr": 0.0
+      },
+      "high": {
+        "tp": 11,
+        "fp": 0,
+        "fn": 3,
+        "tn": 8,
+        "precision": 1.0,
+        "recall": 0.7857,
+        "f1": 0.88,
+        "fpr": 0.0
+      },
+      "medium": {
+        "tp": 12,
+        "fp": 0,
+        "fn": 2,
+        "tn": 8,
+        "precision": 1.0,
+        "recall": 0.8571,
+        "f1": 0.9231,
+        "fpr": 0.0
+      }
+    }
+  },
+  "categories": {
+    "adv-encoding": {
+      "label": "adversarial",
+      "items": 2,
+      "recall_critical": 1.0,
+      "recall_high": 1.0,
+      "recall_medium": 1.0,
+      "expected_rule_hit_rate": 1.0
+    },
+    "adv-paraphrase": {
+      "label": "adversarial",
+      "items": 2,
+      "recall_critical": 0.0,
+      "recall_high": 0.0,
+      "recall_medium": 0.0,
+      "expected_rule_hit_rate": 0.0
+    },
+    "adv-split": {
+      "label": "adversarial",
+      "items": 2,
+      "recall_critical": 0.0,
+      "recall_high": 0.5,
+      "recall_medium": 1.0,
+      "expected_rule_hit_rate": 0.5
+    },
+    "adv-unicode": {
+      "label": "adversarial",
+      "items": 3,
+      "recall_critical": 1.0,
+      "recall_high": 1.0,
+      "recall_medium": 1.0,
+      "expected_rule_hit_rate": 1.0
+    },
+    "benign-config": {
+      "label": "benign",
+      "items": 6,
+      "fpr_critical": 0.0,
+      "fpr_high": 0.0,
+      "fpr_medium": 0.0
+    },
+    "benign-instructions": {
+      "label": "benign",
+      "items": 3,
+      "fpr_critical": 0.0,
+      "fpr_high": 0.0,
+      "fpr_medium": 0.0
+    },
+    "benign-server": {
+      "label": "benign",
+      "items": 3,
+      "fpr_critical": 0.0,
+      "fpr_high": 0.0,
+      "fpr_medium": 0.0
+    },
+    "benign-skill": {
+      "label": "benign",
+      "items": 12,
+      "fpr_critical": 0.0,
+      "fpr_high": 0.0,
+      "fpr_medium": 0.0833
+    },
+    "cred-exfil": {
+      "label": "malicious",
+      "items": 3,
+      "recall_critical": 0.6667,
+      "recall_high": 1.0,
+      "recall_medium": 1.0,
+      "expected_rule_hit_rate": 1.0
+    },
+    "env-dump": {
+      "label": "malicious",
+      "items": 3,
+      "recall_critical": 1.0,
+      "recall_high": 1.0,
+      "recall_medium": 1.0,
+      "expected_rule_hit_rate": 1.0
+    },
+    "prereq-lure": {
+      "label": "malicious",
+      "items": 7,
+      "recall_critical": 0.7143,
+      "recall_high": 1.0,
+      "recall_medium": 1.0,
+      "expected_rule_hit_rate": 1.0
+    },
+    "stdio-injection": {
+      "label": "malicious",
+      "items": 5,
+      "recall_critical": 0.6,
+      "recall_high": 1.0,
+      "recall_medium": 1.0,
+      "expected_rule_hit_rate": 1.0
+    },
+    "tool-poisoning": {
+      "label": "malicious",
+      "items": 4,
+      "recall_critical": 0.5,
+      "recall_high": 1.0,
+      "recall_medium": 1.0,
+      "expected_rule_hit_rate": 1.0
+    },
+    "tool-shadowing": {
+      "label": "malicious",
+      "items": 2,
+      "recall_critical": 0.0,
+      "recall_high": 1.0,
+      "recall_medium": 1.0,
+      "expected_rule_hit_rate": 1.0
+    }
+  },
+  "benign_hits_by_rule": {
+    "AG-SKL-EXEC-002:medium": 1
+  },
+  "targets": {
+    "precision_critical": {
+      "target": 0.95,
+      "actual": 1.0,
+      "met": true
+    },
+    "precision_high": {
+      "target": 0.85,
+      "actual": 1.0,
+      "met": true
+    },
+    "fpr_high_max": {
+      "target": 0.02,
+      "actual": 0.0,
+      "met": true
+    }
+  },
+  "performance": {
+    "total_seconds": 0.269,
+    "mean_ms_per_item": 4.7,
+    "perf_check": {
+      "skills": 100,
+      "configs": 20,
+      "seconds": 1.606,
+      "target_seconds": 10,
+      "met": true,
+      "findings": 547
+    }
+  },
+  "items": [
+    {
+      "id": "lure-zip-password",
+      "label": "malicious",
+      "category": "prereq-lure",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": true,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "critical",
+      "rules": [
+        "AG-SKL-SE-003"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 40.4
+    },
+    {
+      "id": "lure-curl-bash",
+      "label": "malicious",
+      "category": "prereq-lure",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": true,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "critical",
+      "rules": [
+        "AG-SKL-SE-002"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 5.1
+    },
+    {
+      "id": "lure-b64-paste",
+      "label": "malicious",
+      "category": "prereq-lure",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": true,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "critical",
+      "rules": [
+        "AG-SKL-HID-008",
+        "AG-SKL-HID-009",
+        "AG-SKL-SE-002",
+        "AG-SKL-SE-004",
+        "AG-SKL-SE-005"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 5.5
+    },
+    {
+      "id": "lure-quarantine",
+      "label": "malicious",
+      "category": "prereq-lure",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": true,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "critical",
+      "rules": [
+        "AG-SKL-SE-001",
+        "AG-SKL-SE-007"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 4.6
+    },
+    {
+      "id": "lure-msi",
+      "label": "malicious",
+      "category": "prereq-lure",
+      "split": "heldout",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": false,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "high",
+      "rules": [
+        "AG-SKL-SE-001"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 3.4
+    },
+    {
+      "id": "lure-iex",
+      "label": "malicious",
+      "category": "prereq-lure",
+      "split": "heldout",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": true,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "critical",
+      "rules": [
+        "AG-SKL-SE-002"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 4.0
+    },
+    {
+      "id": "lure-winr",
+      "label": "malicious",
+      "category": "prereq-lure",
+      "split": "heldout",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": false,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "high",
+      "rules": [
+        "AG-SKL-SE-004"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 3.0
+    },
+    {
+      "id": "envdump-python",
+      "label": "malicious",
+      "category": "env-dump",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": true,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "critical",
+      "rules": [
+        "AG-SKL-CRED-002",
+        "AG-SKL-CRED-010",
+        "AG-SKL-EXF-001",
+        "AG-SKL-MIS-001"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 6.1
+    },
+    {
+      "id": "envdump-shell",
+      "label": "malicious",
+      "category": "env-dump",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": true,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "critical",
+      "rules": [
+        "AG-SKL-CRED-002",
+        "AG-SKL-CRED-010",
+        "AG-SKL-MIS-001"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 6.0
+    },
+    {
+      "id": "envdump-node",
+      "label": "malicious",
+      "category": "env-dump",
+      "split": "heldout",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": true,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "critical",
+      "rules": [
+        "AG-SKL-CRED-002",
+        "AG-SKL-CRED-010",
+        "AG-SKL-MIS-001"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 6.0
+    },
+    {
+      "id": "poison-manifest",
+      "label": "malicious",
+      "category": "tool-poisoning",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": true,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "critical",
+      "rules": [
+        "AG-MCP-META-002",
+        "AG-MCP-META-003"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 12.3
+    },
+    {
+      "id": "poison-python-source",
+      "label": "malicious",
+      "category": "tool-poisoning",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": true,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "critical",
+      "rules": [
+        "AG-MCP-META-002",
+        "AG-MCP-META-003"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 14.9
+    },
+    {
+      "id": "poison-ts-hidden",
+      "label": "malicious",
+      "category": "tool-poisoning",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": false,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "high",
+      "rules": [
+        "AG-MCP-META-001",
+        "AG-SKL-HID-001"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 4.9
+    },
+    {
+      "id": "poison-sidechannel",
+      "label": "malicious",
+      "category": "tool-poisoning",
+      "split": "heldout",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": false,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "high",
+      "rules": [
+        "AG-MCP-META-002",
+        "AG-MCP-META-004"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 3.5
+    },
+    {
+      "id": "shadow-bcc",
+      "label": "malicious",
+      "category": "tool-shadowing",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": false,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "high",
+      "rules": [
+        "AG-MCP-META-006"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 4.7
+    },
+    {
+      "id": "shadow-replace",
+      "label": "malicious",
+      "category": "tool-shadowing",
+      "split": "heldout",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": false,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "high",
+      "rules": [
+        "AG-MCP-META-006",
+        "AG-MCP-META-009"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 4.5
+    },
+    {
+      "id": "stdio-curl-sh",
+      "label": "malicious",
+      "category": "stdio-injection",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": true,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "critical",
+      "rules": [
+        "AG-MCP-CFG-001",
+        "AG-MCP-CFG-006"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 4.0
+    },
+    {
+      "id": "stdio-docker-sock",
+      "label": "malicious",
+      "category": "stdio-injection",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": true,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "critical",
+      "rules": [
+        "AG-MCP-CFG-008",
+        "AG-MCP-CFG-010"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 3.1
+    },
+    {
+      "id": "stdio-inline-python",
+      "label": "malicious",
+      "category": "stdio-injection",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": false,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "high",
+      "rules": [
+        "AG-MCP-CFG-002"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 2.4
+    },
+    {
+      "id": "stdio-cmd-enc",
+      "label": "malicious",
+      "category": "stdio-injection",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": false,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "high",
+      "rules": [
+        "AG-MCP-CFG-001"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 2.2
+    },
+    {
+      "id": "stdio-chain",
+      "label": "malicious",
+      "category": "stdio-injection",
+      "split": "heldout",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": true,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "critical",
+      "rules": [
+        "AG-MCP-CFG-001",
+        "AG-MCP-CFG-006",
+        "AG-MCP-CFG-022"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 2.9
+    },
+    {
+      "id": "exfil-ssh-transfer",
+      "label": "malicious",
+      "category": "cred-exfil",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": false,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "high",
+      "rules": [
+        "AG-SKL-EXF-001"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 4.0
+    },
+    {
+      "id": "exfil-aws-script",
+      "label": "malicious",
+      "category": "cred-exfil",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": true,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "critical",
+      "rules": [
+        "AG-SKL-CRED-001",
+        "AG-SKL-CRED-010"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 6.1
+    },
+    {
+      "id": "exfil-browser-discord",
+      "label": "malicious",
+      "category": "cred-exfil",
+      "split": "heldout",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": true,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "critical",
+      "rules": [
+        "AG-SKL-CRED-010",
+        "AG-SKL-EXF-001",
+        "AG-SKL-MIS-001"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 6.8
+    },
+    {
+      "id": "adv-zero-width",
+      "label": "adversarial",
+      "category": "adv-unicode",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": true,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "critical",
+      "rules": [
+        "AG-SKL-HID-003",
+        "AG-SKL-SE-002"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 3.2
+    },
+    {
+      "id": "adv-homoglyph-curl",
+      "label": "adversarial",
+      "category": "adv-unicode",
+      "split": "heldout",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": true,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "critical",
+      "rules": [
+        "AG-SKL-HID-004",
+        "AG-SKL-SE-002"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 4.1
+    },
+    {
+      "id": "adv-tag-smuggle",
+      "label": "adversarial",
+      "category": "adv-unicode",
+      "split": "heldout",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": true,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "critical",
+      "rules": [
+        "AG-SKL-CRED-001",
+        "AG-SKL-CRED-010",
+        "AG-SKL-EXF-001",
+        "AG-SKL-HID-001"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 4.8
+    },
+    {
+      "id": "adv-b64-comment",
+      "label": "adversarial",
+      "category": "adv-encoding",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": true,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "critical",
+      "rules": [
+        "AG-SKL-HID-008",
+        "AG-SKL-HID-009",
+        "AG-SKL-SE-002"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 4.6
+    },
+    {
+      "id": "adv-hex-b64",
+      "label": "adversarial",
+      "category": "adv-encoding",
+      "split": "heldout",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": true,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "critical",
+      "rules": [
+        "AG-SKL-HID-008",
+        "AG-SKL-HID-009",
+        "AG-SKL-SE-002"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 4.3
+    },
+    {
+      "id": "adv-paraphrase-lure",
+      "label": "adversarial",
+      "category": "adv-paraphrase",
+      "split": "heldout",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": false,
+      "benign_hits": [],
+      "ms": 2.7
+    },
+    {
+      "id": "adv-paraphrase-override",
+      "label": "adversarial",
+      "category": "adv-paraphrase",
+      "split": "heldout",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": false,
+      "benign_hits": [],
+      "ms": 3.0
+    },
+    {
+      "id": "adv-split-files",
+      "label": "adversarial",
+      "category": "adv-split",
+      "split": "heldout",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": true
+      },
+      "max_severity": "medium",
+      "rules": [
+        "AG-SKL-MIS-001"
+      ],
+      "expected_hit": false,
+      "benign_hits": [],
+      "ms": 4.5
+    },
+    {
+      "id": "adv-split-param",
+      "label": "adversarial",
+      "category": "adv-split",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": true,
+      "flags": {
+        "critical": false,
+        "high": true,
+        "medium": true
+      },
+      "max_severity": "high",
+      "rules": [
+        "AG-MCP-META-002"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 3.6
+    },
+    {
+      "id": "pdf-report",
+      "label": "benign",
+      "category": "benign-skill",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 4.0
+    },
+    {
+      "id": "git-changelog",
+      "label": "benign",
+      "category": "benign-skill",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": "low",
+      "rules": [
+        "AG-SKL-EXEC-001"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 4.2
+    },
+    {
+      "id": "github-sync",
+      "label": "benign",
+      "category": "benign-skill",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 5.2
+    },
+    {
+      "id": "uv-setup",
+      "label": "benign",
+      "category": "benign-skill",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": "low",
+      "rules": [
+        "AG-SKL-SE-008"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 3.2
+    },
+    {
+      "id": "security-reviewer",
+      "label": "benign",
+      "category": "benign-skill",
+      "split": "heldout",
+      "source": "synthetic",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 4.7
+    },
+    {
+      "id": "docx-builder",
+      "label": "benign",
+      "category": "benign-skill",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 4.9
+    },
+    {
+      "id": "sql-helper",
+      "label": "benign",
+      "category": "benign-skill",
+      "split": "heldout",
+      "source": "synthetic",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 2.8
+    },
+    {
+      "id": "k8s-deploy",
+      "label": "benign",
+      "category": "benign-skill",
+      "split": "heldout",
+      "source": "synthetic",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 3.6
+    },
+    {
+      "id": "slack-notifier",
+      "label": "benign",
+      "category": "benign-skill",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 4.1
+    },
+    {
+      "id": "csv-analyzer",
+      "label": "benign",
+      "category": "benign-skill",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 2.6
+    },
+    {
+      "id": "web-research",
+      "label": "benign",
+      "category": "benign-skill",
+      "split": "heldout",
+      "source": "synthetic",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 3.0
+    },
+    {
+      "id": "commit-lint",
+      "label": "benign",
+      "category": "benign-skill",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": true
+      },
+      "max_severity": "medium",
+      "rules": [
+        "AG-SKL-EXEC-002"
+      ],
+      "expected_hit": true,
+      "benign_hits": [
+        "AG-SKL-EXEC-002:medium"
+      ],
+      "ms": 4.1
+    },
+    {
+      "id": "cfg-pinned",
+      "label": "benign",
+      "category": "benign-config",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": "low",
+      "rules": [
+        "AG-MCP-CFG-020"
+      ],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 3.0
+    },
+    {
+      "id": "cfg-vscode-inputs",
+      "label": "benign",
+      "category": "benign-config",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 1.9
+    },
+    {
+      "id": "cfg-cursor-remote",
+      "label": "benign",
+      "category": "benign-config",
+      "split": "heldout",
+      "source": "synthetic",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 2.0
+    },
+    {
+      "id": "cfg-codex-docker",
+      "label": "benign",
+      "category": "benign-config",
+      "split": "heldout",
+      "source": "synthetic",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 2.1
+    },
+    {
+      "id": "cfg-windows-cmd",
+      "label": "benign",
+      "category": "benign-config",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 1.7
+    },
+    {
+      "id": "cfg-gemini",
+      "label": "benign",
+      "category": "benign-config",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 1.5
+    },
+    {
+      "id": "srv-weather-ts",
+      "label": "benign",
+      "category": "benign-server",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 3.9
+    },
+    {
+      "id": "srv-notes-py",
+      "label": "benign",
+      "category": "benign-server",
+      "split": "heldout",
+      "source": "synthetic",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 2.8
+    },
+    {
+      "id": "srv-issues-manifest",
+      "label": "benign",
+      "category": "benign-server",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 2.9
+    },
+    {
+      "id": "agents-md",
+      "label": "benign",
+      "category": "benign-instructions",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 1.8
+    },
+    {
+      "id": "claude-md",
+      "label": "benign",
+      "category": "benign-instructions",
+      "split": "heldout",
+      "source": "synthetic",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 1.4
+    },
+    {
+      "id": "cursor-rules",
+      "label": "benign",
+      "category": "benign-instructions",
+      "split": "dev",
+      "source": "synthetic",
+      "positive": false,
+      "flags": {
+        "critical": false,
+        "high": false,
+        "medium": false
+      },
+      "max_severity": null,
+      "rules": [],
+      "expected_hit": true,
+      "benign_hits": [],
+      "ms": 2.1
+    }
+  ]
+}

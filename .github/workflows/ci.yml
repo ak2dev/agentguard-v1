@@ -1,0 +1,107 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Tests (${{ matrix.os }}, Python ${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ["3.12", "3.14"]
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install (locked)
+        shell: bash
+        run: |
+          python -m pip install --disable-pip-version-check "uv==0.12.19"
+          if [ -f uv.lock ]; then uv sync --frozen --group dev; else uv sync --group dev; fi
+      - name: Unit, rule-fixture and safety tests
+        run: uv run pytest -q
+      - name: Every rule has positive and negative fixtures; crosswalk has no orphans
+        run: uv run python scripts/check_pack.py
+
+  generated:
+    name: Generated files are up to date
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --disable-pip-version-check "uv==0.12.19" && uv sync --group dev
+      - name: Regenerate schemas and site data
+        run: uv run python scripts/gen_site_data.py
+      - name: Fail if anything changed
+        run: git diff --exit-code -- schemas site/src/data/generated
+
+  bench:
+    name: Benchmark (targets + regression)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --disable-pip-version-check "uv==0.12.19" && uv sync --group dev
+      - run: uv run agentguard bench --output bench-results.json
+      - name: Compare with committed results
+        run: uv run python scripts/check_bench.py bench-results.json bench/results/latest.json
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          name: bench-results
+          path: bench-results.json
+
+  pyodide:
+    name: Core rule engine under Pyodide
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: "22"
+      - name: Install pinned Pyodide
+        working-directory: tests/pyodide
+        run: npm ci --no-audit --no-fund
+      - name: Run fixtures in Pyodide
+        working-directory: tests/pyodide
+        run: node run_core.mjs ../..
+
+  dogfood:
+    name: Agent Guard scans itself (SARIF on PRs)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: ./
+        with:
+          path: .
+          fail-on: high

@@ -1,0 +1,3 @@
+[mcp_servers.db]
+command = "docker"
+args = ["run", "--rm", "-i", "-v", "/srv/project:/work:ro", "example/db-mcp@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"]

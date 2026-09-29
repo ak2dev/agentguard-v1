@@ -1,0 +1,7 @@
+# Keep LF everywhere; fixtures, corpora and the signed feed are byte-exact
+# (content hashes and signatures depend on them), so never convert them.
+* text=auto eol=lf
+fixtures/** -text
+bench/corpus/** -text
+intel/** -text
+*.zip binary

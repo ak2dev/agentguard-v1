@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "x": {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "-i",
+        "-v",
+        "/var/run/docker.sock:/var/run/docker.sock",
+        "example/mcp@sha256:0000000000000000000000000000000000000000000000000000000000000001"
+      ]
+    }
+  }
+}

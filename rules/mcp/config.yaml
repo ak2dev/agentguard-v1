@@ -1,0 +1,239 @@
+# MCP client configuration rules. Configs are parsed, never executed.
+rules:
+  - id: AG-MCP-CFG-001
+    version: 1
+    title: Shell interpreter runs a script string
+    description: The server command is a shell (sh, bash, cmd, PowerShell…) given a script string with -c, /c or -Command. A plain `cmd /c <program> <args>` wrapper is not reported.
+    why: Shell strings enable command chaining and substitution; this is how most MCP STDIO command-injection configs are built.
+    severity: high
+    confidence: high
+    match: {type: analyzer, analyzer: mcp.config}
+    remediation: Invoke the server program directly with an argument array instead of a shell string.
+
+  - id: AG-MCP-CFG-002
+    version: 1
+    title: Inline code as the server command
+    description: The server is started with an interpreter and inline code (python -c, node -e, deno eval…).
+    why: Inline code in a config is unreviewable, unversioned code execution on every client start.
+    severity: high
+    confidence: high
+    match: {type: analyzer, analyzer: mcp.config}
+    remediation: Ship the server as a package or file and reference it by pinned version or path.
+
+  - id: AG-MCP-CFG-003
+    version: 1
+    title: Command built from variable expansion or command substitution
+    description: The command contains $(…), backticks, or a variable in the command position.
+    why: Dynamically built commands can be altered through the environment and hide what actually runs.
+    severity: medium
+    confidence: medium
+    match: {type: analyzer, analyzer: mcp.config}
+    remediation: Use a literal command and argument array.
+
+  - id: AG-MCP-CFG-004
+    version: 1
+    title: Unpinned package runner
+    description: The server is launched with npx/bunx/pnpm dlx/uvx/pipx run without an exact version, or with @latest (often with -y auto-confirm).
+    why: Every client start can fetch and execute a different version, so a compromised or hijacked release runs automatically (supply-chain and rug-pull risk).
+    severity: medium
+    confidence: high
+    match: {type: analyzer, analyzer: mcp.config}
+    remediation: Pin an exact version (e.g. `npx -y @scope/server@1.4.2`, `uvx server==1.4.2`) and update deliberately.
+
+  - id: AG-MCP-CFG-006
+    version: 1
+    title: Server command fetches and executes a remote script
+    description: The server command pipes a downloaded script into a shell or interpreter.
+    why: Remote script execution on every start runs whatever the host serves at that moment.
+    severity: critical
+    confidence: high
+    applies_to: [client_config]
+    aivss: {threat: attacked}
+    match:
+      type: regex
+      scopes: [command]
+      patterns:
+        - |-
+          \b(?:curl|wget|fetch)\b[^\n|]{0,300}https?://[^\n|]*\|\s*(?:sudo\s+)?(?:-E\s+)?(?:ba|z|k|da)?sh\b
+        - |-
+          \b(?:iwr|irm|Invoke-WebRequest|Invoke-RestMethod)\b[^\n|]*\|\s*(?:iex|Invoke-Expression)\b
+        - |-
+          \b(?:ba|z)?sh\s+(?:-c\s+)?["']?\$\(\s*(?:curl|wget)\b[^)]*https?://
+        - |-
+          \b(?:python3?|node|perl|ruby)\s+(?:-c\s+)?["']?(?:<\(|\$\()\s*(?:curl|wget)\b
+      unless:
+        - |-
+          https?://(?:[a-z0-9-]+\.)*(?:astral\.sh|rustup\.rs|get\.docker\.com|brew\.sh|deno\.land|bun\.sh|nodejs\.org|get\.pnpm\.io)\b
+      window: 0
+    remediation: Install the server from a registry with a pinned version; never pipe remote scripts into a shell from a config.
+
+  - id: AG-MCP-CFG-007
+    version: 1
+    title: Container runs with elevated host access
+    description: docker/podman is run with --privileged, --cap-add=ALL/SYS_ADMIN, host PID/network/IPC namespaces, or unconfined seccomp/AppArmor.
+    why: These flags remove container isolation; a compromised server gets host-level access.
+    severity: high
+    confidence: high
+    match: {type: analyzer, analyzer: mcp.config}
+    remediation: Drop the flags; grant only the specific capabilities and mounts the server needs.
+
+  - id: AG-MCP-CFG-008
+    version: 1
+    title: Container mounts the Docker socket or host root
+    description: The server container mounts /var/run/docker.sock (or the Windows docker_engine pipe) or the host root filesystem.
+    why: Either mount is equivalent to full root access on the host.
+    severity: critical
+    confidence: high
+    match: {type: analyzer, analyzer: mcp.config}
+    remediation: Remove the mount. If the server must manage containers, run it on an isolated host.
+
+  - id: AG-MCP-CFG-009
+    version: 1
+    title: Container mounts home or credential directories
+    description: The server container mounts $HOME or directories such as ~/.ssh, ~/.aws, ~/.kube, ~/.docker.
+    why: The server (and anything that compromises it) can read every credential in those directories.
+    severity: high
+    confidence: high
+    match: {type: analyzer, analyzer: mcp.config}
+    remediation: Mount only the project directory the server needs, read-only where possible.
+
+  - id: AG-MCP-CFG-010
+    version: 1
+    title: Container image not pinned by digest
+    description: The server image is referenced by tag (or implicitly :latest) instead of @sha256 digest.
+    why: Tags are mutable; the image that runs can change without any config change.
+    severity: medium
+    confidence: high
+    match: {type: analyzer, analyzer: mcp.config}
+    remediation: Reference the image by digest (image@sha256:…).
+
+  - id: AG-MCP-CFG-011
+    version: 1
+    title: Literal secret in server configuration
+    description: A value in env, headers or args matches a known credential format (API keys, tokens, private keys, webhook URLs).
+    why: Config files are copied, synced and committed; literal secrets in them leak.
+    severity: high
+    confidence: high
+    match: {type: analyzer, analyzer: mcp.config}
+    remediation: Rotate the secret, then reference it from the environment or the client's secret store (e.g. `${env:TOKEN}` / input variables).
+
+  - id: AG-MCP-CFG-012
+    version: 1
+    title: High-entropy literal in a secret-named field
+    description: A secret-named env var, header or argument holds a long high-entropy literal.
+    why: Likely a credential that does not match a known provider format.
+    severity: medium
+    confidence: medium
+    match: {type: analyzer, analyzer: mcp.config}
+    remediation: Move the value to a secret store or environment reference; rotate it if it is real.
+
+  - id: AG-MCP-CFG-013
+    version: 1
+    title: Remote server over plain HTTP
+    description: A remote MCP server URL uses http:// for a non-loopback host.
+    why: Tool definitions, results and bearer tokens can be read and modified in transit.
+    severity: high
+    confidence: high
+    match: {type: analyzer, analyzer: mcp.config}
+    remediation: Use https:// .
+
+  - id: AG-MCP-CFG-014
+    version: 1
+    title: Remote server addressed by raw public IP
+    description: The remote server URL uses a literal public IP address.
+    why: Raw IPs bypass DNS reputation and certificate hostname checks are usually disabled to make them work.
+    severity: medium
+    confidence: high
+    match: {type: analyzer, analyzer: mcp.config}
+    remediation: Use a hostname with a valid TLS certificate.
+
+  - id: AG-MCP-CFG-015
+    version: 1
+    title: Cloud-metadata or link-local target
+    description: The server URL points at a cloud instance-metadata endpoint or link-local address.
+    why: Metadata endpoints expose instance credentials; a config pointing there is an SSRF-style credential grab.
+    severity: high
+    confidence: high
+    match: {type: analyzer, analyzer: mcp.config}
+    remediation: Remove the server entry.
+
+  - id: AG-MCP-CFG-016
+    version: 1
+    title: Server listens on all interfaces
+    description: The server is configured to bind 0.0.0.0.
+    why: Local MCP servers exposed on all interfaces can be reached by other hosts on the network (and by DNS-rebinding web pages).
+    severity: medium
+    confidence: medium
+    match: {type: analyzer, analyzer: mcp.config}
+    remediation: Bind to 127.0.0.1 and require authentication for any network listener.
+
+  - id: AG-MCP-CFG-017
+    version: 1
+    title: Near-duplicate server names
+    description: Two configured servers have names that differ by one edit or only by look-alike characters.
+    why: Near-duplicate names are used to shadow a trusted server and confuse users approving tool calls.
+    severity: medium
+    confidence: medium
+    match: {type: analyzer, analyzer: mcp.config}
+    remediation: Remove the unexpected entry or rename servers so they are clearly distinct.
+
+  - id: AG-MCP-CFG-018
+    version: 1
+    title: Same server name, different command or URL
+    description: The same server name resolves to different packages, images or URLs in different config files.
+    why: Which definition wins depends on client precedence rules, so a project config can silently replace a trusted user-level server.
+    severity: high
+    confidence: high
+    match: {type: analyzer, analyzer: mcp.config}
+    remediation: Keep one definition per server name, or rename the project-level server.
+
+  - id: AG-MCP-CFG-019
+    version: 1
+    title: Token or API key in URL query string
+    description: A remote server URL carries a secret-named query parameter with a literal value.
+    why: URLs are logged by proxies, servers and clients; secrets in them leak.
+    severity: high
+    confidence: high
+    match: {type: analyzer, analyzer: mcp.config}
+    remediation: Send credentials in an Authorization header sourced from a secret store.
+
+  - id: AG-MCP-CFG-020
+    version: 1
+    title: Server receives sensitive environment variables
+    description: Secret-named environment variables are passed to the server (names only; values are never recorded).
+    why: Inventory signal for blast radius; each secret passed extends what a compromised server can use.
+    severity: low
+    confidence: low
+    match: {type: analyzer, analyzer: mcp.config}
+    remediation: Pass each server only the credentials it needs, scoped as narrowly as possible.
+
+  - id: AG-MCP-CFG-021
+    version: 1
+    title: Tools or servers auto-approved
+    description: Client configuration auto-approves server tools (alwaysAllow/autoApprove/trust) or enables all project MCP servers / all tool calls.
+    why: Auto-approval removes the human check on every tool call, so any injection executes unattended.
+    severity: high
+    confidence: high
+    match: {type: analyzer, analyzer: mcp.config}
+    remediation: Remove auto-approval, or limit it to specific read-only tools.
+
+  - id: AG-MCP-CFG-022
+    version: 1
+    title: Repository-shipped config adds a STDIO server
+    description: A project/workspace-scoped MCP config defines a local (STDIO) server, which runs a command when the project is opened or trusted.
+    why: Cloning or opening a repository should not be enough to run code; project configs are an easy supply-chain entry point.
+    severity: medium
+    confidence: high
+    match: {type: analyzer, analyzer: mcp.config}
+    remediation: Review the server before trusting the project; prefer documenting servers in the README over committing configs.
+
+  - id: AG-MCP-CFG-023
+    version: 1
+    title: Deprecated HTTP+SSE transport
+    description: The server uses the HTTP+SSE transport, deprecated in favor of Streamable HTTP.
+    why: Deprecated transports lag on security fixes and are scheduled for removal.
+    severity: low
+    confidence: high
+    match: {type: analyzer, analyzer: mcp.config}
+    remediation: Migrate to Streamable HTTP.
+    references: [https://modelcontextprotocol.io/specification/2026-07-28/changelog]

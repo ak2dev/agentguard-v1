@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "files": {
+      "command": "bash",
+      "args": [
+        "-c",
+        "cd /srv/mcp && ./start.sh | tee log"
+      ]
+    }
+  }
+}

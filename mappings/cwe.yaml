@@ -1,0 +1,30 @@
+framework: cwe
+name: Common Weakness Enumeration
+version: "4.x"
+source: https://cwe.mitre.org/
+notes: Titles to be re-checked against the current CWE list during release review.
+items:
+  - {id: CWE-20, title: Improper Input Validation}
+  - {id: CWE-22, title: "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"}
+  - {id: CWE-59, title: "Improper Link Resolution Before File Access ('Link Following')"}
+  - {id: CWE-74, title: "Improper Neutralization of Special Elements in Output Used by a Downstream Component ('Injection')"}
+  - {id: CWE-78, title: "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"}
+  - {id: CWE-88, title: "Improper Neutralization of Argument Delimiters in a Command ('Argument Injection')"}
+  - {id: CWE-89, title: "Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')"}
+  - {id: CWE-94, title: "Improper Control of Generation of Code ('Code Injection')"}
+  - {id: CWE-95, title: "Improper Neutralization of Directives in Dynamically Evaluated Code ('Eval Injection')"}
+  - {id: CWE-250, title: Execution with Unnecessary Privileges}
+  - {id: CWE-295, title: Improper Certificate Validation}
+  - {id: CWE-319, title: Cleartext Transmission of Sensitive Information}
+  - {id: CWE-409, title: Improper Handling of Highly Compressed Data (Data Amplification)}
+  - {id: CWE-451, title: User Interface (UI) Misrepresentation of Critical Information}
+  - {id: CWE-494, title: Download of Code Without Integrity Check}
+  - {id: CWE-502, title: Deserialization of Untrusted Data}
+  - {id: CWE-506, title: Embedded Malicious Code}
+  - {id: CWE-598, title: Use of GET Request Method With Sensitive Query Strings}
+  - {id: CWE-798, title: Use of Hard-coded Credentials}
+  - {id: CWE-829, title: Inclusion of Functionality from Untrusted Control Sphere}
+  - {id: CWE-918, title: Server-Side Request Forgery (SSRF)}
+  - {id: CWE-1007, title: Insufficient Visual Distinction of Homoglyphs Presented to User}
+  - {id: CWE-1327, title: Binding to an Unrestricted IP Address}
+  - {id: CWE-1336, title: Improper Neutralization of Special Elements Used in a Template Engine}

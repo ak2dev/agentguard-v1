@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+dist/
+build/
+*.egg-info/
+.agentguard-cache/
+site/node_modules/
+site/dist/
+site/.astro/
+.claude/launch.json

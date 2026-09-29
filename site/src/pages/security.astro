@@ -1,0 +1,29 @@
+---
+import Base from "../layouts/Base.astro";
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+---
+<Base title="Security">
+  <h1>Security</h1>
+
+  <h2>Verifying releases</h2>
+  <p>Every release is built in CI, signed with Sigstore (keyless, tied to the release workflow identity), and ships a CycloneDX SBOM and a <code>SHA256SUMS</code> file. Verify a wheel before installing it:</p>
+<pre><code>python -m pip install sigstore
+python -m sigstore verify identity \
+  --cert-identity "https://github.com/agentguard/agentguard/.github/workflows/release.yml@refs/tags/v0.1.0" \
+  --cert-oidc-issuer "https://token.actions.githubusercontent.com" \
+  agentguard-0.1.0-py3-none-any.whl</code></pre>
+  <p class="muted">The <code>.sigstore.json</code> bundle for each file is attached to the GitHub release next to it.</p>
+  <p>The rule pack is released as a separate signed bundle. The IOC feed is signed with an Ed25519 key whose public half ships in the package; <code>agentguard intel update</code> refuses unsigned feeds and older versions (rollback protection).</p>
+
+  <h2>How Agent Guard protects you while scanning</h2>
+  <ul>
+    <li>It never executes a scanned target. A process-wide audit hook blocks process creation; the only exception is a hardened read-only <code>git</code> call in PR mode.</li>
+    <li>Scanned content is treated as hostile data: bounded parsing, no YAML aliases or tags, no symlink following, archive-bomb caps, regex timeouts.</li>
+    <li>Secrets found in scanned files are redacted in every output format.</li>
+    <li>No telemetry. Network features are opt-in, SSRF-hardened, and listed in every report.</li>
+  </ul>
+
+  <h2>Reporting a vulnerability</h2>
+  <p>Please report vulnerabilities privately through GitHub security advisories for the <code>agentguard/agentguard</code> repository. Machine-readable contact details are in <a href={`${base}/.well-known/security.txt`}>security.txt</a>. We aim to acknowledge reports within 3 working days and to publish a fix and advisory within 90 days, crediting reporters who want credit.</p>
+  <p>Bypasses of detection rules (a malicious sample Agent Guard misses) are welcome as ordinary issues with an <em>inert</em> reproduction. Please do not attach live malware.</p>
+</Base>

@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "gh": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@example/server-files@1.2.3"
+      ],
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+      }
+    }
+  }
+}

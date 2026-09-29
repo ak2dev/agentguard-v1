@@ -1,0 +1,9 @@
+framework: nsa-csi-mcp-2026-05
+name: "NSA AISC CSI — Model Context Protocol (MCP): Security Design Considerations for AI-Driven Automation"
+version: "2026-05"
+source: https://www.nsa.gov/Press-Room/Press-Releases-Statements/Press-Release-View/Article/4496698/
+notes: >-
+  TODO: the CSI PDF could not be retrieved (HTTP 403 to automated fetch). Section
+  identifiers are unverified, so no items are listed and every rule maps to null
+  with a TODO. Add items (section id + title) once the document has been read.
+items: []

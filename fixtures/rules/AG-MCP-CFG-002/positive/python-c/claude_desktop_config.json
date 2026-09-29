@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "calc": {
+      "command": "python",
+      "args": [
+        "-c",
+        "import calc_server; calc_server.run()"
+      ]
+    }
+  }
+}

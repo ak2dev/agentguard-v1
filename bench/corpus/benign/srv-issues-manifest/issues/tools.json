@@ -1,0 +1,33 @@
+{
+  "tools": [
+    {
+      "name": "create_issue",
+      "description": "Create an issue in a repository.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "repo": {
+            "type": "string",
+            "pattern": "^[\\w.-]+/[\\w.-]+$"
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_issues",
+      "description": "List open issues.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "repo": {
+            "type": "string",
+            "pattern": "^[\\w.-]+/[\\w.-]+$"
+          }
+        }
+      }
+    }
+  ]
+}

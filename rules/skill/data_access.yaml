@@ -1,0 +1,164 @@
+# Credential access and exfiltration sinks.
+rules:
+  - id: AG-SKL-CRED-001
+    version: 1
+    title: Reads credential stores
+    description: Reads SSH keys, cloud CLI credentials, kube/docker configs, package-registry tokens, .env files, keychains, browser profiles or crypto wallets.
+    why: Credential files are the primary target of infostealer skills. Reading them is rarely needed by a skill's stated purpose.
+    severity: medium
+    confidence: medium
+    applies_to: [skill_md, instruction_md, reference, script]
+    match:
+      type: regex
+      scopes: [body, hidden, decoded, command, code]
+      patterns:
+        - |-
+          (?:~|\$HOME|%USERPROFILE%|\$env:USERPROFILE|/home/[^/\s]+|/Users/[^/\s]+|/root)?[/\\]?(?:\.ssh[/\\](?:id_[a-z0-9_]+|authorized_keys|config)|\.aws[/\\](?:credentials|config)|\.config[/\\]gcloud|\.azure[/\\]|\.kube[/\\]config|\.docker[/\\]config\.json|\.npmrc|\.pypirc|\.netrc|\.git-credentials|\.gnupg[/\\]|\.password-store|Login\s+Data|Cookies\.sqlite|key4\.db|logins\.json|wallet\.dat|\.electrum|\.ethereum[/\\]keystore|Exodus[/\\]|nkbihfbeogaeaoehlefnkodbefgpgknn|login\.keychain(?:-db)?|\.config[/\\]gh[/\\]hosts\.yml|\.claude[/\\]\.credentials\.json)
+        - |-
+          \bsecurity\s+(?:find-generic-password|find-internet-password|dump-keychain)\b|\bcmdkey\s+/list\b|\bvaultcmd\b
+        - |-
+          (?:^|[\s"'(/\\])\.env(?:\.(?:local|production|prod|development|dev))?\b(?!\.example|\.sample|\.template)
+      require:
+        - |-
+          \b(?:cat|type|Get-Content|gc|less|more|head|tail|read(?:s|ing)?|open|load|copy|cp|scp|rsync|tar|zip|7z|base64|upload|send|post|exfiltrate|collect|harvest|grab|dump|steal|extract|include|attach|readFile(?:Sync)?|read_text|read_bytes|find-generic-password|find-internet-password|dump-keychain|cmdkey|vaultcmd|glob|walk|find)\b
+      unless:
+        - |-
+          \.env\.(?:example|sample|template|dist)b
+      window: 0
+    remediation: Do not read credential stores. Request only the scoped credential the task needs, through the platform's secret handling.
+
+  - id: AG-SKL-CRED-002
+    version: 1
+    title: Harvests token variables or dumps the environment
+    description: Prints, serializes, filters or writes out the whole environment, or greps it for tokens and secrets.
+    why: Environment variables hold API keys and tokens; dumping them is the core step of env-harvesting "utility" skills.
+    severity: medium
+    confidence: medium
+    applies_to: [skill_md, instruction_md, reference, script]
+    match:
+      type: regex
+      scopes: [body, hidden, decoded, command, code]
+      patterns:
+        - |-
+          (?:^[ \t]*(?:\$\s+)?|[;&|(`]\s*)(?:env|printenv|export\s+-p|Get-ChildItem\s+env:|gci\s+env:|dir\s+env:)[ \t]*(?:$|[|>;&)`])
+        - |-
+          \b(?:env|printenv|set)\s*\|\s*(?:grep|findstr|Select-String)\s+[^\n]*(?:token|key|secret|pass|auth|cred)
+        - |-
+          \bjson\.dumps?\(\s*(?:dict\()?\s*os\.environ|\bprint\(\s*(?:dict\()?\s*os\.environ\s*\)|\bfor\s+\w+(?:\s*,\s*\w+)?\s+in\s+os\.environ(?:\.items\(\))?\s*:
+        - |-
+          \bJSON\.stringify\(\s*process\.env\s*\)|\bconsole\.log\(\s*process\.env\s*\)|\bObject\.(?:entries|keys)\(\s*process\.env\s*\)
+      unless:
+        - |-
+          \benv\s+(?:-i\b|[A-Z_]+=)|#!/usr/bin/env\b|/usr/bin/env\s
+      window: 0
+    remediation: Read only the specific variables the task needs, and never print or transmit the environment.
+
+  - id: AG-SKL-CRED-010
+    version: 1
+    title: Credential access combined with network egress
+    description: The same file both accesses credentials (credential stores, token variables, environment dumps) and sends data over the network.
+    why: Credential read + egress in one place is the complete exfiltration chain; each half alone may be benign, together they are not.
+    severity: critical
+    confidence: high
+    applies_to: [skill_md, instruction_md, reference, script]
+    aivss: {threat: attacked}
+    match: {type: analyzer, analyzer: corr.cred_egress}
+    remediation: Remove the credential access or the network call. A skill that needs an API token should receive a scoped token from the user, not read local stores.
+
+  - id: AG-SKL-EXF-001
+    version: 1
+    title: Known exfiltration sink
+    description: References request-capture services, paste sites, file drops, Discord webhooks or Telegram bot APIs, tunnels, or out-of-band testing domains. Slack incoming webhooks are excluded as a common legitimate integration.
+    why: These endpoints accept arbitrary data from anyone and are the usual drop points for stolen data.
+    severity: high
+    confidence: medium
+    applies_to: [skill_md, instruction_md, reference, script]
+    match:
+      type: regex
+      scopes: [body, hidden, decoded, command, code]
+      patterns:
+        - |-
+          \b(?:webhook\.site|requestbin\.(?:com|net)|[a-z0-9-]+\.m\.pipedream\.net|pipedream\.net|hookbin\.com|beeceptor\.com|requestcatcher\.com|requestrepo\.com|webhook\.cool|mockbin\.org)\b
+        - |-
+          \b(?:pastebin\.com|paste\.ee|hastebin\.com|ghostbin\.\w+|dpaste\.(?:com|org)|termbin\.com|transfer\.sh|file\.io|0x0\.st|gofile\.io|anonfiles\.\w+|catbox\.moe|temp\.sh|bashupload\.com)\b
+        - |-
+          \bdiscord(?:app)?\.com/api/webhooks/|\bapi\.telegram\.org/bot
+        - |-
+          \b(?:[a-z0-9-]+\.)?(?:ngrok(?:-free)?\.(?:io|app|dev)|trycloudflare\.com|serveo\.net|localtunnel\.me|loca\.lt|localhost\.run|pinggy\.(?:io|link))\b
+        - |-
+          \b(?:[a-z0-9-]+\.)?(?:interact\.sh|oast\.(?:pro|live|site|online|fun|me)|burpcollaborator\.net|oastify\.com|canarytokens\.com|dnslog\.cn|ceye\.io)\b
+    remediation: Remove the endpoint. If the skill must send data somewhere, use the documented API of the service it integrates with and say so in the description.
+
+  - id: AG-SKL-EXF-002
+    version: 1
+    title: URL to a raw public IP address
+    description: A URL points at a literal public IPv4 address instead of a hostname.
+    why: Raw IPs avoid DNS-based reputation and are common for command-and-control and drop servers.
+    severity: medium
+    confidence: high
+    applies_to: [skill_md, instruction_md, reference, script]
+    match:
+      type: regex
+      scopes: [body, hidden, decoded, command, code]
+      patterns:
+        - |-
+          \b(?:https?|ftp|wss?|tcp)://(?!(?:127\.|10\.|192\.168\.|172\.(?:1[6-9]|2\d|3[01])\.|0\.0\.0\.0|169\.254\.|192\.0\.2\.|198\.51\.100\.|203\.0\.113\.|100\.(?:6[4-9]|[7-9]\d|1[01]\d|12[0-7])\.))(?:25[0-5]|2[0-4]\d|1?\d?\d)(?:\.(?:25[0-5]|2[0-4]\d|1?\d?\d)){3}\b
+    remediation: Use a named, documented endpoint over HTTPS.
+
+  - id: AG-SKL-EXF-003
+    version: 1
+    title: URL shortener
+    description: A link uses a URL-shortening service.
+    why: Shorteners hide the real destination from reviewers and can be re-pointed after review.
+    severity: medium
+    confidence: high
+    applies_to: [skill_md, instruction_md, reference, script]
+    match:
+      type: regex
+      scopes: [body, hidden, decoded, command, code]
+      patterns:
+        - |-
+          \bhttps?://(?:www\.)?(?:bit\.ly|tinyurl\.com|t\.co|goo\.gl|is\.gd|cutt\.ly|rb\.gy|ow\.ly|buff\.ly|shorturl\.at|tiny\.cc|v\.gd|rebrand\.ly|bl\.ink|t\.ly|s\.id|lnkd\.in|shorturl\.gg|urlz\.fr|qrco\.de)/\S+
+    remediation: Use the full destination URL.
+
+  - id: AG-SKL-EXF-004
+    version: 1
+    title: DNS exfiltration pattern
+    description: DNS lookups whose hostname is built from variables or command output.
+    why: Encoding data into subdomains exfiltrates it through DNS, which is rarely filtered.
+    severity: high
+    confidence: medium
+    applies_to: [skill_md, instruction_md, reference, script]
+    match:
+      type: regex
+      scopes: [body, hidden, decoded, command, code]
+      patterns:
+        - |-
+          \b(?:nslookup|dig|host|ping|Resolve-DnsName)\s+[^\n]*(?:\$\(|\$\{|`|\$[A-Za-z_])[^\n]*\.[a-z]{2,}\b
+        - |-
+          \bdns\.(?:resolve\w*|lookup)\(\s*`[^`]*\$\{
+        - |-
+          \bsocket\.gethostbyname\(\s*(?:f["']|[^)]*\+|[^)]*\.format\()
+    remediation: Remove dynamic DNS lookups built from data.
+
+  - id: AG-SKL-EXF-005
+    version: 1
+    title: Data-in-URL rendering
+    description: Tells the agent to render an image or link whose URL carries data (conversation, secrets, file contents) in the query string.
+    why: When a client renders the image it silently sends the data to the attacker's server, with no tool call and no approval.
+    severity: high
+    confidence: medium
+    applies_to: [skill_md, instruction_md, reference]
+    match:
+      type: regex
+      scopes: [body, hidden, decoded, frontmatter]
+      patterns:
+        - |-
+          !\[[^\]]*\]\(\s*https?://[^)\s]*\?[^)\s]*=(?:\{|\$|<|%7B|\[)
+        - |-
+          <img[^>]+src=["']https?://[^"']+\?[^"']*(?:\{|\$\{|\$\(|<)
+        - |-
+          \b(?:render|display|include|output|show|embed)\b[^\n]{0,60}\b(?:image|markdown\s+image|img|pixel)\b[^\n]{0,80}https?://[^\s]+\?[^\s]*=
+        - |-
+          https?://[^\s)]+\?(?:[^\s)]*&)?(?:data|d|q|secret|token|key|content|conversation|chat|history|env|creds?)=(?:\{\{|\{|\$\{|<)
+    remediation: Never build URLs from conversation or secret data. Render only static, allowlisted images.

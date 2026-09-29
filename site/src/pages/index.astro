@@ -1,0 +1,37 @@
+---
+import Base from "../layouts/Base.astro";
+import meta from "../data/generated/meta.json";
+import bench from "../data/generated/bench.json";
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const scanEnabled = import.meta.env.PUBLIC_FEATURE_SCAN === "1";
+const high = bench.overall.high;
+---
+<Base title="Agent Guard">
+  <h1>Is it safe to give this skill or MCP server to my agent?</h1>
+  <p class="lead">Agent Guard answers that before anything is installed, enabled or merged — and when the answer is "not yet", it says exactly why and how to fix it. It never executes what it scans, needs no account, and works offline.</p>
+  <p>
+    <a class="btn" href={`${base}/docs/install/`}>Install</a>
+    <a class="btn secondary" href={`${base}/sample-report/`}>See a sample report</a>
+    {scanEnabled && <a class="btn secondary" href={`${base}/scan/`}>Scan a link</a>}
+  </p>
+
+  <h2>Install in 30 seconds</h2>
+<pre><code>uvx agentguard scan            # this machine's agent config + current project
+uvx agentguard scan ./my-skill # one skill folder, a repo, or an MCP config file
+pipx install agentguard        # or install it permanently</code></pre>
+
+  <h2>What it catches</h2>
+  <div class="cards">
+    <section class="card"><h3>Malicious skills</h3><p>"Prerequisites" download-and-run lures, pipe-to-shell, password-protected archives, ClickFix prompts, OS-protection bypasses, credential theft and exfiltration sinks.</p></section>
+    <section class="card"><h3>Hidden instructions</h3><p>Unicode tag characters, bidi and zero-width tricks, homoglyphs, HTML comments, off-screen text and encoded blobs — decoded and rescanned.</p></section>
+    <section class="card"><h3>MCP configuration risk</h3><p>Shell-string commands, unpinned <code>npx -y</code>, Docker socket mounts, literal secrets, plain-HTTP remotes, auto-approval, shadowed server names.</p></section>
+    <section class="card"><h3>Tool poisoning</h3><p>Instructions in tool descriptions, side-channel parameters, tool shadowing, name collisions, annotation lies and unsafe schemas.</p></section>
+    <section class="card"><h3>Server code</h3><p>Taint from tool parameters to shells, eval, SQL, paths and URLs; obfuscation, install hooks, token passthrough.</p></section>
+    <section class="card"><h3>Toxic flows</h3><p>The lethal trifecta across all your components — untrusted content, private data and egress — shown as a concrete path you can break.</p></section>
+    <section class="card"><h3>Rug pulls</h3><p><code>agentguard lock</code> pins skill files and tool definitions; <code>verify</code> shows a diff when they change.</p></section>
+    <section class="card"><h3>Standards</h3><p>Every finding maps to OWASP Agentic, MCP, Agentic Skills and LLM Top 10s and CWE, with an AIVSS score. <a href={`${base}/coverage/`}>See coverage and gaps.</a></p></section>
+  </div>
+
+  <h2>Measured, not claimed</h2>
+  <p>Rule pack {meta.rule_pack} has {meta.rule_count} rules, each with unsafe and safe fixtures. On the current benchmark corpus, findings at HIGH or above have precision {high.precision} and recall {high.recall}, with a benign false-positive rate of {high.fpr}. <a href={`${base}/benchmarks/`}>Details, per-category recall and known weak spots.</a></p>
+</Base>

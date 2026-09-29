@@ -1,0 +1,3 @@
+# Agent Guard rule pack. Versioned separately from the engine.
+version: "0.1.0"
+min_engine: "0.1.0"

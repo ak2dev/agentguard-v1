@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@example/pg@1.0.0"
+      ]
+    },
+    "postgress": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@example/pg-tools@1.0.0"
+      ]
+    }
+  }
+}

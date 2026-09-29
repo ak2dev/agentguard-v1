@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "linear": {
+      "url": "https://mcp.example.invalid/sse-free/mcp",
+      "headers": {
+        "Authorization": "Bearer ${env:LINEAR_TOKEN}"
+      }
+    }
+  }
+}
