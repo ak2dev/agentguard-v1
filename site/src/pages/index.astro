@@ -1,37 +1,239 @@
 ---
 import Base from "../layouts/Base.astro";
+import Tile from "../components/Tile.astro";
+import Icon from "../components/Icon.astro";
 import meta from "../data/generated/meta.json";
 import bench from "../data/generated/bench.json";
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const scanEnabled = import.meta.env.PUBLIC_FEATURE_SCAN === "1";
+// Every number on this page comes from the generated benchmark and rule-pack data.
 const high = bench.overall.high;
+const crit = bench.overall.critical;
+const held = bench.by_split.heldout.high;
+const heldBenign = held.tn + held.fp;
+const realBenign = bench.corpus.sources.real ?? 0;
+const perf = bench.performance.perf_check;
+const standards = [
+  "OWASP Top 10 for Agentic Applications 2026", "OWASP MCP Top 10", "OWASP Agentic Skills Top 10",
+  "OWASP Top 10 for LLM Applications 2025", "CWE", "OWASP AIVSS v0.8", "SARIF 2.1.0", "CycloneDX 1.6", "GitHub code scanning",
+];
+const flows = [
+  {
+    id: "skills", label: "Skills", icon: "file",
+    title: "What a skill is really asking for",
+    text: "Spec checks, hidden text decoded and rescanned, instruction-layer attacks, “Prerequisites” lures, credential access and exfiltration sinks — each finding with its evidence, a fix, and its OWASP mapping.",
+    from: "SKILL.md bundle", to: "Report",
+    steps: [["Spec", "check"], ["Hidden text", "eye"], ["Injection", "alert"], ["Lures", "code"], ["Exfiltration", "send"]],
+    note: "Every rule ships with an unsafe and a safe fixture.",
+  },
+  {
+    id: "mcp", label: "MCP servers", icon: "plug",
+    title: "Configs, tool metadata and server code",
+    text: "Shell-string STDIO commands, unpinned npx, literal secrets, tool poisoning and shadowing, and taint from tool parameters to exec, eval, SQL and paths.",
+    from: "Client config + server", to: "Report",
+    steps: [["STDIO", "code"], ["Secrets", "key"], ["Poisoning", "alert"], ["Shadowing", "layers"], ["Code taint", "scan"]],
+    note: "agentguard lock pins tool definitions; verify shows any drift as a diff.",
+  },
+  {
+    id: "ci", label: "CI", icon: "git",
+    title: "A gate on every pull request",
+    text: "The GitHub Action scans only what a pull request touches, reads policy from the base commit, and raises SARIF alerts in code scanning.",
+    from: "Pull request", to: "Code scanning",
+    steps: [["Discover", "scan"], ["Changed only", "git"], ["Baseline", "layers"], ["SARIF", "file"], ["Gate", "lock"]],
+    note: "Exit code 1 at or above --fail-on; 2 on any scanner error, never a silent pass.",
+  },
+];
 ---
 <Base title="Agent Guard">
-  <h1>Is it safe to give this skill or MCP server to my agent?</h1>
-  <p class="lead">Agent Guard answers that before anything is installed, enabled or merged — and when the answer is "not yet", it says exactly why and how to fix it. It never executes what it scans, needs no account, and works offline.</p>
-  <p>
-    <a class="btn" href={`${base}/docs/install/`}>Install</a>
-    <a class="btn secondary" href={`${base}/sample-report/`}>See a sample report</a>
-    {scanEnabled && <a class="btn secondary" href={`${base}/scan/`}>Scan a link</a>}
-  </p>
+  <section class="hero" slot="hero" aria-labelledby="hero-title">
+    {scanEnabled
+      ? <a class="announce" href={`${base}/scan/`}>New · Scan skills and MCP configs in your browser <span class="arrow" aria-hidden="true">→</span></a>
+      : <a class="announce" href={`${base}/benchmarks/`}>Rule pack {meta.rule_pack} · measured on real repositories <span class="arrow" aria-hidden="true">→</span></a>}
+    <h1 id="hero-title">Check what your agent is about to trust</h1>
+    <p>Agent Guard scans agent skills, instruction files and MCP servers before anything is installed, enabled or merged — and says exactly why, and how to fix it.</p>
+    <div class="hero-actions">
+      {scanEnabled
+        ? <a class="btn light" href={`${base}/scan/`}>Scan a link</a>
+        : <a class="btn light" href={`${base}/docs/install/`}>Install</a>}
+      <code>uvx agentguard scan</code>
+    </div>
+  </section>
 
-  <h2>Install in 30 seconds</h2>
-<pre><code>uvx agentguard scan            # this machine's agent config + current project
-uvx agentguard scan ./my-skill # one skill folder, a repo, or an MCP config file
-pipx install agentguard        # or install it permanently</code></pre>
+  <section class="section" aria-labelledby="highlights-title">
+    <h2 id="highlights-title" class="visually-hidden">Highlights</h2>
+    <div class="bento">
+      <Tile span="span-8">
+        <ul class="queue" aria-hidden="true">
+          <li><span>skills/notion-sync</span><span>2 critical · 1 high</span><span class="state">Scanning <i class="spin dash"></i></span></li>
+          <li><span>.cursor/mcp.json</span><span>1 high</span><span class="state">Scanning <i class="spin"></i></span></li>
+          <li><span>skills/csv-summarizer</span><span>Nothing at HIGH+</span><span class="state">Done ✓</span></li>
+          <li><span>servers/weather-mcp</span><span>Tools locked</span><span class="state">Done ✓</span></li>
+        </ul>
+        <h3>Fits into the way you already work</h3>
+        <p>A CLI, a pre-commit hook, a GitHub Action that raises SARIF alerts on pull requests{scanEnabled ? ", and your browser" : ""}. No account, no telemetry.</p>
+      </Tile>
+      <Tile span="span-4" tone="orange">
+        <Icon name="globe" />
+        <h3>One scan for skills, configs and servers</h3>
+        <p>SKILL.md bundles, AGENTS.md and Cursor rules, MCP client configs, tool manifests and server code: one engine, one rule pack of {meta.rule_count} rules, one report.</p>
+      </Tile>
+      <Tile span="span-5">
+        <Icon name="shield" />
+        <h3>Never runs what it scans</h3>
+        <p>No <code>npx</code>, no <code>uvx</code>, no <code>pip install</code>, no STDIO servers, no bundled scripts. A process-level guard blocks process creation while a scan runs.</p>
+      </Tile>
+      <Tile span="span-7">
+        <h3>Findings you can act on</h3>
+        <p>Every finding has a rule ID, severity and confidence, the file and line, a redacted snippet, a fix, and its standards mapping.</p>
+        <div class="terminal" role="img" aria-label="Example terminal output of agentguard scan listing three findings">
+          <p>$ agentguard scan ./skills -v</p>
+          <p><span class="dot"></span><span class="hi">2 critical · 1 high · 3 medium</span> from {meta.rule_count} rules</p>
+          <p class="tline">↳ <span class="tag">AG-SKL-SE-002</span> pipe-to-shell in “Prerequisites” · SKILL.md:8</p>
+          <p class="tline">↳ <span class="tag">AG-SKL-CRED-010</span> credential read + egress · scripts/sync.py:3</p>
+          <p class="tline">↳ <span class="tag">AG-FLOW-001</span> fetch → agent → slack · lethal trifecta</p>
+          <p class="tline">&gt;<span class="cursor"></span></p>
+        </div>
+      </Tile>
+    </div>
+  </section>
 
-  <h2>What it catches</h2>
-  <div class="cards">
-    <section class="card"><h3>Malicious skills</h3><p>"Prerequisites" download-and-run lures, pipe-to-shell, password-protected archives, ClickFix prompts, OS-protection bypasses, credential theft and exfiltration sinks.</p></section>
-    <section class="card"><h3>Hidden instructions</h3><p>Unicode tag characters, bidi and zero-width tricks, homoglyphs, HTML comments, off-screen text and encoded blobs — decoded and rescanned.</p></section>
-    <section class="card"><h3>MCP configuration risk</h3><p>Shell-string commands, unpinned <code>npx -y</code>, Docker socket mounts, literal secrets, plain-HTTP remotes, auto-approval, shadowed server names.</p></section>
-    <section class="card"><h3>Tool poisoning</h3><p>Instructions in tool descriptions, side-channel parameters, tool shadowing, name collisions, annotation lies and unsafe schemas.</p></section>
-    <section class="card"><h3>Server code</h3><p>Taint from tool parameters to shells, eval, SQL, paths and URLs; obfuscation, install hooks, token passthrough.</p></section>
-    <section class="card"><h3>Toxic flows</h3><p>The lethal trifecta across all your components — untrusted content, private data and egress — shown as a concrete path you can break.</p></section>
-    <section class="card"><h3>Rug pulls</h3><p><code>agentguard lock</code> pins skill files and tool definitions; <code>verify</code> shows a diff when they change.</p></section>
-    <section class="card"><h3>Standards</h3><p>Every finding maps to OWASP Agentic, MCP, Agentic Skills and LLM Top 10s and CWE, with an AIVSS score. <a href={`${base}/coverage/`}>See coverage and gaps.</a></p></section>
-  </div>
+  <section class="section" aria-labelledby="why-title">
+    <div class="section-head">
+      <h2 id="why-title">Why check before you install</h2>
+      <p>Everything an agent reads can <span class="accent">instruct it, reach your data, or send it elsewhere</span>.</p>
+    </div>
+    <div class="split">
+      <div class="before">
+        <span class="badge"><Icon name="alert" class="icon small-icon" /> Status: unreviewed</span>
+        <h3>Installing on trust</h3>
+        <div class="noise" aria-hidden="true"></div>
+        <div class="chaos">
+          <p class="note n1"><b>Prerequisites</b>“Run curl … | bash before first use”</p>
+          <p class="note n2"><b>Rug pull</b>tools/list changed after you approved it</p>
+          <p class="note n3"><b>Hidden text</b>Unicode tag characters in a tool description</p>
+          <p class="note n4"><b>Credential access</b>Reads ~/.aws/credentials, posts to a webhook</p>
+          <p class="note n5"><b>Shadowing</b>Two servers both define read_file</p>
+        </div>
+      </div>
+      <div class="after">
+        <h3>Installing with Agent Guard</h3>
+        <p class="calm"><Icon name="check" class="icon" /> Reviewed · pinned in agentguard.lock</p>
+      </div>
+    </div>
+  </section>
 
-  <h2>Measured, not claimed</h2>
-  <p>Rule pack {meta.rule_pack} has {meta.rule_count} rules, each with unsafe and safe fixtures. On the current benchmark corpus, findings at HIGH or above have precision {high.precision} and recall {high.recall}, with a benign false-positive rate of {high.fpr}. <a href={`${base}/benchmarks/`}>Details, per-category recall and known weak spots.</a></p>
+  <section class="section" aria-labelledby="evidence-title">
+    <div class="section-head">
+      <h2 id="evidence-title">Evidence, not verdicts</h2>
+      <p class="muted">(Never a “safe” badge.)</p>
+    </div>
+    <div class="seg" data-tabs>
+      <div role="tablist" aria-label="What Agent Guard checks" hidden>
+        {flows.map((f, i) => (
+          <button type="button" role="tab" id={`tab-${f.id}`} aria-controls={`panel-${f.id}`} aria-selected={i === 0 ? "true" : "false"} tabindex={i === 0 ? "0" : "-1"}>
+            <Icon name={f.icon} class="icon small-icon" /> {f.label}
+          </button>
+        ))}
+      </div>
+    </div>
+    {flows.map((f) => (
+      <div class="seg-panel" id={`panel-${f.id}`} role="tabpanel" aria-labelledby={`tab-${f.id}`}>
+        <div>
+          <p class="no-js-label accent small">{f.label}</p>
+          <h3>{f.title}</h3>
+          <p>{f.text}</p>
+        </div>
+        <div class="pipe">
+          <div class="pipe-ends"><span>{f.from}</span><span>{f.to}</span></div>
+          <ol>
+            {f.steps.map(([label, icon]) => <li><Icon name={icon} />{label}</li>)}
+          </ol>
+          <p class="pipe-note">{f.note}</p>
+        </div>
+      </div>
+    ))}
+  </section>
+
+  <section class="section" aria-labelledby="standards-title">
+    <div class="section-head">
+      <h2 id="standards-title">Mapped to the standards your security team uses</h2>
+      <p>Every finding carries its OWASP and CWE context and an AIVSS score. <a href={`${base}/coverage/`}>Coverage, including the gaps.</a></p>
+    </div>
+    <div class="strip">
+      <div class="strip-head" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div class="marquee">
+        {standards.map((s) => <span>{s}</span>)}
+        {standards.map((s) => <span aria-hidden="true">{s}</span>)}
+      </div>
+    </div>
+    <div class="proof">
+      <blockquote>
+        On {heldBenign} held-out benign skills and servers from vendor repositories the rules were never tuned on, <span class="accent">{held.fp} {held.fp === 1 ? "was" : "were"} flagged</span> at HIGH or above.
+      </blockquote>
+      <p>Precision {crit.precision.toFixed(2)} at CRITICAL and {high.precision.toFixed(2)} at HIGH across {bench.corpus.items} benchmark items, {realBenign} of them from real repositories. Recall is reported per category, including where it is weak. <a href={`${base}/benchmarks/`}>See the benchmark.</a></p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="graph-title">
+    <div class="section-head">
+      <h2 id="graph-title">See the whole session, not one file</h2>
+      <p>Toxic-flow analysis joins every skill and server an agent can reach into one capability graph.</p>
+    </div>
+    <div class="graph">
+      <svg viewBox="0 0 900 440" role="img" aria-labelledby="graph-desc">
+        <desc id="graph-desc">A web-fetch tool brings untrusted content to the agent; the agent can read private files and send data to a chat service. Together these form the lethal trifecta.</desc>
+        <defs>
+          <pattern id="dots" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r="1.2" fill="#ff7a33" fill-opacity=".38"></circle></pattern>
+          <radialGradient id="fade" cx="50%" cy="45%" r="55%"><stop offset="0" stop-color="#fff" stop-opacity="1"></stop><stop offset="1" stop-color="#fff" stop-opacity="0"></stop></radialGradient>
+          <mask id="m"><rect width="900" height="440" fill="url(#fade)"></rect></mask>
+        </defs>
+        <circle cx="450" cy="250" r="235" fill="url(#dots)" mask="url(#m)"></circle>
+        <circle cx="450" cy="250" r="235" fill="none" stroke="#3b3733"></circle>
+        <ellipse cx="450" cy="250" rx="235" ry="80" fill="none" stroke="#2a2724"></ellipse>
+        <ellipse cx="450" cy="250" rx="110" ry="235" fill="none" stroke="#2a2724"></ellipse>
+        <path class="flowline" d="M300 110 C 360 150, 400 190, 450 230" fill="none" stroke="#ff7a33" stroke-width="2"></path>
+        <path class="flowline" d="M450 230 C 520 210, 570 160, 620 130" fill="none" stroke="#ff7a33" stroke-width="2"></path>
+        <path class="flowline" d="M450 230 C 480 290, 520 330, 560 360" fill="none" stroke="#ff7a33" stroke-width="2"></path>
+        <g fill="#0e0d0c" stroke="#ff7a33" stroke-width="2">
+          <circle cx="300" cy="110" r="24"></circle><circle cx="620" cy="130" r="24"></circle><circle cx="560" cy="360" r="24"></circle>
+        </g>
+        <circle cx="450" cy="230" r="30" fill="#e2560f"></circle>
+        <g fill="none" stroke="#ff7a33" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M291 110h18M300 101c4 3 6 6 6 9s-2 6-6 9c-4-3-6-6-6-9s2-6 6-9z"></path>
+          <path d="M612 124h16v13h-16zM615 124v-3a5 5 0 0 1 10 0v3"></path>
+          <path d="M570 352l-19 7 7 3 3 7z"></path>
+        </g>
+        <path d="M438 230h24M450 218v24" stroke="#fff" stroke-width="2.4" stroke-linecap="round"></path>
+        <g fill="#d8d1c8" font-size="15" font-weight="600" text-anchor="middle">
+          <text x="300" y="158">web-fetch</text><text x="620" y="178">filesystem</text><text x="560" y="408">slack</text><text x="450" y="284">agent</text>
+        </g>
+        <g fill="#a69e94" font-size="13" text-anchor="middle">
+          <text x="300" y="176">untrusted content</text><text x="620" y="196">private data</text><text x="560" y="426">external egress</text>
+        </g>
+      </svg>
+      <p class="callout c1"><strong>Lethal trifecta</strong>Untrusted content, private data and egress, reachable in one session.</p>
+      <p class="callout c2"><strong>A path you can break</strong>Each label comes with the evidence behind it.</p>
+    </div>
+    <div class="features">
+      <div><Icon name="offline" /><h3>Offline by default</h3><p>The core scan needs no network and no account. Network checks are opt-in flags, listed in every report.</p></div>
+      <div><Icon name="git" /><h3>In CI</h3><p>SARIF alerts on pull requests, a pre-commit hook, exit codes you can gate on. {perf.skills} skills and {perf.configs} configs scan in about {Math.max(1, Math.round(perf.seconds))} s.</p></div>
+      {scanEnabled
+        ? <div><Icon name="browser" /><h3>In your browser</h3><p>Paste, drop or link. Scanned on your device by the same engine and rule pack; pasted text never leaves it.</p></div>
+        : <div><Icon name="code" /><h3>As a library</h3><p><code>scan(tree, options) → Report</code>: pure and deterministic, the same API the CLI uses.</p></div>}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="cta-title">
+    <div class="cta-band">
+      <h2 id="cta-title">Scan before you trust</h2>
+      <p>Thirty seconds, no account, nothing executed.</p>
+      <pre><code>uvx agentguard scan ./my-skill</code></pre>
+      <div class="hero-actions">
+        <a class="btn" href={`${base}/docs/install/`}>Install</a>
+        {scanEnabled && <a class="btn secondary" href={`${base}/scan/`}>Scan a link</a>}
+        <a class="btn secondary" href={`${base}/sample-report/`}>Sample report</a>
+      </div>
+    </div>
+  </section>
+  <script is:inline src={`${base}/js/tabs.js`}></script>
 </Base>

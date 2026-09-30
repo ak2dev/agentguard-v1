@@ -69,6 +69,10 @@ function check(file) {
 }
 
 walk(dist);
+// Stylesheets must not inline fonts or images as data: URIs (font-src is 'self' only).
+for (const f of fs.readdirSync(path.join(dist, "assets")).filter((n) => n.endsWith(".css"))) {
+  if (/url\(\s*["']?data:font/i.test(fs.readFileSync(path.join(dist, "assets", f), "utf8"))) problems.push(`assets/${f}: data: font (blocked by CSP)`);
+}
 if (!fs.existsSync(path.join(dist, ".well-known", "security.txt"))) problems.push("missing /.well-known/security.txt");
 if (problems.length) {
   console.error(`postbuild: ${problems.length} problem(s)\n` + problems.join("\n"));

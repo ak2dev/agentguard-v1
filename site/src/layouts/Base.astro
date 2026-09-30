@@ -1,20 +1,21 @@
 ---
+import "@fontsource-variable/inter/opsz.css";
+import "@fontsource-variable/jetbrains-mono";
 import "../styles/global.css";
 import Wordmark from "../components/Wordmark.astro";
 
 interface Props { title: string; description?: string; wide?: boolean }
-const { title, description = "Offline-first security scanner for AI agent skills, instruction files and MCP servers.", wide = false } = Astro.props;
+const { title, description = "Offline-first security scanner for AI agent skills, instruction files and MCP servers." } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const scanEnabled = import.meta.env.PUBLIC_FEATURE_SCAN === "1";
 const path = Astro.url.pathname;
 const nav = [
-  ...(import.meta.env.PUBLIC_FEATURE_SCAN === "1" ? [["Scan", "/scan/"]] : []),
+  ...(scanEnabled ? [["Scan", "/scan/"]] : []),
   ["Docs", "/docs/"],
   ["Rules", "/rules/"],
   ["Coverage", "/coverage/"],
   ["Benchmarks", "/benchmarks/"],
-  ["Sample report", "/sample-report/"],
   ["Security", "/security/"],
-  ["Changelog", "/changelog/"],
 ];
 const csp = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests";
 ---
@@ -25,6 +26,8 @@ const csp = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 's
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="Content-Security-Policy" content={csp} />
     <meta name="referrer" content="no-referrer" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0e0d0c" />
     <meta name="description" content={description} />
     <title>{title === "Agent Guard" ? title : `${title} · Agent Guard`}</title>
     <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
@@ -41,16 +44,58 @@ const csp = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 's
             ))}
           </ul>
         </nav>
+        <div class="bar-actions">
+          <a class="btn secondary" href={`${base}/docs/install/`}>Install</a>
+          {scanEnabled && <a class="btn" href={`${base}/scan/`}>Scan a link</a>}
+        </div>
       </div>
     </header>
-    <main id="content" class="wrap">
-      <slot />
-    </main>
-    <footer class="site">
-      <div class="wrap">
-        <p>Agent Guard is open source (Apache-2.0). This site uses no analytics, no cookies and no third-party requests.
-          Findings are evidence for review, not verdicts; a clean scan never means "safe".</p>
+    <main id="content">
+      <slot name="hero" />
+      <div class="frame">
+        <div class="wrap main-inner">
+          <slot />
+        </div>
       </div>
-    </footer>
+    </main>
+    <div class="frame">
+      <footer class="site">
+        <div class="wrap">
+          <div class="foot">
+            <div>
+              <a class="brand" href={`${base}/`}><Wordmark /></a>
+              <p>Open source (Apache-2.0). No analytics, no cookies, no third-party requests.</p>
+              <p>Findings are evidence for review, not verdicts. A scan with no findings never means "safe".</p>
+            </div>
+            <div>
+              <h2>Product</h2>
+              <ul>
+                {scanEnabled && <li><a href={`${base}/scan/`}>Web scanner</a></li>}
+                <li><a href={`${base}/docs/install/`}>Install</a></li>
+                <li><a href={`${base}/sample-report/`}>Sample report</a></li>
+                <li><a href={`${base}/changelog/`}>Changelog</a></li>
+              </ul>
+            </div>
+            <div>
+              <h2>Evidence</h2>
+              <ul>
+                <li><a href={`${base}/rules/`}>Rule catalog</a></li>
+                <li><a href={`${base}/coverage/`}>Standards coverage</a></li>
+                <li><a href={`${base}/benchmarks/`}>Benchmarks</a></li>
+                <li><a href={`${base}/docs/limitations/`}>Limitations</a></li>
+              </ul>
+            </div>
+            <div>
+              <h2>Trust</h2>
+              <ul>
+                <li><a href={`${base}/security/`}>Security</a></li>
+                <li><a href={`${base}/privacy/`}>Privacy</a></li>
+                <li><a href={`${base}/.well-known/security.txt`}>security.txt</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
   </body>
 </html>
