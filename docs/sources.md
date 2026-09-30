@@ -40,3 +40,15 @@ marked TODO is unverified and must not be relied on without checking.
 | Zed | macOS `~/Library/Application Support/Zed/settings.json`; Linux `~/.local/share/zed/settings.json`; Windows `%LOCALAPPDATA%\Zed\settings.json`; project `.zed/settings.json`; key `context_servers` | https://zed.dev/docs/configuring-zed · https://zed.dev/docs/ai/mcp | 2026-09-28 |
 | Cline | `cline_mcp_settings.json`, `alwaysAllow` | — | TODO |
 | OpenClaw / ClawHub | skill directories | — | TODO |
+
+## Agent Guard Web (browser scanner) and hosting
+
+| Topic | Claim relied on | Source | Checked |
+|---|---|---|---|
+| GitHub REST rate limits | Unauthenticated: 60 requests/hour per IP; `x-ratelimit-limit/remaining/used/reset/resource` headers; exceeding returns 403 or 429 | https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api | 2026-09-29 |
+| GitHub "Get a tree" | `GET /repos/{owner}/{repo}/git/trees/{tree_sha}?recursive=1`; entries `path`, `mode`, `type`, `sha`, `size`; `truncated` when over 100,000 entries or 7 MB | https://docs.github.com/en/rest/git/trees | 2026-09-29 |
+| GitHub "Get a commit" | `ref` may be a SHA, branch or tag; `Accept: application/vnd.github.sha` returns only the SHA | https://docs.github.com/en/rest/commits/commits#get-a-commit | 2026-09-29 |
+| CORS for api.github.com / raw.githubusercontent.com | Browser `fetch` without credentials works for public data | Verified empirically from the scanner (2026-09-29): repo, commit, tree and 429 raw files fetched | 2026-09-29 (TODO: find a documented statement) |
+| Vercel `vercel.json` | `framework: null` = "Other"; `installCommand`, `buildCommand`, `outputDirectory`; `headers[].source` pattern + `headers`; `trailingSlash: true` 308-redirects paths without an extension | https://vercel.com/docs/project-configuration/vercel-json | 2026-09-29 (precedence when several header rules set the same key is not documented, so the config avoids overlapping keys) |
+| CSP `'wasm-unsafe-eval'` | Allows WebAssembly compilation without allowing JavaScript `eval`; Chrome 97+ | https://github.com/WebAssembly/content-security-policy/blob/main/proposals/CSP.md | 2026-09-29 (Pyodide 0.28.3 verified to run with it and without `'unsafe-eval'`) |
+| Pyodide 0.28.3 | npm package ships the runtime and `pyodide-lock.json` (with sha256 per wheel) but not the wheels; wheels at `https://cdn.jsdelivr.net/pyodide/v0.28.3/full/` (build time only) | `site/node_modules/pyodide/pyodide-lock.json` | 2026-09-29 |

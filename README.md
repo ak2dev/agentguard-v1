@@ -47,6 +47,10 @@ Exit codes: `0` no findings at or above `--fail-on` (default `high`), `1` findin
 
 159 rules in rule pack 0.1.0, each with an unsafe and a safe fixture, mapped to the OWASP Top 10 for Agentic Applications (ASI), OWASP MCP Top 10, OWASP Agentic Skills Top 10 (AST), OWASP LLM Top 10 and CWE, with an AIVSS score. The website shows the full catalog and a coverage matrix that lists gaps.
 
+## In the browser
+
+The website's `/scan` page runs the same engine in your browser (Pyodide): paste a `SKILL.md` or MCP config, drop a folder or `.zip`, or give a public GitHub repository, folder, file or gist link. Pasted and dropped input never leaves your device (a CI test asserts zero network requests); for GitHub links your browser fetches the files straight from GitHub, pinned to a commit. npm, PyPI, MCP Registry and remote-server links need the Agent Guard Web server, which is designed but not built yet. See `site/src/pages/docs/web-scanner.md` for limits and Vercel deployment.
+
 ## CI
 
 ```yaml
@@ -76,7 +80,7 @@ Pull requests run in PR mode (only components touched by the change; configurati
 
 ## Project layout
 
-`src/agentguard/core` is the pure engine (runs under Pyodide); `io`, `net`, `judge` and `cli` are host-side. Rules are data in `rules/`, standards crosswalk in `mappings/`, fixtures in `fixtures/rules/`, benchmark in `bench/`, website in `site/`, Milestone 2 design in `web/`. Design and threat model: `docs/`.
+`src/agentguard/core` is the pure engine (runs under Pyodide) and `webscan.py` its browser entry points; `io`, `net`, `judge` and `cli` are host-side. Rules are data in `rules/`, standards crosswalk in `mappings/`, fixtures in `fixtures/rules/`, benchmark in `bench/`, website and browser scanner in `site/` (deployed with `vercel.json`), Milestone 2 server design in `web/`. Design and threat model: `docs/`.
 
 ## License
 

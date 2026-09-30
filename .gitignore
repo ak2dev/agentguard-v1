@@ -11,3 +11,9 @@ site/dist/
 site/.astro/
 .claude/launch.json
 tests/pyodide/node_modules/
+site/.cache/
+site/public/pyodide/
+site/public/engine/
+site/src/data/engine.json
+site/test-results/
+site/playwright-report/
