@@ -65,6 +65,39 @@ def test_html_escapes_and_has_no_script(report):
     assert "Content-Security-Policy" in html
 
 
+def test_html_uses_site_fonts_and_loads_nothing_external(report):
+    import re
+
+    html = render_html(report)
+    assert html.count("data:font/woff2;base64,") == 2  # Inter + JetBrains Mono, embedded
+    csp = re.search(r'Content-Security-Policy" content="([^"]+)"', html).group(1)
+    assert "default-src 'none'" in csp and "font-src data:" in csp and "script-src" not in csp
+    # Nothing is fetched: no src= attributes, no url() pointing anywhere but data:
+    assert " src=" not in html
+    assert not re.search(r"url\((?!data:)", html)
+    assert render_html(report) == html  # deterministic
+
+
+def test_html_links_findings_to_the_scanned_commit():
+    import re
+
+    from agentguard.core.inputs import github_ref
+
+    tree = ArtifactTree.from_mapping(MALICIOUS_SKILL, source=github_ref("o", "r", "a" * 40))
+    html = render_html(scan(tree, ScanOptions()))
+    assert f'href="https://github.com/o/r/blob/{"a" * 40}/' in html
+    assert all(h.startswith("https://") for h in re.findall(r'href="([^"]+)"', html))
+
+
+def test_html_does_not_reveal_local_paths():
+    from agentguard.core.models import SourceRef
+    from agentguard.core.models.enums import SourceKind
+
+    source = SourceRef(kind=SourceKind.local, locator="C:\\Users\\someone\\projects\\my-skill")
+    html = render_html(scan(ArtifactTree.from_mapping(MALICIOUS_SKILL, source=source), ScanOptions()))
+    assert "someone" not in html and "my-skill" in html
+
+
 def test_deterministic(report):
     again = scan(ArtifactTree.from_mapping(MALICIOUS_SKILL), ScanOptions())
     assert render_json(report) == render_json(again)

@@ -79,7 +79,8 @@ for (const pkg of pkgs) fs.writeFileSync(path.join(outPy, pkg.file_name), await 
 const files = {};
 const py = (n) => n.endsWith(".py");
 for (const f of ["__init__.py", "webscan.py"]) files[`agentguard/${f}`] = fs.readFileSync(path.join(repo, "src", "agentguard", f)).toString("base64");
-collect(path.join(repo, "src", "agentguard", "core"), "agentguard/core", py, files);
+// Engine code plus the HTML report's embedded fonts (and their OFL licenses).
+collect(path.join(repo, "src", "agentguard", "core"), "agentguard/core", (n) => py(n) || n.endsWith(".woff2") || n.endsWith("-OFL.txt"), files);
 for (const d of ["rules", "mappings", "intel"]) collect(path.join(repo, d), `agentguard/_data/${d}`, () => true, files);
 const engine = Buffer.from(JSON.stringify({ format: "agentguard-web-engine/1", files }));
 fs.rmSync(path.join(site, "public", "engine"), { recursive: true, force: true });

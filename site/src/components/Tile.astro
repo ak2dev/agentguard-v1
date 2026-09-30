@@ -1,0 +1,10 @@
+---
+// A bento tile with square corner markers.
+interface Props { span?: string; tone?: "" | "orange"; }
+const { span = "span-6", tone = "" } = Astro.props;
+---
+<article class={`tile ${span} ${tone}`.trim()}>
+  <i class="c tl" aria-hidden="true"></i><i class="c tr" aria-hidden="true"></i>
+  <i class="c bl" aria-hidden="true"></i><i class="c br" aria-hidden="true"></i>
+  <slot />
+</article>

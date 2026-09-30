@@ -13,6 +13,8 @@ export default defineConfig({
     assets: "assets",
   },
   devToolbar: { enabled: false },
+  // Never inline assets as data: URIs (fonts included); the CSP only allows same-origin files.
+  vite: { build: { assetsInlineLimit: 0 } },
   markdown: {
     syntaxHighlight: false,
   },
