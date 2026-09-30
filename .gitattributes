@@ -5,3 +5,4 @@ fixtures/** -text
 bench/corpus/** -text
 intel/** -text
 *.zip binary
+*.woff2 binary
