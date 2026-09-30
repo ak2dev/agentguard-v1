@@ -82,7 +82,7 @@ rules:
     remediation: Store content in plain text, or document why the encoding is needed.
 
   - id: AG-SKL-HID-009
-    version: 1
+    version: 2
     title: Encoded blob contains instructions or executable content
     description: A decoded blob contains agent-directed instructions, shell commands or URLs.
     why: Instructions or commands that only exist in encoded form are a strong sign of deliberate concealment.

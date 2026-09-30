@@ -12,6 +12,7 @@ const cats = Object.entries(b.categories);
   <h2>Corpus</h2>
   <p>{b.corpus.items} items: {b.corpus.malicious} malicious, {b.corpus.adversarial} adversarial, {b.corpus.benign} benign. Sources: {Object.entries(b.corpus.sources).map(([k, v]) => `${v} ${k}`).join(", ")}.
   All malicious and adversarial items are inert synthetic reproductions of documented patterns (reserved domains, no working payloads). The held-out split shares no author or template with the items used while writing rules.</p>
+  {b.corpus.sources.real && <p class="gap">Caveat: the {b.corpus.sources.real} real benign items are skills and MCP servers from vendor-maintained repositories at pinned commits. Rules were tuned against the ones in the dev split, so read the held-out table below for generalization. Before each tuning round the next repositories were scanned once: 16 of 43, then 7 of 28, then 1 of 79 benign items were flagged at HIGH. The full history and the benign items still flagged are in <code>docs/benchmark.md</code>.</p>}
   {!b.corpus.sources.real && <p class="gap">Caveat: the benign set is currently synthetic. Real-world benign corpora (official and popular skills and servers at pinned revisions) are added with <code>bench/fetch_real.py</code> once sources are approved in <code>bench/real_sources.yaml</code>; until then, false-positive rates here are optimistic.</p>}
 
   <h2>Targets</h2>

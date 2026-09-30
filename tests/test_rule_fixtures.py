@@ -8,6 +8,7 @@ import pytest
 from agentguard.core.analyzers import registry
 from agentguard.core.engine import scan
 from agentguard.core.models import AnalyzerMatch
+from agentguard.core.models.enums import Severity
 from agentguard.core.rules.pack import RulePack
 
 from fixture_harness import FIXTURES, iter_cases, load_case
@@ -42,6 +43,13 @@ def test_fixture(rule_id, side, case_dir, monkeypatch):
     fired = {f.rule_id for f in [*report.findings, *report.suppressed_findings]}
     if side == "positive":
         assert rule_id in fired, f"{case.id}: expected {rule_id}; fired {sorted(fired)}"
+    elif case.config.get("max_severity"):
+        # A mention the rule reports at a lower severity (e.g. a quoted pattern in a
+        # reference doc): it may fire, but never above max_severity.
+        cap = Severity(case.config["max_severity"])
+        over = [f for f in [*report.findings, *report.suppressed_findings] if f.rule_id == rule_id and f.severity.rank > cap.rank]
+        assert not over, f"{case.id}: {rule_id} fired above {cap.value}: " + "; ".join(
+            f"{f.severity.value}: {f.message}" for f in over)
     else:
         assert rule_id not in fired, f"{case.id}: {rule_id} fired on a negative fixture: " + "; ".join(
             f.message for f in report.findings if f.rule_id == rule_id

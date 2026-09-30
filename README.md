@@ -60,13 +60,13 @@ Pull requests run in PR mode (only components touched by the change; configurati
 
 ## Benchmark
 
-`agentguard bench` reports precision, recall, F1 and false-positive rate per category and severity on `bench/`. Latest committed results (`bench/results/latest.json`): precision 1.0 at CRITICAL and at HIGH, benign false-positive rate 0.0 at HIGH, 100 skills + 20 server configs scanned in about 1 second (target: under 10). See the caveats below before quoting these numbers.
+`agentguard bench` reports precision, recall, F1 and false-positive rate per category and severity on `bench/`. The corpus has 61 synthetic items and 163 real benign skills and MCP servers from eight vendor-maintained repositories at pinned commits. Latest committed results (`bench/results/latest.json`): precision 1.0 at CRITICAL and 0.91 at HIGH, recall 0.89 at HIGH, benign false-positive rate 0.016 at HIGH (1 of 79 real held-out items flagged), 100 skills + 20 server configs scanned in about 1 second (target: under 10). Rules were tuned against the `dev` real sources; [docs/benchmark.md](docs/benchmark.md) records every tuning round, its held-out result before tuning, and the benign items still flagged.
 
 ## Limitations
 
 - **Static only.** Behavior that appears only at run time (code downloaded later, a server changing its tools after connection) is out of reach; `lock`/`verify` catches changes between scans. Sandboxed dynamic analysis is planned, not built.
 - **Pattern rules can be evaded.** Paraphrased lures and payloads split across files are known misses and are reported as such by the benchmark. The optional LLM judge (`--llm-judge`) helps with paraphrase but is never the sole basis for a CRITICAL finding.
-- **The benchmark's benign set is synthetic** and small, so false-positive rates are optimistic until real-world benign corpora (official and popular skills and servers at pinned revisions) are added.
+- **The benchmark's malicious set is synthetic**, and more than half of the real benign items were used to tune rules. Before each tuning round the next vendor repositories were scanned once: 16 of 43, then 7 of 28, then 1 of 79 benign items flagged at HIGH. Expect false positives on real skills that look unlike those repositories, and treat MEDIUM (FPR 0.14 on real code) as review material.
 - **Taint analysis is intra-procedural** for Python and pattern-based within a tool handler for JavaScript/TypeScript.
 - **Flow labels are inferred** (medium or low confidence) when only a config names a server and its code or tools are unavailable.
 - **Provenance:** missing attestations and subject-digest mismatches are detected; full Sigstore chain verification is not.

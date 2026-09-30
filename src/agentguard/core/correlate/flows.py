@@ -69,6 +69,7 @@ _NAME_HINTS: tuple[tuple[str, tuple[CapLabel, ...]], ...] = (
     ("database", (L.reads_private_data,)),
     ("shell", (L.code_exec,)),
 )
+_PROSE_KINDS = (ComponentKind.skill, ComponentKind.instruction_file, ComponentKind.command, ComponentKind.subagent)
 FLOW_LABELS = (L.reads_private_data, L.ingests_untrusted_content, L.external_egress, L.destructive, L.code_exec, L.persistence)
 LABEL_TEXT = {
     L.reads_private_data: "can read private data",
@@ -230,6 +231,12 @@ class FlowAnalyzer:
         single_done = set()
         for cid, d in sorted(by_comp.items()):
             if all(x in d for x in (U, P, E)):
+                comp = d[U][2].component
+                if comp.kind in _PROSE_KINDS and not (d[P][0] == Confidence.high and d[E][0] == Confidence.high):
+                    # A skill's untrusted-input label comes from its prose; the private-data
+                    # read and the egress must be behaviour (code, a command, a fenced
+                    # snippet), not words like "curl" or ".env" in documentation.
+                    continue
                 hops = [d[U][2], d[P][2], d[E][2]]
                 conf = Confidence.min(d[U][0], d[P][0], d[E][0])
                 self._emit(ctx, "AG-FLOW-002", client, agent, hops, (U, P, E), conf, policy_sev)

@@ -10,6 +10,7 @@ import regex
 
 from ..artifacts import TextUnit
 from ..models import RegexMatch, RuleDef
+from ..models.rule import Downgrade
 from ..models.enums import Confidence, EvidenceKind
 from ..textutil import TIMEOUT
 from .base import Context
@@ -36,6 +37,59 @@ def _window(text: str, starts: list[int], start: int, end: int, lines: int) -> s
     b_line = le + lines + 1
     b = starts[b_line] if b_line < len(starts) else len(text)
     return text[a:b]
+
+
+_OPEN_CLOSE = (("“", "”"), ("«", "»"))
+
+
+def is_quoted(line: str, start: int, end: int) -> bool:
+    """True when line[start:end] sits inside "double quotes", “curly quotes”,
+    an inline `code span`, or 'single quotes' directly around it (a mention or
+    a literal, not a directive). Other single quotes are too often apostrophes."""
+    before, after = line[:start], line[end:]
+    for q in ('"', "`"):
+        if before.count(q) % 2 == 1 and q in after:
+            return True
+    if before.endswith("'") and after.startswith("'"):
+        return True
+    return any(before.rfind(o) > before.rfind(c) and c in after for o, c in _OPEN_CLOSE)
+
+
+def _description(ctx: Context, component_id: str) -> str:
+    cache: dict[str, str] = ctx.data.setdefault("_declared_descriptions", {})  # type: ignore[assignment]
+    if component_id not in cache:
+        md = next((t for t in ctx.texts("skill_md") if t.artifact.component_id == component_id), None)
+        data = md.fm.data if md is not None and md.fm and isinstance(md.fm.data, dict) else {}
+        cache[component_id] = str(data.get("description") or "")
+    return cache[component_id]
+
+
+def _downgrade(ctx: Context, m: RegexMatch, unit: TextUnit, text: str, starts: list[int], s: int, e: int) -> Downgrade | None:
+    for dg in m.downgrade:
+        if dg.roles and unit.role not in dg.roles:
+            continue
+        if dg.declared:
+            desc = _description(ctx, unit.component_id)
+            try:
+                if not desc or not any(_compile(p, True).search(desc, timeout=TIMEOUT) for p in dg.declared):
+                    continue
+            except TimeoutError:
+                continue
+        if dg.quoted:
+            ls = starts[bisect.bisect_right(starts, s) - 1]
+            le = text.find("\n", s)
+            le = len(text) if le < 0 else le
+            if e > le or not is_quoted(text[ls:le], s - ls, e - ls):
+                continue
+        if dg.patterns:
+            win = _window(text, starts, s, e, m.window if dg.window is None else dg.window)
+            try:
+                if not any(_compile(p, m.ignore_case).search(win, timeout=TIMEOUT) for p in dg.patterns):
+                    continue
+            except TimeoutError:
+                continue
+        return dg
+    return None
 
 
 def units_for(ctx: Context) -> list[TextUnit]:
@@ -105,6 +159,10 @@ class RegexRuleAnalyzer:
                 confidence = rule.confidence
                 if m.lower_confidence_in_code and at is not None and abs_off is not None and unit.base is not None and at.in_code(abs_off):
                     confidence = confidence.lower()
+                severity = None
+                dg = _downgrade(ctx, m, unit, text, starts, s, e)
+                if dg is not None and dg.severity.rank < rule.severity.rank:
+                    severity, confidence = dg.severity, confidence.lower()
                 seen_lines.add(line_no)
                 line = _window(text, starts, s, e, 0).strip("\n")
                 ctx.emit(
@@ -115,6 +173,7 @@ class RegexRuleAnalyzer:
                     match=hit.group(0).lower(),
                     detail=f"matched in {unit.scope}{' (' + unit.label + ')' if unit.label else ''}",
                     kind=EvidenceKind.regex,
+                    severity=severity,
                     confidence=confidence if confidence != rule.confidence else None,
                     hidden=unit.hidden,
                     hidden_kind=unit.hidden_kind,

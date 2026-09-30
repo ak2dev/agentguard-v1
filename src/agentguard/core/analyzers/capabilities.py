@@ -10,11 +10,11 @@ import regex
 
 from ..models.enums import ArtifactRole, CapLabel, ComponentKind, Confidence, EvidenceKind
 from .base import Context
+from .envcopy import env_dumps
 from .heuristics import (
     CREDENTIAL_PATH,
     DESTRUCTIVE,
     EGRESS_CODE,
-    ENV_DUMP,
     EXEC_CODE,
     INSTRUCTION_FILES,
     PERSISTENCE,
@@ -24,9 +24,20 @@ from .heuristics import (
     search,
 )
 
+# Content sources: unambiguous on their own, or a generic noun ("messages",
+# "issues", "PDFs") only when the skill acts on it ("summarize the issues",
+# "read incoming emails"). Bare nouns ("commit message format", "output .pdf
+# files", `messages.create`) do not make a skill ingest third-party content.
 _UNTRUSTED_SOURCES = regex.compile(
-    r"\b(?:web ?pages?|websites?|urls?|browse|crawl|scrape|search results?|emails?|inbox|issues?|pull requests?|"
-    r"comments?|tickets?|slack|discord|messages?|rss|feeds?|user[- ]supplied|untrusted|documents? from|pdfs?|uploads?)\b",
+    r"\b(?:web ?pages?|websites?|brows(?:e|es|ing)\s+(?:the\s+)?(?:web|internet|sites?|pages?|urls?)|crawl(?:s|ing)?|scrap(?:e|es|ing)|"
+    r"search results?|(?:the\s+user'?s\s+)?inbox|user[- ](?:supplied|provided|submitted)\s+(?:content|text|files?|documents?|urls?|data)|"
+    r"untrusted\s+(?:content|input|text|data|documents?|sources?)|rss\s+feeds?|documents?\s+from\s+(?:the\s+)?(?:web|internet|users?|customers?|third[- ]part(?:y|ies)))\b"
+    r"|\b(?:fetch(?:es|ing)?|read(?:s|ing)?|process(?:es|ing)?|summari[sz](?:e|es|ing)|pars(?:e|es|ing)|triag(?:e|es|ing)|"
+    r"review(?:s|ing)?|analy[sz](?:e|es|ing)|ingest(?:s|ing)?|download(?:s|ing)?|open(?:s|ing)?|"
+    r"(?:respond(?:s|ing)?|repl(?:y|ies|ying))\s+to|extract(?:s|ing)?\s+(?:\w+\s+){0,2}from)\s+"
+    r"(?:(?:the|a|an|any|all|incoming|new|unread|recent|their|user'?s?|customer|github|gitlab|slack|discord|jira|linear|external|remote|uploaded|open)\s+){0,3}"
+    r"(?:urls?|links?|emails?|e-mails?|mail|issues?|comments?|pull\s+requests?|prs|tickets?|messages?|chats?|threads?|"
+    r"documents?|pdfs?|uploads?|attachments?|posts?|web\s+content|feeds?|articles?)\b",
     regex.IGNORECASE,
 )
 _PRIVATE_SOURCES = regex.compile(
@@ -66,6 +77,8 @@ class CapabilityAnalyzer:
                 explicit = code or unit.scope == "command"
 
                 def cap(label: CapLabel, m: regex.Match[str], reason: str, c: Confidence | None = None) -> None:
+                    if code and _is_comment(_line(t, m.start())):
+                        return                                # a comment describes, it does not do
                     if c is None:
                         abs_off = ctx.unit_abs(unit, m.start())
                         in_fence = unit.base is not None and abs_off is not None and at.in_code(abs_off)
@@ -78,7 +91,7 @@ class CapabilityAnalyzer:
                     cap(CapLabel.external_egress, m, "network request")
                 for m in finditer(EXEC_CODE, t)[:3]:
                     cap(CapLabel.code_exec, m, "process/eval execution")
-                for m in finditer(ENV_DUMP, t)[:2]:
+                for m in env_dumps(t, at.artifact.language if code else None)[:2]:
                     cap(CapLabel.credential_access, m, "dumps the environment")
                     cap(CapLabel.reads_private_data, m, "dumps the environment")
                 for m in finditer(CREDENTIAL_PATH, t)[:3]:
@@ -153,6 +166,10 @@ def _line(text: str, offset: int) -> str:
     s = text.rfind("\n", 0, offset) + 1
     e = text.find("\n", offset)
     return text[s : e if e >= 0 else len(text)]
+
+
+def _is_comment(line: str) -> bool:
+    return line.lstrip().startswith(("#", "//", "/*", "* ", "<!--")) and not line.lstrip().startswith("#!")
 
 
 __all__ = ["CapabilityAnalyzer", "TOKEN_ENV"]

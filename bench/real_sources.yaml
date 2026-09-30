@@ -1,4 +1,1506 @@
-# Real-world benign benchmark sources (pinned). Empty until the project
-# maintainers approve which third-party skills/servers may be fetched or
-# vendored, and under which licenses. See bench/fetch_real.py for the format.
-sources: []
+# Real-world benign benchmark sources, pinned by commit and tarball hash.
+# Fetch with `python bench/fetch_real.py` (dev-only, network), then
+# `python bench/generate_synthetic.py` to merge them into manifest.yaml.
+#
+# Licensing: only permissively licensed directories are vendored, each with
+# its own license file (checked by fetch_real.py); attributions are in
+# bench/NOTICE. Deliberately NOT vendored:
+#   anthropics/skills  docx, pdf, pptx, xlsx  proprietary ("source-available")
+#   anthropics/skills  doc-coauthoring        no license file
+#   anthropics/skills  canvas-design          5.4 MB, mostly bundled third-party fonts
+#   openai/skills      figma*                 Figma Developer Terms (proprietary)
+#   openai/skills      cloudflare-deploy      1.3 MB of vendored docs (size)
+#
+# Splits: `dev` sources were looked at while tuning rules. Round 1 tuned on
+# anthropics/skills; openai/skills, modelcontextprotocol/servers and
+# microsoft/playwright-mcp were held out, measured once, then tuned on in
+# round 2; huggingface/skills and supabase-mcp were the round-2 held-out set,
+# measured once, then tuned on in round 3. `heldout` sources (microsoft/skills,
+# cloudflare/mcp-server-cloudflare) were added after all tuning and scanned
+# once; no rule was changed in response to them. See docs/benchmark.md.
+sources:
+  - id: anthropic-academy-guide
+    repo: anthropics/skills
+    commit: 8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4
+    subpath: "skills/academy-guide"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 89c38d91a2d22495d075d3fdd37e674179da044491eee1f1eb678caa986a9db5
+  - id: anthropic-algorithmic-art
+    repo: anthropics/skills
+    commit: 8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4
+    subpath: "skills/algorithmic-art"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 89c38d91a2d22495d075d3fdd37e674179da044491eee1f1eb678caa986a9db5
+  - id: anthropic-brand-guidelines
+    repo: anthropics/skills
+    commit: 8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4
+    subpath: "skills/brand-guidelines"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 89c38d91a2d22495d075d3fdd37e674179da044491eee1f1eb678caa986a9db5
+  - id: anthropic-claude-api
+    repo: anthropics/skills
+    commit: 8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4
+    subpath: "skills/claude-api"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 89c38d91a2d22495d075d3fdd37e674179da044491eee1f1eb678caa986a9db5
+  - id: anthropic-discernment-nudge
+    repo: anthropics/skills
+    commit: 8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4
+    subpath: "skills/discernment-nudge"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 89c38d91a2d22495d075d3fdd37e674179da044491eee1f1eb678caa986a9db5
+  - id: anthropic-frontend-design
+    repo: anthropics/skills
+    commit: 8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4
+    subpath: "skills/frontend-design"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 89c38d91a2d22495d075d3fdd37e674179da044491eee1f1eb678caa986a9db5
+  - id: anthropic-internal-comms
+    repo: anthropics/skills
+    commit: 8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4
+    subpath: "skills/internal-comms"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 89c38d91a2d22495d075d3fdd37e674179da044491eee1f1eb678caa986a9db5
+  - id: anthropic-mcp-builder
+    repo: anthropics/skills
+    commit: 8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4
+    subpath: "skills/mcp-builder"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 89c38d91a2d22495d075d3fdd37e674179da044491eee1f1eb678caa986a9db5
+  - id: anthropic-skill-creator
+    repo: anthropics/skills
+    commit: 8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4
+    subpath: "skills/skill-creator"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 89c38d91a2d22495d075d3fdd37e674179da044491eee1f1eb678caa986a9db5
+  - id: anthropic-slack-gif-creator
+    repo: anthropics/skills
+    commit: 8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4
+    subpath: "skills/slack-gif-creator"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 89c38d91a2d22495d075d3fdd37e674179da044491eee1f1eb678caa986a9db5
+  - id: anthropic-theme-factory
+    repo: anthropics/skills
+    commit: 8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4
+    subpath: "skills/theme-factory"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 89c38d91a2d22495d075d3fdd37e674179da044491eee1f1eb678caa986a9db5
+  - id: anthropic-web-artifacts-builder
+    repo: anthropics/skills
+    commit: 8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4
+    subpath: "skills/web-artifacts-builder"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 89c38d91a2d22495d075d3fdd37e674179da044491eee1f1eb678caa986a9db5
+  - id: anthropic-webapp-testing
+    repo: anthropics/skills
+    commit: 8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4
+    subpath: "skills/webapp-testing"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 89c38d91a2d22495d075d3fdd37e674179da044491eee1f1eb678caa986a9db5
+  - id: openai-aspnet-core
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/aspnet-core"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-chatgpt-apps
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/chatgpt-apps"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-cli-creator
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/cli-creator"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-define-goal
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/define-goal"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-gh-address-comments
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/gh-address-comments"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-gh-fix-ci
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/gh-fix-ci"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-hatch-pet
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/hatch-pet"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-jupyter-notebook
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/jupyter-notebook"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-linear
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/linear"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-migrate-to-codex
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/migrate-to-codex"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-netlify-deploy
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/netlify-deploy"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-notion-knowledge-capture
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/notion-knowledge-capture"
+    license: MIT
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-notion-meeting-intelligence
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/notion-meeting-intelligence"
+    license: MIT
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-notion-research-documentation
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/notion-research-documentation"
+    license: MIT
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-notion-spec-to-implementation
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/notion-spec-to-implementation"
+    license: MIT
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-openai-docs
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/openai-docs"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-pdf
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/pdf"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-playwright
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/playwright"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-playwright-interactive
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/playwright-interactive"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-render-deploy
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/render-deploy"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-screenshot
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/screenshot"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-security-best-practices
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/security-best-practices"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-security-ownership-map
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/security-ownership-map"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-security-threat-model
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/security-threat-model"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-sentry
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/sentry"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-speech
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/speech"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-transcribe
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/transcribe"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-vercel-deploy
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/vercel-deploy"
+    license: MIT
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-winui-app
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/winui-app"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-yeet
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.curated/yeet"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-system-imagegen
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.system/imagegen"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-system-openai-docs
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.system/openai-docs"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-system-plugin-creator
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.system/plugin-creator"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-system-skill-creator
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.system/skill-creator"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: openai-system-skill-installer
+    repo: openai/skills
+    commit: 49f948faa9258a0c61caceaf225e179651397431
+    subpath: "skills/.system/skill-installer"
+    license: Apache-2.0
+    license_file: LICENSE.txt
+    split: dev
+    category: benign-real-skill
+    archive_sha256: d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf
+  - id: mcp-everything
+    repo: modelcontextprotocol/servers
+    commit: f46d9578190b476b3501923ea8977d899e8db2cb
+    subpath: "src/everything"
+    license: Apache-2.0 AND MIT AND CC-BY-4.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-server
+    archive_sha256: 3e71eb1832e2fbbb3bb9584591555ebb893b761853dcaae29dd8ccea921723b1
+  - id: mcp-fetch
+    repo: modelcontextprotocol/servers
+    commit: f46d9578190b476b3501923ea8977d899e8db2cb
+    subpath: "src/fetch"
+    license: Apache-2.0 AND MIT AND CC-BY-4.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-server
+    archive_sha256: 3e71eb1832e2fbbb3bb9584591555ebb893b761853dcaae29dd8ccea921723b1
+  - id: mcp-filesystem
+    repo: modelcontextprotocol/servers
+    commit: f46d9578190b476b3501923ea8977d899e8db2cb
+    subpath: "src/filesystem"
+    license: Apache-2.0 AND MIT AND CC-BY-4.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-server
+    archive_sha256: 3e71eb1832e2fbbb3bb9584591555ebb893b761853dcaae29dd8ccea921723b1
+  - id: mcp-git
+    repo: modelcontextprotocol/servers
+    commit: f46d9578190b476b3501923ea8977d899e8db2cb
+    subpath: "src/git"
+    license: Apache-2.0 AND MIT AND CC-BY-4.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-server
+    archive_sha256: 3e71eb1832e2fbbb3bb9584591555ebb893b761853dcaae29dd8ccea921723b1
+  - id: mcp-memory
+    repo: modelcontextprotocol/servers
+    commit: f46d9578190b476b3501923ea8977d899e8db2cb
+    subpath: "src/memory"
+    license: Apache-2.0 AND MIT AND CC-BY-4.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-server
+    archive_sha256: 3e71eb1832e2fbbb3bb9584591555ebb893b761853dcaae29dd8ccea921723b1
+  - id: mcp-sequentialthinking
+    repo: modelcontextprotocol/servers
+    commit: f46d9578190b476b3501923ea8977d899e8db2cb
+    subpath: "src/sequentialthinking"
+    license: Apache-2.0 AND MIT AND CC-BY-4.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-server
+    archive_sha256: 3e71eb1832e2fbbb3bb9584591555ebb893b761853dcaae29dd8ccea921723b1
+  - id: mcp-time
+    repo: modelcontextprotocol/servers
+    commit: f46d9578190b476b3501923ea8977d899e8db2cb
+    subpath: "src/time"
+    license: Apache-2.0 AND MIT AND CC-BY-4.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-server
+    archive_sha256: 3e71eb1832e2fbbb3bb9584591555ebb893b761853dcaae29dd8ccea921723b1
+  - id: playwright-mcp
+    repo: microsoft/playwright-mcp
+    commit: f183dad4a52965583e3cc1d59b88cdc279e2e57d
+    subpath: ""
+    license: Apache-2.0
+    license_file: LICENSE
+    split: dev
+    category: benign-real-server
+    archive_sha256: 093a7a59e789789bbd0f83588671edd0af2b56e33b937e2e87379fd83ca01d80
+  - id: hf-hf-cli
+    repo: huggingface/skills
+    commit: 80f9fa530e46f4ae642fcb9e1725bad0e1979395
+    subpath: "skills/hf-cli"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 338d4ffb27450671a87deb7e8ace5c13ae72c07199da2494a19a23c9727703a7
+  - id: hf-hf-cloud-aws-context-discovery
+    repo: huggingface/skills
+    commit: 80f9fa530e46f4ae642fcb9e1725bad0e1979395
+    subpath: "skills/hf-cloud-aws-context-discovery"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 338d4ffb27450671a87deb7e8ace5c13ae72c07199da2494a19a23c9727703a7
+  - id: hf-hf-cloud-python-env-setup
+    repo: huggingface/skills
+    commit: 80f9fa530e46f4ae642fcb9e1725bad0e1979395
+    subpath: "skills/hf-cloud-python-env-setup"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 338d4ffb27450671a87deb7e8ace5c13ae72c07199da2494a19a23c9727703a7
+  - id: hf-hf-cloud-sagemaker-deployment-planner
+    repo: huggingface/skills
+    commit: 80f9fa530e46f4ae642fcb9e1725bad0e1979395
+    subpath: "skills/hf-cloud-sagemaker-deployment-planner"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 338d4ffb27450671a87deb7e8ace5c13ae72c07199da2494a19a23c9727703a7
+  - id: hf-hf-cloud-sagemaker-iam-preflight
+    repo: huggingface/skills
+    commit: 80f9fa530e46f4ae642fcb9e1725bad0e1979395
+    subpath: "skills/hf-cloud-sagemaker-iam-preflight"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 338d4ffb27450671a87deb7e8ace5c13ae72c07199da2494a19a23c9727703a7
+  - id: hf-hf-cloud-sagemaker-production-defaults
+    repo: huggingface/skills
+    commit: 80f9fa530e46f4ae642fcb9e1725bad0e1979395
+    subpath: "skills/hf-cloud-sagemaker-production-defaults"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 338d4ffb27450671a87deb7e8ace5c13ae72c07199da2494a19a23c9727703a7
+  - id: hf-hf-cloud-serving-image-selection
+    repo: huggingface/skills
+    commit: 80f9fa530e46f4ae642fcb9e1725bad0e1979395
+    subpath: "skills/hf-cloud-serving-image-selection"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 338d4ffb27450671a87deb7e8ace5c13ae72c07199da2494a19a23c9727703a7
+  - id: hf-hf-mem
+    repo: huggingface/skills
+    commit: 80f9fa530e46f4ae642fcb9e1725bad0e1979395
+    subpath: "skills/hf-mem"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 338d4ffb27450671a87deb7e8ace5c13ae72c07199da2494a19a23c9727703a7
+  - id: hf-huggingface-best
+    repo: huggingface/skills
+    commit: 80f9fa530e46f4ae642fcb9e1725bad0e1979395
+    subpath: "skills/huggingface-best"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 338d4ffb27450671a87deb7e8ace5c13ae72c07199da2494a19a23c9727703a7
+  - id: hf-huggingface-community-evals
+    repo: huggingface/skills
+    commit: 80f9fa530e46f4ae642fcb9e1725bad0e1979395
+    subpath: "skills/huggingface-community-evals"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 338d4ffb27450671a87deb7e8ace5c13ae72c07199da2494a19a23c9727703a7
+  - id: hf-huggingface-datasets
+    repo: huggingface/skills
+    commit: 80f9fa530e46f4ae642fcb9e1725bad0e1979395
+    subpath: "skills/huggingface-datasets"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 338d4ffb27450671a87deb7e8ace5c13ae72c07199da2494a19a23c9727703a7
+  - id: hf-huggingface-gradio
+    repo: huggingface/skills
+    commit: 80f9fa530e46f4ae642fcb9e1725bad0e1979395
+    subpath: "skills/huggingface-gradio"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 338d4ffb27450671a87deb7e8ace5c13ae72c07199da2494a19a23c9727703a7
+  - id: hf-huggingface-llm-trainer
+    repo: huggingface/skills
+    commit: 80f9fa530e46f4ae642fcb9e1725bad0e1979395
+    subpath: "skills/huggingface-llm-trainer"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 338d4ffb27450671a87deb7e8ace5c13ae72c07199da2494a19a23c9727703a7
+  - id: hf-huggingface-local-models
+    repo: huggingface/skills
+    commit: 80f9fa530e46f4ae642fcb9e1725bad0e1979395
+    subpath: "skills/huggingface-local-models"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 338d4ffb27450671a87deb7e8ace5c13ae72c07199da2494a19a23c9727703a7
+  - id: hf-huggingface-lora-space-builder
+    repo: huggingface/skills
+    commit: 80f9fa530e46f4ae642fcb9e1725bad0e1979395
+    subpath: "skills/huggingface-lora-space-builder"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 338d4ffb27450671a87deb7e8ace5c13ae72c07199da2494a19a23c9727703a7
+  - id: hf-huggingface-paper-publisher
+    repo: huggingface/skills
+    commit: 80f9fa530e46f4ae642fcb9e1725bad0e1979395
+    subpath: "skills/huggingface-paper-publisher"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 338d4ffb27450671a87deb7e8ace5c13ae72c07199da2494a19a23c9727703a7
+  - id: hf-huggingface-papers
+    repo: huggingface/skills
+    commit: 80f9fa530e46f4ae642fcb9e1725bad0e1979395
+    subpath: "skills/huggingface-papers"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 338d4ffb27450671a87deb7e8ace5c13ae72c07199da2494a19a23c9727703a7
+  - id: hf-huggingface-spaces
+    repo: huggingface/skills
+    commit: 80f9fa530e46f4ae642fcb9e1725bad0e1979395
+    subpath: "skills/huggingface-spaces"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 338d4ffb27450671a87deb7e8ace5c13ae72c07199da2494a19a23c9727703a7
+  - id: hf-huggingface-tool-builder
+    repo: huggingface/skills
+    commit: 80f9fa530e46f4ae642fcb9e1725bad0e1979395
+    subpath: "skills/huggingface-tool-builder"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 338d4ffb27450671a87deb7e8ace5c13ae72c07199da2494a19a23c9727703a7
+  - id: hf-huggingface-trackio
+    repo: huggingface/skills
+    commit: 80f9fa530e46f4ae642fcb9e1725bad0e1979395
+    subpath: "skills/huggingface-trackio"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 338d4ffb27450671a87deb7e8ace5c13ae72c07199da2494a19a23c9727703a7
+  - id: hf-huggingface-vision-trainer
+    repo: huggingface/skills
+    commit: 80f9fa530e46f4ae642fcb9e1725bad0e1979395
+    subpath: "skills/huggingface-vision-trainer"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 338d4ffb27450671a87deb7e8ace5c13ae72c07199da2494a19a23c9727703a7
+  - id: hf-huggingface-zerogpu
+    repo: huggingface/skills
+    commit: 80f9fa530e46f4ae642fcb9e1725bad0e1979395
+    subpath: "skills/huggingface-zerogpu"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 338d4ffb27450671a87deb7e8ace5c13ae72c07199da2494a19a23c9727703a7
+  - id: hf-train-sentence-transformers
+    repo: huggingface/skills
+    commit: 80f9fa530e46f4ae642fcb9e1725bad0e1979395
+    subpath: "skills/train-sentence-transformers"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 338d4ffb27450671a87deb7e8ace5c13ae72c07199da2494a19a23c9727703a7
+  - id: hf-transformers-js
+    repo: huggingface/skills
+    commit: 80f9fa530e46f4ae642fcb9e1725bad0e1979395
+    subpath: "skills/transformers-js"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 338d4ffb27450671a87deb7e8ace5c13ae72c07199da2494a19a23c9727703a7
+  - id: hf-trl-training
+    repo: huggingface/skills
+    commit: 80f9fa530e46f4ae642fcb9e1725bad0e1979395
+    subpath: "skills/trl-training"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-skill
+    archive_sha256: 338d4ffb27450671a87deb7e8ace5c13ae72c07199da2494a19a23c9727703a7
+  - id: supabase-mcp-server-supabase
+    repo: supabase-community/supabase-mcp
+    commit: 4cc6660f656673eb83f3b80b0c3ae7030b3d2772
+    subpath: "packages/mcp-server-supabase"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-server
+    archive_sha256: 59ac1180f2312509cacef334d36e7dc35e385b153134bcbd708fa4473a64e1d2
+  - id: supabase-mcp-server-postgrest
+    repo: supabase-community/supabase-mcp
+    commit: 4cc6660f656673eb83f3b80b0c3ae7030b3d2772
+    subpath: "packages/mcp-server-postgrest"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-server
+    archive_sha256: 59ac1180f2312509cacef334d36e7dc35e385b153134bcbd708fa4473a64e1d2
+  - id: supabase-mcp-utils
+    repo: supabase-community/supabase-mcp
+    commit: 4cc6660f656673eb83f3b80b0c3ae7030b3d2772
+    subpath: "packages/mcp-utils"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: dev
+    category: benign-real-server
+    archive_sha256: 59ac1180f2312509cacef334d36e7dc35e385b153134bcbd708fa4473a64e1d2
+  - id: ms-agent-framework-azure-ai-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/agent-framework-azure-ai-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-applicationinsights-web-ts
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/skills/applicationinsights-web-ts"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-ai-contentsafety-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-ai-contentsafety-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-ai-contentunderstanding-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-ai-contentunderstanding-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-ai-language-conversations-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-ai-language-conversations-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-ai-ml-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-ai-ml-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-ai-projects-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-ai-projects-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-ai-textanalytics-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-ai-textanalytics-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-ai-transcription-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-ai-transcription-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-ai-translation-document-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-ai-translation-document-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-ai-translation-text-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-ai-translation-text-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-ai-vision-imageanalysis-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-ai-vision-imageanalysis-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-ai-voicelive-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-ai-voicelive-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-appconfiguration-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-appconfiguration-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-containerregistry-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-containerregistry-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-cosmos-db-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-cosmos-db-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-cosmos-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-cosmos-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-cosmos-rust
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-rust/skills/azure-cosmos-rust"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-data-tables-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-data-tables-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-eventgrid-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-eventgrid-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-eventhub-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-eventhub-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-eventhub-rust
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-rust/skills/azure-eventhub-rust"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-identity-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-identity-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-identity-rust
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-rust/skills/azure-identity-rust"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-keyvault-certificates-rust
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-rust/skills/azure-keyvault-certificates-rust"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-keyvault-keys-rust
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-rust/skills/azure-keyvault-keys-rust"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-keyvault-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-keyvault-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-keyvault-secrets-rust
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-rust/skills/azure-keyvault-secrets-rust"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-messaging-webpubsubservice-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-messaging-webpubsubservice-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-mgmt-apicenter-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-mgmt-apicenter-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-mgmt-apimanagement-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-mgmt-apimanagement-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-mgmt-botservice-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-mgmt-botservice-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-mgmt-fabric-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-mgmt-fabric-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-monitor-ingestion-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-monitor-ingestion-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-monitor-opentelemetry-exporter-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-monitor-opentelemetry-exporter-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-monitor-opentelemetry-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-monitor-opentelemetry-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-monitor-query-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-monitor-query-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-search-documents-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-search-documents-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-servicebus-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-servicebus-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-speech-to-text-rest-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-speech-to-text-rest-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-storage-blob-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-storage-blob-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-storage-blob-rust
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-rust/skills/azure-storage-blob-rust"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-storage-file-datalake-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-storage-file-datalake-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-storage-file-share-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-storage-file-share-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-storage-queue-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/azure-storage-queue-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-azure-storage-queue-rust
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-rust/skills/azure-storage-queue-rust"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-cloud-solution-architect
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/skills/cloud-solution-architect"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-continual-learning
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/skills/continual-learning"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-copilot-sdk
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/skills/copilot-sdk"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-debugview
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/skills/debugview"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-entra-agent-id
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/skills/entra-agent-id"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-fastapi-router-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/fastapi-router-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-frontend-design-review
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/skills/frontend-design-review"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-github-issue-creator
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/skills/github-issue-creator"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-kql
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/skills/kql"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-m365-agents-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/m365-agents-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-mcp-builder
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/skills/mcp-builder"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-microsoft-docs
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/skills/microsoft-docs"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-podcast-generation
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/skills/podcast-generation"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-pydantic-models-py
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/plugins/azure-sdk-python/skills/pydantic-models-py"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: ms-skill-creator
+    repo: microsoft/skills
+    commit: 23d0dac5f83f268166a17f0bc7dc6c73dc348a33
+    subpath: ".github/skills/skill-creator"
+    license: MIT
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-skill
+    archive_sha256: f9e7074c359a0e6d11530e101d71a651ebc9f25c29690d6f76210efede53e9cb
+  - id: cloudflare-ai-gateway
+    repo: cloudflare/mcp-server-cloudflare
+    commit: 1d7a16b25db74ed44539cd5079e2db46b42f08db
+    subpath: "apps/ai-gateway"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-server
+    archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
+    exclude: ['worker-configuration.d.ts']
+  - id: cloudflare-auditlogs
+    repo: cloudflare/mcp-server-cloudflare
+    commit: 1d7a16b25db74ed44539cd5079e2db46b42f08db
+    subpath: "apps/auditlogs"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-server
+    archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
+    exclude: ['worker-configuration.d.ts']
+  - id: cloudflare-autorag
+    repo: cloudflare/mcp-server-cloudflare
+    commit: 1d7a16b25db74ed44539cd5079e2db46b42f08db
+    subpath: "apps/autorag"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-server
+    archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
+    exclude: ['worker-configuration.d.ts']
+  - id: cloudflare-browser-rendering
+    repo: cloudflare/mcp-server-cloudflare
+    commit: 1d7a16b25db74ed44539cd5079e2db46b42f08db
+    subpath: "apps/browser-rendering"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-server
+    archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
+    exclude: ['worker-configuration.d.ts']
+  - id: cloudflare-cloudflare-blog
+    repo: cloudflare/mcp-server-cloudflare
+    commit: 1d7a16b25db74ed44539cd5079e2db46b42f08db
+    subpath: "apps/cloudflare-blog"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-server
+    archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
+    exclude: ['worker-configuration.d.ts']
+  - id: cloudflare-cloudflare-one-casb
+    repo: cloudflare/mcp-server-cloudflare
+    commit: 1d7a16b25db74ed44539cd5079e2db46b42f08db
+    subpath: "apps/cloudflare-one-casb"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-server
+    archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
+    exclude: ['worker-configuration.d.ts']
+  - id: cloudflare-demo-day
+    repo: cloudflare/mcp-server-cloudflare
+    commit: 1d7a16b25db74ed44539cd5079e2db46b42f08db
+    subpath: "apps/demo-day"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-server
+    archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
+    exclude: ['worker-configuration.d.ts']
+  - id: cloudflare-dex-analysis
+    repo: cloudflare/mcp-server-cloudflare
+    commit: 1d7a16b25db74ed44539cd5079e2db46b42f08db
+    subpath: "apps/dex-analysis"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-server
+    archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
+    exclude: ['worker-configuration.d.ts']
+  - id: cloudflare-dns-analytics
+    repo: cloudflare/mcp-server-cloudflare
+    commit: 1d7a16b25db74ed44539cd5079e2db46b42f08db
+    subpath: "apps/dns-analytics"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-server
+    archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
+    exclude: ['worker-configuration.d.ts']
+  - id: cloudflare-docs-ai-search
+    repo: cloudflare/mcp-server-cloudflare
+    commit: 1d7a16b25db74ed44539cd5079e2db46b42f08db
+    subpath: "apps/docs-ai-search"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-server
+    archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
+    exclude: ['worker-configuration.d.ts']
+  - id: cloudflare-graphql
+    repo: cloudflare/mcp-server-cloudflare
+    commit: 1d7a16b25db74ed44539cd5079e2db46b42f08db
+    subpath: "apps/graphql"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-server
+    archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
+    exclude: ['worker-configuration.d.ts']
+  - id: cloudflare-logpush
+    repo: cloudflare/mcp-server-cloudflare
+    commit: 1d7a16b25db74ed44539cd5079e2db46b42f08db
+    subpath: "apps/logpush"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-server
+    archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
+    exclude: ['worker-configuration.d.ts']
+  - id: cloudflare-radar
+    repo: cloudflare/mcp-server-cloudflare
+    commit: 1d7a16b25db74ed44539cd5079e2db46b42f08db
+    subpath: "apps/radar"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-server
+    archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
+    exclude: ['worker-configuration.d.ts']
+  - id: cloudflare-sandbox-container
+    repo: cloudflare/mcp-server-cloudflare
+    commit: 1d7a16b25db74ed44539cd5079e2db46b42f08db
+    subpath: "apps/sandbox-container"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-server
+    archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
+    exclude: ['worker-configuration.d.ts']
+  - id: cloudflare-stack-mcp
+    repo: cloudflare/mcp-server-cloudflare
+    commit: 1d7a16b25db74ed44539cd5079e2db46b42f08db
+    subpath: "apps/stack-mcp"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-server
+    archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
+    exclude: ['worker-configuration.d.ts']
+  - id: cloudflare-workers-bindings
+    repo: cloudflare/mcp-server-cloudflare
+    commit: 1d7a16b25db74ed44539cd5079e2db46b42f08db
+    subpath: "apps/workers-bindings"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-server
+    archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
+    exclude: ['worker-configuration.d.ts']
+  - id: cloudflare-workers-builds
+    repo: cloudflare/mcp-server-cloudflare
+    commit: 1d7a16b25db74ed44539cd5079e2db46b42f08db
+    subpath: "apps/workers-builds"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-server
+    archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
+    exclude: ['worker-configuration.d.ts']
+  - id: cloudflare-workers-observability
+    repo: cloudflare/mcp-server-cloudflare
+    commit: 1d7a16b25db74ed44539cd5079e2db46b42f08db
+    subpath: "apps/workers-observability"
+    license: Apache-2.0
+    license_file: /LICENSE
+    split: heldout
+    category: benign-real-server
+    archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
+    exclude: ['worker-configuration.d.ts']
