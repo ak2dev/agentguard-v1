@@ -1,12 +1,91 @@
 ---
-// Milestone 2 entry point ("paste a link, get a report"). Hidden behind a
-// build-time feature flag: with PUBLIC_FEATURE_SCAN unset, no page is built.
+// "Paste a link, get a report" — the browser-only part of Agent Guard Web.
+// Behind a build-time feature flag: with PUBLIC_FEATURE_SCAN unset, no page is built.
 import Base from "../layouts/Base.astro";
+import meta from "../data/generated/meta.json";
+import engine from "../data/engine.json";
 export function getStaticPaths() {
   return import.meta.env.PUBLIC_FEATURE_SCAN === "1" ? [{ params: { scan: "scan" } }] : [];
 }
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
-<Base title="Scan a link">
-  <h1>Scan a link</h1>
-  <p class="lead">Coming in Milestone 2. Pasted text and dropped files will be scanned in your browser; links will be fetched and scanned in isolated workers.</p>
+<Base title="Scan" description="Scan an agent skill, MCP configuration or public GitHub link in your browser. Nothing is uploaded.">
+  <h1>Scan a skill, MCP config or GitHub link</h1>
+  <p class="lead">The scanner runs entirely in your browser. Pasted text and dropped files never leave your device, and nothing you scan is sent to Agent Guard.</p>
+  <p class="muted">Findings are evidence for review, not a verdict. A result with no findings means no rule matched; it is not proof that something is safe.</p>
+
+  <noscript>
+    <div class="card"><p>This page needs JavaScript because the scanner runs on your device. The command-line scanner works without it:</p>
+      <pre><code>uvx agentguard scan ./my-skill</code></pre></div>
+  </noscript>
+
+  <div id="scanner" class="scanner" hidden
+       data-engine-sha={engine.engine_sha256}
+       data-worker={`${base}/js/scan-worker.js`}>
+    <div class="tabs" role="tablist" aria-label="What to scan">
+      <button type="button" role="tab" id="tab-link" aria-controls="panel-link" aria-selected="true">GitHub link</button>
+      <button type="button" role="tab" id="tab-paste" aria-controls="panel-paste" aria-selected="false" tabindex="-1">Paste</button>
+      <button type="button" role="tab" id="tab-files" aria-controls="panel-files" aria-selected="false" tabindex="-1">Files</button>
+    </div>
+
+    <section id="panel-link" role="tabpanel" aria-labelledby="tab-link" class="panel">
+      <form id="link-form" class="stack">
+        <label for="link">Public GitHub repository, folder, file or gist</label>
+        <div class="row">
+          <input id="link" name="link" type="text" inputmode="url" autocomplete="off" spellcheck="false" required
+                 placeholder="https://github.com/owner/repo/tree/main/skills/pdf" />
+          <button type="submit" class="btn">Scan</button>
+        </div>
+      </form>
+      <p class="muted small">Your browser fetches the files directly from GitHub (<code>api.github.com</code>, <code>raw.githubusercontent.com</code>), without cookies. GitHub allows 60 anonymous API requests per hour per network; a scan uses 2 to 6. npm, PyPI, MCP Registry and remote MCP server links need the Agent Guard Web server, which is not available yet.</p>
+    </section>
+
+    <section id="panel-paste" role="tabpanel" aria-labelledby="tab-paste" class="panel" hidden>
+      <form id="paste-form" class="stack">
+        <label for="paste-text">Paste a SKILL.md, instruction file, MCP configuration or tool list</label>
+        <textarea id="paste-text" rows="14" spellcheck="false" required placeholder="---&#10;name: my-skill&#10;description: …&#10;---"></textarea>
+        <div class="row">
+          <label for="paste-kind">Treat as</label>
+          <select id="paste-kind">
+            <option value="">Detect automatically</option>
+            <option value="pasted-skill/SKILL.md">Agent skill (SKILL.md)</option>
+            <option value="AGENTS.md">Instruction file (AGENTS.md, CLAUDE.md)</option>
+            <option value=".cursor/rules/pasted.mdc">Cursor rule (.mdc)</option>
+            <option value=".mcp.json">MCP client configuration (JSON)</option>
+            <option value=".codex/config.toml">Codex configuration (TOML)</option>
+            <option value="tools.json">MCP tool list (JSON)</option>
+            <option value="server.json">MCP Registry server.json</option>
+            <option value="pasted.py">Python</option>
+            <option value="pasted.ts">JavaScript or TypeScript</option>
+            <option value="pasted.sh">Shell script</option>
+          </select>
+          <button type="submit" class="btn">Scan</button>
+        </div>
+      </form>
+      <p class="muted small">Scanned on your device with no network requests.</p>
+    </section>
+
+    <section id="panel-files" role="tabpanel" aria-labelledby="tab-files" class="panel" hidden>
+      <div id="drop" class="drop" tabindex="0" aria-describedby="drop-help">
+        <p><strong>Drop a skill folder, files, or a .zip here</strong></p>
+        <p id="drop-help" class="muted small">Or choose them:
+          <label class="linklike"><input id="pick-files" type="file" multiple class="visually-hidden" /> files</label> ·
+          <label class="linklike"><input id="pick-folder" type="file" webkitdirectory multiple class="visually-hidden" /> a folder</label>
+        </p>
+      </div>
+      <p class="muted small">Scanned on your device with no network requests. Archives are read in memory, never extracted to disk. Limits: 5,000 files, 2 MB per file, 64 MB in total.</p>
+    </section>
+
+    <div id="status" class="status" role="status" aria-live="polite" hidden>
+      <span class="spinner" aria-hidden="true"></span>
+      <span id="status-text"></span>
+      <button type="button" id="cancel" class="btn secondary small">Cancel</button>
+    </div>
+    <div id="error" class="alert" role="alert" hidden></div>
+
+    <section id="result" class="result" aria-labelledby="result-title" hidden></section>
+  </div>
+
+  <p class="muted small">Engine and rule pack {meta.rule_pack} ({meta.rule_count} rules) run in Pyodide {engine.pyodide_version}, served from this site. The first scan downloads about 15 MB; later scans reuse it. <a href={`${base}/rules/`}>What the rules detect.</a></p>
+  <script type="module" src={`${base}/js/scan-page.js`}></script>
 </Base>

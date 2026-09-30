@@ -1,8 +1,13 @@
 ---
 import Base from "../layouts/Base.astro";
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const scanEnabled = import.meta.env.PUBLIC_FEATURE_SCAN === "1";
 ---
 <Base title="Privacy">
   <h1>Privacy</h1>
-  <p>This website is static. It sets no cookies, runs no analytics, and loads nothing from third parties. The hosting provider (GitHub Pages) keeps standard access logs under its own policy.</p>
+  <p>This website is static. It sets no cookies, runs no analytics, and loads nothing from third parties. The hosting provider keeps standard access logs under its own policy.</p>
+  {scanEnabled && (
+    <p>The <a href={`${base}/scan/`}>web scanner</a> runs on your device. Pasted text and dropped files are never uploaded. When you scan a GitHub link, your browser fetches the files directly from GitHub (<code>api.github.com</code>, <code>raw.githubusercontent.com</code>, <code>gist.githubusercontent.com</code>) without cookies or a referrer; GitHub's own privacy policy applies to those requests. Nothing you scan is sent to Agent Guard. <a href={`${base}/docs/web-scanner/`}>Details.</a></p>
+  )}
   <p>The Agent Guard CLI sends no telemetry. It uses the network only when you pass an opt-in flag, and every report lists which network features were used and which hosts were contacted.</p>
 </Base>

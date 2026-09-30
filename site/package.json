@@ -3,10 +3,17 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prebuild": "node scripts/prepare-engine.mjs",
     "build": "astro build && node scripts/postbuild.mjs",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "serve": "node scripts/serve.mjs",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
-    "astro": "7.3.5"
+    "astro": "7.3.5",
+    "pyodide": "0.28.3"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0"
   }
 }
