@@ -65,8 +65,8 @@ a:hover { color: var(--accent-hover); }
 /* ---- header ---------------------------------------------------------------- */
 header.site { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(10px); border-bottom: 1px dashed var(--line); }
 .bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 28px; min-height: 80px; padding-block: 10px; }
-.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--fg); text-decoration: none; font-weight: 800; letter-spacing: .17em; text-transform: uppercase; font-size: 1.1rem; }
-.brand svg { width: 34px; height: 34px; color: var(--accent); }
+.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--fg); text-decoration: none; font-weight: 650; letter-spacing: -0.02em; font-size: 1.3rem; line-height: 1; }
+.brand svg { width: 30px; height: 30px; color: var(--accent); flex: none; }
 .brand:hover { color: var(--fg); }
 nav.main { flex: 1; }
 nav.main ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 30px; list-style: none; margin: 0; padding: 0; }
