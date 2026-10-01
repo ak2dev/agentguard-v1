@@ -213,3 +213,49 @@ def test_parse_input_and_engine_info_are_json():
     assert json.loads(webscan.parse_input("nope"))["ok"] is False
     info = json.loads(webscan.engine_info())
     assert info["rule_pack"]["rule_count"] > 100 and "intel" in info
+
+
+# -- cache key, report diff, fetched archives (Agent Guard Web) -------------------
+
+def test_report_cache_key_is_stable_and_sensitive():
+    from agentguard.core.cachekey import report_cache_key
+    from agentguard.core.models import ImmutableRef, RulePackInfo
+    from agentguard.core.models.enums import SourceKind
+
+    ref = ImmutableRef(kind=SourceKind.npm, locator="pkg", resolved="1.0.0", integrity="sha512:ab")
+    pack = RulePackInfo(version="0.1.0", digest="d" * 64, rule_count=1)
+    k = report_cache_key(ref, pack, "e1")
+    assert k == report_cache_key(ref, pack, "e1") and len(k) == 32
+    assert k != report_cache_key(ref.model_copy(update={"resolved": "1.0.1"}), pack, "e1")
+    assert k != report_cache_key(ref, pack.model_copy(update={"digest": "e" * 64}), "e1")
+    assert k != report_cache_key(ref, pack, "e2")
+
+
+def test_diff_reports_added_and_removed():
+    from agentguard.core.cachekey import diff_reports
+    from agentguard.core.models import Report
+
+    old = Report.model_validate_json(webscan.scan_files({"pdf-helper/SKILL.md": LURE.encode()}))
+    new = Report.model_validate_json(webscan.scan_files({"pdf-helper/SKILL.md": b"---\nname: pdf-helper\ndescription: Merge PDF files.\n---\nUse it.\n"}))
+    d = diff_reports(old, new)
+    assert d.removed and not d.added and not d.rule_pack_changed
+    assert diff_reports(old, old).unchanged == len(old.findings) and not diff_reports(old, old).removed
+
+
+def test_scan_fetched_archive_strips_top_dir_and_scopes_subpath():
+    import tarfile
+
+    buf = io.BytesIO()
+    with tarfile.open(fileobj=buf, mode="w:gz") as tf:
+        for name, data in {"o-r-abc/skills/a/SKILL.md": LURE.encode(), "o-r-abc/other/SKILL.md": LURE.encode()}.items():
+            info = tarfile.TarInfo(name)
+            info.size = len(data)
+            tf.addfile(info, io.BytesIO(data))
+    source = json.dumps({"kind": "github", "locator": "o/r", "resolved": SHA, "subpath": "skills/a"})
+    report = json.loads(webscan.scan_fetched_archive(buf.getvalue(), source, strip_components=1, subpath="skills/a",
+                                                      extra_files={"_mcp-registry/server.json": "{}"}))
+    paths = {a["path"] for a in report["artifacts"]}
+    assert any(p.startswith("skills/a/") for p in paths) and not any(p.startswith("other/") for p in paths)
+    assert report["target"]["resolved"] == SHA and report["target"]["locator"] == "o/r/skills/a"
+    with pytest.raises(ValueError, match="nothing found"):
+        webscan.scan_fetched_archive(buf.getvalue(), source, strip_components=1, subpath="missing")

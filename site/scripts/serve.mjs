@@ -1,6 +1,8 @@
 // Serves site/dist the way Vercel will: the response headers from ../vercel.json
 // (so the real Content-Security-Policy is enforced locally and in CI tests) and
 // `trailingSlash: true`. Local development and testing only.
+// With AGW_API_URL set (e.g. http://127.0.0.1:8000), /api/* is proxied there,
+// as the Vercel rewrite does in production.
 // Usage: node scripts/serve.mjs [port]
 import http from "node:http";
 import fs from "node:fs";
@@ -18,8 +20,17 @@ const TYPES = {
   ".wasm": "application/wasm", ".zip": "application/zip", ".whl": "application/zip", ".png": "image/png", ".ico": "image/x-icon",
 };
 
+const api = process.env.AGW_API_URL ? new URL(process.env.AGW_API_URL) : null;
+
 http.createServer((req, res) => {
   const url = new URL(req.url, "http://localhost");
+  if (url.pathname.startsWith("/api/")) {
+    if (!api) { res.writeHead(404, { "Content-Type": "application/json" }); return res.end('{"error":"no API configured"}'); }
+    const up = http.request({ hostname: api.hostname, port: api.port, path: req.url, method: req.method,
+      headers: { ...req.headers, host: api.host } }, (r) => { res.writeHead(r.statusCode, r.headers); r.pipe(res); });
+    up.on("error", () => { if (!res.headersSent) res.writeHead(502); res.end(); });
+    return req.pipe(up);
+  }
   let pathname = decodeURIComponent(url.pathname);
   for (const r of rules) if (r.re.test(pathname)) for (const h of r.headers) res.setHeader(h.key, h.value);
   if (config.trailingSlash && !pathname.endsWith("/") && !path.extname(pathname)) {

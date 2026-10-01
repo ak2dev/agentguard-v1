@@ -27,6 +27,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 METADATA_HOSTS = {"metadata.google.internal", "metadata", "metadata.azure.internal", "instance-data"}
+_CREDENTIAL_HEADERS = {"authorization", "cookie", "proxy-authorization", "x-api-key"}
 DEFAULT_UA = "agentguard/0.1 (+https://github.com/agentguard/agentguard; read-only security scanner)"
 
 
@@ -189,6 +190,9 @@ class SafeHttpClient:
             if resp.status in (301, 302, 303, 307, 308) and "location" in headers_out:
                 nxt = urllib.parse.urljoin(current, headers_out["location"])
                 redirects.append(nxt)
+                if (urllib.parse.urlsplit(nxt).hostname or "").lower() != host.lower() and headers:
+                    # Never forward credentials to a different host.
+                    headers = {k: v for k, v in headers.items() if k.lower() not in _CREDENTIAL_HEADERS}
                 if method != "GET" and resp.status in (301, 302, 303):
                     method, body = "GET", None
                 current = nxt
