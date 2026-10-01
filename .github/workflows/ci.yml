@@ -90,6 +90,30 @@ jobs:
         working-directory: tests/pyodide
         run: node run_core.mjs ../..
 
+  web-server:
+    name: Agent Guard Web server (API, resolver, isolated sandbox)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --disable-pip-version-check "uv==0.12.19" && uv sync --frozen --all-packages --all-groups
+      - name: API, pipeline, resolver and fetcher tests (no network, no Docker)
+        working-directory: web
+        run: uv run --frozen pytest
+      - name: Build the scanner sandbox image
+        run: docker build -f web/docker/scanner.Dockerfile -t agentguard-scanner:local .
+      - name: Isolation tests against real containers (no egress, limits, cleanup, determinism)
+        working-directory: web
+        env:
+          AGW_DOCKER_TESTS: "1"
+        run: uv run --frozen pytest tests/test_docker_sandbox.py
+      - name: The API/dispatcher image builds
+        run: docker build -f web/docker/server.Dockerfile -t agentguard-web:local .
+
   browser-scanner:
     name: Browser scanner end-to-end (zero-network paste and drop)
     runs-on: ubuntu-latest

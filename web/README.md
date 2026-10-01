@@ -1,27 +1,87 @@
-# Agent Guard Web (Milestone 2)
+# Agent Guard Web
 
-"Paste a link, get a report." The full architecture is in `docs/design/v1-design.md` § (f).
+"Paste a link, get a report." Two parts:
 
-## Built: the browser-only part
+- **In the browser** (the site's `/scan` page): pasted text and dropped files are scanned on the device by the engine under Pyodide, with zero network requests. Without a server, public GitHub links are scanned in the browser too.
+- **The server** (this package, `agentguard-web`): links are resolved to an exact commit or version, fetched through an allowlist, scanned in an isolated container with no network, and stored as an unlisted report with a permalink.
 
-The website's `/scan` page (`site/src/pages/[scan].astro`, `site/public/js/scan-page.js`, `site/public/js/scan-worker.js`) scans in the browser with the pure engine under Pyodide, served by the site itself:
+## How a link is scanned
 
-- **Pasted text, dropped files, folders and archives**: scanned on the device, zero network requests after the engine has loaded (asserted by `site/tests/e2e/scan.spec.mjs` in CI).
-- **Public GitHub repository / folder / file / raw file / gist links**: parsed by `agentguard.core.inputs.parse`, resolved in the browser to a commit SHA via `api.github.com`, file list reduced by `agentguard.core.fetchplan.plan_fetch`, contents fetched from `raw.githubusercontent.com`, then scanned locally. Findings link to the file and line at that commit.
-- **Report**: rendered from the findings JSON (`schemas/report.v1.json`) as text nodes only; downloads in JSON, SARIF, HTML, Markdown and CycloneDX, rendered by the engine in the worker.
-- **Hosting**: static, on Vercel (`vercel.json`: build, security headers, trailing slashes). No server code.
+```
+browser ──POST /api/scans──▶ API ──queue──▶ dispatcher ──▶ resolver + fetcher ──(allowlisted HTTPS)──▶ GitHub · npm · PyPI · MCP Registry
+                              │                  │
+                              │                  └─ archive on stdin ─▶ scanner container (--network none, read-only, non-root,
+                              │                                         no capabilities, CPU/memory/PID/time limits, optional gVisor)
+                              │                  ◀── report JSON on stdout ──┘
+                              └──── reports (Postgres / SQLite), keyed by (immutable ref, rule pack, engine)
+```
 
-The scanned project's own `.agentguard.yaml` is ignored so it cannot suppress its own findings.
+| Component | Network | What it does |
+|---|---|---|
+| API (`agentguard_web.api`) | none of its own | Validates input (`agentguard.core.inputs.parse`), rate-limits per client (salted hash, no raw IPs stored), caps the queue, streams progress (SSE), serves reports and downloads (JSON, SARIF, HTML, Markdown, CycloneDX) and drift against the previous scan. |
+| Dispatcher (`agentguard_web.dispatcher`) | the only egress, through the fetcher | Resolves inputs (`resolve.py`), checks the cache, downloads (`fetch.py`), starts one sandbox per job, validates and stores the report. |
+| Fetcher (`fetch.py`) | allowlist only: `api.github.com`, `codeload.github.com`, `raw.githubusercontent.com`, `gist.githubusercontent.com`, `registry.npmjs.org`, `pypi.org`, `files.pythonhosted.org`, `registry.modelcontextprotocol.io` | `SafeHttpClient` underneath: HTTPS only, DNS pinned, private and metadata ranges blocked, redirects re-validated, credentials never forwarded across hosts, size and time caps. Verifies the registry's published SHA-512 / SHA-256. Never clones, installs or executes; never parses the archive. |
+| Scanner sandbox (`sandbox.py`, `web/docker/scanner.Dockerfile`) | **none** | `python -m agentguard.sandbox_entry`: reads the job spec and archive from stdin, scans with the pure engine (archive limits, link and path-escape rejection, process-creation guard), writes the report to stdout. Created, started and always force-removed per job. |
 
-## Still to build: the server part
+What is resolved to what:
 
-For inputs a browser cannot fetch safely or at all — npm and PyPI packages, MCP Registry names, marketplace listings, remote MCP server URLs — and for permalinks, caching and rescans:
+| Input | Immutable reference | Archive |
+|---|---|---|
+| `https://github.com/o/r[/tree|blob/<ref>/<path>]` | commit SHA (branch names with `/` tried in order) | `GET /repos/o/r/tarball/<sha>` → codeload; a single file for `/blob/` |
+| gist URL | gist revision | the gist's files |
+| `npm:<name>[@<version or tag>]`, npmjs.com URL | exact version + tarball SHA-512 | registry tarball, digest verified |
+| `pypi:<name>[==<version>]`, pypi.org URL | exact version + file SHA-256 | sdist (else a wheel), digest verified |
+| MCP Registry name (`io.github.o/server`) | its `server.json` (`/v0.1/servers/<name>/versions/latest`) → the npm/PyPI package it publishes, else its GitHub repository | as above; `server.json` is scanned too |
+| Remote MCP server URL | — | not on the hosted service yet (use the CLI's `--live-metadata --auth-checks`) |
 
-- **API** (FastAPI): `core.inputs.parse` already recognizes these inputs and returns the "server needed" note; add rate limits, bot protection, cache lookup keyed by `(immutable ref, rule-pack digest, engine version)`.
-- **Fetcher**: the only component with egress (allowlist: GitHub, npm, PyPI, MCP Registry, configured marketplaces); archive APIs and registry tarballs only — never `git clone`, never install. It can reuse `core.fetchplan.plan_fetch`.
-- **Scanner worker**: the same engine in an ephemeral, non-root, read-only, no-network gVisor/microVM container with CPU/memory/time limits, destroyed after each job: `from_archive(bytes, limits=LoadLimits.web())` → `scan()`. Vercel Functions cannot provide this isolation, so workers run on a platform that can (e.g. Cloud Run or Fly Machines); the site and API can stay on Vercel.
-- **Probe worker** for remote MCP URLs: `agentguard.net.safe_http.SafeHttpClient` + `agentguard.net.remote.probe_server` (read-only; `tools/call` impossible).
-- **Results**: permalinks keyed to commit/version + rule pack; drift diff against the previous scan; unlisted by default; factual badges only ("0 high · a1b2c3d"), never "verified safe".
-- Still to add to the engine: `report_cache_key()`, `diff_reports()`.
+Same reference + same rule pack + same engine → byte-identical report, served from the cache.
 
-The service's own threat model is in `web/threat-model.md`. Local development will be one `docker compose up`.
+## Run it locally
+
+```bash
+docker compose up --build        # API on http://127.0.0.1:8000, Postgres, Redis, dispatcher, scanner image
+```
+
+Then point the site at it: `cd site && PUBLIC_FEATURE_SCAN=1 npm run build && AGW_API_URL=http://127.0.0.1:8000 npm run serve` and open `http://127.0.0.1:4321/scan/`. The site calls the API on its own origin (`/api/…`), so its strict CSP stays `connect-src 'self'`.
+
+```bash
+curl -s -X POST http://127.0.0.1:8000/api/scans -H 'content-type: application/json' -d '{"input": "npm:@modelcontextprotocol/server-filesystem"}'
+docker compose run --rm dispatcher check-sandbox   # proves the scanner container has no network
+```
+
+Tests: `cd web && uv run pytest` (no network, no Docker); `AGW_DOCKER_TESTS=1 uv run pytest tests/test_docker_sandbox.py` against real containers.
+
+## Configuration (`AGW_*`)
+
+| Variable | Default | |
+|---|---|---|
+| `MODE` | `dev` | `prod` refuses the in-process sandbox and an in-memory queue |
+| `STORE` | `sqlite:///./agentguard-web.db` | or `postgresql://…` |
+| `QUEUE` | `memory` | `redis://…` (required to run the API and dispatcher separately) |
+| `SANDBOX` | `docker` | `inprocess` = no isolation, tests and local development only |
+| `SCANNER_IMAGE` / `DOCKER_RUNTIME` | `agentguard-scanner:local` / — | set `DOCKER_RUNTIME=runsc` where gVisor is installed |
+| `GITHUB_TOKEN` | — | optional, raises GitHub's API limit; held by the dispatcher only, never sent to other hosts |
+| `ALLOWED_ORIGINS` | — | CORS, only if the site calls the API cross-origin |
+| `TRUST_PROXY` | off | use `X-Forwarded-For` only behind a trusted proxy |
+| `RATE_PER_MINUTE` / `RATE_PER_DAY` / `QUEUE_CAP` | 6 / 60 / 50 | abuse and cost limits |
+| `MAX_ARCHIVE_BYTES` / `JOB_TIMEOUT_S` / `WORKERS` | 50 MB / 120 / 2 | |
+| `RETENTION_DAYS` | 90 | `agentguard-web prune` deletes older reports |
+
+## Deploying
+
+The site stays on Vercel. The server needs a host that can run Docker containers with `--network none` (ideally with gVisor): a small VM, or a container platform where the dispatcher can start sibling containers. The API can run anywhere that reaches Redis and Postgres.
+
+1. Run Postgres, Redis, `agentguard-web api` and `agentguard-web dispatcher` (the images in `web/docker/`). Give only the dispatcher Docker access, and only on a host dedicated to scanning. In `compose.yaml` the Docker socket is mounted for local development; on a shared host prefer rootless Docker or a separate scan VM.
+2. Run `agentguard-web check-sandbox` at deploy time; it must print `NO-EGRESS`.
+3. Proxy the site's `/api/` to the API with a Vercel rewrite in `vercel.json`:
+   `"rewrites": [{ "source": "/api/:path*", "destination": "https://<your-api-host>/api/:path*" }]`.
+   Without it the site still works: links to GitHub fall back to the browser scanner.
+4. Schedule `agentguard-web prune` daily.
+
+## Not built yet
+
+- Remote MCP server probing on the service (the CLI has it): a separate probe worker using `SafeHttpClient` + `probe_server`.
+- Bot protection on submit (e.g. Turnstile), a maintainer response and "rescan with latest rules" on report pages, factual README badges.
+- Privacy policy and terms pages for the hosted service; a GitHub App token for higher limits; marketplace adapters (e.g. ClawHub) where their terms allow it.
+
+The service's threat model is in `web/threat-model.md`.

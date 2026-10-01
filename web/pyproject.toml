@@ -1,0 +1,35 @@
+[project]
+name = "agentguard-web"
+version = "0.1.0.dev0"
+description = "Agent Guard Web: paste a link, get a report (API, dispatcher, isolated scanner sandbox)."
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.12"
+dependencies = [
+  "agentguard",
+  "fastapi>=0.115,<1",
+  "uvicorn>=0.32,<1",
+  "redis>=5.2,<7",
+  "psycopg[binary]>=3.2,<4",
+]
+
+[dependency-groups]
+dev = ["pytest>=8.3", "httpx>=0.27"]
+
+[project.scripts]
+agentguard-web = "agentguard_web.cli:main"
+
+[tool.uv.sources]
+agentguard = { workspace = true }
+
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/agentguard_web"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+pythonpath = ["src", "../src"]

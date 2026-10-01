@@ -40,6 +40,9 @@ judge = ["anthropic>=1.0,<2"]
 [dependency-groups]
 dev = ["pytest>=8.3", "pytest-timeout>=2.3"]
 
+[tool.uv.workspace]
+members = ["web"]
+
 [project.scripts]
 agentguard = "agentguard.cli.app:main"
 

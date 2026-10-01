@@ -70,6 +70,19 @@ class _Handler(BaseHTTPRequestHandler):
             self.send_header("Location", "http://169.254.169.254/latest/meta-data/")
             self.end_headers()
             return
+        if self.path == "/redirect-to-localhost":
+            self.send_response(302)
+            self.send_header("Location", f"http://localhost:{self.server.server_address[1]}/echo-headers")
+            self.end_headers()
+            return
+        if self.path == "/echo-headers":
+            payload = json.dumps({"authorization": self.headers.get("Authorization"),
+                                  "accept": self.headers.get("Accept")}).encode()
+            self.send_response(200)
+            self.send_header("Content-Length", str(len(payload)))
+            self.end_headers()
+            self.wfile.write(payload)
+            return
         self.send_response(404)
         self.end_headers()
 
@@ -107,6 +120,14 @@ def test_redirect_revalidated(server):
     c = SafeHttpClient(allow_http_loopback=True)
     with pytest.raises(BlockedRequest):
         c.get(server + "/redirect-to-metadata")
+
+
+def test_credentials_not_forwarded_across_hosts(server):
+    c = SafeHttpClient(allow_http_loopback=True)
+    resp = c.get(server + "/redirect-to-localhost", headers={"Authorization": "Bearer secret", "Accept": "x/y"})
+    echoed = resp.json()
+    assert echoed["authorization"] is None  # dropped: the redirect changed host (127.0.0.1 → localhost)
+    assert echoed["accept"] == "x/y"        # ordinary headers still sent
 
 
 def test_mcp_probe_is_read_only(server):

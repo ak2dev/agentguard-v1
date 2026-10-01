@@ -151,6 +151,10 @@ def _source(source_json: str | None) -> SourceRef | ImmutableRef:
             return github_ref(owner, repo, raw["resolved"], raw.get("subpath") or None)
         if raw.get("kind") == "gist":
             return gist_ref(raw["locator"], raw["resolved"])
+        return ImmutableRef(
+            kind=SourceKind(raw["kind"]), locator=str(raw["locator"])[:300], resolved=str(raw["resolved"])[:200],
+            integrity=raw.get("integrity"),
+        )
     return SourceRef(kind=SourceKind(raw.get("kind", "pasted")), locator=str(raw.get("locator", "pasted"))[:200])
 
 
@@ -183,6 +187,35 @@ def scan_archive(data: bytes, name: str) -> str:
     except (ArchiveError, ValueError, OSError) as exc:
         raise ValueError(f"{name}: {exc}") from exc
     return _finish(tree, [])
+
+
+def scan_fetched_archive(
+    data: bytes,
+    source_json: str,
+    *,
+    strip_components: int = 0,
+    subpath: str = "",
+    events_json: str | None = None,
+    extra_files: dict[str, str] | None = None,
+) -> str:
+    """Scan an archive the server-side fetcher downloaded for an immutable reference
+    (repository tarball, npm/PyPI package). Used inside the isolated scanner sandbox."""
+    source = _source(source_json)
+    try:
+        tree = from_archive(_as_bytes(data), None, LIMITS, source=source, strip_components=strip_components)  # type: ignore[arg-type]
+    except (ArchiveError, ValueError, OSError) as exc:
+        raise ValueError(f"archive: {exc}") from exc
+    sub = subpath.strip("/")
+    if sub:
+        tree.files = {p: b for p, b in tree.files.items() if p == sub or p.startswith(sub + "/")}
+        if not tree.files:
+            raise ValueError(f"nothing found under {sub!r} in the archive")
+    for path, text in sorted((extra_files or {}).items()):
+        if sum(len(t) for t in (extra_files or {}).values()) > 256 * 1024:
+            raise ValueError("extra files too large")
+        tree.add(path, text.encode("utf-8"), LIMITS)
+    events = [LimitEvent.model_validate(e) for e in json.loads(events_json)] if events_json else []
+    return _finish(tree, events)
 
 
 def render_last(fmt: str) -> str:

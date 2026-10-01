@@ -63,6 +63,7 @@ function main(root) {
   }
 
   $("cancel").addEventListener("click", () => {
+    if (events) { events.close(); events = null; busy = false; status.hidden = true; }
     if (worker) worker.terminate();
     worker = null;
     failAll({ message: "Cancelled.", cancelled: true });
@@ -126,6 +127,61 @@ function main(root) {
     errorBox.hidden = false;
   }
 
+  // -- Agent Guard Web server (same origin, /api/) -----------------------------------
+  // Links go to the server when it is reachable (cached, shareable reports); pasted
+  // text and dropped files never do. Without a server, GitHub links scan in the browser.
+  const KEY = /^[0-9a-f]{32}$/;
+  let serverCheck = null;
+  function serverAvailable() {
+    serverCheck ??= fetch(`${siteBase}/api/health`, { cache: "no-store", credentials: "omit" })
+      .then((r) => (r.ok ? r.json() : null)).then((j) => Boolean(j && j.ok)).catch(() => false);
+    return serverCheck;
+  }
+  let events = null;
+
+  async function loadServerReport(key, label, detail) {
+    const r = await fetch(`${siteBase}/api/reports/${key}`, { credentials: "omit" });
+    if (!r.ok) throw { message: r.status === 404 ? "That report does not exist or has expired." : `The server returned HTTP ${r.status}.` };
+    const u = new URL(location.href);
+    u.searchParams.delete("url");
+    u.searchParams.set("report", key);
+    history.replaceState(null, "", u);
+    renderReport(await r.json(), { serverKey: key, cached: detail?.cached }, label);
+  }
+
+  async function runServer(input) {
+    if (busy) return;
+    busy = true;
+    errorBox.hidden = true;
+    result.hidden = true;
+    status.hidden = false;
+    statusText.textContent = "Sending to Agent Guard Web…";
+    try {
+      const r = await fetch(`${siteBase}/api/scans`, {
+        method: "POST", credentials: "omit", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ input }),
+      });
+      const job = await r.json().catch(() => ({}));
+      if (!r.ok) throw { message: job.error || `The server returned HTTP ${r.status}.`, supported: job.supported };
+      const final = await new Promise((resolve, reject) => {
+        events = new EventSource(`${siteBase}/api/scans/${job.id}/events`);
+        events.onmessage = (ev) => {
+          const j = JSON.parse(ev.data);
+          if (j.detail) statusText.textContent = j.detail;
+          if (j.status === "done" || j.status === "error") { events.close(); resolve(j); }
+        };
+        events.onerror = () => { events.close(); reject({ message: "Lost contact with the server." }); };
+      });
+      if (final.status === "error") throw { message: final.error, supported: final.supported };
+      await loadServerReport(final.report_key, input, final);
+    } catch (err) {
+      showError(err);
+    } finally {
+      events = null;
+      busy = false;
+      status.hidden = true;
+    }
+  }
+
   // Link
   const linkInput = $("link");
   const qs = new URLSearchParams(location.search).get("url");
@@ -136,9 +192,16 @@ function main(root) {
     if (!url) return;
     const u = new URL(location.href);
     u.searchParams.set("url", url);
+    u.searchParams.delete("report");
     history.replaceState(null, "", u);
-    run({ type: "scan-link", url }, url);
+    serverAvailable().then((ok) => (ok ? runServer(url) : run({ type: "scan-link", url }, url)));
   });
+  const permalink = new URLSearchParams(location.search).get("report");
+  if (permalink && KEY.test(permalink)) {
+    status.hidden = false;
+    statusText.textContent = "Loading the report…";
+    loadServerReport(permalink, "").catch(showError).finally(() => { status.hidden = true; });
+  }
 
   // Paste
   $("paste-form").addEventListener("submit", (e) => {
@@ -254,6 +317,13 @@ function main(root) {
     if (t.kind === "gist" && t.resolved) {
       return el("p", {}, "Scanned gist ", el("a", { href: `https://gist.github.com/${encodeURIComponent(t.locator)}/${t.resolved}` }, t.locator), " at revision ", el("code", {}, t.resolved.slice(0, 12)), ".");
     }
+    if ((t.kind === "npm" || t.kind === "pypi") && t.resolved) {
+      const url = t.kind === "npm"
+        ? `https://www.npmjs.com/package/${t.locator.split("/").map(encodeURIComponent).join("/")}/v/${encodeURIComponent(t.resolved)}`
+        : `https://pypi.org/project/${encodeURIComponent(t.locator)}/${encodeURIComponent(t.resolved)}/`;
+      return el("p", {}, `Scanned ${t.kind} package `, el("a", { href: url }, `${t.locator} ${t.resolved}`),
+        t.integrity ? [" (", el("code", {}, String(t.integrity).slice(0, 19) + "…"), ")"] : null, ".");
+    }
     return el("p", {}, "Scanned ", meta.name ? el("code", {}, meta.name) : label, ".");
   }
 
@@ -277,9 +347,17 @@ function main(root) {
     parts.push(el("p", { class: "muted small" },
       `${report.stats?.files_scanned ?? 0} file(s), ${report.inventory?.length ?? 0} component(s). Rule pack v${pack.version} (${pack.rule_count} rules, digest ${String(pack.digest || "").slice(0, 12)}), engine ${report.engine_version}.`,
       meta.fetch_ms !== undefined ? ` Fetched from GitHub in ${(meta.fetch_ms / 1000).toFixed(1)} s;` : "",
-      meta.scan_ms ? ` scanned in ${(meta.scan_ms / 1000).toFixed(1)} s on this device.` : ""));
+      meta.scan_ms ? ` scanned in ${(meta.scan_ms / 1000).toFixed(1)} s on this device.` : "",
+      meta.serverKey ? ` Scanned by Agent Guard Web in an isolated sandbox${meta.cached ? " (cached result for this exact version and rule pack)" : ""}.` : ""));
+    if (meta.serverKey) {
+      const link = new URL(`${siteBase}/scan/`, location.href);
+      link.searchParams.set("report", meta.serverKey);
+      const copy = el("button", { type: "button", class: "btn secondary small" }, "Copy link");
+      copy.addEventListener("click", () => navigator.clipboard?.writeText(link.href).then(() => { copy.textContent = "Copied"; }));
+      parts.push(el("p", { class: "small" }, "Permalink (unlisted; anyone with the link can view it): ", el("a", { href: link.href }, link.href), " ", copy));
+    }
 
-    parts.push(renderDownloads());
+    parts.push(renderDownloads(meta));
 
     if (report.flows?.length) {
       const names = Object.fromEntries((report.inventory || []).map((c) => [c.id, c.name]));
@@ -346,11 +424,16 @@ function main(root) {
     return el("details", { class: "coverage" }, el("summary", {}, "What was not scanned"), el("ul", {}, ...items));
   }
 
-  function renderDownloads() {
+  function renderDownloads(meta = {}) {
     const formats = [["json", "JSON", "application/json", "json"], ["sarif", "SARIF", "application/sarif+json", "sarif"],
       ["html", "HTML report", "text/html", "html"], ["markdown", "Markdown", "text/markdown", "md"], ["cyclonedx", "CycloneDX", "application/vnd.cyclonedx+json", "cdx.json"]];
     const row = el("p", { class: "downloads" }, el("span", { class: "muted" }, "Download: "));
     for (const [fmt, name, type, ext] of formats) {
+      if (meta.serverKey) {
+        const href = `${siteBase}/api/reports/${meta.serverKey}${fmt === "json" ? "" : `?format=${fmt}`}`;
+        row.append(el("a", { class: "btn secondary small", href, download: `agentguard-report.${ext}` }, name), " ");
+        continue;
+      }
       const btn = el("button", { type: "button", class: "btn secondary small" }, name);
       btn.addEventListener("click", async () => {
         try {

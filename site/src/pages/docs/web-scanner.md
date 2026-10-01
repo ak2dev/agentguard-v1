@@ -1,12 +1,12 @@
 ---
 layout: ../../layouts/Doc.astro
 title: Web scanner
-description: Scan pasted text, dropped files and public GitHub links in the browser; how it works, its limits, and how to deploy it.
+description: Scan pasted text and dropped files in the browser, and GitHub, npm, PyPI and MCP Registry links on the Agent Guard Web server; privacy, limits and deployment.
 ---
 
 # Web scanner
 
-The [/scan](../../scan/) page runs the same engine and rule pack as the CLI, in your browser. It is the first part of Agent Guard Web ("paste a link, get a report").
+The [/scan](../../scan/) page is Agent Guard Web: "paste a link, get a report". Pasted text and dropped files are scanned in your browser by the same engine and rule pack as the CLI. Links are scanned by the Agent Guard Web server in an isolated sandbox.
 
 ## What you can scan
 
@@ -14,15 +14,23 @@ The [/scan](../../scan/) page runs the same engine and rule pack as the CLI, in 
 |---|---|---|
 | Pasted `SKILL.md`, instruction file, MCP configuration, tool list or script | Your browser | None |
 | Dropped files, a folder, or a `.zip` / `.tar` / `.tgz` | Your browser | None |
-| Public GitHub repository, folder (`/tree/…`), file (`/blob/…`), raw file or gist | Your browser | Your browser fetches the files from GitHub |
-| npm or PyPI package, MCP Registry name, remote MCP server URL | Agent Guard Web server | Not available yet; the page says so |
+| Public GitHub repository, folder (`/tree/…`), file (`/blob/…`), raw file or gist | Agent Guard Web server (or your browser if the server is unavailable) | The server fetches from GitHub; in the fallback, your browser does |
+| npm package (`npm:name@version`), PyPI package (`pypi:name==version`), MCP Registry name | Agent Guard Web server | The server fetches from the registry |
+| Remote MCP server URL | — | Not on the hosted service yet; use the CLI's `--live-metadata --auth-checks` |
 
-A GitHub link is first pinned to a commit SHA, so the report says exactly what was scanned and every finding links to the file and line at that commit. Branch names that contain `/` are resolved by trying each split in order.
+Every link is first pinned to an immutable reference — a commit SHA, or an exact package version with the registry's published SHA-512 / SHA-256, which the server verifies — so the report says exactly what was scanned. GitHub findings link to the file and line at that commit. Branch names that contain `/` are resolved by trying each split in order. An MCP Registry name resolves to its `server.json` and the npm or PyPI package it publishes.
+
+## On the server
+
+- The server downloads archives only from GitHub, npm, PyPI and the MCP Registry, through an allowlisted, SSRF-hardened client. It never clones, installs or runs anything.
+- Each scan runs in a fresh container with no network, a read-only filesystem, no privileges and strict CPU, memory and time limits; the container is removed afterwards. The archive is never stored.
+- The same version scanned with the same rule pack always gives the same report, so repeat requests are answered from the cache. Each report has an unlisted permalink (`/scan/?report=…`); there is no public index of reports.
+- Requests are rate-limited per network; addresses are kept only as salted hashes.
 
 ## Privacy
 
 - Pasted text and dropped files never leave your device. An automated test in CI asserts that these scans make zero network requests.
-- For a GitHub link, your browser contacts only `api.github.com` (2 to 6 requests: repository, commit, file list) and `raw.githubusercontent.com` or `gist.githubusercontent.com` (file contents), without cookies or a referrer. Nothing is sent to Agent Guard. GitHub allows 60 anonymous API requests per hour per network.
+- In the GitHub fallback (no server), your browser contacts only `api.github.com` (2 to 6 requests: repository, commit, file list) and `raw.githubusercontent.com` or `gist.githubusercontent.com` (file contents), without cookies or a referrer. Nothing is sent to Agent Guard. GitHub allows 60 anonymous API requests per hour per network.
 - The Python runtime ([Pyodide](https://pyodide.org/)), its packages and the engine are served by this site. The first scan downloads about 15 MB; your browser caches it.
 
 ## What is different from the CLI
@@ -42,6 +50,14 @@ The repository root has a `vercel.json`. Import the repository as a Vercel proje
 - response headers: a Content-Security-Policy that allows WebAssembly (`'wasm-unsafe-eval'`) and, for the scanner's worker, the three GitHub hosts above; every page also carries its own stricter policy, and browsers enforce both;
 - `trailingSlash: true`, matching the site's URLs.
 
-No server code, environment variables or secrets are needed. The build downloads the six Python wheels the engine needs from the Pyodide release and checks each one against the sha256 in Pyodide's lock file; visitors never contact a CDN.
+No server code, environment variables or secrets are needed.
+
+To connect the server, run it on a host that can start containers with no network (see `web/README.md`: `docker compose up` locally; Postgres, Redis, the API and the dispatcher in production), then add a rewrite so the site reaches it on its own origin and its CSP can stay `connect-src 'self'`:
+
+```json
+"rewrites": [{ "source": "/api/:path*", "destination": "https://<your-api-host>/api/:path*" }]
+```
+
+Without the rewrite the page still works: links to GitHub are scanned in the browser, and other links explain that the server is not available. The build downloads the six Python wheels the engine needs from the Pyodide release and checks each one against the sha256 in Pyodide's lock file; visitors never contact a CDN.
 
 To try the production headers locally: `cd site && PUBLIC_FEATURE_SCAN=1 npm run build && npm run serve`, then open `http://127.0.0.1:4321/scan/`. The end-to-end tests (`npm run test:e2e`) use the same server and an installed Chrome (`PW_CHANNEL=msedge` for Edge).
