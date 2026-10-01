@@ -45,7 +45,9 @@ http.createServer((req, res) => {
       res.writeHead(404, { "Content-Type": "text/html; charset=utf-8" });
       return res.end(fs.existsSync(path.join(dist, "404.html")) ? fs.readFileSync(path.join(dist, "404.html")) : "Not found");
     }
-    res.writeHead(200, { "Content-Type": TYPES[path.extname(file)] || "application/octet-stream", "Cache-Control": "no-cache" });
+    // A Content-Type from vercel.json (e.g. speculation rules) wins over the extension.
+    if (!res.getHeader("Content-Type")) res.setHeader("Content-Type", TYPES[path.extname(file)] || "application/octet-stream");
+    res.writeHead(200, { "Cache-Control": "no-cache" });
     res.end(data);
   });
 }).listen(port, "127.0.0.1", () => console.log(`serving ${dist} at http://127.0.0.1:${port}/ with vercel.json headers`));
