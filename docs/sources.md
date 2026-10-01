@@ -62,3 +62,10 @@ marked TODO is unverified and must not be relied on without checking.
 | PyPI JSON API | `GET /pypi/<project>/<version>/json` → `urls[]` with `packagetype` (`sdist`, `bdist_wheel`), `url` on files.pythonhosted.org, `digests.sha256`, `yanked`; `GET /pypi/<project>/json` → `info.version` | https://docs.pypi.org/api/json/ | 2026-10-01 |
 | MCP Registry API | `GET /v0.1/servers/{url-encoded name}/versions/{version|latest}` → `{"server": <server.json>, "_meta": …}`; `server.json` has `packages[]` (`registryType`, `identifier`, `version`), `remotes[]`, `repository` (`url`, `subfolder`) | https://registry.modelcontextprotocol.io (docs page did not render; endpoint and shape verified against the live API) | 2026-10-01 |
 | Docker run hardening flags | `--network none`, `--read-only`, `--tmpfs`, `--user`, `--cap-drop ALL`, `--security-opt no-new-privileges`, `--pids-limit`, `--memory`/`--memory-swap`, `--cpus`, `--ulimit`, `--runtime` | https://docs.docker.com/reference/cli/docker/container/run/ | 2026-10-01 (behaviour verified by the Docker tests, incl. no egress) |
+
+## Site navigation
+
+| Topic | Claim relied on | Source | Checked |
+|---|---|---|---|
+| Cross-document view transitions | `@view-transition { navigation: auto; }` opts same-origin navigations in; `navigation: none` opts out; not Baseline (progressive enhancement) | https://developer.mozilla.org/en-US/docs/Web/CSS/@view-transition | 2026-10-01 (verified in Chromium/Edge 152 via `pageswap` `viewTransition`) |
+| Speculation rules via HTTP header | `Speculation-Rules: "<url>"`; the rules file must be served as `application/speculationrules+json`; same JSON as inline rules | https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Speculation-Rules | 2026-10-01 (an invalid `href_matches` pattern disables the whole rule set; verified `deliveryType: navigational-prefetch` in Edge) |
