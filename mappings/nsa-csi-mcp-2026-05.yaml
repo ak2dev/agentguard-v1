@@ -1,9 +1,37 @@
 framework: nsa-csi-mcp-2026-05
 name: "NSA AISC CSI — Model Context Protocol (MCP): Security Design Considerations for AI-Driven Automation"
-version: "2026-05"
-source: https://www.nsa.gov/Press-Room/Press-Releases-Statements/Press-Release-View/Article/4496698/
+version: "2026-05 (U/OO/6030316-26, PP-26-1834, Ver. 1.0)"
+source: https://www.nsa.gov/Portals/75/documents/Cybersecurity/CSI_MCP_SECURITY.pdf
 notes: >-
-  TODO: the CSI PDF could not be retrieved (HTTP 403 to automated fetch). Section
-  identifiers are unverified, so no items are listed and every rule maps to null
-  with a TODO. Add items (section id + title) once the document has been read.
-items: []
+  Read from the PDF (17 pages, SHA-256 f9c0452acdf5f45603f61079eea66b67e19b372bee96a8bbb3981a74429add03,
+  retrieved 2026-10-02). The CSI does not number its sections, so item ids are slugs of its own
+  headings, grouped as it groups them: security concerns, real-world examples, and recommendations.
+  A rule maps to an item only where the CSI's text describes the risk the rule detects or the control
+  it checks; skill and scanner-internal rules map to nothing ([]) because the CSI covers MCP only.
+items:
+  # "Security concerns in MCP design, implementation, and practices"
+  - {id: concerns/access-control, title: "Access control"}
+  - {id: concerns/insecure-serialization, title: "Insecure context or data serialization"}
+  - {id: concerns/approval-workflows, title: "Poor approval workflows"}
+  - {id: concerns/token-session-security, title: "Token or session security"}
+  - {id: concerns/misconfiguration, title: "Misconfigurations and poor implementation"}
+  - {id: concerns/inconsistent-behaviors, title: "Inconsistent behaviors"}
+  - {id: concerns/audit-logs, title: "Poor or missing audit logs"}
+  - {id: concerns/denial-of-service, title: "Denial of service and fatigue-based techniques"}
+  # "Examples of real-world MCP security issues"
+  - {id: examples/tool-parameter-injection, title: "Tool parameter injection in open MCP agents"}
+  - {id: examples/tool-invocation-path-confusion, title: "Tool invocation path confusion"}
+  - {id: examples/unrestricted-repository-access, title: "Unrestricted private/public repository access in GitHub-based MCP tools"}
+  - {id: examples/messaging-platform-exploitation, title: "Exploitation via messaging platforms"}
+  - {id: examples/output-poisoning, title: "Poisoning output for downstream automation"}
+  - {id: examples/remote-code-execution, title: "Remote code execution vulnerability"}
+  # "Recommendations"
+  - {id: recommendations/supported-projects, title: "Choose supported MCP projects when possible"}
+  - {id: recommendations/design-for-boundaries, title: "Design for boundaries"}
+  - {id: recommendations/validate-parameters, title: "Validate parameters"}
+  - {id: recommendations/constrain-and-sandbox, title: "Constrain and sandbox tool execution"}
+  - {id: recommendations/sign-and-verify-messages, title: "Sign and verify MCP messages"}
+  - {id: recommendations/filter-output-pipelines, title: "Filter and monitor output pipelines and chained execution"}
+  - {id: recommendations/logging-and-detection, title: "Instrument for logging and detection"}
+  - {id: recommendations/track-and-patch, title: "Track and patch MCP related vulnerabilities"}
+  - {id: recommendations/scan-for-mcp-servers, title: "Scan local network for open or vulnerable MCP servers"}

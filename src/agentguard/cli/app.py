@@ -258,7 +258,8 @@ def discover_cmd(
     for col in ("Client", "Scope", "Kind", "Path", "Found", "Verified path"):
         t.add_column(col)
     for r in disc.records:
-        t.add_row(r.client, r.scope, r.kind, escape(r.path), "yes" if r.exists else "-", "yes" if r.verified else "no")
+        t.add_row(r.client, r.scope, r.kind, escape(r.path), "yes" if r.exists else "-",
+                  "yes" if r.verified else escape(f"no ({r.note})" if r.note else "no"))
     con.print(t)
     s = Table(title="MCP servers", title_justify="left")
     for col in ("Name", "Client", "Transport", "Command / URL", "Pinned", "Env vars (names)"):

@@ -1,7 +1,7 @@
 {
   "rule_pack": {
     "version": "0.1.0",
-    "digest": "2ae207179344628f571b23fed56b22b3b16c19c0cbcb1e21094d547e47e94ff2"
+    "digest": "4933406de36158d95066cfb42dbbb585c1945bff10cb7aac8eb32499dbbbaf87"
   },
   "rules": [
     {
@@ -23,7 +23,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/access-control",
+          "title": "Access control"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/scan-for-mcp-servers",
+          "title": "Scan local network for open or vulnerable MCP servers"
         }
       ],
       "match_type": "analyzer",
@@ -64,7 +70,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/access-control",
+          "title": "Access control"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "concerns/token-session-security",
+          "title": "Token or session security"
         }
       ],
       "match_type": "analyzer",
@@ -103,7 +115,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/access-control",
+          "title": "Access control"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "concerns/token-session-security",
+          "title": "Token or session security"
         }
       ],
       "match_type": "analyzer",
@@ -144,7 +162,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/access-control",
+          "title": "Access control"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "concerns/token-session-security",
+          "title": "Token or session security"
         }
       ],
       "match_type": "analyzer",
@@ -185,7 +209,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/token-session-security",
+          "title": "Token or session security"
         }
       ],
       "match_type": "analyzer",
@@ -226,7 +251,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/token-session-security",
+          "title": "Token or session security"
         }
       ],
       "match_type": "analyzer",
@@ -262,7 +288,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/token-session-security",
+          "title": "Token or session security"
         }
       ],
       "match_type": "analyzer",
@@ -303,7 +330,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/token-session-security",
+          "title": "Token or session security"
         }
       ],
       "match_type": "analyzer",
@@ -337,7 +365,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/sign-and-verify-messages",
+          "title": "Sign and verify MCP messages"
         },
         {
           "framework": "cwe",
@@ -371,7 +400,8 @@
       "mappings": [
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/scan-for-mcp-servers",
+          "title": "Scan local network for open or vulnerable MCP servers"
         }
       ],
       "match_type": "analyzer",
@@ -405,7 +435,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/token-session-security",
+          "title": "Token or session security"
         }
       ],
       "match_type": "analyzer",
@@ -456,7 +487,23 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "examples/tool-parameter-injection",
+          "title": "Tool parameter injection in open MCP agents"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "examples/remote-code-execution",
+          "title": "Remote code execution vulnerability"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/validate-parameters",
+          "title": "Validate parameters"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/constrain-and-sandbox",
+          "title": "Constrain and sandbox tool execution"
         },
         {
           "framework": "cwe",
@@ -505,7 +552,18 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "examples/tool-parameter-injection",
+          "title": "Tool parameter injection in open MCP agents"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/validate-parameters",
+          "title": "Validate parameters"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/constrain-and-sandbox",
+          "title": "Constrain and sandbox tool execution"
         },
         {
           "framework": "cwe",
@@ -559,7 +617,23 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "examples/tool-parameter-injection",
+          "title": "Tool parameter injection in open MCP agents"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "examples/remote-code-execution",
+          "title": "Remote code execution vulnerability"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/validate-parameters",
+          "title": "Validate parameters"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/constrain-and-sandbox",
+          "title": "Constrain and sandbox tool execution"
         },
         {
           "framework": "cwe",
@@ -608,7 +682,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/insecure-serialization",
+          "title": "Insecure context or data serialization"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/validate-parameters",
+          "title": "Validate parameters"
         },
         {
           "framework": "cwe",
@@ -657,7 +737,18 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "examples/tool-parameter-injection",
+          "title": "Tool parameter injection in open MCP agents"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/validate-parameters",
+          "title": "Validate parameters"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/constrain-and-sandbox",
+          "title": "Constrain and sandbox tool execution"
         },
         {
           "framework": "cwe",
@@ -706,7 +797,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/validate-parameters",
+          "title": "Validate parameters"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/design-for-boundaries",
+          "title": "Design for boundaries"
         },
         {
           "framework": "cwe",
@@ -755,7 +852,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "examples/tool-parameter-injection",
+          "title": "Tool parameter injection in open MCP agents"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/validate-parameters",
+          "title": "Validate parameters"
         },
         {
           "framework": "cwe",
@@ -804,7 +907,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "examples/tool-parameter-injection",
+          "title": "Tool parameter injection in open MCP agents"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/validate-parameters",
+          "title": "Validate parameters"
         },
         {
           "framework": "cwe",
@@ -858,7 +967,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/constrain-and-sandbox",
+          "title": "Constrain and sandbox tool execution"
         }
       ],
       "match_type": "analyzer",
@@ -907,7 +1017,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/constrain-and-sandbox",
+          "title": "Constrain and sandbox tool execution"
         }
       ],
       "match_type": "analyzer",
@@ -951,7 +1062,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/design-for-boundaries",
+          "title": "Design for boundaries"
         }
       ],
       "match_type": "analyzer",
@@ -995,7 +1107,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/supported-projects",
+          "title": "Choose supported MCP projects when possible"
         },
         {
           "framework": "cwe",
@@ -1049,7 +1162,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/supported-projects",
+          "title": "Choose supported MCP projects when possible"
         },
         {
           "framework": "cwe",
@@ -1103,7 +1217,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/supported-projects",
+          "title": "Choose supported MCP projects when possible"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "concerns/approval-workflows",
+          "title": "Poor approval workflows"
         },
         {
           "framework": "cwe",
@@ -1147,7 +1267,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/constrain-and-sandbox",
+          "title": "Constrain and sandbox tool execution"
         }
       ],
       "match_type": "analyzer",
@@ -1191,7 +1312,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/supported-projects",
+          "title": "Choose supported MCP projects when possible"
         }
       ],
       "match_type": "analyzer",
@@ -1240,7 +1362,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/supported-projects",
+          "title": "Choose supported MCP projects when possible"
         },
         {
           "framework": "cwe",
@@ -1284,7 +1407,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/token-session-security",
+          "title": "Token or session security"
         }
       ],
       "match_type": "analyzer",
@@ -1333,7 +1457,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/approval-workflows",
+          "title": "Poor approval workflows"
         }
       ],
       "match_type": "analyzer",
@@ -1384,7 +1509,18 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/access-control",
+          "title": "Access control"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "examples/messaging-platform-exploitation",
+          "title": "Exploitation via messaging platforms"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/design-for-boundaries",
+          "title": "Design for boundaries"
         }
       ],
       "match_type": "analyzer",
@@ -1433,7 +1569,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/design-for-boundaries",
+          "title": "Design for boundaries"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/filter-output-pipelines",
+          "title": "Filter and monitor output pipelines and chained execution"
         }
       ],
       "match_type": "analyzer",
@@ -1482,7 +1624,18 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "examples/output-poisoning",
+          "title": "Poisoning output for downstream automation"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/filter-output-pipelines",
+          "title": "Filter and monitor output pipelines and chained execution"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/constrain-and-sandbox",
+          "title": "Constrain and sandbox tool execution"
         }
       ],
       "match_type": "analyzer",
@@ -1531,7 +1684,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/approval-workflows",
+          "title": "Poor approval workflows"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/filter-output-pipelines",
+          "title": "Filter and monitor output pipelines and chained execution"
         }
       ],
       "match_type": "analyzer",
@@ -1580,7 +1739,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/design-for-boundaries",
+          "title": "Design for boundaries"
         }
       ],
       "match_type": "analyzer",
@@ -1629,7 +1789,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/approval-workflows",
+          "title": "Poor approval workflows"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/design-for-boundaries",
+          "title": "Design for boundaries"
         }
       ],
       "match_type": "analyzer",
@@ -1678,7 +1844,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "examples/output-poisoning",
+          "title": "Poisoning output for downstream automation"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/filter-output-pipelines",
+          "title": "Filter and monitor output pipelines and chained execution"
         }
       ],
       "match_type": "analyzer",
@@ -1722,7 +1894,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/approval-workflows",
+          "title": "Poor approval workflows"
         }
       ],
       "match_type": "analyzer",
@@ -1771,7 +1944,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "examples/output-poisoning",
+          "title": "Poisoning output for downstream automation"
         }
       ],
       "match_type": "analyzer",
@@ -1810,7 +1984,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/misconfiguration",
+          "title": "Misconfigurations and poor implementation"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/constrain-and-sandbox",
+          "title": "Constrain and sandbox tool execution"
         },
         {
           "framework": "cwe",
@@ -1854,7 +2034,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/misconfiguration",
+          "title": "Misconfigurations and poor implementation"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/constrain-and-sandbox",
+          "title": "Constrain and sandbox tool execution"
         },
         {
           "framework": "cwe",
@@ -1898,7 +2084,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/misconfiguration",
+          "title": "Misconfigurations and poor implementation"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/constrain-and-sandbox",
+          "title": "Constrain and sandbox tool execution"
         },
         {
           "framework": "cwe",
@@ -1952,7 +2144,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/track-and-patch",
+          "title": "Track and patch MCP related vulnerabilities"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/supported-projects",
+          "title": "Choose supported MCP projects when possible"
         },
         {
           "framework": "cwe",
@@ -2001,7 +2199,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/misconfiguration",
+          "title": "Misconfigurations and poor implementation"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/supported-projects",
+          "title": "Choose supported MCP projects when possible"
         },
         {
           "framework": "cwe",
@@ -2045,7 +2249,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/constrain-and-sandbox",
+          "title": "Constrain and sandbox tool execution"
         },
         {
           "framework": "cwe",
@@ -2089,7 +2294,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/constrain-and-sandbox",
+          "title": "Constrain and sandbox tool execution"
         },
         {
           "framework": "cwe",
@@ -2138,7 +2344,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/constrain-and-sandbox",
+          "title": "Constrain and sandbox tool execution"
         },
         {
           "framework": "cwe",
@@ -2187,7 +2394,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/track-and-patch",
+          "title": "Track and patch MCP related vulnerabilities"
         },
         {
           "framework": "cwe",
@@ -2231,7 +2439,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/misconfiguration",
+          "title": "Misconfigurations and poor implementation"
         },
         {
           "framework": "cwe",
@@ -2275,7 +2484,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/misconfiguration",
+          "title": "Misconfigurations and poor implementation"
         },
         {
           "framework": "cwe",
@@ -2314,7 +2524,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/sign-and-verify-messages",
+          "title": "Sign and verify MCP messages"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "concerns/token-session-security",
+          "title": "Token or session security"
         },
         {
           "framework": "cwe",
@@ -2350,10 +2566,6 @@
           "framework": "owasp-mcp-2025-beta",
           "id": "MCP09:2025",
           "title": "Shadow MCP Servers"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "analyzer",
@@ -2387,7 +2599,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/design-for-boundaries",
+          "title": "Design for boundaries"
         },
         {
           "framework": "cwe",
@@ -2426,7 +2639,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/access-control",
+          "title": "Access control"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/scan-for-mcp-servers",
+          "title": "Scan local network for open or vulnerable MCP servers"
         },
         {
           "framework": "cwe",
@@ -2470,7 +2689,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "examples/tool-invocation-path-confusion",
+          "title": "Tool invocation path confusion"
         }
       ],
       "match_type": "analyzer",
@@ -2509,7 +2729,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "examples/tool-invocation-path-confusion",
+          "title": "Tool invocation path confusion"
         }
       ],
       "match_type": "analyzer",
@@ -2548,7 +2769,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/token-session-security",
+          "title": "Token or session security"
         },
         {
           "framework": "cwe",
@@ -2592,7 +2814,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/constrain-and-sandbox",
+          "title": "Constrain and sandbox tool execution"
         }
       ],
       "match_type": "analyzer",
@@ -2636,7 +2859,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/approval-workflows",
+          "title": "Poor approval workflows"
         }
       ],
       "match_type": "analyzer",
@@ -2680,7 +2904,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/approval-workflows",
+          "title": "Poor approval workflows"
         },
         {
           "framework": "cwe",
@@ -2718,10 +2943,6 @@
           "framework": "owasp-mcp-2025-beta",
           "id": "MCP07:2025",
           "title": "Insufficient Authentication & Authorization"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "analyzer",
@@ -2765,7 +2986,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "examples/output-poisoning",
+          "title": "Poisoning output for downstream automation"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/filter-output-pipelines",
+          "title": "Filter and monitor output pipelines and chained execution"
         },
         {
           "framework": "cwe",
@@ -2814,7 +3041,18 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "examples/messaging-platform-exploitation",
+          "title": "Exploitation via messaging platforms"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "examples/output-poisoning",
+          "title": "Poisoning output for downstream automation"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/filter-output-pipelines",
+          "title": "Filter and monitor output pipelines and chained execution"
         }
       ],
       "match_type": "regex",
@@ -2858,7 +3096,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "examples/messaging-platform-exploitation",
+          "title": "Exploitation via messaging platforms"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "examples/output-poisoning",
+          "title": "Poisoning output for downstream automation"
         }
       ],
       "match_type": "regex",
@@ -2902,7 +3146,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/validate-parameters",
+          "title": "Validate parameters"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "examples/messaging-platform-exploitation",
+          "title": "Exploitation via messaging platforms"
         }
       ],
       "match_type": "analyzer",
@@ -2946,7 +3196,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "examples/output-poisoning",
+          "title": "Poisoning output for downstream automation"
         }
       ],
       "match_type": "regex",
@@ -2990,7 +3241,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "examples/tool-invocation-path-confusion",
+          "title": "Tool invocation path confusion"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "examples/messaging-platform-exploitation",
+          "title": "Exploitation via messaging platforms"
         }
       ],
       "match_type": "analyzer",
@@ -3029,7 +3286,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "examples/tool-invocation-path-confusion",
+          "title": "Tool invocation path confusion"
         }
       ],
       "match_type": "analyzer",
@@ -3068,7 +3326,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "examples/tool-invocation-path-confusion",
+          "title": "Tool invocation path confusion"
         },
         {
           "framework": "cwe",
@@ -3117,7 +3376,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/validate-parameters",
+          "title": "Validate parameters"
         },
         {
           "framework": "cwe",
@@ -3161,7 +3421,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/validate-parameters",
+          "title": "Validate parameters"
         },
         {
           "framework": "cwe",
@@ -3210,7 +3471,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/approval-workflows",
+          "title": "Poor approval workflows"
         }
       ],
       "match_type": "analyzer",
@@ -3254,7 +3516,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/approval-workflows",
+          "title": "Poor approval workflows"
         }
       ],
       "match_type": "analyzer",
@@ -3298,7 +3561,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "examples/output-poisoning",
+          "title": "Poisoning output for downstream automation"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/filter-output-pipelines",
+          "title": "Filter and monitor output pipelines and chained execution"
         }
       ],
       "match_type": "regex",
@@ -3342,7 +3611,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "examples/output-poisoning",
+          "title": "Poisoning output for downstream automation"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/filter-output-pipelines",
+          "title": "Filter and monitor output pipelines and chained execution"
         }
       ],
       "match_type": "regex",
@@ -3386,7 +3661,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "examples/output-poisoning",
+          "title": "Poisoning output for downstream automation"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/filter-output-pipelines",
+          "title": "Filter and monitor output pipelines and chained execution"
         }
       ],
       "match_type": "regex",
@@ -3430,7 +3711,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/design-for-boundaries",
+          "title": "Design for boundaries"
         },
         {
           "framework": "cwe",
@@ -3476,10 +3758,6 @@
           "framework": "owasp-llm-2025",
           "id": "LLM02:2025",
           "title": "Sensitive Information Disclosure"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "analyzer",
@@ -3518,7 +3796,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/design-for-boundaries",
+          "title": "Design for boundaries"
         }
       ],
       "match_type": "analyzer",
@@ -3562,7 +3841,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "examples/output-poisoning",
+          "title": "Poisoning output for downstream automation"
         }
       ],
       "match_type": "analyzer",
@@ -3606,7 +3886,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/approval-workflows",
+          "title": "Poor approval workflows"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "examples/messaging-platform-exploitation",
+          "title": "Exploitation via messaging platforms"
         }
       ],
       "match_type": "analyzer",
@@ -3645,7 +3931,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/supported-projects",
+          "title": "Choose supported MCP projects when possible"
         }
       ],
       "match_type": "analyzer",
@@ -3684,7 +3971,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/supported-projects",
+          "title": "Choose supported MCP projects when possible"
         }
       ],
       "match_type": "analyzer",
@@ -3728,7 +4016,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/track-and-patch",
+          "title": "Track and patch MCP related vulnerabilities"
         }
       ],
       "match_type": "analyzer",
@@ -3759,10 +4048,6 @@
           "framework": "owasp-ast-1.0",
           "id": "AST09",
           "title": "No Governance"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "analyzer",
@@ -3793,10 +4078,6 @@
           "framework": "owasp-ast-1.0",
           "id": "AST09",
           "title": "No Governance"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "analyzer",
@@ -3827,10 +4108,6 @@
           "framework": "owasp-ast-1.0",
           "id": "AST09",
           "title": "No Governance"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "analyzer",
@@ -3879,7 +4156,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/approval-workflows",
+          "title": "Poor approval workflows"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "examples/messaging-platform-exploitation",
+          "title": "Exploitation via messaging platforms"
         }
       ],
       "match_type": "analyzer",
@@ -3923,7 +4206,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/approval-workflows",
+          "title": "Poor approval workflows"
         }
       ],
       "match_type": "analyzer",
@@ -3967,7 +4251,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/approval-workflows",
+          "title": "Poor approval workflows"
         }
       ],
       "match_type": "analyzer",
@@ -4011,7 +4296,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/track-and-patch",
+          "title": "Track and patch MCP related vulnerabilities"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "concerns/approval-workflows",
+          "title": "Poor approval workflows"
         }
       ],
       "match_type": "analyzer",
@@ -4060,7 +4351,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/approval-workflows",
+          "title": "Poor approval workflows"
         }
       ],
       "match_type": "analyzer",
@@ -4104,7 +4396,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/track-and-patch",
+          "title": "Track and patch MCP related vulnerabilities"
         }
       ],
       "match_type": "analyzer",
@@ -4153,7 +4446,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/track-and-patch",
+          "title": "Track and patch MCP related vulnerabilities"
         }
       ],
       "match_type": "analyzer",
@@ -4197,7 +4491,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/track-and-patch",
+          "title": "Track and patch MCP related vulnerabilities"
         }
       ],
       "match_type": "analyzer",
@@ -4246,7 +4541,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/track-and-patch",
+          "title": "Track and patch MCP related vulnerabilities"
         }
       ],
       "match_type": "analyzer",
@@ -4295,7 +4591,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/supported-projects",
+          "title": "Choose supported MCP projects when possible"
         }
       ],
       "match_type": "analyzer",
@@ -4344,7 +4641,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/supported-projects",
+          "title": "Choose supported MCP projects when possible"
         }
       ],
       "match_type": "analyzer",
@@ -4393,7 +4691,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/track-and-patch",
+          "title": "Track and patch MCP related vulnerabilities"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/scan-for-mcp-servers",
+          "title": "Scan local network for open or vulnerable MCP servers"
         }
       ],
       "match_type": "analyzer",
@@ -4442,7 +4746,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/supported-projects",
+          "title": "Choose supported MCP projects when possible"
         }
       ],
       "match_type": "analyzer",
@@ -4491,7 +4796,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "recommendations/supported-projects",
+          "title": "Choose supported MCP projects when possible"
         }
       ],
       "match_type": "analyzer",
@@ -4540,7 +4846,13 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "examples/tool-invocation-path-confusion",
+          "title": "Tool invocation path confusion"
+        },
+        {
+          "framework": "nsa-csi-mcp-2026-05",
+          "id": "recommendations/supported-projects",
+          "title": "Choose supported MCP projects when possible"
         }
       ],
       "match_type": "analyzer",
@@ -4583,10 +4895,6 @@
           "title": "Supply Chain"
         },
         {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
-        },
-        {
           "framework": "cwe",
           "id": "CWE-506",
           "title": "Embedded Malicious Code"
@@ -4625,10 +4933,6 @@
           "framework": "owasp-ast-1.0",
           "id": "AST01",
           "title": "Malicious Skills"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "analyzer",
@@ -4659,10 +4963,6 @@
           "framework": "owasp-ast-1.0",
           "id": "AST04",
           "title": "Insecure Metadata"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "analyzer",
@@ -4703,10 +5003,6 @@
           "framework": "owasp-llm-2025",
           "id": "LLM02:2025",
           "title": "Sensitive Information Disclosure"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "regex",
@@ -4747,10 +5043,6 @@
           "framework": "owasp-llm-2025",
           "id": "LLM02:2025",
           "title": "Sensitive Information Disclosure"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "regex",
@@ -4791,10 +5083,6 @@
           "framework": "owasp-llm-2025",
           "id": "LLM02:2025",
           "title": "Sensitive Information Disclosure"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "analyzer",
@@ -4832,10 +5120,6 @@
           "framework": "owasp-ast-1.0",
           "id": "AST06",
           "title": "Weak Isolation"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         },
         {
           "framework": "cwe",
@@ -4878,10 +5162,6 @@
           "framework": "owasp-ast-1.0",
           "id": "AST06",
           "title": "Weak Isolation"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "analyzer",
@@ -4917,10 +5197,6 @@
           "framework": "owasp-ast-1.0",
           "id": "AST01",
           "title": "Malicious Skills"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         },
         {
           "framework": "cwe",
@@ -4966,10 +5242,6 @@
           "framework": "owasp-llm-2025",
           "id": "LLM02:2025",
           "title": "Sensitive Information Disclosure"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "regex",
@@ -5005,10 +5277,6 @@
           "framework": "owasp-ast-1.0",
           "id": "AST01",
           "title": "Malicious Skills"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "regex",
@@ -5044,10 +5312,6 @@
           "framework": "owasp-ast-1.0",
           "id": "AST01",
           "title": "Malicious Skills"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "regex",
@@ -5088,10 +5352,6 @@
           "framework": "owasp-llm-2025",
           "id": "LLM02:2025",
           "title": "Sensitive Information Disclosure"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "regex",
@@ -5132,10 +5392,6 @@
           "framework": "owasp-llm-2025",
           "id": "LLM02:2025",
           "title": "Sensitive Information Disclosure"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "regex",
@@ -5178,10 +5434,6 @@
           "framework": "owasp-llm-2025",
           "id": "LLM01:2025",
           "title": "Prompt Injection"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         },
         {
           "framework": "cwe",
@@ -5231,10 +5483,6 @@
           "title": "Prompt Injection"
         },
         {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
-        },
-        {
           "framework": "cwe",
           "id": "CWE-451",
           "title": "User Interface (UI) Misrepresentation of Critical Information"
@@ -5278,10 +5526,6 @@
           "framework": "owasp-llm-2025",
           "id": "LLM01:2025",
           "title": "Prompt Injection"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         },
         {
           "framework": "cwe",
@@ -5329,10 +5573,6 @@
           "title": "Prompt Injection"
         },
         {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
-        },
-        {
           "framework": "cwe",
           "id": "CWE-1007",
           "title": "Insufficient Visual Distinction of Homoglyphs Presented to User"
@@ -5376,10 +5616,6 @@
           "framework": "owasp-llm-2025",
           "id": "LLM01:2025",
           "title": "Prompt Injection"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         },
         {
           "framework": "cwe",
@@ -5427,10 +5663,6 @@
           "title": "Prompt Injection"
         },
         {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
-        },
-        {
           "framework": "cwe",
           "id": "CWE-451",
           "title": "User Interface (UI) Misrepresentation of Critical Information"
@@ -5474,10 +5706,6 @@
           "framework": "owasp-llm-2025",
           "id": "LLM01:2025",
           "title": "Prompt Injection"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "analyzer",
@@ -5508,10 +5736,6 @@
           "framework": "owasp-ast-1.0",
           "id": "AST04",
           "title": "Insecure Metadata"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "analyzer",
@@ -5552,10 +5776,6 @@
           "framework": "owasp-llm-2025",
           "id": "LLM01:2025",
           "title": "Prompt Injection"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         },
         {
           "framework": "cwe",
@@ -5603,10 +5823,6 @@
           "title": "Prompt Injection"
         },
         {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
-        },
-        {
           "framework": "cwe",
           "id": "CWE-451",
           "title": "User Interface (UI) Misrepresentation of Critical Information"
@@ -5650,10 +5866,6 @@
           "framework": "owasp-llm-2025",
           "id": "LLM01:2025",
           "title": "Prompt Injection"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "regex",
@@ -5694,10 +5906,6 @@
           "framework": "owasp-llm-2025",
           "id": "LLM01:2025",
           "title": "Prompt Injection"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         },
         {
           "framework": "cwe",
@@ -5743,10 +5951,6 @@
           "framework": "owasp-llm-2025",
           "id": "LLM01:2025",
           "title": "Prompt Injection"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "regex",
@@ -5790,7 +5994,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/approval-workflows",
+          "title": "Poor approval workflows"
         }
       ],
       "match_type": "regex",
@@ -5831,10 +6036,6 @@
           "framework": "owasp-llm-2025",
           "id": "LLM06:2025",
           "title": "Excessive Agency"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "regex",
@@ -5870,10 +6071,6 @@
           "framework": "owasp-ast-1.0",
           "id": "AST01",
           "title": "Malicious Skills"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "regex",
@@ -5922,7 +6119,8 @@
         },
         {
           "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+          "id": "concerns/approval-workflows",
+          "title": "Poor approval workflows"
         }
       ],
       "match_type": "regex",
@@ -5963,10 +6161,6 @@
           "framework": "owasp-llm-2025",
           "id": "LLM01:2025",
           "title": "Prompt Injection"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "regex",
@@ -6007,10 +6201,6 @@
           "framework": "owasp-llm-2025",
           "id": "LLM01:2025",
           "title": "Prompt Injection"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "regex",
@@ -6046,10 +6236,6 @@
           "framework": "owasp-ast-1.0",
           "id": "AST04",
           "title": "Insecure Metadata"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "analyzer",
@@ -6092,10 +6278,6 @@
           "framework": "owasp-llm-2025",
           "id": "LLM06:2025",
           "title": "Excessive Agency"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         },
         {
           "framework": "cwe",
@@ -6143,10 +6325,6 @@
           "title": "Excessive Agency"
         },
         {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
-        },
-        {
           "framework": "cwe",
           "id": "CWE-250",
           "title": "Execution with Unnecessary Privileges"
@@ -6190,10 +6368,6 @@
           "framework": "owasp-llm-2025",
           "id": "LLM03:2025",
           "title": "Supply Chain"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         },
         {
           "framework": "cwe",
@@ -6241,10 +6415,6 @@
           "title": "Supply Chain"
         },
         {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
-        },
-        {
           "framework": "cwe",
           "id": "CWE-494",
           "title": "Download of Code Without Integrity Check"
@@ -6285,10 +6455,6 @@
           "title": "Malicious Skills"
         },
         {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
-        },
-        {
           "framework": "cwe",
           "id": "CWE-506",
           "title": "Embedded Malicious Code"
@@ -6327,10 +6493,6 @@
           "framework": "owasp-ast-1.0",
           "id": "AST01",
           "title": "Malicious Skills"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "regex",
@@ -6366,10 +6528,6 @@
           "framework": "owasp-ast-1.0",
           "id": "AST01",
           "title": "Malicious Skills"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         },
         {
           "framework": "cwe",
@@ -6415,10 +6573,6 @@
           "framework": "owasp-llm-2025",
           "id": "LLM02:2025",
           "title": "Sensitive Information Disclosure"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "regex",
@@ -6454,10 +6608,6 @@
           "framework": "owasp-ast-1.0",
           "id": "AST01",
           "title": "Malicious Skills"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "regex",
@@ -6495,10 +6645,6 @@
           "title": "Supply Chain"
         },
         {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
-        },
-        {
           "framework": "cwe",
           "id": "CWE-494",
           "title": "Download of Code Without Integrity Check"
@@ -6534,10 +6680,6 @@
           "framework": "owasp-ast-1.0",
           "id": "AST04",
           "title": "Insecure Metadata"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "analyzer",
@@ -6570,10 +6712,6 @@
           "framework": "owasp-ast-1.0",
           "id": "AST04",
           "title": "Insecure Metadata"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "analyzer",
@@ -6606,10 +6744,6 @@
           "framework": "owasp-ast-1.0",
           "id": "AST04",
           "title": "Insecure Metadata"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "analyzer",
@@ -6642,10 +6776,6 @@
           "framework": "owasp-ast-1.0",
           "id": "AST04",
           "title": "Insecure Metadata"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "analyzer",
@@ -6679,10 +6809,6 @@
           "framework": "owasp-ast-1.0",
           "id": "AST04",
           "title": "Insecure Metadata"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "analyzer",
@@ -6723,10 +6849,6 @@
           "framework": "owasp-llm-2025",
           "id": "LLM01:2025",
           "title": "Prompt Injection"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "analyzer",
@@ -6757,10 +6879,6 @@
           "framework": "owasp-ast-1.0",
           "id": "AST04",
           "title": "Insecure Metadata"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         },
         {
           "framework": "cwe",
@@ -6806,10 +6924,6 @@
           "framework": "owasp-llm-2025",
           "id": "LLM03:2025",
           "title": "Supply Chain"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "analyzer",
@@ -6850,10 +6964,6 @@
           "framework": "owasp-llm-2025",
           "id": "LLM03:2025",
           "title": "Supply Chain"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "analyzer",
@@ -6884,10 +6994,6 @@
           "framework": "owasp-ast-1.0",
           "id": "AST08",
           "title": "Poor Scanning"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         },
         {
           "framework": "cwe",
@@ -6923,10 +7029,6 @@
           "framework": "owasp-ast-1.0",
           "id": "AST08",
           "title": "Poor Scanning"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         }
       ],
       "match_type": "analyzer",
@@ -6959,10 +7061,6 @@
           "title": "Weak Isolation"
         },
         {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
-        },
-        {
           "framework": "cwe",
           "id": "CWE-59",
           "title": "Improper Link Resolution Before File Access ('Link Following')"
@@ -6987,10 +7085,6 @@
           "framework": "owasp-llm-2025",
           "id": "LLM10:2025",
           "title": "Unbounded Consumption"
-        },
-        {
-          "framework": "nsa-csi-mcp-2026-05",
-          "todo": "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
         },
         {
           "framework": "cwe",
@@ -7037,10 +7131,34 @@
     },
     "nsa-csi-mcp-2026-05": {
       "name": "NSA AISC CSI — Model Context Protocol (MCP): Security Design Considerations for AI-Driven Automation",
-      "version": "2026-05",
-      "source": "https://www.nsa.gov/Press-Room/Press-Releases-Statements/Press-Release-View/Article/4496698/",
-      "notes": "TODO: the CSI PDF could not be retrieved (HTTP 403 to automated fetch). Section identifiers are unverified, so no items are listed and every rule maps to null with a TODO. Add items (section id + title) once the document has been read.",
-      "items": {}
+      "version": "2026-05 (U/OO/6030316-26, PP-26-1834, Ver. 1.0)",
+      "source": "https://www.nsa.gov/Portals/75/documents/Cybersecurity/CSI_MCP_SECURITY.pdf",
+      "notes": "Read from the PDF (17 pages, SHA-256 f9c0452acdf5f45603f61079eea66b67e19b372bee96a8bbb3981a74429add03, retrieved 2026-10-02). The CSI does not number its sections, so item ids are slugs of its own headings, grouped as it groups them: security concerns, real-world examples, and recommendations. A rule maps to an item only where the CSI's text describes the risk the rule detects or the control it checks; skill and scanner-internal rules map to nothing ([]) because the CSI covers MCP only.",
+      "items": {
+        "concerns/access-control": "Access control",
+        "concerns/insecure-serialization": "Insecure context or data serialization",
+        "concerns/approval-workflows": "Poor approval workflows",
+        "concerns/token-session-security": "Token or session security",
+        "concerns/misconfiguration": "Misconfigurations and poor implementation",
+        "concerns/inconsistent-behaviors": "Inconsistent behaviors",
+        "concerns/audit-logs": "Poor or missing audit logs",
+        "concerns/denial-of-service": "Denial of service and fatigue-based techniques",
+        "examples/tool-parameter-injection": "Tool parameter injection in open MCP agents",
+        "examples/tool-invocation-path-confusion": "Tool invocation path confusion",
+        "examples/unrestricted-repository-access": "Unrestricted private/public repository access in GitHub-based MCP tools",
+        "examples/messaging-platform-exploitation": "Exploitation via messaging platforms",
+        "examples/output-poisoning": "Poisoning output for downstream automation",
+        "examples/remote-code-execution": "Remote code execution vulnerability",
+        "recommendations/supported-projects": "Choose supported MCP projects when possible",
+        "recommendations/design-for-boundaries": "Design for boundaries",
+        "recommendations/validate-parameters": "Validate parameters",
+        "recommendations/constrain-and-sandbox": "Constrain and sandbox tool execution",
+        "recommendations/sign-and-verify-messages": "Sign and verify MCP messages",
+        "recommendations/filter-output-pipelines": "Filter and monitor output pipelines and chained execution",
+        "recommendations/logging-and-detection": "Instrument for logging and detection",
+        "recommendations/track-and-patch": "Track and patch MCP related vulnerabilities",
+        "recommendations/scan-for-mcp-servers": "Scan local network for open or vulnerable MCP servers"
+      }
     },
     "owasp-asi-2026": {
       "name": "OWASP Top 10 for Agentic Applications",
