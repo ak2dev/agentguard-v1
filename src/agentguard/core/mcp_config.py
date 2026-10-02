@@ -36,6 +36,8 @@ _CLIENT_BY_PATH = (
     (r"(^|/)\.vscode/mcp\.json$", "vscode", "workspace"),
     (r"(^|/)\.vscode/settings\.json$", "vscode", "workspace"),
     (r"(^|/)Code/User/(settings|mcp)\.json$", "vscode", "user"),
+    (r"(^|/)Code/User/profiles/[^/]+/(settings|mcp)\.json$", "vscode", "user"),
+    (r"(^|/)\.copilot/mcp-config\.json$", "copilot", "user"),
     (r"(^|/)(?:devin|windsurf)/mcp_config\.json$", "windsurf", "user"),
     (r"(^|/)\.gemini/settings\.json$", "gemini-cli", "project"),
     (r"(^|/)gemini-?cli/settings\.json$", "gemini-cli", "enterprise"),
@@ -43,6 +45,7 @@ _CLIENT_BY_PATH = (
     (r"(^|/)\.zed/settings\.json$", "zed", "project"),
     (r"(^|/)zed/settings\.json$", "zed", "user"),
     (r"(^|/)cline_mcp_settings\.json$", "cline", "user"),
+    (r"(^|/)\.cline/mcp\.json$", "cline", "user"),
     (r"(^|/)mcp\.json$", "generic", "project"),
 )
 

@@ -45,7 +45,7 @@ Exit codes: `0` no findings at or above `--fail-on` (default `high`), `1` findin
 | Supply chain | Lockfile drift and rug pulls, signed IOC feed, registry namespace and package typosquats; opt-in provenance, OSV and package-age checks |
 | Remote auth | Opt-in RFC 9728/8414/9207/8707 and PKCE conformance for remote MCP servers (unauthenticated probes only) |
 
-159 rules in rule pack 0.1.0, each with an unsafe and a safe fixture, mapped to the OWASP Top 10 for Agentic Applications (ASI), OWASP MCP Top 10, OWASP Agentic Skills Top 10 (AST), OWASP LLM Top 10 and CWE, with an AIVSS score. The website shows the full catalog and a coverage matrix that lists gaps.
+159 rules in rule pack 0.1.0, each with an unsafe and a safe fixture, mapped to the OWASP Top 10 for Agentic Applications (ASI), OWASP MCP Top 10, OWASP Agentic Skills Top 10 (AST), OWASP LLM Top 10, the NSA MCP security guidance (May 2026) and CWE, with an AIVSS score. The website shows the full catalog and a coverage matrix that lists gaps.
 
 ## In the browser
 
@@ -75,8 +75,8 @@ Pull requests run in PR mode (only components touched by the change; configurati
 - **Flow labels are inferred** (medium or low confidence) when only a config names a server and its code or tools are unavailable.
 - **Provenance:** missing attestations and subject-digest mismatches are detected; full Sigstore chain verification is not.
 - **AIVSS scores are approximate:** severity-default CVSS bases and a capability proxy for the amplification factors; each score records this.
-- **Standards mappings to the NSA MCP guidance are pending** (the document could not be retrieved automatically).
-- **Some client config paths are unverified;** `agentguard discover` labels them.
+- **NSA MCP guidance mappings use section names:** the CSI does not number its sections, so rules map to its own headings; it covers MCP only, so skill rules have none.
+- **Four client config paths are unverified** because the vendor does not document them (Claude Desktop on Linux, Claude Code's plugin folder, legacy Windsurf and `~/.codex/skills`); `agentguard discover` labels them and says why.
 
 ## Project layout
 
