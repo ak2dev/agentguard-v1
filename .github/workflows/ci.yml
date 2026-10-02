@@ -28,12 +28,18 @@ jobs:
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: ${{ matrix.python }}
-      - name: Install (locked)
+      - name: Install (locked, with the optional native analyzers)
         shell: bash
         run: |
           python -m pip install --disable-pip-version-check "uv==0.12.19"
-          uv sync --frozen --group dev
+          # yara-python 4.5.4 publishes wheels up to CPython 3.13.
+          extras="--extra code"
+          if [ "${{ matrix.python }}" != "3.14" ]; then extras="$extras --extra yara"; fi
+          uv sync --frozen --group dev $extras
       - name: Unit, rule-fixture and safety tests
+        env:
+          # Fixtures for these analyzers must run here, not be skipped.
+          AG_REQUIRE_NATIVE: ${{ matrix.python == '3.14' && 'code.ts' || 'code.ts,yara' }}
         run: uv run pytest -q
       - name: Every rule has positive and negative fixtures; crosswalk has no orphans
         run: uv run python scripts/check_pack.py
