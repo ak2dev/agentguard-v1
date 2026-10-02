@@ -20,3 +20,13 @@ First public version.
 - Environment copies handed only to a child process (`subprocess` `env=`, `spawn` `env:`) are no longer environment dumps; `AF_UNIX` and loopback sockets and same-origin `fetch("/api/...")` are no longer network egress.
 - Tightened AG-SKL-EXF-004 (DNS exfiltration), AG-SKL-CRED-002, AG-SKL-INJ-003/005/007, AG-CODE-025 and AG-SKL-HID-009 (percent-encoding inside URLs). Instruction-layer rules report quoted and code-span mentions in reference docs at MEDIUM. AG-SKL-SE-007 reports quarantine removal under a package-manager prefix at MEDIUM.
 - Fixed: JS/TS handler extraction treated an apostrophe in a `//` comment as a string, so a handler could swallow the rest of the file. JS path taint now honours containment checks (`validatePath(...)`), as Python taint already did.
+
+### Agent Guard Web: Milestone 2 completed
+
+- Remote MCP server URLs on the server: the dispatcher probes them read-only (discovery or initialize, the `*/list` methods, OAuth metadata; never `tools/call`, no credentials, query string dropped) through the SSRF-hardened client with a per-job request and time budget, and the recorded metadata is scanned in the sandbox. Reports are keyed by a fingerprint of the metadata, so changed tools give a new report and a drift diff. MCP Registry entries that only list a remote are probed too.
+- Rescan a report's exact commit or version with the server's current rules; "scan the latest version" link.
+- Maintainer responses: commit `.agentguard/response.md` naming the report to the project's GitHub repository (for npm/PyPI, the repository in the registry metadata) and ask the server to read it; shown as plain text with a link to the commit.
+- README badges with factual counts at one version (`0 high · a1b2c3d`), never "safe".
+- Bot protection: a self-hosted proof-of-work challenge on every request that starts work (HMAC-signed, single-use, solved in a Web Worker); `AGW_SECRET` and `AGW_POW_DIFFICULTY` are required in production.
+- The report page draws each toxic flow as a diagram (source → reader → sink through the agent session).
+- Terms page; privacy page covers the server; `agentguard-web dev` runs the API and dispatcher in one process for local development.

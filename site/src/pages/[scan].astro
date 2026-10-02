@@ -30,14 +30,14 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 
     <section id="panel-link" role="tabpanel" aria-labelledby="tab-link" class="panel">
       <form id="link-form" class="stack">
-        <label for="link">GitHub repository, folder, file or gist · npm or PyPI package · MCP Registry name</label>
+        <label for="link">GitHub repository, folder, file or gist · npm or PyPI package · MCP Registry name · remote MCP server URL</label>
         <div class="row">
           <input id="link" name="link" type="text" inputmode="url" autocomplete="off" spellcheck="false" required
                  placeholder="https://github.com/owner/repo/tree/main/skills/pdf  ·  npm:@scope/server  ·  pypi:name==1.0" />
           <button type="submit" class="btn">Scan</button>
         </div>
       </form>
-      <p class="muted small">Links are fetched by the Agent Guard Web server, pinned to an exact commit or version, and scanned in an isolated sandbox with no network; the report gets an unlisted permalink. If the server is unavailable, GitHub links are scanned in your browser instead (your browser then fetches the files from GitHub, without cookies). Only public sources. Remote MCP server URLs are not supported yet.</p>
+      <p class="muted small">Links are fetched by the Agent Guard Web server, pinned to an exact commit or version, and scanned in an isolated sandbox with no network; the report gets an unlisted permalink. A remote MCP server URL is checked as an unauthenticated, read-only client (it lists tools; it never calls them). Before sending, your browser does a moment of computation as a bot check; no third party is involved. If the server is unavailable, GitHub links are scanned in your browser instead (your browser then fetches the files from GitHub, without cookies). Only public sources. <a href={`${base}/terms/`}>Terms</a>.</p>
     </section>
 
     <section id="panel-paste" role="tabpanel" aria-labelledby="tab-paste" class="panel" hidden>
