@@ -105,7 +105,7 @@ def user_locations(home: Path | None = None, platform: str | None = None) -> lis
     if plat != "win32":
         add(Location("codex", "enterprise", "skills", Path("/etc/codex/skills"), True))
     add(Location("codex", "user", "skills", codex / "skills", False,
-                 "not in the current docs, but installed Codex keeps its bundled skills in skills/.system"))
+                 "older Codex skills folder; not in the current docs"))
     # Zed (zed.dev/docs/configuring-zed, as published in the zed-industries/zed repository)
     if plat == "win32":
         add(Location("zed", "user", "config", appdata / "Zed" / "settings.json", True))
