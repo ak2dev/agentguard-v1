@@ -58,6 +58,10 @@ Item level; AG-FLOW/AG-SYS/AG-POL findings are not counted as detections.
 | ≥ MEDIUM | 0.557 | 0.944 | 0.144 | 34 / 27 / 2 / 161 |
 
 Held-out split at ≥ HIGH: precision 0.923, recall 0.800, FPR 0.012 (1 of 87 benign items).
+
+These numbers are for the default install. With the optional `agentguard[code,yara]` analyzers installed
+(tree-sitter taint, YARA), every item's flags, maximum severity and fired rules were identical
+(2026-10-02, Python 3.12): no new detections and no new false positives on this corpus.
 Recall on every malicious and adversarial item is unchanged by the tuning (no item's flags,
 maximum severity or expected-rule hit changed).
 

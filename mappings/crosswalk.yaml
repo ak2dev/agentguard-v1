@@ -372,6 +372,20 @@ AG-SKL-BND-003:
   owasp-llm-2025: []
   nsa-csi-mcp-2026-05: null
   cwe: []
+AG-SKL-BND-004:
+  owasp-asi-2026: [ASI04]
+  owasp-mcp-2025-beta: []
+  owasp-ast-1.0: [AST01]
+  owasp-llm-2025: ["LLM03:2025"]
+  nsa-csi-mcp-2026-05: null
+  cwe: [CWE-506]
+AG-SKL-BND-005:
+  owasp-asi-2026: [ASI04]
+  owasp-mcp-2025-beta: []
+  owasp-ast-1.0: [AST01]
+  owasp-llm-2025: ["LLM03:2025"]
+  nsa-csi-mcp-2026-05: null
+  cwe: [CWE-494]
 AG-MCP-CFG-001:
   owasp-asi-2026: [ASI05]
   owasp-mcp-2025-beta: ["MCP05:2025"]

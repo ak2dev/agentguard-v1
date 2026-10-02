@@ -3,6 +3,8 @@ each fixture must behave as labelled. CI fails otherwise."""
 
 from __future__ import annotations
 
+import os
+
 import pytest
 
 from agentguard.core.analyzers import registry
@@ -11,10 +13,12 @@ from agentguard.core.models import AnalyzerMatch
 from agentguard.core.models.enums import Severity
 from agentguard.core.rules.pack import RulePack
 
-from fixture_harness import FIXTURES, iter_cases, load_case
+from fixture_harness import FIXTURES, iter_cases, load_case, missing_native
 
 PACK = RulePack.default()
 RULE_IDS = sorted(PACK.rules)
+# Optional native analyzers CI installs and therefore must not be skipped.
+REQUIRED_NATIVE = {a for a in os.environ.get("AG_REQUIRE_NATIVE", "").split(",") if a}
 
 
 @pytest.mark.parametrize("rule_id", RULE_IDS)
@@ -31,6 +35,11 @@ def test_rule_has_fixtures(rule_id):
 )
 def test_fixture(rule_id, side, case_dir, monkeypatch):
     case = load_case(rule_id, side, case_dir)
+    missing = missing_native(case)
+    if missing:
+        if REQUIRED_NATIVE & set(missing):
+            pytest.fail(f"{case.id}: required analyzer not installed: {', '.join(sorted(REQUIRED_NATIVE & set(missing)))}")
+        pytest.skip(f"optional analyzer not installed: {', '.join(missing)}")
     fault = case.config.get("fault")
     if fault:
         cls = next(c for c in registry.all_stages() if c.id == fault)

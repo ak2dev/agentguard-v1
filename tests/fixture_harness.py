@@ -87,3 +87,12 @@ def iter_cases(rule_ids: list[str]) -> list[tuple[str, str, Path]]:
                 for case in sorted(p for p in d.iterdir() if p.is_dir()):
                     out.append((rule_id, side, case))
     return out
+
+
+def missing_native(case: Case) -> list[str]:
+    """Analyzers a case requires (``requires: [code.ts, yara]`` in _case.yaml)
+    whose optional native dependencies are not installed."""
+    from agentguard.core.analyzers import registry
+
+    stages = {c.id: c for c in registry.all_stages()}
+    return [a for a in case.config.get("requires", []) if not registry.native_available(stages[a])]
