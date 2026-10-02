@@ -4,7 +4,8 @@
 
 The sandbox has no network, a read-only filesystem and no credentials. This
 program reads one compact JSON line (the job spec, at most MAX_SPEC bytes)
-followed by one archive (at most MAX_ARCHIVE bytes) from stdin, scans it with
+followed by one payload (at most MAX_ARCHIVE bytes) from stdin: an archive, or
+for ``mode: remote_mcp`` the JSON a read-only remote MCP probe recorded. It scans it with
 the pure engine, and writes the report JSON to stdout. On failure it writes
 {"error": "..."} to stdout and exits 2. It never executes anything: the
 process-creation guard is installed before any input is read.
@@ -31,7 +32,9 @@ def run(stdin: BinaryIO) -> tuple[int, str]:
         return 2, json.dumps({"error": "missing or oversized job spec line"})
     try:
         spec = json.loads(line)
+        mode = str(spec.get("mode") or "archive")
         source_json = json.dumps(spec["source"])
+        hosts = [str(h) for h in spec.get("hosts") or []]
         strip = int(spec.get("strip_components", 0))
         subpath = str(spec.get("subpath") or "")
         events = spec.get("events") or []
@@ -44,11 +47,15 @@ def run(stdin: BinaryIO) -> tuple[int, str]:
     from . import webscan
 
     try:
+        if mode == "remote_mcp":   # the payload is the dispatcher's recorded probe, not an archive
+            return 0, webscan.scan_remote_probe(data, source_json, hosts)
+        if mode != "archive":
+            return 2, json.dumps({"error": f"unknown job mode {mode[:40]!r}"})
         report = webscan.scan_fetched_archive(
             data, source_json, strip_components=strip, subpath=subpath,
             events_json=json.dumps(events) if events else None, extra_files=extra,
         )
-    except ValueError as exc:
+    except ValueError as exc:   # includes pydantic.ValidationError of a malformed probe
         return 2, json.dumps({"error": str(exc)[:500]})
     return 0, report
 

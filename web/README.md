@@ -32,9 +32,16 @@ What is resolved to what:
 | `npm:<name>[@<version or tag>]`, npmjs.com URL | exact version + tarball SHA-512 | registry tarball, digest verified |
 | `pypi:<name>[==<version>]`, pypi.org URL | exact version + file SHA-256 | sdist (else a wheel), digest verified |
 | MCP Registry name (`io.github.o/server`) | its `server.json` (`/v0.1/servers/<name>/versions/latest`) → the npm/PyPI package it publishes, else its GitHub repository | as above; `server.json` is scanned too |
-| Remote MCP server URL | — | not on the hosted service yet (use the CLI's `--live-metadata --auth-checks`) |
+| Remote MCP server URL (`https://…`; the query string is dropped), or a registry entry that only lists a remote | fingerprint of the metadata the server returned | none: the dispatcher's probe client (`probe.py`) sends discovery/initialize, `tools/list`, `prompts/list`, `resources/list` and fetches the OAuth metadata documents, unauthenticated; the recorded probe is scanned in the sandbox. Never `tools/call` |
 
-Same reference + same rule pack + same engine → byte-identical report, served from the cache.
+Same reference + same rule pack + same engine → byte-identical report, served from the cache. A remote server's report is reused for `REMOTE_CACHE_S` before it is probed again; changed tool definitions give a new report and a drift diff.
+
+## On a report
+
+- **Rescan** (`POST /api/reports/<key>/rescan`): the same commit or version with the server's current rules; with unchanged rules it is the cached report. A remote server is probed again.
+- **Maintainer response** (`POST`/`GET /api/reports/<key>/response`): no accounts. Whoever can push to the project's GitHub repository (for npm/PyPI, the repository the registry metadata names) commits `.agentguard/response.md` to the default branch with a line `report: <key>`; the dispatcher reads it at the branch's current commit and shows the text, plain, with a link to that commit. Only `report:` left in the file removes the response (`responses.py`).
+- **Badge** (`GET /api/reports/<key>/badge.svg`): `Agent Guard | 1 critical · 0 high · a1b2c3d` for that exact version, in one neutral colour, never "safe" (`badge.py`).
+- **Bot check**: every request that starts work (`/api/scans`, rescan, response) needs a solved proof-of-work challenge from `GET /api/challenge` (`pow.py`; the site solves it in a Web Worker in well under a second). Challenges are HMAC-signed, expire after 5 minutes and are single-use. No third party, no cookies, nothing to solve by hand.
 
 ## Run it locally
 
@@ -42,10 +49,27 @@ Same reference + same rule pack + same engine → byte-identical report, served 
 docker compose up --build        # API on http://127.0.0.1:8000, Postgres, Redis, dispatcher, scanner image
 ```
 
-Then point the site at it: `cd site && PUBLIC_FEATURE_SCAN=1 npm run build && AGW_API_URL=http://127.0.0.1:8000 npm run serve` and open `http://127.0.0.1:4321/scan/`. The site calls the API on its own origin (`/api/…`), so its strict CSP stays `connect-src 'self'`.
+Without Docker, Redis or Postgres (development only; scans run without isolation):
 
 ```bash
-curl -s -X POST http://127.0.0.1:8000/api/scans -H 'content-type: application/json' -d '{"input": "npm:@modelcontextprotocol/server-filesystem"}'
+AGW_SANDBOX=inprocess AGW_STORE=memory agentguard-web dev     # API + dispatcher in one process
+```
+
+Then point the site at it: `cd site && PUBLIC_FEATURE_SCAN=1 npm run build && AGW_API_URL=http://127.0.0.1:8000 npm run serve` and open `http://127.0.0.1:4321/scan/`. The site calls the API on its own origin (`/api/…`), so its strict CSP stays `connect-src 'self'`.
+
+Scripted clients solve the challenge too (or run a local server with `AGW_POW_DIFFICULTY=0`):
+
+```bash
+python - <<'PY'
+import json, urllib.request
+from agentguard_web.pow import solve
+api = "http://127.0.0.1:8000"
+ch = json.load(urllib.request.urlopen(f"{api}/api/challenge"))
+body = {"input": "npm:@modelcontextprotocol/server-filesystem",
+        "pow": {"challenge": ch["challenge"], "nonce": solve(ch["challenge"], ch["difficulty"])}}
+req = urllib.request.Request(f"{api}/api/scans", json.dumps(body).encode(), {"content-type": "application/json"})
+print(json.load(urllib.request.urlopen(req)))
+PY
 docker compose run --rm dispatcher check-sandbox   # proves the scanner container has no network
 ```
 
@@ -65,7 +89,10 @@ Tests: `cd web && uv run pytest` (no network, no Docker); `AGW_DOCKER_TESTS=1 uv
 | `TRUST_PROXY` | off | use `X-Forwarded-For` only behind a trusted proxy |
 | `RATE_PER_MINUTE` / `RATE_PER_DAY` / `QUEUE_CAP` | 6 / 60 / 50 | abuse and cost limits |
 | `MAX_ARCHIVE_BYTES` / `JOB_TIMEOUT_S` / `WORKERS` | 50 MB / 120 / 2 | |
-| `RETENTION_DAYS` | 90 | `agentguard-web prune` deletes older reports |
+| `RETENTION_DAYS` | 90 | `agentguard-web prune` deletes older reports (and their maintainer responses) |
+| `SECRET` | random per process | signs proof-of-work challenges; required (32+ characters, shared by all API processes) in production |
+| `POW_DIFFICULTY` | 18 | leading zero bits (~0.3–1 s in a browser); `0` turns the check off; at least 12 in production |
+| `REMOTE_CACHE_S` | 600 | how long a remote MCP server's report is reused before it is probed again |
 
 ## Deploying
 
@@ -80,8 +107,8 @@ The site stays on Vercel. The server needs a host that can run Docker containers
 
 ## Not built yet
 
-- Remote MCP server probing on the service (the CLI has it): a separate probe worker using `SafeHttpClient` + `probe_server`.
-- Bot protection on submit (e.g. Turnstile), a maintainer response and "rescan with latest rules" on report pages, factual README badges.
-- Privacy policy and terms pages for the hosted service; a GitHub App token for higher limits; marketplace adapters (e.g. ClawHub) where their terms allow it.
+- A GitHub App token for higher limits, and private repositories through a GitHub App with read-only contents permission.
+- Marketplace adapters (e.g. ClawHub), where their terms allow it.
+- Maintainer responses for gists and remote MCP servers (there is no repository to check).
 
 The service's threat model is in `web/threat-model.md`.

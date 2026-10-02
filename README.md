@@ -49,7 +49,7 @@ Exit codes: `0` no findings at or above `--fail-on` (default `high`), `1` findin
 
 ## In the browser
 
-The website's `/scan` page runs the same engine in your browser (Pyodide): paste a `SKILL.md` or MCP config, drop a folder or `.zip`, or give a public GitHub repository, folder, file or gist link. Pasted and dropped input never leaves your device (a CI test asserts zero network requests); for GitHub links your browser fetches the files straight from GitHub, pinned to a commit. npm, PyPI, MCP Registry and remote-server links need the Agent Guard Web server, which is designed but not built yet. See `site/src/pages/docs/web-scanner.md` for limits and Vercel deployment.
+The website's `/scan` page runs the same engine in your browser (Pyodide): paste a `SKILL.md` or MCP config, drop a folder or `.zip`, or give a public GitHub repository, folder, file or gist link. Pasted and dropped input never leaves your device (a CI test asserts zero network requests); for GitHub links your browser fetches the files straight from GitHub, pinned to a commit. npm, PyPI, MCP Registry and remote MCP server links go to the Agent Guard Web server (`web/`): pinned to an exact version, fetched through an allowlist (or probed read-only, for a remote server) and scanned in a throwaway container with no network. Reports have unlisted permalinks, rescans with current rules, factual README badges and maintainer responses. See `site/src/pages/docs/web-scanner.md` and `web/README.md`.
 
 ## CI
 

@@ -13,6 +13,7 @@ under review must not be able to suppress its own findings.
 from __future__ import annotations
 
 import datetime as dt
+import hashlib
 import json
 import re
 import sys
@@ -23,7 +24,7 @@ from .core.engine import ENGINE_VERSION, scan
 from .core.fetchplan import RemoteEntry, plan_fetch
 from .core.inputs import ParsedInput, gist_ref, github_ref, parse
 from .core.intel.feed import FeedError, IntelFeed, load_trusted_keys, verify_feed
-from .core.models import ImmutableRef, LimitEvent, LoadLimits, Report, ScanOptions, SourceRef
+from .core.models import ImmutableRef, LimitEvent, LoadLimits, NetworkOptions, RemoteProbe, Report, ScanOptions, SourceRef
 from .core.models.enums import SourceKind
 from .core.report.html import render_html
 from .core.report.render import render_cyclonedx, render_json, render_markdown, render_sarif
@@ -216,6 +217,45 @@ def scan_fetched_archive(
         tree.add(path, text.encode("utf-8"), LIMITS)
     events = [LimitEvent.model_validate(e) for e in json.loads(events_json)] if events_json else []
     return _finish(tree, events)
+
+
+REMOTE_CONFIG_PATH = "remote-mcp/.mcp.json"
+MAX_PROBE_BYTES = 8 * 1024 * 1024
+
+
+def remote_fingerprint(probe: RemoteProbe) -> str:
+    """Identity of what a remote server returned: the same metadata gives the same
+    report, and a changed tool definition gives a new report (and a drift diff)."""
+    canon = json.dumps(probe.model_dump(mode="json", exclude={"config_path"}), sort_keys=True, separators=(",", ":"))
+    return "sha256:" + hashlib.sha256(canon.encode("utf-8")).hexdigest()[:32]
+
+
+def scan_remote_probe(probe_json: bytes | str, source_json: str, hosts: list[str] | None = None) -> str:
+    """Scan what a read-only probe recorded from a remote MCP server (server
+    discovery or initialize, the */list results, OAuth metadata). The probe ran
+    in Agent Guard Web's dispatcher; this runs inside the isolated sandbox, so
+    the server's (hostile) tool descriptions are only ever parsed there. The
+    server is represented by a one-entry client configuration, so the
+    configuration, metadata, auth and flow rules all see it."""
+    global _last
+    raw = _as_bytes(probe_json)
+    if len(raw) > MAX_PROBE_BYTES:
+        raise ValueError("remote metadata too large")
+    probe = RemoteProbe.model_validate_json(raw)
+    probe.config_path = REMOTE_CONFIG_PATH
+    config = {"mcpServers": {probe.server_name: {"type": "http", "url": probe.url}}}
+    tree = ArtifactTree.from_mapping({REMOTE_CONFIG_PATH: json.dumps(config, indent=2, sort_keys=True)}, LIMITS,
+                                     source=_source(source_json))
+    tree.limit_events.append(LimitEvent(
+        kind="remote", path=REMOTE_CONFIG_PATH,
+        detail=f"metadata as returned by {probe.url} to an unauthenticated, read-only client (no tools/call); "
+               "a remote server can return different definitions at any time"))
+    options = _options()
+    options.network = NetworkOptions(live_metadata=True, auth_checks=True)
+    options.remote_probes = [probe]
+    options.network_hosts = sorted(set(hosts or []))
+    _last = scan(tree, options, _rule_pack())
+    return render_json(_last)
 
 
 def render_last(fmt: str) -> str:

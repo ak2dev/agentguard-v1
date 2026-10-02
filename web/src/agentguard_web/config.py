@@ -36,6 +36,9 @@ class Settings:
     retention_days: int = 90
     workers: int = 2
     extra_allowed_hosts: tuple[str, ...] = field(default_factory=tuple)  # configured marketplaces
+    secret: str = ""                        # signs proof-of-work challenges; required in production
+    pow_difficulty: int = 18                # leading zero bits (~0.3–1 s in a browser); 0 turns it off
+    remote_cache_s: int = 600               # reuse a remote MCP server's report this long before probing again
 
     @classmethod
     def from_env(cls) -> Settings:
@@ -57,6 +60,9 @@ class Settings:
             retention_days=_int("RETENTION_DAYS", cls.retention_days),
             workers=_int("WORKERS", cls.workers),
             extra_allowed_hosts=tuple(h for h in _env("EXTRA_ALLOWED_HOSTS").split(",") if h),
+            secret=_env("SECRET", ""),
+            pow_difficulty=_int("POW_DIFFICULTY", cls.pow_difficulty),
+            remote_cache_s=_int("REMOTE_CACHE_S", cls.remote_cache_s),
         )
         s.validate()
         return s
@@ -67,5 +73,9 @@ class Settings:
                 raise ValueError("AGW_SANDBOX must be 'docker' in production: scans must run isolated")
             if self.queue == "memory":
                 raise ValueError("AGW_QUEUE must be a Redis URL in production")
+            if len(self.secret) < 32:
+                raise ValueError("AGW_SECRET must be set to at least 32 random characters in production")
+            if self.pow_difficulty < 12:
+                raise ValueError("AGW_POW_DIFFICULTY must be at least 12 in production")
         if self.sandbox not in ("docker", "inprocess"):
             raise ValueError(f"unknown AGW_SANDBOX {self.sandbox!r}")
