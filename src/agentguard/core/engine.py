@@ -82,7 +82,7 @@ def scan(tree: ArtifactTree, options: ScanOptions | None = None, pack: RulePack 
     evaluated = [
         r for r in pack.rules.values()
         if r.enabled and ((isinstance(r.match, AnalyzerMatch) and r.match.analyzer in ran) or
-                          (not isinstance(r.match, AnalyzerMatch) and r.match.type == "regex" and "regex" in ran))
+                          (not isinstance(r.match, AnalyzerMatch) and r.match.type in ran))  # "regex" / "yara" analyzers
     ]
 
     raw = ctx.raw

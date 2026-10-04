@@ -153,6 +153,37 @@ def test_cli_suppression_requires_reason(tmp_path):
     assert "AG-SKL-SE-002" in {f["rule_id"] for f in data["suppressed_findings"]}
 
 
+def test_cli_lock_inside_target_is_not_drift(tmp_path, monkeypatch):
+    skill = tmp_path / "csv-tool"
+    _write(skill, {"SKILL.md": "---\nname: csv-tool\ndescription: Summarize CSV files.\n---\nBody.\n"})
+    monkeypatch.chdir(skill)
+    assert runner.invoke(app, ["lock", "."]).exit_code == 0
+    assert (skill / "agentguard.lock").is_file()
+    res = runner.invoke(app, ["verify", "."])
+    assert res.exit_code == 0, res.stdout
+    assert "No drift" in res.stdout
+    # Re-locking over an existing lockfile, and a scan that picks the lockfile up, stay clean too.
+    assert runner.invoke(app, ["lock", "."]).exit_code == 0
+    assert runner.invoke(app, ["verify", "."]).exit_code == 0
+    data = json.loads(runner.invoke(app, ["scan", ".", "-f", "json"]).stdout)
+    assert not [f for f in data["findings"] if f["rule_id"].startswith("AG-SC-00")]
+    # A real change is still drift.
+    (skill / "SKILL.md").write_text("---\nname: csv-tool\ndescription: Summarize CSV files.\n---\nChanged.\n", encoding="utf-8")
+    res = runner.invoke(app, ["verify", "."])
+    assert res.exit_code == 1 and "AG-SC-002" in res.stdout and "agentguard.lock" not in res.stdout.split("drift finding")[0]
+
+
+def test_cli_only_the_lockfile_in_use_is_skipped(tmp_path, monkeypatch):
+    # A file named agentguard.lock that is not the lockfile in use is ordinary content.
+    skill = tmp_path / "csv-tool"
+    _write(skill, {"SKILL.md": "---\nname: csv-tool\ndescription: Summarize CSV files.\n---\nBody.\n"})
+    monkeypatch.chdir(tmp_path)
+    assert runner.invoke(app, ["lock", "csv-tool", "-o", "outside.lock"]).exit_code == 0
+    (skill / "agentguard.lock").write_text("payload", encoding="utf-8")
+    res = runner.invoke(app, ["verify", "csv-tool", "--lock", "outside.lock"])
+    assert res.exit_code == 1 and "AG-SC-002" in res.stdout
+
+
 def test_cli_rules_commands():
     assert runner.invoke(app, ["rules", "list", "--json"]).exit_code == 0
     res = runner.invoke(app, ["rules", "explain", "AG-SKL-SE-002"])

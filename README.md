@@ -16,7 +16,7 @@ uvx agentguard scan            # this machine's agent configuration + the curren
 pipx install agentguard        # or install it
 ```
 
-Python 3.12+. Optional extras: `agentguard[judge]` (Anthropic provider for the LLM judge), `agentguard[code]`, `agentguard[yara]`.
+Python 3.12+. Optional extras: `agentguard[code]` (tree-sitter taint for JS/TS tool handlers and shell scripts), `agentguard[yara]` (YARA rules over bundled binaries; wheels up to Python 3.13), `agentguard[judge]` (Anthropic provider for the LLM judge). Without an extra, its analyzer is reported as skipped and its rules are not counted.
 
 ## Use
 
@@ -45,7 +45,7 @@ Exit codes: `0` no findings at or above `--fail-on` (default `high`), `1` findin
 | Supply chain | Lockfile drift and rug pulls, signed IOC feed, registry namespace and package typosquats; opt-in provenance, OSV and package-age checks |
 | Remote auth | Opt-in RFC 9728/8414/9207/8707 and PKCE conformance for remote MCP servers (unauthenticated probes only) |
 
-159 rules in rule pack 0.1.0, each with an unsafe and a safe fixture, mapped to the OWASP Top 10 for Agentic Applications (ASI), OWASP MCP Top 10, OWASP Agentic Skills Top 10 (AST), OWASP LLM Top 10 and CWE, with an AIVSS score. The website shows the full catalog and a coverage matrix that lists gaps.
+161 rules in rule pack 0.1.0, each with an unsafe and a safe fixture, mapped to the OWASP Top 10 for Agentic Applications (ASI), OWASP MCP Top 10, OWASP Agentic Skills Top 10 (AST), OWASP LLM Top 10 and CWE, with an AIVSS score. The website shows the full catalog and a coverage matrix that lists gaps.
 
 ## In the browser
 
@@ -71,7 +71,8 @@ Pull requests run in PR mode (only components touched by the change; configurati
 - **Static only.** Behavior that appears only at run time (code downloaded later, a server changing its tools after connection) is out of reach; `lock`/`verify` catches changes between scans. Sandboxed dynamic analysis is planned, not built.
 - **Pattern rules can be evaded.** Paraphrased lures and payloads split across files are known misses and are reported as such by the benchmark. The optional LLM judge (`--llm-judge`) helps with paraphrase but is never the sole basis for a CRITICAL finding.
 - **The benchmark's malicious set is synthetic**, and more than half of the real benign items were used to tune rules. Before each tuning round the next vendor repositories were scanned once: 16 of 43, then 7 of 28, then 1 of 79 benign items flagged at HIGH. Expect false positives on real skills that look unlike those repositories, and treat MEDIUM (FPR 0.14 on real code) as review material.
-- **Taint analysis is intra-procedural** for Python and pattern-based within a tool handler for JavaScript/TypeScript.
+- **Taint analysis is intra-procedural.** Python uses the standard `ast` module. JavaScript/TypeScript is pattern-based within a tool handler unless `agentguard[code]` is installed; its tree-sitter analyzer follows destructuring, reassignment, handlers passed by name and `promisify`/import aliases, still within one function, and adds shell-script taint (`$1` → `eval`, `sh -c`). It only adds findings; it does not remove pattern-analyzer false positives.
+- **YARA rules need `agentguard[yara]`,** which has no Python 3.14 wheels yet. The browser scanner runs neither native analyzer.
 - **Flow labels are inferred** (medium or low confidence) when only a config names a server and its code or tools are unavailable.
 - **Provenance:** missing attestations and subject-digest mismatches are detected; full Sigstore chain verification is not.
 - **AIVSS scores are approximate:** severity-default CVSS bases and a capability proxy for the amplification factors; each score records this.

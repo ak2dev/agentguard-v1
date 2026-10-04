@@ -124,6 +124,8 @@
             "AG-SC-025",
             "AG-SKL-BND-001",
             "AG-SKL-BND-002",
+            "AG-SKL-BND-004",
+            "AG-SKL-BND-005",
             "AG-SKL-TYP-001",
             "AG-SKL-TYP-002"
           ]
@@ -392,6 +394,8 @@
             "AG-SC-025",
             "AG-SKL-BND-001",
             "AG-SKL-BND-002",
+            "AG-SKL-BND-004",
+            "AG-SKL-BND-005",
             "AG-SKL-CRED-010",
             "AG-SKL-EXEC-003",
             "AG-SKL-EXF-001",
@@ -630,6 +634,8 @@
             "AG-SC-024",
             "AG-SC-025",
             "AG-SKL-BND-001",
+            "AG-SKL-BND-004",
+            "AG-SKL-BND-005",
             "AG-SKL-SE-001",
             "AG-SKL-SE-002",
             "AG-SKL-SE-008",
@@ -818,6 +824,8 @@
         "AG-SKL-BND-001",
         "AG-SKL-BND-002",
         "AG-SKL-BND-003",
+        "AG-SKL-BND-004",
+        "AG-SKL-BND-005",
         "AG-SKL-CRED-001",
         "AG-SKL-CRED-002",
         "AG-SKL-CRED-010",
@@ -1003,6 +1011,7 @@
             "AG-CODE-025",
             "AG-CODE-028",
             "AG-MCP-CFG-006",
+            "AG-SKL-BND-005",
             "AG-SKL-EXEC-003",
             "AG-SKL-SE-001",
             "AG-SKL-SE-002",
@@ -1022,6 +1031,7 @@
           "rules": [
             "AG-CODE-023",
             "AG-SKL-BND-001",
+            "AG-SKL-BND-004",
             "AG-SKL-HID-009",
             "AG-SKL-SE-003",
             "AG-SKL-SE-005"

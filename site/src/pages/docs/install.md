@@ -11,8 +11,11 @@ Agent Guard needs Python 3.12 or newer. It has no account, no API key and no tel
 ```bash
 uvx agentguard --version          # run without installing
 pipx install agentguard           # or install it
-pip install "agentguard[code]"    # optional: tree-sitter parsers for deeper JS/TS analysis
+pip install "agentguard[code]"    # optional: tree-sitter taint for JS/TS tool handlers and shell scripts
+pip install "agentguard[yara]"    # optional: YARA rules over bundled binaries (Python 3.12–3.13)
 ```
+
+Without an extra, its analyzer is listed as skipped in every report and its rules are not counted in "N rules".
 
 ## Verify a release
 
