@@ -18,7 +18,7 @@ from typing import Any
 
 from pydantic import ValidationError
 
-from ..models import Mapping, RuleDef, RulePackInfo
+from ..models import Mapping, RuleDef, RulePackInfo, YaraMatch
 from ..models.finding import FRAMEWORKS
 from ..parsers.safe_yaml import safe_load
 from ..textutil import sha256_hex
@@ -125,6 +125,10 @@ class RulePack:
                     items={str(i["id"]): i.get("title", "") for i in doc.get("items") or []},
                     notes=doc.get("notes", ""),
                 )
+
+        for rule in rules.values():
+            if isinstance(rule.match, YaraMatch) and rule.match.rule_file not in yara_sources:
+                errors.append(f"{rule.id}: YARA rule file {rule.match.rule_file} not found in rules/yara/")
 
         # Attach mappings from the crosswalk (data, not code).
         for rule_id, rule in rules.items():

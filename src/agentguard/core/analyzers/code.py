@@ -3,8 +3,9 @@
 * Python tool handlers: real intra-procedural taint via ``ast`` (pytaint).
 * JS/TS tool handlers: sink calls are located and their argument lists
   extracted by bracket matching; a handler parameter appearing directly in a
-  sink's arguments is a high-confidence hit. (The optional tree-sitter
-  analyzer adds full data-flow when installed.)
+  sink's arguments is a high-confidence hit. The optional tree-sitter
+  analyzer (``code.ts``, treesitter.py) adds syntax-aware taint on top when
+  installed.
 * Capability evidence regardless of taint for server source and bundled
   skill scripts.
 """
@@ -233,6 +234,24 @@ _CLIENT_VARIANCE = regex.compile(r"\b(?:clientInfo|client_info|getClientVersion|
 _REMOTE_TOOLS = regex.compile(r"\btools\s*=\s*(?:await\s+)?\(?\s*(?:await\s+)?(?:fetch|requests\.get|httpx\.get|axios\.get)\s*\(")
 
 
+def emit_taint(ctx: Context, at: ArtifactText, tool: str, kind: str, span: Span, sink: str, source: str,
+               conf: Confidence, caps: dict, chain: list[Span], *, script: bool = False) -> None:
+    """Report a taint path. Shared with the tree-sitter analyzer: the match key
+    is (tool, kind, line), so both analyzers' hits on one line merge."""
+    cid = at.artifact.component_id
+    lines = at.text.splitlines()
+    line = lines[span.start_line - 1] if 0 < span.start_line <= len(lines) else ""
+    where, what = (f"script '{tool}'", "argument") if script else (f"tool '{tool}'", "parameter")
+    ctx.emit(TAINT_RULE[kind], component_ids=cid, span=span, snippet=line.strip(), match=f"{tool}:{kind}:{span.start_line}",
+             kind=EvidenceKind.taint, confidence=conf, related=chain,
+             detail=f"{where}: {what} '{source}' → {sink}",
+             message=f"In {where}, {what} '{source}' {TAINT_TEXT[kind]} ({sink}).")
+    caps.setdefault((cid, tool), set()).add(TAINT_LABEL[kind])
+    ctx.add_capability(cid, TAINT_LABEL[kind], subject=f"{cid}#{tool}", confidence=Confidence.high, span=span,
+                       snippet=line.strip(), reason=f"{'script argument' if script else 'tool parameter'} {TAINT_TEXT[kind]}",
+                       kind=EvidenceKind.taint)
+
+
 def _line_of(text: str, offset: int) -> str:
     s = text.rfind("\n", 0, offset) + 1
     e = text.find("\n", offset)
@@ -313,15 +332,7 @@ class CodeAnalyzer:
 
     def _emit_taint(self, ctx: Context, at: ArtifactText, tool: str, kind: str, span: Span, sink: str, source: str,
                     conf: Confidence, caps: dict, chain: list[Span]) -> None:
-        cid = at.artifact.component_id
-        line = at.text.splitlines()[span.start_line - 1] if span.start_line - 1 < len(at.text.splitlines()) else ""
-        ctx.emit(TAINT_RULE[kind], component_ids=cid, span=span, snippet=line.strip(), match=f"{tool}:{kind}:{span.start_line}",
-                 kind=EvidenceKind.taint, confidence=conf, related=chain,
-                 detail=f"tool '{tool}': parameter '{source}' → {sink}",
-                 message=f"In tool '{tool}', parameter '{source}' {TAINT_TEXT[kind]} ({sink}).")
-        caps.setdefault((cid, tool), set()).add(TAINT_LABEL[kind])
-        ctx.add_capability(cid, TAINT_LABEL[kind], subject=f"{cid}#{tool}", confidence=Confidence.high, span=span,
-                           snippet=line.strip(), reason=f"tool parameter {TAINT_TEXT[kind]}", kind=EvidenceKind.taint)
+        emit_taint(ctx, at, tool, kind, span, sink, source, conf, caps, chain)
 
     def _handler_caps(self, body: str, key: tuple[str, str], caps: dict, language: str | None) -> None:
         s = caps.setdefault(key, set())

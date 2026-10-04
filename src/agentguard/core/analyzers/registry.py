@@ -24,6 +24,8 @@ from .skill import (
     TyposquatAnalyzer,
 )
 from .system import LimitsAnalyzer
+from .treesitter import TreeSitterAnalyzer
+from .yara_rules import YaraAnalyzer
 
 ANALYZERS: list[type] = [
     LimitsAnalyzer,
@@ -35,10 +37,12 @@ ANALYZERS: list[type] = [
     RegexRuleAnalyzer,
     McpMetaAnalyzer,
     CodeAnalyzer,
+    TreeSitterAnalyzer,
     SkillPrivilegeAnalyzer,
     CapabilityAnalyzer,
     TyposquatAnalyzer,
     BundleAnalyzer,
+    YaraAnalyzer,
     IntelAnalyzer,
     RegistryOfflineAnalyzer,
     AuthAnalyzer,

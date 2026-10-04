@@ -2,7 +2,8 @@
 
 Python uses the stdlib ``ast`` module (parse only; nothing is executed or
 imported). JavaScript/TypeScript uses conservative regexes over common SDK
-call shapes; the optional tree-sitter analyzer refines this when installed.
+call shapes; when installed, the optional tree-sitter analyzer (``code.ts``)
+re-parses each registration found here to track taint through its handler.
 """
 
 from __future__ import annotations
