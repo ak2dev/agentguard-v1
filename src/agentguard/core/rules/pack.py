@@ -23,7 +23,7 @@ from ..models.finding import FRAMEWORKS
 from ..parsers.safe_yaml import safe_load
 from ..textutil import sha256_hex
 
-NSA_TODO = "NSA AISC CSI (MCP, May 2026) not yet retrieved; mapping pending (docs/sources.md)"
+NSA_TODO = "NSA AISC CSI (MCP, May 2026) mapping not yet reviewed for this rule"
 
 
 class RulePackError(ValueError):

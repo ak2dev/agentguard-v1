@@ -6,1125 +6,1125 @@ AG-SKL-SPEC-001:
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST04]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-SPEC-002:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST04]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-SPEC-003:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST04]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-SPEC-004:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST04]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-SPEC-005:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST04]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-SPEC-006:
   owasp-asi-2026: [ASI01]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST04]
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-SPEC-007:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST04]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: [CWE-20]
 AG-SKL-HID-001:
   owasp-asi-2026: [ASI01]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: [CWE-451]
 AG-SKL-HID-002:
   owasp-asi-2026: [ASI01]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: [CWE-451]
 AG-SKL-HID-003:
   owasp-asi-2026: [ASI01]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST04]
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: [CWE-451]
 AG-SKL-HID-004:
   owasp-asi-2026: [ASI01]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: [CWE-1007]
 AG-SKL-HID-005:
   owasp-asi-2026: [ASI01]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST04]
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: [CWE-451]
 AG-SKL-HID-006:
   owasp-asi-2026: [ASI01]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST04]
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: [CWE-451]
 AG-SKL-HID-007:
   owasp-asi-2026: [ASI01]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST04]
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-HID-008:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST04]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-HID-009:
   owasp-asi-2026: [ASI01]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: [CWE-506]
 AG-SKL-HID-010:
   owasp-asi-2026: [ASI01]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST04]
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: [CWE-451]
 AG-SKL-INJ-001:
   owasp-asi-2026: [ASI01]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-INJ-002:
   owasp-asi-2026: [ASI01]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: [CWE-74]
 AG-SKL-INJ-003:
   owasp-asi-2026: [ASI09]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-INJ-004:
   owasp-asi-2026: [ASI03]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST03]
   owasp-llm-2025: ["LLM06:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/approval-workflows]
   cwe: []
 AG-SKL-INJ-005:
   owasp-asi-2026: [ASI10]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: ["LLM06:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-INJ-006:
   owasp-asi-2026: [ASI06]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-INJ-007:
   owasp-asi-2026: [ASI03]
   owasp-mcp-2025-beta: ["MCP09:2025"]
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: ["LLM06:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/approval-workflows]
   cwe: []
 AG-SKL-INJ-008:
   owasp-asi-2026: [ASI01]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST05]
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-INJ-009:
   owasp-asi-2026: [ASI09]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-EXEC-001:
   owasp-asi-2026: [ASI05]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST06]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: [CWE-78]
 AG-SKL-EXEC-002:
   owasp-asi-2026: [ASI05]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST06]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-EXEC-003:
   owasp-asi-2026: [ASI05]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: [CWE-494]
 AG-SKL-SE-001:
   owasp-asi-2026: [ASI09]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: ["LLM03:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: [CWE-494]
 AG-SKL-SE-002:
   owasp-asi-2026: [ASI05]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: ["LLM03:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: [CWE-494]
 AG-SKL-SE-003:
   owasp-asi-2026: [ASI09]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: [CWE-506]
 AG-SKL-SE-004:
   owasp-asi-2026: [ASI09]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-SE-005:
   owasp-asi-2026: [ASI05]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: [CWE-506]
 AG-SKL-SE-006:
   owasp-asi-2026: [ASI09]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: ["LLM02:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-SE-007:
   owasp-asi-2026: [ASI05]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-SE-008:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST02]
   owasp-llm-2025: ["LLM03:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: [CWE-494]
 AG-SKL-CRED-001:
   owasp-asi-2026: [ASI03]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST03]
   owasp-llm-2025: ["LLM02:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-CRED-002:
   owasp-asi-2026: [ASI03]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST03]
   owasp-llm-2025: ["LLM02:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-CRED-010:
   owasp-asi-2026: [ASI03]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: ["LLM02:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-EXF-001:
   owasp-asi-2026: [ASI02]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: ["LLM02:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-EXF-002:
   owasp-asi-2026: [ASI02]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-EXF-003:
   owasp-asi-2026: [ASI02]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-EXF-004:
   owasp-asi-2026: [ASI02]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: ["LLM02:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-EXF-005:
   owasp-asi-2026: [ASI01]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: ["LLM02:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-PRIV-001:
   owasp-asi-2026: [ASI03]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST03]
   owasp-llm-2025: ["LLM06:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: [CWE-250]
 AG-SKL-PRIV-002:
   owasp-asi-2026: [ASI03]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST03]
   owasp-llm-2025: ["LLM06:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: [CWE-250]
 AG-SKL-MIS-001:
   owasp-asi-2026: [ASI02]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST04]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-TYP-001:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: ["LLM03:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-TYP-002:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST02]
   owasp-llm-2025: ["LLM03:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-BND-001:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: ["LLM03:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: [CWE-506]
 AG-SKL-BND-002:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-BND-003:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST04]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SKL-BND-004:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: ["LLM03:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: [CWE-506]
 AG-SKL-BND-005:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: ["LLM03:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: [CWE-494]
 AG-MCP-CFG-001:
   owasp-asi-2026: [ASI05]
   owasp-mcp-2025-beta: ["MCP05:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/misconfiguration, recommendations/constrain-and-sandbox]
   cwe: [CWE-78]
 AG-MCP-CFG-002:
   owasp-asi-2026: [ASI05]
   owasp-mcp-2025-beta: ["MCP05:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/misconfiguration, recommendations/constrain-and-sandbox]
   cwe: [CWE-94]
 AG-MCP-CFG-003:
   owasp-asi-2026: [ASI05]
   owasp-mcp-2025-beta: ["MCP05:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/misconfiguration, recommendations/constrain-and-sandbox]
   cwe: [CWE-78]
 AG-MCP-CFG-004:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: ["MCP04:2025"]
   owasp-ast-1.0: [AST07]
   owasp-llm-2025: ["LLM03:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/track-and-patch, recommendations/supported-projects]
   cwe: [CWE-829]
 AG-MCP-CFG-006:
   owasp-asi-2026: [ASI05]
   owasp-mcp-2025-beta: ["MCP05:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM03:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/misconfiguration, recommendations/supported-projects]
   cwe: [CWE-494]
 AG-MCP-CFG-007:
   owasp-asi-2026: [ASI03]
   owasp-mcp-2025-beta: ["MCP02:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/constrain-and-sandbox]
   cwe: [CWE-250]
 AG-MCP-CFG-008:
   owasp-asi-2026: [ASI03]
   owasp-mcp-2025-beta: ["MCP02:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/constrain-and-sandbox]
   cwe: [CWE-250]
 AG-MCP-CFG-009:
   owasp-asi-2026: [ASI03]
   owasp-mcp-2025-beta: ["MCP02:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM02:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/constrain-and-sandbox]
   cwe: [CWE-250]
 AG-MCP-CFG-010:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: ["MCP04:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM03:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/track-and-patch]
   cwe: [CWE-829]
 AG-MCP-CFG-011:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: ["MCP01:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM02:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/misconfiguration]
   cwe: [CWE-798]
 AG-MCP-CFG-012:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: ["MCP01:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM02:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/misconfiguration]
   cwe: [CWE-798]
 AG-MCP-CFG-013:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: ["MCP07:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/sign-and-verify-messages, concerns/token-session-security]
   cwe: [CWE-319]
 AG-MCP-CFG-014:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: ["MCP09:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-MCP-CFG-015:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: ["MCP07:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/design-for-boundaries]
   cwe: [CWE-918]
 AG-MCP-CFG-016:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: ["MCP07:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/access-control, recommendations/scan-for-mcp-servers]
   cwe: [CWE-1327]
 AG-MCP-CFG-017:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: ["MCP09:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [examples/tool-invocation-path-confusion]
   cwe: []
 AG-MCP-CFG-018:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: ["MCP09:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [examples/tool-invocation-path-confusion]
   cwe: []
 AG-MCP-CFG-019:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: ["MCP01:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM02:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/token-session-security]
   cwe: [CWE-598]
 AG-MCP-CFG-020:
   owasp-asi-2026: [ASI03]
   owasp-mcp-2025-beta: ["MCP02:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/constrain-and-sandbox]
   cwe: []
 AG-MCP-CFG-021:
   owasp-asi-2026: [ASI03]
   owasp-mcp-2025-beta: ["MCP02:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM06:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/approval-workflows]
   cwe: []
 AG-MCP-CFG-022:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: ["MCP09:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM03:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/approval-workflows]
   cwe: [CWE-829]
 AG-MCP-CFG-023:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: ["MCP07:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-MCP-META-001:
   owasp-asi-2026: [ASI01]
   owasp-mcp-2025-beta: ["MCP03:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [examples/output-poisoning, recommendations/filter-output-pipelines]
   cwe: [CWE-451]
 AG-MCP-META-002:
   owasp-asi-2026: [ASI01]
   owasp-mcp-2025-beta: ["MCP03:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [examples/messaging-platform-exploitation, examples/output-poisoning, recommendations/filter-output-pipelines]
   cwe: []
 AG-MCP-META-003:
   owasp-asi-2026: [ASI02]
   owasp-mcp-2025-beta: ["MCP03:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM02:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [examples/messaging-platform-exploitation, examples/output-poisoning]
   cwe: []
 AG-MCP-META-004:
   owasp-asi-2026: [ASI02]
   owasp-mcp-2025-beta: ["MCP10:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM02:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/validate-parameters, examples/messaging-platform-exploitation]
   cwe: []
 AG-MCP-META-005:
   owasp-asi-2026: [ASI01]
   owasp-mcp-2025-beta: ["MCP03:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [examples/output-poisoning]
   cwe: []
 AG-MCP-META-006:
   owasp-asi-2026: [ASI02]
   owasp-mcp-2025-beta: ["MCP03:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [examples/tool-invocation-path-confusion, examples/messaging-platform-exploitation]
   cwe: []
 AG-MCP-META-007:
   owasp-asi-2026: [ASI02]
   owasp-mcp-2025-beta: ["MCP09:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [examples/tool-invocation-path-confusion]
   cwe: []
 AG-MCP-META-008:
   owasp-asi-2026: [ASI02]
   owasp-mcp-2025-beta: ["MCP09:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [examples/tool-invocation-path-confusion]
   cwe: [CWE-1007]
 AG-MCP-META-009:
   owasp-asi-2026: [ASI02]
   owasp-mcp-2025-beta: ["MCP05:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM06:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/validate-parameters]
   cwe: [CWE-20]
 AG-MCP-META-010:
   owasp-asi-2026: [ASI02]
   owasp-mcp-2025-beta: ["MCP05:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/validate-parameters]
   cwe: [CWE-20]
 AG-MCP-META-011:
   owasp-asi-2026: [ASI09]
   owasp-mcp-2025-beta: ["MCP02:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM06:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/approval-workflows]
   cwe: []
 AG-MCP-META-012:
   owasp-asi-2026: [ASI09]
   owasp-mcp-2025-beta: ["MCP02:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM06:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/approval-workflows]
   cwe: []
 AG-MCP-META-013:
   owasp-asi-2026: [ASI01]
   owasp-mcp-2025-beta: ["MCP06:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [examples/output-poisoning, recommendations/filter-output-pipelines]
   cwe: []
 AG-MCP-META-014:
   owasp-asi-2026: [ASI01]
   owasp-mcp-2025-beta: ["MCP06:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [examples/output-poisoning, recommendations/filter-output-pipelines]
   cwe: []
 AG-MCP-META-015:
   owasp-asi-2026: [ASI01]
   owasp-mcp-2025-beta: ["MCP10:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [examples/output-poisoning, recommendations/filter-output-pipelines]
   cwe: []
 AG-MCP-META-016:
   owasp-asi-2026: [ASI02]
   owasp-mcp-2025-beta: ["MCP10:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM02:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/design-for-boundaries]
   cwe: [CWE-829]
 AG-MCP-META-017:
   owasp-asi-2026: [ASI09]
   owasp-mcp-2025-beta: ["MCP01:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM02:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-MCP-META-018:
   owasp-asi-2026: [ASI09]
   owasp-mcp-2025-beta: ["MCP10:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/design-for-boundaries]
   cwe: []
 AG-MCP-META-019:
   owasp-asi-2026: [ASI01]
   owasp-mcp-2025-beta: ["MCP03:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [examples/output-poisoning]
   cwe: []
 AG-MCP-META-020:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: ["MCP03:2025"]
   owasp-ast-1.0: [AST07]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/approval-workflows, examples/messaging-platform-exploitation]
   cwe: []
 AG-CODE-001:
   owasp-asi-2026: [ASI05]
   owasp-mcp-2025-beta: ["MCP05:2025"]
   owasp-ast-1.0: [AST06]
   owasp-llm-2025: ["LLM05:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [examples/tool-parameter-injection, examples/remote-code-execution, recommendations/validate-parameters, recommendations/constrain-and-sandbox]
   cwe: [CWE-78]
 AG-CODE-002:
   owasp-asi-2026: [ASI05]
   owasp-mcp-2025-beta: ["MCP05:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM05:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [examples/tool-parameter-injection, recommendations/validate-parameters, recommendations/constrain-and-sandbox]
   cwe: [CWE-88]
 AG-CODE-003:
   owasp-asi-2026: [ASI05]
   owasp-mcp-2025-beta: ["MCP05:2025"]
   owasp-ast-1.0: [AST06]
   owasp-llm-2025: ["LLM05:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [examples/tool-parameter-injection, examples/remote-code-execution, recommendations/validate-parameters, recommendations/constrain-and-sandbox]
   cwe: [CWE-95]
 AG-CODE-004:
   owasp-asi-2026: [ASI05]
   owasp-mcp-2025-beta: ["MCP05:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM05:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/insecure-serialization, recommendations/validate-parameters]
   cwe: [CWE-502]
 AG-CODE-005:
   owasp-asi-2026: [ASI02]
   owasp-mcp-2025-beta: ["MCP02:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM05:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [examples/tool-parameter-injection, recommendations/validate-parameters, recommendations/constrain-and-sandbox]
   cwe: [CWE-22]
 AG-CODE-006:
   owasp-asi-2026: [ASI02]
   owasp-mcp-2025-beta: ["MCP05:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM05:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/validate-parameters, recommendations/design-for-boundaries]
   cwe: [CWE-918]
 AG-CODE-007:
   owasp-asi-2026: [ASI02]
   owasp-mcp-2025-beta: ["MCP05:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM05:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [examples/tool-parameter-injection, recommendations/validate-parameters]
   cwe: [CWE-89]
 AG-CODE-008:
   owasp-asi-2026: [ASI05]
   owasp-mcp-2025-beta: ["MCP05:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM05:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [examples/tool-parameter-injection, recommendations/validate-parameters]
   cwe: [CWE-1336]
 AG-CODE-020:
   owasp-asi-2026: [ASI03]
   owasp-mcp-2025-beta: ["MCP01:2025"]
   owasp-ast-1.0: [AST03]
   owasp-llm-2025: ["LLM02:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/constrain-and-sandbox]
   cwe: []
 AG-CODE-021:
   owasp-asi-2026: [ASI03]
   owasp-mcp-2025-beta: ["MCP01:2025"]
   owasp-ast-1.0: [AST03]
   owasp-llm-2025: ["LLM02:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/constrain-and-sandbox]
   cwe: []
 AG-CODE-022:
   owasp-asi-2026: [ASI02]
   owasp-mcp-2025-beta: ["MCP10:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM02:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/design-for-boundaries]
   cwe: []
 AG-CODE-023:
   owasp-asi-2026: [ASI05]
   owasp-mcp-2025-beta: ["MCP04:2025"]
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/supported-projects]
   cwe: [CWE-506]
 AG-CODE-024:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: ["MCP04:2025"]
   owasp-ast-1.0: [AST02]
   owasp-llm-2025: ["LLM03:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/supported-projects]
   cwe: [CWE-829]
 AG-CODE-025:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: ["MCP04:2025"]
   owasp-ast-1.0: [AST02]
   owasp-llm-2025: ["LLM03:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/supported-projects, concerns/approval-workflows]
   cwe: [CWE-494]
 AG-CODE-026:
   owasp-asi-2026: [ASI06]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/constrain-and-sandbox]
   cwe: []
 AG-CODE-027:
   owasp-asi-2026: [ASI10]
   owasp-mcp-2025-beta: ["MCP04:2025"]
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/supported-projects]
   cwe: []
 AG-CODE-028:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: ["MCP04:2025"]
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: ["LLM03:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/supported-projects]
   cwe: [CWE-494]
 AG-CODE-029:
   owasp-asi-2026: [ASI03]
   owasp-mcp-2025-beta: ["MCP07:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/token-session-security]
   cwe: []
 AG-CODE-040:
   owasp-asi-2026: [ASI02]
   owasp-mcp-2025-beta: ["MCP02:2025"]
   owasp-ast-1.0: [AST04]
   owasp-llm-2025: ["LLM06:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/approval-workflows]
   cwe: []
 AG-AUTH-001:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: ["MCP07:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/access-control, recommendations/scan-for-mcp-servers]
   cwe: []
 AG-AUTH-002:
   owasp-asi-2026: [ASI03]
   owasp-mcp-2025-beta: ["MCP07:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/access-control, concerns/token-session-security]
   cwe: []
 AG-AUTH-003:
   owasp-asi-2026: [ASI03]
   owasp-mcp-2025-beta: ["MCP07:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/access-control, concerns/token-session-security]
   cwe: []
 AG-AUTH-004:
   owasp-asi-2026: [ASI03]
   owasp-mcp-2025-beta: ["MCP07:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/access-control, concerns/token-session-security]
   cwe: []
 AG-AUTH-005:
   owasp-asi-2026: [ASI03]
   owasp-mcp-2025-beta: ["MCP07:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/token-session-security]
   cwe: []
 AG-AUTH-006:
   owasp-asi-2026: [ASI03]
   owasp-mcp-2025-beta: ["MCP07:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/token-session-security]
   cwe: []
 AG-AUTH-007:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: ["MCP07:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/token-session-security]
   cwe: []
 AG-AUTH-008:
   owasp-asi-2026: [ASI03]
   owasp-mcp-2025-beta: ["MCP07:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/token-session-security]
   cwe: []
 AG-AUTH-009:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: ["MCP07:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/sign-and-verify-messages]
   cwe: [CWE-295]
 AG-AUTH-010:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/scan-for-mcp-servers]
   cwe: []
 AG-AUTH-011:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: ["MCP07:2025"]
   owasp-ast-1.0: []
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/token-session-security]
   cwe: []
 AG-FLOW-001:
   owasp-asi-2026: [ASI01]
   owasp-mcp-2025-beta: ["MCP10:2025"]
   owasp-ast-1.0: [AST06]
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/access-control, examples/messaging-platform-exploitation, recommendations/design-for-boundaries]
   cwe: []
 AG-FLOW-002:
   owasp-asi-2026: [ASI01]
   owasp-mcp-2025-beta: ["MCP10:2025"]
   owasp-ast-1.0: [AST03]
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/design-for-boundaries, recommendations/filter-output-pipelines]
   cwe: []
 AG-FLOW-003:
   owasp-asi-2026: [ASI05]
   owasp-mcp-2025-beta: ["MCP06:2025"]
   owasp-ast-1.0: [AST06]
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [examples/output-poisoning, recommendations/filter-output-pipelines, recommendations/constrain-and-sandbox]
   cwe: []
 AG-FLOW-004:
   owasp-asi-2026: [ASI02]
   owasp-mcp-2025-beta: ["MCP02:2025"]
   owasp-ast-1.0: [AST03]
   owasp-llm-2025: ["LLM06:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/approval-workflows, recommendations/filter-output-pipelines]
   cwe: []
 AG-FLOW-005:
   owasp-asi-2026: [ASI02]
   owasp-mcp-2025-beta: ["MCP10:2025"]
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: ["LLM02:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/design-for-boundaries]
   cwe: []
 AG-FLOW-006:
   owasp-asi-2026: [ASI01]
   owasp-mcp-2025-beta: ["MCP02:2025"]
   owasp-ast-1.0: [AST03]
   owasp-llm-2025: ["LLM06:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/approval-workflows, recommendations/design-for-boundaries]
   cwe: []
 AG-FLOW-007:
   owasp-asi-2026: [ASI06]
   owasp-mcp-2025-beta: ["MCP10:2025"]
   owasp-ast-1.0: [AST05]
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [examples/output-poisoning, recommendations/filter-output-pipelines]
   cwe: []
 AG-SC-001:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: ["MCP03:2025"]
   owasp-ast-1.0: [AST07]
   owasp-llm-2025: ["LLM03:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/approval-workflows, examples/messaging-platform-exploitation]
   cwe: []
 AG-SC-002:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST07]
   owasp-llm-2025: ["LLM03:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/approval-workflows]
   cwe: []
 AG-SC-003:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: ["MCP03:2025"]
   owasp-ast-1.0: [AST07]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/approval-workflows]
   cwe: []
 AG-SC-004:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: ["MCP04:2025"]
   owasp-ast-1.0: [AST07]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/track-and-patch, concerns/approval-workflows]
   cwe: []
 AG-SC-005:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: ["MCP03:2025"]
   owasp-ast-1.0: [AST07]
   owasp-llm-2025: ["LLM03:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/approval-workflows]
   cwe: []
 AG-SC-006:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: ["MCP09:2025"]
   owasp-ast-1.0: [AST09]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/track-and-patch]
   cwe: []
 AG-SC-010:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: ["MCP04:2025"]
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: ["LLM03:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/track-and-patch]
   cwe: []
 AG-SC-011:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: ["MCP04:2025"]
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/track-and-patch]
   cwe: []
 AG-SC-012:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: ["MCP04:2025"]
   owasp-ast-1.0: [AST02]
   owasp-llm-2025: ["LLM03:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/track-and-patch]
   cwe: []
 AG-SC-020:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: ["MCP04:2025"]
   owasp-ast-1.0: [AST02]
   owasp-llm-2025: ["LLM03:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/supported-projects]
   cwe: []
 AG-SC-021:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: ["MCP04:2025"]
   owasp-ast-1.0: [AST02]
   owasp-llm-2025: ["LLM03:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/supported-projects]
   cwe: []
 AG-SC-022:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: ["MCP04:2025"]
   owasp-ast-1.0: [AST02]
   owasp-llm-2025: ["LLM03:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/track-and-patch, recommendations/scan-for-mcp-servers]
   cwe: []
 AG-SC-023:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: ["MCP04:2025"]
   owasp-ast-1.0: [AST02]
   owasp-llm-2025: ["LLM03:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/supported-projects]
   cwe: []
 AG-SC-024:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: ["MCP09:2025"]
   owasp-ast-1.0: [AST02]
   owasp-llm-2025: ["LLM03:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/supported-projects]
   cwe: []
 AG-SC-025:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: ["MCP04:2025"]
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: ["LLM03:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [examples/tool-invocation-path-confusion, recommendations/supported-projects]
   cwe: []
 AG-POL-001:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: ["MCP09:2025"]
   owasp-ast-1.0: [AST09]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/supported-projects]
   cwe: []
 AG-POL-002:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: ["MCP09:2025"]
   owasp-ast-1.0: [AST09]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/supported-projects]
   cwe: []
 AG-POL-003:
   owasp-asi-2026: [ASI04]
   owasp-mcp-2025-beta: ["MCP04:2025"]
   owasp-ast-1.0: [AST07]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [recommendations/track-and-patch]
   cwe: []
 AG-POL-005:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST09]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-POL-006:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST09]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-POL-010:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST09]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SYS-001:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST08]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: [CWE-409]
 AG-SYS-002:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST08]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: []
 AG-SYS-003:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: [AST06]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: [CWE-59]
 AG-SYS-004:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: []
   owasp-ast-1.0: []
   owasp-llm-2025: ["LLM10:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: []
   cwe: [CWE-409]
 AG-LLM-001:
   owasp-asi-2026: [ASI02]
   owasp-mcp-2025-beta: ["MCP03:2025"]
   owasp-ast-1.0: [AST04]
   owasp-llm-2025: []
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [concerns/approval-workflows]
   cwe: []
 AG-LLM-002:
   owasp-asi-2026: [ASI01]
   owasp-mcp-2025-beta: ["MCP03:2025"]
   owasp-ast-1.0: [AST01]
   owasp-llm-2025: ["LLM01:2025"]
-  nsa-csi-mcp-2026-05: null
+  nsa-csi-mcp-2026-05: [examples/output-poisoning]
   cwe: []

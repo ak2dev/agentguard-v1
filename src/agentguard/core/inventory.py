@@ -36,12 +36,14 @@ from .textutil import TIMEOUT, sha256_hex
 from .tree import ArtifactTree
 
 _INSTRUCTION_NAMES = {
-    "agents.md", "agent.md", "claude.md", "claude.local.md", "gemini.md", ".cursorrules",
+    "agents.md", "agents.override.md", "agent.md", "claude.md", "claude.local.md", "gemini.md", ".cursorrules",
     ".windsurfrules", "copilot-instructions.md", "soul.md", "memory.md", "identity.md",
 }
 _INSTRUCTION_PATHS = (
     r"(^|/)\.cursor/rules/.+\.(mdc|md)$",
     r"(^|/)\.github/instructions/.+\.instructions\.md$",
+    r"(^|/)\.copilot/instructions/.+\.md$",
+    r"(^|/)\.claude/rules/.+\.md$",
     r"(^|/)\.windsurf/rules/.+\.md$",
     r"(^|/)\.clinerules(/.+\.md)?$",
 )

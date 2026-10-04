@@ -80,7 +80,8 @@ def test_analyzer_rule_consistency():
 
 def test_every_rule_is_mapped():
     for rule in PACK.rules.values():
-        frameworks = {m.framework for m in rule.mappings}
-        assert "nsa-csi-mcp-2026-05" in frameworks, rule.id
+        # The NSA CSI column has been reviewed for every rule: a list of its items, or [] when
+        # the CSI (which covers MCP only) has nothing on what the rule detects. null = unreviewed.
+        assert PACK.crosswalk[rule.id].get("nsa-csi-mcp-2026-05") is not None, f"{rule.id}: NSA CSI mapping not reviewed"
         for m in rule.mappings:
             assert m.id or m.todo

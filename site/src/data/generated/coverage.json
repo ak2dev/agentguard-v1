@@ -714,174 +714,298 @@
     {
       "framework": "nsa-csi-mcp-2026-05",
       "name": "NSA AISC CSI — Model Context Protocol (MCP): Security Design Considerations for AI-Driven Automation",
-      "version": "2026-05",
-      "source": "https://www.nsa.gov/Press-Room/Press-Releases-Statements/Press-Release-View/Article/4496698/",
-      "notes": "TODO: the CSI PDF could not be retrieved (HTTP 403 to automated fetch). Section identifiers are unverified, so no items are listed and every rule maps to null with a TODO. Add items (section id + title) once the document has been read.",
-      "items": [],
-      "rules_pending_mapping": [
-        "AG-AUTH-001",
-        "AG-AUTH-002",
-        "AG-AUTH-003",
-        "AG-AUTH-004",
-        "AG-AUTH-005",
-        "AG-AUTH-006",
-        "AG-AUTH-007",
-        "AG-AUTH-008",
-        "AG-AUTH-009",
-        "AG-AUTH-010",
-        "AG-AUTH-011",
-        "AG-CODE-001",
-        "AG-CODE-002",
-        "AG-CODE-003",
-        "AG-CODE-004",
-        "AG-CODE-005",
-        "AG-CODE-006",
-        "AG-CODE-007",
-        "AG-CODE-008",
-        "AG-CODE-020",
-        "AG-CODE-021",
-        "AG-CODE-022",
-        "AG-CODE-023",
-        "AG-CODE-024",
-        "AG-CODE-025",
-        "AG-CODE-026",
-        "AG-CODE-027",
-        "AG-CODE-028",
-        "AG-CODE-029",
-        "AG-CODE-040",
-        "AG-FLOW-001",
-        "AG-FLOW-002",
-        "AG-FLOW-003",
-        "AG-FLOW-004",
-        "AG-FLOW-005",
-        "AG-FLOW-006",
-        "AG-FLOW-007",
-        "AG-LLM-001",
-        "AG-LLM-002",
-        "AG-MCP-CFG-001",
-        "AG-MCP-CFG-002",
-        "AG-MCP-CFG-003",
-        "AG-MCP-CFG-004",
-        "AG-MCP-CFG-006",
-        "AG-MCP-CFG-007",
-        "AG-MCP-CFG-008",
-        "AG-MCP-CFG-009",
-        "AG-MCP-CFG-010",
-        "AG-MCP-CFG-011",
-        "AG-MCP-CFG-012",
-        "AG-MCP-CFG-013",
-        "AG-MCP-CFG-014",
-        "AG-MCP-CFG-015",
-        "AG-MCP-CFG-016",
-        "AG-MCP-CFG-017",
-        "AG-MCP-CFG-018",
-        "AG-MCP-CFG-019",
-        "AG-MCP-CFG-020",
-        "AG-MCP-CFG-021",
-        "AG-MCP-CFG-022",
-        "AG-MCP-CFG-023",
-        "AG-MCP-META-001",
-        "AG-MCP-META-002",
-        "AG-MCP-META-003",
-        "AG-MCP-META-004",
-        "AG-MCP-META-005",
-        "AG-MCP-META-006",
-        "AG-MCP-META-007",
-        "AG-MCP-META-008",
-        "AG-MCP-META-009",
-        "AG-MCP-META-010",
-        "AG-MCP-META-011",
-        "AG-MCP-META-012",
-        "AG-MCP-META-013",
-        "AG-MCP-META-014",
-        "AG-MCP-META-015",
-        "AG-MCP-META-016",
-        "AG-MCP-META-017",
-        "AG-MCP-META-018",
-        "AG-MCP-META-019",
-        "AG-MCP-META-020",
-        "AG-POL-001",
-        "AG-POL-002",
-        "AG-POL-003",
-        "AG-POL-005",
-        "AG-POL-006",
-        "AG-POL-010",
-        "AG-SC-001",
-        "AG-SC-002",
-        "AG-SC-003",
-        "AG-SC-004",
-        "AG-SC-005",
-        "AG-SC-006",
-        "AG-SC-010",
-        "AG-SC-011",
-        "AG-SC-012",
-        "AG-SC-020",
-        "AG-SC-021",
-        "AG-SC-022",
-        "AG-SC-023",
-        "AG-SC-024",
-        "AG-SC-025",
-        "AG-SKL-BND-001",
-        "AG-SKL-BND-002",
-        "AG-SKL-BND-003",
-        "AG-SKL-BND-004",
-        "AG-SKL-BND-005",
-        "AG-SKL-CRED-001",
-        "AG-SKL-CRED-002",
-        "AG-SKL-CRED-010",
-        "AG-SKL-EXEC-001",
-        "AG-SKL-EXEC-002",
-        "AG-SKL-EXEC-003",
-        "AG-SKL-EXF-001",
-        "AG-SKL-EXF-002",
-        "AG-SKL-EXF-003",
-        "AG-SKL-EXF-004",
-        "AG-SKL-EXF-005",
-        "AG-SKL-HID-001",
-        "AG-SKL-HID-002",
-        "AG-SKL-HID-003",
-        "AG-SKL-HID-004",
-        "AG-SKL-HID-005",
-        "AG-SKL-HID-006",
-        "AG-SKL-HID-007",
-        "AG-SKL-HID-008",
-        "AG-SKL-HID-009",
-        "AG-SKL-HID-010",
-        "AG-SKL-INJ-001",
-        "AG-SKL-INJ-002",
-        "AG-SKL-INJ-003",
-        "AG-SKL-INJ-004",
-        "AG-SKL-INJ-005",
-        "AG-SKL-INJ-006",
-        "AG-SKL-INJ-007",
-        "AG-SKL-INJ-008",
-        "AG-SKL-INJ-009",
-        "AG-SKL-MIS-001",
-        "AG-SKL-PRIV-001",
-        "AG-SKL-PRIV-002",
-        "AG-SKL-SE-001",
-        "AG-SKL-SE-002",
-        "AG-SKL-SE-003",
-        "AG-SKL-SE-004",
-        "AG-SKL-SE-005",
-        "AG-SKL-SE-006",
-        "AG-SKL-SE-007",
-        "AG-SKL-SE-008",
-        "AG-SKL-SPEC-001",
-        "AG-SKL-SPEC-002",
-        "AG-SKL-SPEC-003",
-        "AG-SKL-SPEC-004",
-        "AG-SKL-SPEC-005",
-        "AG-SKL-SPEC-006",
-        "AG-SKL-SPEC-007",
-        "AG-SKL-TYP-001",
-        "AG-SKL-TYP-002",
-        "AG-SYS-001",
-        "AG-SYS-002",
-        "AG-SYS-003",
-        "AG-SYS-004"
+      "version": "2026-05 (U/OO/6030316-26, PP-26-1834, Ver. 1.0)",
+      "source": "https://www.nsa.gov/Portals/75/documents/Cybersecurity/CSI_MCP_SECURITY.pdf",
+      "notes": "Read from the PDF (17 pages, SHA-256 f9c0452acdf5f45603f61079eea66b67e19b372bee96a8bbb3981a74429add03, retrieved 2026-10-02). The CSI does not number its sections, so item ids are slugs of its own headings, grouped as it groups them: security concerns, real-world examples, and recommendations. A rule maps to an item only where the CSI's text describes the risk the rule detects or the control it checks; skill and scanner-internal rules map to nothing ([]) because the CSI covers MCP only.",
+      "items": [
+        {
+          "id": "concerns/access-control",
+          "title": "Access control",
+          "rules": [
+            "AG-AUTH-001",
+            "AG-AUTH-002",
+            "AG-AUTH-003",
+            "AG-AUTH-004",
+            "AG-FLOW-001",
+            "AG-MCP-CFG-016"
+          ]
+        },
+        {
+          "id": "concerns/insecure-serialization",
+          "title": "Insecure context or data serialization",
+          "rules": [
+            "AG-CODE-004"
+          ]
+        },
+        {
+          "id": "concerns/approval-workflows",
+          "title": "Poor approval workflows",
+          "rules": [
+            "AG-CODE-025",
+            "AG-CODE-040",
+            "AG-FLOW-004",
+            "AG-FLOW-006",
+            "AG-LLM-001",
+            "AG-MCP-CFG-021",
+            "AG-MCP-CFG-022",
+            "AG-MCP-META-011",
+            "AG-MCP-META-012",
+            "AG-MCP-META-020",
+            "AG-SC-001",
+            "AG-SC-002",
+            "AG-SC-003",
+            "AG-SC-004",
+            "AG-SC-005",
+            "AG-SKL-INJ-004",
+            "AG-SKL-INJ-007"
+          ]
+        },
+        {
+          "id": "concerns/token-session-security",
+          "title": "Token or session security",
+          "rules": [
+            "AG-AUTH-002",
+            "AG-AUTH-003",
+            "AG-AUTH-004",
+            "AG-AUTH-005",
+            "AG-AUTH-006",
+            "AG-AUTH-007",
+            "AG-AUTH-008",
+            "AG-AUTH-011",
+            "AG-CODE-029",
+            "AG-MCP-CFG-013",
+            "AG-MCP-CFG-019"
+          ]
+        },
+        {
+          "id": "concerns/misconfiguration",
+          "title": "Misconfigurations and poor implementation",
+          "rules": [
+            "AG-MCP-CFG-001",
+            "AG-MCP-CFG-002",
+            "AG-MCP-CFG-003",
+            "AG-MCP-CFG-006",
+            "AG-MCP-CFG-011",
+            "AG-MCP-CFG-012"
+          ]
+        },
+        {
+          "id": "concerns/inconsistent-behaviors",
+          "title": "Inconsistent behaviors",
+          "rules": []
+        },
+        {
+          "id": "concerns/audit-logs",
+          "title": "Poor or missing audit logs",
+          "rules": []
+        },
+        {
+          "id": "concerns/denial-of-service",
+          "title": "Denial of service and fatigue-based techniques",
+          "rules": []
+        },
+        {
+          "id": "examples/tool-parameter-injection",
+          "title": "Tool parameter injection in open MCP agents",
+          "rules": [
+            "AG-CODE-001",
+            "AG-CODE-002",
+            "AG-CODE-003",
+            "AG-CODE-005",
+            "AG-CODE-007",
+            "AG-CODE-008"
+          ]
+        },
+        {
+          "id": "examples/tool-invocation-path-confusion",
+          "title": "Tool invocation path confusion",
+          "rules": [
+            "AG-MCP-CFG-017",
+            "AG-MCP-CFG-018",
+            "AG-MCP-META-006",
+            "AG-MCP-META-007",
+            "AG-MCP-META-008",
+            "AG-SC-025"
+          ]
+        },
+        {
+          "id": "examples/unrestricted-repository-access",
+          "title": "Unrestricted private/public repository access in GitHub-based MCP tools",
+          "rules": []
+        },
+        {
+          "id": "examples/messaging-platform-exploitation",
+          "title": "Exploitation via messaging platforms",
+          "rules": [
+            "AG-FLOW-001",
+            "AG-MCP-META-002",
+            "AG-MCP-META-003",
+            "AG-MCP-META-004",
+            "AG-MCP-META-006",
+            "AG-MCP-META-020",
+            "AG-SC-001"
+          ]
+        },
+        {
+          "id": "examples/output-poisoning",
+          "title": "Poisoning output for downstream automation",
+          "rules": [
+            "AG-FLOW-003",
+            "AG-FLOW-007",
+            "AG-LLM-002",
+            "AG-MCP-META-001",
+            "AG-MCP-META-002",
+            "AG-MCP-META-003",
+            "AG-MCP-META-005",
+            "AG-MCP-META-013",
+            "AG-MCP-META-014",
+            "AG-MCP-META-015",
+            "AG-MCP-META-019"
+          ]
+        },
+        {
+          "id": "examples/remote-code-execution",
+          "title": "Remote code execution vulnerability",
+          "rules": [
+            "AG-CODE-001",
+            "AG-CODE-003"
+          ]
+        },
+        {
+          "id": "recommendations/supported-projects",
+          "title": "Choose supported MCP projects when possible",
+          "rules": [
+            "AG-CODE-023",
+            "AG-CODE-024",
+            "AG-CODE-025",
+            "AG-CODE-027",
+            "AG-CODE-028",
+            "AG-MCP-CFG-004",
+            "AG-MCP-CFG-006",
+            "AG-POL-001",
+            "AG-POL-002",
+            "AG-SC-020",
+            "AG-SC-021",
+            "AG-SC-023",
+            "AG-SC-024",
+            "AG-SC-025"
+          ]
+        },
+        {
+          "id": "recommendations/design-for-boundaries",
+          "title": "Design for boundaries",
+          "rules": [
+            "AG-CODE-006",
+            "AG-CODE-022",
+            "AG-FLOW-001",
+            "AG-FLOW-002",
+            "AG-FLOW-005",
+            "AG-FLOW-006",
+            "AG-MCP-CFG-015",
+            "AG-MCP-META-016",
+            "AG-MCP-META-018"
+          ]
+        },
+        {
+          "id": "recommendations/validate-parameters",
+          "title": "Validate parameters",
+          "rules": [
+            "AG-CODE-001",
+            "AG-CODE-002",
+            "AG-CODE-003",
+            "AG-CODE-004",
+            "AG-CODE-005",
+            "AG-CODE-006",
+            "AG-CODE-007",
+            "AG-CODE-008",
+            "AG-MCP-META-004",
+            "AG-MCP-META-009",
+            "AG-MCP-META-010"
+          ]
+        },
+        {
+          "id": "recommendations/constrain-and-sandbox",
+          "title": "Constrain and sandbox tool execution",
+          "rules": [
+            "AG-CODE-001",
+            "AG-CODE-002",
+            "AG-CODE-003",
+            "AG-CODE-005",
+            "AG-CODE-020",
+            "AG-CODE-021",
+            "AG-CODE-026",
+            "AG-FLOW-003",
+            "AG-MCP-CFG-001",
+            "AG-MCP-CFG-002",
+            "AG-MCP-CFG-003",
+            "AG-MCP-CFG-007",
+            "AG-MCP-CFG-008",
+            "AG-MCP-CFG-009",
+            "AG-MCP-CFG-020"
+          ]
+        },
+        {
+          "id": "recommendations/sign-and-verify-messages",
+          "title": "Sign and verify MCP messages",
+          "rules": [
+            "AG-AUTH-009",
+            "AG-MCP-CFG-013"
+          ]
+        },
+        {
+          "id": "recommendations/filter-output-pipelines",
+          "title": "Filter and monitor output pipelines and chained execution",
+          "rules": [
+            "AG-FLOW-002",
+            "AG-FLOW-003",
+            "AG-FLOW-004",
+            "AG-FLOW-007",
+            "AG-MCP-META-001",
+            "AG-MCP-META-002",
+            "AG-MCP-META-013",
+            "AG-MCP-META-014",
+            "AG-MCP-META-015"
+          ]
+        },
+        {
+          "id": "recommendations/logging-and-detection",
+          "title": "Instrument for logging and detection",
+          "rules": []
+        },
+        {
+          "id": "recommendations/track-and-patch",
+          "title": "Track and patch MCP related vulnerabilities",
+          "rules": [
+            "AG-MCP-CFG-004",
+            "AG-MCP-CFG-010",
+            "AG-POL-003",
+            "AG-SC-004",
+            "AG-SC-006",
+            "AG-SC-010",
+            "AG-SC-011",
+            "AG-SC-012",
+            "AG-SC-022"
+          ]
+        },
+        {
+          "id": "recommendations/scan-for-mcp-servers",
+          "title": "Scan local network for open or vulnerable MCP servers",
+          "rules": [
+            "AG-AUTH-001",
+            "AG-AUTH-010",
+            "AG-MCP-CFG-016",
+            "AG-SC-022"
+          ]
+        }
       ],
-      "gaps": []
+      "rules_pending_mapping": [],
+      "gaps": [
+        "concerns/inconsistent-behaviors",
+        "concerns/audit-logs",
+        "concerns/denial-of-service",
+        "examples/unrestricted-repository-access",
+        "recommendations/logging-and-detection"
+      ]
     },
     {
       "framework": "cwe",
