@@ -1,5 +1,32 @@
 /* Agent Guard site — dark, warm, orange-accented. Fonts are self-hosted
    (Inter with optical sizing, JetBrains Mono; OFL) via @fontsource, imported in Base.astro. */
+
+/* Until Inter is loaded (it uses font-display: swap, so a navigation can paint
+   before it arrives), text is set in Arial (or its metric twin, Liberation Sans)
+   scaled to Inter's widths and vertical metrics, so the swap cannot move the
+   header. local() fonts are not fetched, so the CSP's font-src is unaffected.
+   size-adjust is Inter/Arial width over the header labels (500) and the
+   wordmark (650); the overrides are Inter's ascent 0.969 and descent 0.241
+   divided by it. tests/e2e/navigation.spec.mjs checks the result. */
+@font-face {
+  font-family: "Inter Fallback";
+  src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("LiberationSans");
+  font-weight: 100 549;
+  size-adjust: 106%;
+  ascent-override: 91.4%;
+  descent-override: 22.75%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Inter Fallback";
+  src: local("Arial Bold"), local("Arial-BoldMT"), local("Liberation Sans Bold"), local("LiberationSans-Bold");
+  font-weight: 550 900;
+  size-adjust: 99%;
+  ascent-override: 97.85%;
+  descent-override: 24.36%;
+  line-gap-override: 0%;
+}
+
 :root {
   --bg: #0e0d0c;
   --bg-dots: #2f2c29;
@@ -26,7 +53,7 @@
   --radius: 14px;
   --radius-lg: 24px;
   --maxw: 1360px;
-  --font: "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font: "Inter Variable", "Inter Fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-display: var(--font);
   --mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   color-scheme: dark;

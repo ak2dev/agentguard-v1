@@ -47,7 +47,9 @@ http.createServer((req, res) => {
     }
     // A Content-Type from vercel.json (e.g. speculation rules) wins over the extension.
     if (!res.getHeader("Content-Type")) res.setHeader("Content-Type", TYPES[path.extname(file)] || "application/octet-stream");
-    res.writeHead(200, { "Cache-Control": "no-cache" });
+    // vercel.json caches the hashed /assets/ files for a year; everything else revalidates.
+    if (!res.getHeader("Cache-Control")) res.setHeader("Cache-Control", "no-cache");
+    res.writeHead(200);
     res.end(data);
   });
 }).listen(port, "127.0.0.1", () => console.log(`serving ${dist} at http://127.0.0.1:${port}/ with vercel.json headers`));

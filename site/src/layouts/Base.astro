@@ -1,7 +1,8 @@
 ---
 import "@fontsource-variable/inter/opsz.css";
-// The Latin subset of Inter is preloaded so it is ready for the first frame of every page;
-// otherwise each navigation paints the nav in a fallback font and then shifts when Inter loads.
+// The Latin subset of Inter is preloaded (and cached as immutable) so it is usually ready for
+// the first frame of every page; when it is not, the metric-matched "Inter Fallback" in
+// global.css keeps the header from shifting when Inter swaps in.
 import interLatin from "@fontsource-variable/inter/files/inter-latin-opsz-normal.woff2?url";
 import "@fontsource-variable/jetbrains-mono";
 import "../styles/global.css";
