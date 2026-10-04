@@ -28,9 +28,16 @@ def now() -> dt.datetime:
     return dt.datetime.now(dt.UTC).replace(microsecond=0)
 
 
+class JobKind(StrEnum):
+    scan = "scan"            # resolve a link or package and scan it
+    response = "response"    # verify and attach a maintainer response to report ``target_key``
+
+
 class Job(BaseModel):
     id: str = Field(default_factory=new_job_id)
     input: str
+    kind: JobKind = JobKind.scan
+    target_key: str | None = None
     status: JobStatus = JobStatus.queued
     detail: str = ""
     report_key: str | None = None
@@ -53,3 +60,15 @@ class StoredReport(BaseModel):
     engine_version: str
     scanned_at: dt.datetime
     report_json: str
+
+
+class MaintainerResponse(BaseModel):
+    """A public response to a report, published by committing ``.agentguard/response.md``
+    to the scanned project's GitHub repository. Shown as plain text."""
+
+    report_key: str
+    text: str
+    repository: str          # owner/repo the file was read from
+    commit: str              # the commit it was read at
+    path: str = ".agentguard/response.md"
+    created_at: dt.datetime = Field(default_factory=now)

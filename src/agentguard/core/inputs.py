@@ -162,7 +162,7 @@ def _gist(gid: str, rev: str) -> ParsedInput:
     )
 
 
-_SERVER_ONLY = "Fetching this needs the Agent Guard Web server, which is not available yet. Download it and scan the files here, or use the CLI."
+_SERVER_ONLY = "Fetching this needs the Agent Guard Web server, which this site is not connected to. Download it and scan the files here, or use the CLI."
 
 
 def _npm(name: str, version: str | None) -> ParsedInput | Rejection:

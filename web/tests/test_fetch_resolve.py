@@ -145,11 +145,18 @@ def test_registry_name_resolves_to_its_npm_package():
     assert any("MCP Registry" in n.detail for n in r.notes)
 
 
-def test_registry_remote_only_is_explained():
+def test_registry_remote_only_goes_to_the_probe():
+    from agentguard_web.resolve import RemoteServer
+
     routes = {"https://registry.modelcontextprotocol.io/v0.1/servers/io.github.o%2Fremote/versions/latest": {
         "server": {"name": "io.github.o/remote", "remotes": [{"type": "streamable-http", "url": "https://x.example.invalid/mcp"}]},
     }}
-    with pytest.raises(ResolveError, match="remote-only"):
+    with pytest.raises(RemoteServer) as exc:
+        resolve("io.github.o/remote", routes)
+    assert exc.value.url == "https://x.example.invalid/mcp"
+    # A templated URL (needs per-user configuration) has nothing fixed to check.
+    routes[next(iter(routes))]["server"]["remotes"] = [{"type": "streamable-http", "url": "https://{tenant}.example.invalid/mcp"}]
+    with pytest.raises(ResolveError, match="templated"):
         resolve("io.github.o/remote", routes)
 
 
@@ -160,6 +167,9 @@ def test_gist_inline_files():
     assert r.ref.kind.value == "gist" and r.ref.resolved == SHA and r.inline_files == {"SKILL.md": b"---\nname: g\n---\n"}
 
 
-def test_remote_mcp_not_yet():
-    with pytest.raises(ResolveError, match="not available"):
-        resolve("https://mcp.example.invalid/mcp", {})
+def test_remote_mcp_url_goes_to_the_probe():
+    from agentguard_web.resolve import RemoteServer
+
+    with pytest.raises(RemoteServer) as exc:
+        resolve("https://mcp.example.invalid/mcp?token=secret", {})
+    assert exc.value.url == "https://mcp.example.invalid/mcp"   # the query (often a credential) is dropped
