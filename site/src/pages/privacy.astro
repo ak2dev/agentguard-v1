@@ -7,7 +7,23 @@ const scanEnabled = import.meta.env.PUBLIC_FEATURE_SCAN === "1";
   <h1>Privacy</h1>
   <p>This website is static. It sets no cookies, runs no analytics, and loads nothing from third parties. The hosting provider keeps standard access logs under its own policy.</p>
   {scanEnabled && (
-    <p>The <a href={`${base}/scan/`}>web scanner</a> runs on your device. Pasted text and dropped files are never uploaded. When you scan a GitHub link, your browser fetches the files directly from GitHub (<code>api.github.com</code>, <code>raw.githubusercontent.com</code>, <code>gist.githubusercontent.com</code>) without cookies or a referrer; GitHub's own privacy policy applies to those requests. Nothing you scan is sent to Agent Guard. <a href={`${base}/docs/web-scanner/`}>Details.</a></p>
+    <>
+      <h2>Web scanner</h2>
+      <p>Pasted text and dropped files are scanned on your device and are never uploaded. <a href={`${base}/docs/web-scanner/`}>Details.</a></p>
+      <p>When the site is connected to the Agent Guard Web server, a link you submit is sent to that server, which fetches the source and scans it. The server keeps:</p>
+      <ul>
+        <li>the report (findings with redacted evidence snippets), for a limited period (90 days by default); the fetched source code is deleted as soon as the scan finishes;</li>
+        <li>maintainer responses attached to reports, until the report is deleted or the maintainer removes them;</li>
+        <li>the status of each job, for 24 hours;</li>
+        <li>rate-limit counters keyed by a salted hash of your network address, never the address itself, which expire within a day;</li>
+        <li>standard operational logs. There are no accounts and no analytics.</li>
+      </ul>
+      <p>Before a request is sent, your browser does a short computation as a bot check. It runs on your device; no third-party service is involved and nothing about you is sent except the answer.</p>
+      <p>If you submit a remote MCP server URL, the server contacts that URL (and the OAuth metadata documents it points to) as an unauthenticated, read-only client. The query string of the URL is discarded before anything is sent or stored.</p>
+      <p>If the server is unavailable, GitHub links are scanned in your browser instead: your browser fetches the files directly from GitHub (<code>api.github.com</code>, <code>raw.githubusercontent.com</code>, <code>gist.githubusercontent.com</code>) without cookies or a referrer, and GitHub's own privacy policy applies to those requests.</p>
+      <p>See also the <a href={`${base}/terms/`}>terms of use</a>.</p>
+    </>
   )}
+  <h2>Command-line tool</h2>
   <p>The Agent Guard CLI sends no telemetry. It uses the network only when you pass an opt-in flag, and every report lists which network features were used and which hosts were contacted.</p>
 </Base>

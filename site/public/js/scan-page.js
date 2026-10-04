@@ -63,6 +63,7 @@ function main(root) {
   }
 
   $("cancel").addEventListener("click", () => {
+    if (powWorker) { powWorker.terminate(); powWorker = null; }
     if (events) { events.close(); events = null; busy = false; status.hidden = true; }
     if (worker) worker.terminate();
     worker = null;
@@ -132,47 +133,76 @@ function main(root) {
   // text and dropped files never do. Without a server, GitHub links scan in the browser.
   const KEY = /^[0-9a-f]{32}$/;
   let serverCheck = null;
-  function serverAvailable() {
+  // The server's health document (engine, current rule pack, proof-of-work difficulty), or null.
+  function serverInfo() {
     serverCheck ??= fetch(`${siteBase}/api/health`, { cache: "no-store", credentials: "omit" })
-      .then((r) => (r.ok ? r.json() : null)).then((j) => Boolean(j && j.ok)).catch(() => false);
+      .then((r) => (r.ok ? r.json() : null)).then((j) => (j && j.ok ? j : null)).catch(() => null);
     return serverCheck;
   }
   let events = null;
+  let powWorker = null;
 
-  async function loadServerReport(key, label, detail) {
-    const r = await fetch(`${siteBase}/api/reports/${key}`, { credentials: "omit" });
-    if (!r.ok) throw { message: r.status === 404 ? "That report does not exist or has expired." : `The server returned HTTP ${r.status}.` };
-    const u = new URL(location.href);
-    u.searchParams.delete("url");
-    u.searchParams.set("report", key);
-    history.replaceState(null, "", u);
-    renderReport(await r.json(), { serverKey: key, cached: detail?.cached }, label);
+  // Bot check for requests that start work on the server: a short computation on this
+  // device (see pow.js). No third party is involved and nothing is sent except the answer.
+  async function proofOfWork() {
+    const r = await fetch(`${siteBase}/api/challenge`, { cache: "no-store", credentials: "omit" });
+    if (!r.ok) throw { message: `The server returned HTTP ${r.status}.` };
+    const ch = await r.json();
+    if (!ch.difficulty) return null;
+    statusText.textContent = "Checking this is a browser, not a bot (a moment of computation on your device)…";
+    return new Promise((resolve, reject) => {
+      powWorker = new Worker(`${siteBase}/js/pow-worker.js`, { type: "module", name: "agentguard-bot-check" });
+      powWorker.onmessage = (ev) => {
+        powWorker.terminate();
+        powWorker = null;
+        if (ev.data.nonce) resolve({ challenge: ch.challenge, nonce: ev.data.nonce });
+        else reject({ message: "The bot check failed. Reload the page and try again." });
+      };
+      powWorker.onerror = (ev) => {
+        ev.preventDefault();
+        powWorker?.terminate();
+        powWorker = null;
+        reject({ message: "The bot check could not run in this browser." });
+      };
+      powWorker.postMessage({ challenge: ch.challenge, difficulty: ch.difficulty });
+    });
   }
 
-  async function runServer(input) {
+  async function postJob(path, body) {
+    const pow = await proofOfWork();
+    statusText.textContent = "Sending to Agent Guard Web…";
+    const r = await fetch(`${siteBase}${path}`, {
+      method: "POST", credentials: "omit", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...body, pow }),
+    });
+    const job = await r.json().catch(() => ({}));
+    if (!r.ok) throw { message: job.error || `The server returned HTTP ${r.status}.`, supported: job.supported };
+    return job;
+  }
+
+  function waitForJob(job) {
+    return new Promise((resolve, reject) => {
+      events = new EventSource(`${siteBase}/api/scans/${job.id}/events`);
+      events.onmessage = (ev) => {
+        const j = JSON.parse(ev.data);
+        if (j.detail) statusText.textContent = j.detail;
+        if (j.status === "done" || j.status === "error") { events.close(); resolve(j); }
+      };
+      events.onerror = () => { events.close(); reject({ message: "Lost contact with the server." }); };
+    });
+  }
+
+  // Runs one server job (scan, rescan or response check) and hands the finished job to onDone.
+  async function serverTask(path, body, onDone, { keepResult = false } = {}) {
     if (busy) return;
     busy = true;
     errorBox.hidden = true;
-    result.hidden = true;
+    if (!keepResult) result.hidden = true;
     status.hidden = false;
-    statusText.textContent = "Sending to Agent Guard Web…";
+    statusText.textContent = "Contacting Agent Guard Web…";
     try {
-      const r = await fetch(`${siteBase}/api/scans`, {
-        method: "POST", credentials: "omit", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ input }),
-      });
-      const job = await r.json().catch(() => ({}));
-      if (!r.ok) throw { message: job.error || `The server returned HTTP ${r.status}.`, supported: job.supported };
-      const final = await new Promise((resolve, reject) => {
-        events = new EventSource(`${siteBase}/api/scans/${job.id}/events`);
-        events.onmessage = (ev) => {
-          const j = JSON.parse(ev.data);
-          if (j.detail) statusText.textContent = j.detail;
-          if (j.status === "done" || j.status === "error") { events.close(); resolve(j); }
-        };
-        events.onerror = () => { events.close(); reject({ message: "Lost contact with the server." }); };
-      });
+      const final = await waitForJob(await postJob(path, body));
       if (final.status === "error") throw { message: final.error, supported: final.supported };
-      await loadServerReport(final.report_key, input, final);
+      await onDone(final);
     } catch (err) {
       showError(err);
     } finally {
@@ -180,6 +210,25 @@ function main(root) {
       busy = false;
       status.hidden = true;
     }
+  }
+
+  async function loadServerReport(key, label, detail) {
+    const opts = { credentials: "omit" };
+    const [r, resp, server] = await Promise.all([
+      fetch(`${siteBase}/api/reports/${key}`, opts),
+      fetch(`${siteBase}/api/reports/${key}/response`, opts).then((x) => (x.ok ? x.json() : {})).catch(() => ({})),
+      serverInfo(),
+    ]);
+    if (!r.ok) throw { message: r.status === 404 ? "That report does not exist or has expired." : `The server returned HTTP ${r.status}.` };
+    const u = new URL(location.href);
+    u.searchParams.delete("url");
+    u.searchParams.set("report", key);
+    history.replaceState(null, "", u);
+    renderReport(await r.json(), { serverKey: key, cached: detail?.cached, notice: detail?.notice, response: resp.response, server }, label);
+  }
+
+  function runServer(input) {
+    return serverTask("/api/scans", { input }, (final) => loadServerReport(final.report_key, input, final));
   }
 
   // Link
@@ -194,7 +243,7 @@ function main(root) {
     u.searchParams.set("url", url);
     u.searchParams.delete("report");
     history.replaceState(null, "", u);
-    serverAvailable().then((ok) => (ok ? runServer(url) : run({ type: "scan-link", url }, url)));
+    serverInfo().then((info) => (info ? runServer(url) : run({ type: "scan-link", url }, url)));
   });
   const permalink = new URLSearchParams(location.search).get("report");
   if (permalink && KEY.test(permalink)) {
@@ -324,6 +373,12 @@ function main(root) {
       return el("p", {}, `Scanned ${t.kind} package `, el("a", { href: url }, `${t.locator} ${t.resolved}`),
         t.integrity ? [" (", el("code", {}, String(t.integrity).slice(0, 19) + "…"), ")"] : null, ".");
     }
+    if (t.kind === "remote_mcp") {
+      return el("p", {}, "Checked the remote MCP server ", el("code", {}, t.locator),
+        " as an unauthenticated, read-only client (discovery and list methods, OAuth metadata; never tools/call). Metadata fingerprint ",
+        el("code", {}, String(t.resolved || "").replace(/^sha256:/, "").slice(0, 12)),
+        ". A remote server can change its tools at any time; this report shows what it returned when checked.");
+    }
     return el("p", {}, "Scanned ", meta.name ? el("code", {}, meta.name) : label, ".");
   }
 
@@ -355,15 +410,18 @@ function main(root) {
       const copy = el("button", { type: "button", class: "btn secondary small" }, "Copy link");
       copy.addEventListener("click", () => navigator.clipboard?.writeText(link.href).then(() => { copy.textContent = "Copied"; }));
       parts.push(el("p", { class: "small" }, "Permalink (unlisted; anyone with the link can view it): ", el("a", { href: link.href }, link.href), " ", copy));
+      if (meta.notice) parts.push(el("p", { class: "notice" }, meta.notice));
+      if (meta.response) parts.push(renderResponse(meta.response));
     }
 
     parts.push(renderDownloads(meta));
+    if (meta.serverKey) parts.push(renderServerActions(report, meta, label));
 
     if (report.flows?.length) {
       const names = Object.fromEntries((report.inventory || []).map((c) => [c.id, c.name]));
       parts.push(el("h3", {}, "Dangerous combinations"),
         el("ul", { class: "flows" }, ...report.flows.map((fl) => el("li", {},
-          el("p", {}, fl.nodes.map((n) => names[n] || n).filter((n, i, a) => i === 0 || n !== a[i - 1]).join(" → ")),
+          flowDiagram(fl, names),
           fl.narrative ? el("p", { class: "muted" }, fl.narrative) : null))));
     }
 
@@ -377,6 +435,138 @@ function main(root) {
     result.replaceChildren(...parts);
     result.hidden = false;
     result.querySelector("#result-title").focus();
+  }
+
+  // -- toxic-flow diagram ------------------------------------------------------------------
+  const ROLE = {
+    ingests_untrusted_content: "brings in untrusted content", reads_private_data: "reads private data",
+    external_egress: "can send data out", destructive: "can delete or change things", code_exec: "can run code",
+    persistence: "can persist changes",
+  };
+  const FIRST = ["ingests_untrusted_content"], LAST = ["external_egress", "destructive", "code_exec", "persistence"];
+
+  function stepRole(labels, i, n) {
+    const prefer = i === 0 ? FIRST : i === n - 1 ? LAST : ["reads_private_data"];
+    const hit = prefer.find((l) => labels.includes(l)) || labels[0];
+    return ROLE[hit] || hit || "";
+  }
+
+  // One box per step, arrows labelled with the agent session that connects them. Text only
+  // via textContent (names come from scanned material). Stacks vertically on narrow screens.
+  function flowDiagram(fl, names) {
+    const NS = "http://www.w3.org/2000/svg";
+    const steps = fl.nodes.map((id, i) => ({ id, name: names[id] || id, role: stepRole(fl.labels?.[id] || [], i, fl.nodes.length) }));
+    const agent = String((fl.edges?.[0]?.[2]) || "").replace(/^agent:/, "") || "agent";
+    const vertical = root.clientWidth < 620;   // the result box is hidden (0 px) while it is rebuilt
+    const BW = 200, BH = 64, GAP = vertical ? 46 : 74;
+    const n = steps.length;
+    const w = vertical ? BW : n * BW + (n - 1) * GAP;
+    const h = vertical ? n * BH + (n - 1) * GAP : BH;
+    const svg = document.createElementNS(NS, "svg");
+    svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+    svg.setAttribute("class", "flow-graph" + (vertical ? " vertical" : ""));
+    svg.setAttribute("role", "img");
+    svg.setAttribute("aria-label", steps.map((s) => `${s.name} (${s.role})`).join(", then via the agent, "));
+    const node = (tag, attrs, text) => {
+      const e = document.createElementNS(NS, tag);
+      for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, String(v));
+      if (text !== undefined) e.textContent = text;
+      return e;
+    };
+    const defs = node("defs", {});
+    const marker = node("marker", { id: "flow-arrow", viewBox: "0 0 10 10", refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: "auto-start-reverse" });
+    marker.append(node("path", { d: "M0,0 L10,5 L0,10 z", class: "flow-arrowhead" }));
+    defs.append(marker);
+    svg.append(defs);
+    const clip = (t, max) => (t.length > max ? t.slice(0, max - 1) + "…" : t);
+    steps.forEach((s, i) => {
+      const x = vertical ? 0 : i * (BW + GAP), y = vertical ? i * (BH + GAP) : 0;
+      const cls = i === 0 ? "source" : i === n - 1 ? "sink" : "middle";
+      svg.append(node("rect", { x: x + 1, y: y + 1, width: BW - 2, height: BH - 2, rx: 10, class: `flow-box ${cls}` }));
+      svg.append(node("text", { x: x + BW / 2, y: y + 27, class: "flow-name" }, clip(s.name, 24)));
+      svg.append(node("text", { x: x + BW / 2, y: y + 47, class: "flow-role" }, clip(s.role, 30)));
+      if (i < n - 1) {
+        const [x1, y1, x2, y2] = vertical ? [BW / 2, y + BH, BW / 2, y + BH + GAP] : [x + BW, BH / 2, x + BW + GAP, BH / 2];
+        svg.append(node("line", { x1, y1, x2: vertical ? x2 : x2 - 2, y2: vertical ? y2 - 2 : y2, class: "flow-edge", "marker-end": "url(#flow-arrow)" }));
+        const lx = vertical ? BW / 2 + 8 : (x1 + x2) / 2, ly = vertical ? (y1 + y2) / 2 + 4 : BH / 2 - 8;
+        svg.append(node("text", { x: lx, y: ly, class: "flow-agent" + (vertical ? " side" : "") }, clip(agent, vertical ? 26 : 12)));
+      }
+    });
+    return el("div", { class: "flow-wrap" }, svg);
+  }
+
+  // -- Agent Guard Web: rescans, badge, maintainer responses ---------------------------------------
+  function unpinnedLink(t) {
+    if (t.kind === "github") {
+      const [owner, repo, ...sub] = t.locator.split("/");
+      const base = `https://github.com/${owner}/${repo}`;
+      return sub.length ? `${base}/tree/HEAD/${sub.join("/")}` : base;
+    }
+    if (t.kind === "npm") return `npm:${t.locator}`;
+    if (t.kind === "pypi") return `pypi:${t.locator}`;
+    return null;
+  }
+
+  function renderServerActions(report, meta, label) {
+    const key = meta.serverKey;
+    const t = report.target || {};
+    const box = el("div", { class: "server-actions" });
+    const current = meta.server?.rule_pack;
+    if (t.kind === "remote_mcp") {
+      const again = el("button", { type: "button", class: "btn secondary small" }, "Check the server again");
+      again.addEventListener("click", () => serverTask(`/api/reports/${key}/rescan`, {}, (final) => loadServerReport(final.report_key, label, final)));
+      box.append(el("p", {}, again, el("span", { class: "muted small" }, " A recent check is reused for a few minutes.")));
+    } else if (current && current.digest !== report.rule_pack?.digest) {
+      const rescan = el("button", { type: "button", class: "btn small" }, "Rescan this version with the current rules");
+      rescan.addEventListener("click", () => serverTask(`/api/reports/${key}/rescan`, {}, (final) => loadServerReport(final.report_key, label, final)));
+      box.append(el("p", {}, `This report used rule pack v${report.rule_pack?.version}; the server now has v${current.version}. `, rescan));
+    } else if (current) {
+      box.append(el("p", { class: "muted small" }, "This report uses the server's current rules."));
+    }
+    const latest = unpinnedLink(t);
+    if (latest) {
+      const href = new URL(`${siteBase}/scan/`, location.href);
+      href.searchParams.set("url", latest);
+      box.append(el("p", { class: "small" }, "This report is pinned to one exact version. ", el("a", { href: href.href }, "Scan the latest version"), "."));
+    }
+    box.append(renderBadge(key), renderRespondHelp(report, key, label));
+    return box;
+  }
+
+  function renderBadge(key) {
+    const img = new URL(`${siteBase}/api/reports/${key}/badge.svg`, location.href).href;
+    const page = new URL(`${siteBase}/scan/`, location.href);
+    page.searchParams.set("report", key);
+    const md = `[![Agent Guard](${img})](${page.href})`;
+    const copy = el("button", { type: "button", class: "btn secondary small" }, "Copy Markdown");
+    copy.addEventListener("click", () => navigator.clipboard?.writeText(md).then(() => { copy.textContent = "Copied"; }));
+    return el("details", { class: "coverage" }, el("summary", {}, "README badge"),
+      el("p", {}, el("img", { src: img, alt: "Agent Guard badge: finding counts for this report", height: "20" })),
+      el("p", { class: "small muted" }, "The badge states the counts in this report for this exact version. It does not update when the project changes and never says \u201csafe\u201d."),
+      el("pre", {}, el("code", {}, md)), copy);
+  }
+
+  function renderResponse(resp) {
+    const file = `https://github.com/${resp.repository}/blob/${resp.commit}/${resp.path}`;
+    return el("section", { class: "maintainer-response", "aria-labelledby": "maintainer-response-title" },
+      el("h3", { id: "maintainer-response-title" }, "Maintainer response"),
+      el("p", { class: "response-text" }, resp.text),
+      el("p", { class: "muted small" }, "Published by committing ", el("a", { href: file }, resp.path), ` to github.com/${resp.repository} (commit `,
+        el("code", {}, resp.commit.slice(0, 12)), "). Agent Guard checks where it came from, not what it says."));
+  }
+
+  function renderRespondHelp(report, key, label) {
+    const kind = report.target?.kind;
+    if (!["github", "npm", "pypi"].includes(kind)) return el("span", {});
+    const check = el("button", { type: "button", class: "btn secondary small" }, "Check the repository");
+    check.addEventListener("click", () => serverTask(`/api/reports/${key}/response`, {}, (final) =>
+      loadServerReport(key, label, { notice: final.detail }), { keepResult: true }));
+    const where = kind === "github" ? "the scanned repository" : `the GitHub repository named in the ${kind === "npm" ? "npm" : "PyPI"} package's metadata`;
+    return el("details", { class: "coverage" }, el("summary", {}, "Maintainer? Respond to this report"),
+      el("p", {}, `Commit a file named .agentguard/response.md to the default branch of ${where}. It must contain this line, and your response as plain text:`),
+      el("pre", {}, el("code", {}, `report: ${key}\n\nYour response (up to 4,000 characters).`)),
+      el("p", {}, "Then ask the server to read it. Anyone can view the response next to the report, with a link to the commit. To remove it, leave only the report line and check again."),
+      check);
   }
 
   function renderFinding(f, target) {

@@ -26,6 +26,7 @@ def build_pipeline(settings: Settings, queue: JobQueue, store: ReportStore) -> P
         fetcher=Fetcher(github_token=settings.github_token, max_archive_bytes=settings.max_archive_bytes,
                         extra_hosts=settings.extra_allowed_hosts),
         timeout_s=settings.job_timeout_s,
+        remote_cache_s=settings.remote_cache_s,
     )
 
 

@@ -16,6 +16,7 @@ x-agw-env: &agw-env
   AGW_SCANNER_IMAGE: agentguard-scanner:local
   AGW_ALLOWED_ORIGINS: http://127.0.0.1:4321,http://localhost:4321,http://127.0.0.1:4322,http://localhost:4322
   AGW_RATE_SALT: local-dev-salt
+  AGW_SECRET: local-development-only-secret-not-for-production
 
 services:
   scanner:
