@@ -183,6 +183,7 @@ def scan_cmd(
             tree = discover(Path.cwd(), include_user=not no_user, limits=options.limits).tree
         else:
             tree = load_path(path, options.limits, extra_excludes=tuple(pconf.exclude) if pconf else ())
+        tree = _without_lockfile(tree, path, lock_path)
         if options.network.enabled():
             from ..net.collect import collect
 
@@ -331,12 +332,36 @@ def rules_export(
     _emit(json.dumps(export_rules(RulePack.default()), indent=2, ensure_ascii=False) + "\n", output)
 
 
-def _load_target(path: Optional[Path], no_user: bool, options: ScanOptions):
+def _load_target(path: Optional[Path], no_user: bool, options: ScanOptions, lock_path: Optional[Path] = None):
     if path is None:
-        return discover(Path.cwd(), include_user=not no_user, limits=options.limits).tree
-    if not path.exists():
-        _fail(f"path not found: {path}")
-    return load_path(path, options.limits)
+        tree = discover(Path.cwd(), include_user=not no_user, limits=options.limits).tree
+    else:
+        if not path.exists():
+            _fail(f"path not found: {path}")
+        tree = load_path(path, options.limits)
+    return _without_lockfile(tree, path, lock_path)
+
+
+def _without_lockfile(tree, target: Optional[Path], lock_path: Optional[Path]):
+    """Drop the lockfile this run reads or writes from the scanned tree.
+
+    It is Agent Guard's own state, not component content: hashing it would make
+    `lock` → `verify` inside a skill folder report drift on the lockfile itself.
+    Only the lockfile in use is dropped, so a target cannot hide a file from the
+    scan by naming it agentguard.lock."""
+    if lock_path is None:
+        return tree
+    base = (target or Path.cwd()).resolve()
+    if base.is_file():
+        base = base.parent
+    try:
+        rel = lock_path.resolve().relative_to(base).as_posix()
+    except ValueError:
+        return tree
+    for key in (rel, f"./{rel}"):  # discovery prefixes a skill at the project root with "."
+        tree.files.pop(key, None)
+        tree.hints.pop(key, None)
+    return tree
 
 
 @app.command("lock")
@@ -349,7 +374,7 @@ def lock_cmd(
     from ..core.lock import build_lock, dump_lock
 
     options = ScanOptions()
-    report = scan(_load_target(path, no_user, options), options)
+    report = scan(_load_target(path, no_user, options, output), options)
     lock = build_lock(report)
     _emit(dump_lock(lock), output)
     _console(stderr=True).print(f"Locked {len(lock.entries)} components → {escape(str(output))}")
@@ -371,7 +396,7 @@ def verify_cmd(
         _fail(f"lockfile not found: {lock} (run `agentguard lock` first)")
     lockfile = Lockfile.model_validate_json(lock.read_text(encoding="utf-8"))
     options = ScanOptions(lock=lockfile, fail_on=Severity(fail_on.value))
-    report = scan(_load_target(path, no_user, options), options)
+    report = scan(_load_target(path, no_user, options, lock), options)
     report.findings = [f for f in report.findings if f.rule_id.startswith("AG-SC-00")]
     report.summary = (f"{len(report.findings)} drift finding(s) against {lock}." if report.findings
                       else f"No drift from {lock} ({len(lockfile.entries)} locked components).")

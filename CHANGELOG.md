@@ -26,3 +26,8 @@ First public version.
 - `code.ts` (`agentguard[code]`): tree-sitter taint for JavaScript/TypeScript tool handlers (nested destructuring, reassignment, `for … of`, handlers passed by name, `promisify` and import aliases of `child_process`, `fs` and `execa`) and for shell scripts (`$1`, `$@` and `read` into `eval`, `sh -c` and `source`). It adds findings to AG-CODE-001..008 and merges with the pattern analyzer's on the same line.
 - `yara` (`agentguard[yara]`): rules with `match: {type: yara}` are compiled from `rules/yara/*.yar` (includes disabled) and matched against raw file bytes. New rules AG-SKL-BND-004 (bundled binary combining credential-store paths with an exfiltration channel) and AG-SKL-BND-005 (download-and-execute command embedded in a binary).
 - Without the extra, each analyzer is reported as skipped and its rules are not counted. Fixtures declare `requires:`; CI installs both extras (YARA on Python 3.12, which has wheels) and fails instead of skipping. Benchmark results with both installed are identical item by item.
+
+### Fixes
+
+- `agentguard lock` then `agentguard verify` inside a skill folder no longer reports the new `agentguard.lock` as drift (AG-SC-002, exit 1). The lockfile a command reads or writes is left out of the scan; any other file named `agentguard.lock` is still scanned.
+- The Website workflow builds and checks the site as Vercel deploys it (`PUBLIC_FEATURE_SCAN=1`, root base path) and no longer tries to deploy to GitHub Pages, which failed on every push to `main`.
