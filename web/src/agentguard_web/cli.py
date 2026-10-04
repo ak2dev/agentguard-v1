@@ -1,4 +1,4 @@
-"""agentguard-web api | dispatcher | prune | check-sandbox"""
+"""agentguard-web api | dispatcher | dev | prune | check-sandbox"""
 
 from __future__ import annotations
 
@@ -42,6 +42,33 @@ def check_sandbox(settings: Settings) -> int:
     return 0 if proc.returncode == 0 and out.endswith("NO-EGRESS") else 1
 
 
+def run_dev(settings: Settings, store, host: str, port: int) -> int:  # noqa: ANN001
+    """One process: the API plus a dispatcher thread sharing an in-memory queue."""
+    import threading
+
+    import uvicorn
+
+    from .api import create_app
+    from .dispatcher import run
+    from .queue import MemoryQueue
+
+    if settings.mode == "prod":
+        print("`dev` is refused in production (AGW_MODE=prod)", file=sys.stderr)
+        return 2
+    if settings.sandbox == "inprocess":
+        logging.getLogger("agentguard_web").warning("AGW_SANDBOX=inprocess: scans run WITHOUT isolation (development only)")
+    queue = MemoryQueue()
+    stop = threading.Event()
+    worker = threading.Thread(target=run, args=(settings, queue, store, stop), name="agw-dispatcher", daemon=True)
+    worker.start()
+    app = create_app(settings, queue=queue, store=store, limiter=_limiter(settings))
+    try:
+        uvicorn.run(app, host=host, port=port, server_header=False)
+    finally:
+        stop.set()
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="agentguard-web")
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -49,6 +76,9 @@ def main(argv: list[str] | None = None) -> int:
     api.add_argument("--host", default="127.0.0.1")
     api.add_argument("--port", type=int, default=8000)
     sub.add_parser("dispatcher", help="resolve, fetch and scan queued jobs")
+    dev = sub.add_parser("dev", help="API and dispatcher in one process with an in-memory queue (development only)")
+    dev.add_argument("--host", default="127.0.0.1")
+    dev.add_argument("--port", type=int, default=8000)
     sub.add_parser("prune", help="delete reports older than AGW_RETENTION_DAYS")
     sub.add_parser("check-sandbox", help="verify the scanner sandbox has no network egress")
     args = ap.parse_args(argv)
@@ -62,6 +92,8 @@ def main(argv: list[str] | None = None) -> int:
         n = store.prune(dt.datetime.now(dt.UTC) - dt.timedelta(days=settings.retention_days))
         print(f"pruned {n} report(s) older than {settings.retention_days} days")
         return 0
+    if args.cmd == "dev":
+        return run_dev(settings, store, args.host, args.port)
     queue = make_queue(settings.queue)
     if args.cmd == "api":
         import uvicorn

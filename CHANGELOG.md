@@ -26,6 +26,16 @@ First public version.
 - NSA AISC CSI "Model Context Protocol (MCP): Security Design Considerations for AI-Driven Automation" (U/OO/6030316-26, May 2026) mapped for every rule. The CSI does not number its sections, so rules map to its own headings: 8 security concerns, 6 real-world examples, 9 recommendations. 98 rules map to at least one; skill and scanner-internal rules map to none (the CSI covers MCP only). Uncovered CSI items (inconsistent behaviors, audit logs, denial of service, unrestricted repository access, logging and detection) show as gaps on the coverage page.
 - Client config paths re-checked against vendor documentation (`docs/sources.md`). Fixed: Zed's user settings are `~/.config/zed/settings.json` (macOS, Linux) and `%APPDATA%\Zed\settings.json` (Windows); discovery used Zed's data directories. Added: Claude Code managed `CLAUDE.md`, `CLAUDE.local.md`, `.claude/CLAUDE.md` and `rules/`; VS Code profile folders; Copilot `~/.copilot/mcp-config.json` and instructions; Codex `.agents/skills`, `~/.agents/skills`, `/etc/codex/skills`, `AGENTS.override.md` and `CODEX_HOME`; Cline CLI `~/.cline/mcp.json`; OpenClaw state-dir overrides. Four paths the vendors do not document stay unverified, and `agentguard discover` now says why.
 
+### Agent Guard Web: Milestone 2 completed
+
+- Remote MCP server URLs on the server: the dispatcher probes them read-only (discovery or initialize, the `*/list` methods, OAuth metadata; never `tools/call`, no credentials, query string dropped) through the SSRF-hardened client with a per-job request and time budget, and the recorded metadata is scanned in the sandbox. Reports are keyed by a fingerprint of the metadata, so changed tools give a new report and a drift diff. MCP Registry entries that only list a remote are probed too.
+- Rescan a report's exact commit or version with the server's current rules; "scan the latest version" link.
+- Maintainer responses: commit `.agentguard/response.md` naming the report to the project's GitHub repository (for npm/PyPI, the repository in the registry metadata) and ask the server to read it; shown as plain text with a link to the commit.
+- README badges with factual counts at one version (`0 high · a1b2c3d`), never "safe".
+- Bot protection: a self-hosted proof-of-work challenge on every request that starts work (HMAC-signed, single-use, solved in a Web Worker); `AGW_SECRET` and `AGW_POW_DIFFICULTY` are required in production.
+- The report page draws each toxic flow as a diagram (source → reader → sink through the agent session).
+- Terms page; privacy page covers the server; `agentguard-web dev` runs the API and dispatcher in one process for local development.
+
 ### Optional native analyzers
 
 - `code.ts` (`agentguard[code]`): tree-sitter taint for JavaScript/TypeScript tool handlers (nested destructuring, reassignment, `for … of`, handlers passed by name, `promisify` and import aliases of `child_process`, `fs` and `execa`) and for shell scripts (`$1`, `$@` and `read` into `eval`, `sh -c` and `source`). It adds findings to AG-CODE-001..008 and merges with the pattern analyzer's on the same line.

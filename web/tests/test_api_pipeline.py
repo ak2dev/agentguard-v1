@@ -21,7 +21,7 @@ from agentguard_web.store import MemoryStore, SqliteStore
 
 @pytest.fixture()
 def env():
-    settings = Settings(mode="dev", store="memory", queue="memory", sandbox="inprocess", queue_cap=3)
+    settings = Settings(mode="dev", store="memory", queue="memory", sandbox="inprocess", queue_cap=3, pow_difficulty=0)
     queue, store = MemoryQueue(), MemoryStore()
     limiter = MemoryRateLimiter(per_minute=5, per_day=100)
     client = TestClient(create_app(settings, queue=queue, store=store, limiter=limiter))
@@ -75,11 +75,6 @@ def test_bad_input_lists_supported(env):
     client = env[0]
     r = client.post("/api/scans", json={"input": "not a link"})
     assert r.status_code == 400 and len(r.json()["supported"]) >= 5
-
-
-def test_remote_mcp_not_yet(env):
-    r = env[0].post("/api/scans", json={"input": "https://mcp.example.invalid/mcp"})
-    assert r.status_code == 422
 
 
 def test_rate_limit_and_queue_cap(env):

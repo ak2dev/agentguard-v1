@@ -334,7 +334,23 @@ footer.site { border-top: 1px dashed var(--line); padding: 40px 0 48px; color: v
 .finding-body { padding: 0 16px 14px; }
 .finding-body h4 { margin: 14px 0 6px; font-size: 1rem; }
 .evidence pre { max-height: 240px; white-space: pre-wrap; overflow-wrap: anywhere; }
-.flows li { margin-bottom: 8px; }
+.flows { list-style: none; padding: 0; }
+.flows li { margin-bottom: 18px; }
+.flow-wrap { margin: 8px 0; }
+.flow-graph { display: block; width: 100%; max-width: 860px; height: auto; }
+.flow-graph.vertical { max-width: 300px; }
+.flow-box { fill: var(--surface-2); stroke: var(--line-2); stroke-width: 1.5; }
+.flow-box.source { stroke: var(--med); } .flow-box.middle { stroke: var(--high); } .flow-box.sink { stroke: var(--crit); }
+.flow-name { fill: var(--fg); font: 600 14px var(--font); text-anchor: middle; }
+.flow-role { fill: var(--muted); font: 12px var(--font); text-anchor: middle; }
+.flow-agent { fill: var(--muted); font: 11px var(--mono); text-anchor: middle; }
+.flow-agent.side { text-anchor: start; }
+.flow-edge { stroke: var(--fg-2); stroke-width: 1.5; }
+.flow-arrowhead { fill: var(--fg-2); }
+.server-actions { margin-top: 12px; }
+.notice { border-left: 3px solid var(--accent); padding: 6px 12px; background: var(--surface); border-radius: 6px; }
+.maintainer-response { border: 1px solid var(--line-2); border-radius: var(--radius); background: var(--surface); padding: 4px 16px 8px; margin: 14px 0; }
+.response-text { white-space: pre-wrap; overflow-wrap: anywhere; }
 .coverage { margin-top: 24px; }
 .coverage summary { cursor: pointer; font-weight: 700; }
 .coverage li { overflow-wrap: anywhere; }

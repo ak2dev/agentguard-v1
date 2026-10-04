@@ -1,0 +1,35 @@
+---
+import Base from "../layouts/Base.astro";
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+---
+<Base title="Terms" description="Terms of use for the Agent Guard website, web scanner and Agent Guard Web server.">
+  <h1>Terms of use</h1>
+  <p class="lead">Plain-language terms for this website, the in-browser scanner and the Agent Guard Web server. The command-line tool and its source code are covered by their Apache-2.0 license.</p>
+
+  <h2>What the service does</h2>
+  <p>Agent Guard reports security findings about agent skills, instruction files, MCP configurations and MCP servers. Pasted text and dropped files are scanned on your device. Links you submit are fetched by the Agent Guard Web server from GitHub, npm, PyPI or the MCP Registry, pinned to an exact version and scanned in an isolated sandbox. A remote MCP server URL is checked as an unauthenticated, read-only client.</p>
+
+  <h2>Findings, not verdicts</h2>
+  <p>A report lists what the rules matched, with evidence, for one exact version and one rule pack. It is not a verdict about a project or its authors, and a report with no findings does not mean something is safe. Rules miss things and sometimes flag harmless content. The service is provided as is, without warranty of any kind; decide what to install on your own judgment.</p>
+
+  <h2>Acceptable use</h2>
+  <ul>
+    <li>Submit only public sources. Do not submit links you are not allowed to access.</li>
+    <li>Submit a remote MCP server URL only for a server that is meant to be reachable by public clients. The server sends it the same discovery and list requests any MCP client sends (listing tools, prompts and resources, and reading its OAuth metadata documents). It never calls a tool and never sends credentials.</li>
+    <li>Do not try to get around the rate limits or the bot check, overload the service, or use it to attack anyone, including the projects and servers you submit.</li>
+    <li>Do not use reports to misrepresent a project: quote findings as findings, with the version and rule pack they apply to.</li>
+  </ul>
+  <p>We may refuse or remove requests that break these terms.</p>
+
+  <h2>Reports and permalinks</h2>
+  <p>Each server report has an unlisted permalink. There is no public index, but anyone you share the link with can see the report. Reports contain findings with evidence snippets, in which secrets are redacted; fetched source code is deleted as soon as the scan finishes. Reports are kept for a limited period (90 days by default) and then deleted.</p>
+
+  <h2>Maintainer responses</h2>
+  <p>Whoever can commit to a project's GitHub repository can attach a public response to a report of that project by committing <code>.agentguard/response.md</code> (see the report page). The response is shown as plain text next to the report, with a link to the commit it was read from. Agent Guard checks where a response came from, not whether what it says is true. Remove a response by leaving only its <code>report:</code> line in the file and checking again.</p>
+
+  <h2>Badges</h2>
+  <p>A badge shows the finding counts of one report, for one exact version. It does not change when the project changes, and it does not certify anything.</p>
+
+  <h2>Changes and contact</h2>
+  <p>The service may change or stop at any time, and these terms may be updated; the date of the last change is in the <a href={`${base}/changelog/`}>changelog</a>. Questions, corrections and takedown requests: open an issue on the project's GitHub repository, or see <a href={`${base}/security/`}>Security</a> for vulnerabilities. How data is handled: <a href={`${base}/privacy/`}>Privacy</a>.</p>
+</Base>

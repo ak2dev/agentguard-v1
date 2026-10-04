@@ -13,7 +13,7 @@ import re
 import urllib.parse
 from dataclasses import dataclass, field
 
-from agentguard.core.inputs import GitHubLocator, ParsedInput, gist_ref, github_ref
+from agentguard.core.inputs import GitHubLocator, ParsedInput, gist_ref, github_ref, parse
 from agentguard.core.models import ImmutableRef, LimitEvent
 from agentguard.core.models.enums import SourceKind
 
@@ -25,6 +25,15 @@ _SEMVERISH = re.compile(r"^[A-Za-z0-9][A-Za-z0-9.+_-]{0,63}$")
 
 class ResolveError(ValueError):
     """A user-facing reason the input cannot be scanned."""
+
+
+class RemoteServer(Exception):  # noqa: N818 - a redirect, not an error
+    """The input resolves to a remote MCP server URL, which is probed, not downloaded."""
+
+    def __init__(self, url: str, note: str = "") -> None:
+        super().__init__(url)
+        self.url = url
+        self.note = note
 
 
 @dataclass
@@ -70,8 +79,7 @@ class Resolver:
         if kind == SourceKind.mcp_registry:
             return self._registry(parsed.source.locator)
         if kind == SourceKind.remote_mcp:
-            raise ResolveError("Remote MCP server checks are not available on the hosted service yet. "
-                               "Use the CLI with --live-metadata --auth-checks.")
+            raise RemoteServer(parsed.source.locator)
         raise ResolveError(f"{kind.value} inputs are not supported by the hosted service yet.")
 
     # -- GitHub ----------------------------------------------------------------
@@ -216,8 +224,14 @@ class Resolver:
             resolved.notes.append(LimitEvent(kind="registry", path="server.json",
                                              detail="no npm/PyPI package published; scanned the repository's default branch"))
             return resolved
+        for remote in server.get("remotes") or []:
+            url = str(remote.get("url", "")) if isinstance(remote, dict) else ""
+            parsed = parse(url) if url else None
+            if isinstance(parsed, ParsedInput) and parsed.source.kind == SourceKind.remote_mcp and "{" not in url:
+                raise RemoteServer(parsed.source.locator, f"remote server listed by MCP Registry {server_name}")
         if server.get("remotes"):
-            raise ResolveError("This registry entry is a remote-only server; remote checks are not available on the hosted service yet.")
+            raise ResolveError("This registry entry lists only remote servers whose URLs need configuration "
+                               "(templated or not HTTPS), so there is nothing fixed to check.")
         raise ResolveError("This registry entry publishes no npm or PyPI package and no GitHub repository to scan.")
 
 
