@@ -16,7 +16,7 @@ const fwName = Object.fromEntries(Object.entries(data.frameworks).map(([k, v]) =
     <dt>Severity</dt><dd><span class={`sev ${rule.severity}`}>{rule.severity}</span></dd>
     <dt>Confidence</dt><dd>{rule.confidence}</dd>
     <dt>Rule version</dt><dd>{rule.version} (rule pack {data.rule_pack.version})</dd>
-    <dt>Detection</dt><dd>{rule.match_type === "regex" ? "data-defined pattern rule" : "analyzer rule"}{rule.network && " · requires an opt-in network feature"}</dd>
+    <dt>Detection</dt><dd>{rule.match_type === "regex" ? "data-defined pattern rule" : rule.match_type === "yara" ? "YARA rule over raw file bytes · requires the optional agentguard[yara] extra" : "analyzer rule"}{rule.network && " · requires an opt-in network feature"}</dd>
   </dl>
 
   <h2>What it detects</h2>
