@@ -20,3 +20,8 @@ First public version.
 - Environment copies handed only to a child process (`subprocess` `env=`, `spawn` `env:`) are no longer environment dumps; `AF_UNIX` and loopback sockets and same-origin `fetch("/api/...")` are no longer network egress.
 - Tightened AG-SKL-EXF-004 (DNS exfiltration), AG-SKL-CRED-002, AG-SKL-INJ-003/005/007, AG-CODE-025 and AG-SKL-HID-009 (percent-encoding inside URLs). Instruction-layer rules report quoted and code-span mentions in reference docs at MEDIUM. AG-SKL-SE-007 reports quarantine removal under a package-manager prefix at MEDIUM.
 - Fixed: JS/TS handler extraction treated an apostrophe in a `//` comment as a string, so a handler could swallow the rest of the file. JS path taint now honours containment checks (`validatePath(...)`), as Python taint already did.
+
+### Fixes
+
+- `agentguard lock` then `agentguard verify` inside a skill folder no longer reports the new `agentguard.lock` as drift (AG-SC-002, exit 1). The lockfile a command reads or writes is left out of the scan; any other file named `agentguard.lock` is still scanned.
+- The Website workflow builds and checks the site as Vercel deploys it (`PUBLIC_FEATURE_SCAN=1`, root base path) and no longer tries to deploy to GitHub Pages, which failed on every push to `main`.
