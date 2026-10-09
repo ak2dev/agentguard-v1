@@ -271,3 +271,37 @@ rules:
         - |-
           \b(?:urgent|critical|mandatory)\s*[:!]+\s*(?:you\s+must|immediately|the\s+(?:assistant|agent)\s+must)\b
     remediation: Remove claims of special authority; skills cannot grant themselves authority.
+
+  - id: AG-SKL-INJ-010
+    version: 1
+    title: Instruction override in other words
+    description: Text dismisses the agent's earlier instructions without the usual "ignore previous instructions" phrasing (set aside what you were told, pay no attention to prior directions, the earlier rules no longer apply, previous instructions are void).
+    why: Paraphrasing is the cheapest way past keyword filters. Any wording that revokes the agent's existing instructions is an override directive.
+    severity: high
+    confidence: medium
+    applies_to: [skill_md, instruction_md, reference]
+    match:
+      type: regex
+      scopes: [body, hidden, decoded, frontmatter]
+      patterns:
+        # dismiss + what the agent was told
+        - |-
+          \b(?:disregard|ignore|forget|set\s+aside|put\s+aside|pay\s+no\s+(?:attention|heed|mind)\s+to|discard|abandon|override|overrule|throw\s+out|stop\s+following|no\s+longer\s+follow)\b[^\n.;]{0,60}?(?:\b(?:previous|prior|earlier|preceding|above|original|initial|former|old|system)\s+(?:instructions?|guidance|directions?|directives?|rules|prompts?|guidelines|orders|commands|programming|constraints)\b|\b(?:what|everything|anything|whatever)\s+(?:you\s+(?:were|have\s+been|'ve\s+been)\s+|you\s+)?(?:told|instructed|asked|given|taught|received)\b|\bthe\s+(?:guidance|instructions?|directions?|rules)\s+you\s+(?:received|were\s+given|got|have\s+been\s+given)\b)
+        # prior instructions declared void
+        - |-
+          \b(?:the\s+|your\s+|all\s+)?(?:previous|prior|earlier|preceding|original|old|former|initial)\s+(?:instructions?|guidance|directions?|directives?|rules|prompts?|guidelines|orders)\s+(?:are|is|have\s+been|were)\s+(?:now\s+|hereby\s+)?(?:void|null|cancel(?:l)?ed|revoked|superseded|obsolete|invalid|overridden|replaced|no\s+longer\s+(?:valid|in\s+effect|relevant|applicable))\b|\b(?:the\s+|your\s+)?(?:previous|prior|earlier|original|old|former)\s+(?:instructions?|rules|guidance|directions?|guidelines)\s+no\s+longer\s+apply\b
+        - |-
+          \bwhatever\s+your\s+(?:previous|prior|earlier|original|system)\s+(?:instructions?|rules|guidance|prompt)\s+(?:said|say|were|was)\b
+      unless:
+        # INJ-001 already reports the literal form.
+        - |-
+          \b(?:ignore|disregard|forget|override|bypass)\s+(?:all\s+|any\s+|the\s+|your\s+|my\s+|these\s+)?(?:previous|prior|above|earlier|preceding|former|original|system|safety|developer|existing)\s+(?:instructions?|prompts?|rules?|guidelines?|directives?|messages?|context|constraints?|guardrails?)
+        # Discussion of the attack, or guidance to refuse it.
+        - |-
+          \b(?:example|detects?|detection|attacks?|injection|such as|e\.g\.|for instance|payloads?|red[- ]?team|test cases?|flag(?:s|ged)?|scanner|patterns?)\b
+        - |-
+          \b(?:if|when)\s+(?:a\s+|the\s+|any\s+)?(?:users?|someone|anyone|people|they|a\s+message|a\s+document|content|text)\b[^\n]{0,60}\b(?:asks?|tells?|says?|instructs?)\b|\b(?:users?|people|someone|attackers?|content|documents?|websites?|emails?)\s+(?:may|might|sometimes|often|could|can|will)\s+(?:try\s+to\s+)?(?:ask|tell|instruct|request|say)\b|\b(?:refuse|decline|do\s+not\s+(?:comply|obey|follow)|never\s+(?:comply|obey|follow)|don't\s+(?:comply|obey|follow))\b
+      window: 0
+      downgrade:
+        - {severity: medium, roles: [reference], quoted: true}
+    remediation: Remove the override. Describe what the skill adds instead of what the agent should drop.

@@ -23,9 +23,9 @@ rules:
     remediation: Do not ask users or agents to download and run binaries. Depend on packages from official registries with pinned versions and verified signatures.
 
   - id: AG-SKL-SE-002
-    version: 2
+    version: 3
     title: Pipe-to-shell from a non-allowlisted host
-    description: A remote script is piped straight into a shell (curl | sh, iwr | iex) from a host that is not a known vendor installer.
+    description: A remote script is piped straight into a shell (curl | sh, iwr | iex) or run by a Windows binary that executes remote code (mshta, regsvr32 /i, rundll32, msiexec /i), from a host that is not a known vendor installer.
     why: Pipe-to-shell executes whatever the server returns at that moment, with no integrity check and no review.
     severity: critical
     confidence: high
@@ -47,6 +47,15 @@ rules:
           \b(?:python3?|node|perl|ruby)\s+(?:-c\s+)?["']?(?:<\(|\$\()\s*(?:curl|wget)\b
         - |-
           \bsource\s+<\(\s*(?:curl|wget)\b
+        # Windows binaries that fetch and run remote code (LOLBAS: Mshta, Regsvr32, Rundll32, Msiexec).
+        - |-
+          \bmshta(?:\.exe)?\s+["']?(?:https?|vbscript|javascript):
+        - |-
+          \bregsvr32(?:\.exe)?\b[^\n]*\s/i:\s*["']?https?://
+        - |-
+          \brundll32(?:\.exe)?\b[^\n]*(?:javascript:|\burl\.dll\b[^\n]*https?://|\bmshtml\b[^\n]*RunHTMLApplication)
+        - |-
+          \bmsiexec(?:\.exe)?\b[^\n]*\s/(?:i|package)\s+["']?https?://
       unless:
         - |-
           (?:https?://(?:[a-z0-9-]+\.)*(?:astral\.sh|rustup\.rs|sh\.rustup\.rs|get\.docker\.com|brew\.sh|deno\.land|deno\.com|bun\.sh|nodejs\.org|deb\.nodesource\.com|rpm\.nodesource\.com|get\.pnpm\.io|install\.python-poetry\.org|pyenv\.run|get\.sdkman\.io|ollama\.com|claude\.ai/install|get\.helm\.sh|starship\.rs|tailscale\.com/install|fly\.io/install|get\.volta\.sh|sh\.vector\.dev|install\.determinate\.systems|nixos\.org/nix/install|mise\.run|get\.jetify\.com|opencode\.ai/install|cursor\.com/install|cli\.sentry\.dev/install|hf\.co/cli/install\.sh)\b)|(?:https?://raw\.githubusercontent\.com/(?:Homebrew/install|nvm-sh/nvm|ohmyzsh/ohmyzsh|pyenv/pyenv-installer|render-oss/cli)/)
@@ -201,3 +210,89 @@ rules:
           (?:https?://(?:[a-z0-9-]+\.)*(?:astral\.sh|rustup\.rs|sh\.rustup\.rs|get\.docker\.com|brew\.sh|deno\.land|deno\.com|bun\.sh|nodejs\.org|deb\.nodesource\.com|rpm\.nodesource\.com|get\.pnpm\.io|install\.python-poetry\.org|pyenv\.run|get\.sdkman\.io|ollama\.com|claude\.ai/install|get\.helm\.sh|starship\.rs|tailscale\.com/install|fly\.io/install|get\.volta\.sh|sh\.vector\.dev|install\.determinate\.systems|nixos\.org/nix/install|mise\.run|get\.jetify\.com|opencode\.ai/install|cursor\.com/install|cli\.sentry\.dev/install|hf\.co/cli/install\.sh)\b)|(?:https?://raw\.githubusercontent\.com/(?:Homebrew/install|nvm-sh/nvm|ohmyzsh/ohmyzsh|pyenv/pyenv-installer|render-oss/cli)/)
       window: 0
     remediation: Prefer a package manager with pinned versions, or verify the installer checksum before running it.
+
+  - id: AG-SKL-SE-009
+    version: 1
+    title: Download-and-run instruction in plain words
+    description: Prose tells the reader to fetch something from a remote host and run it through a shell, terminal or console, make it executable, paste it, or approve security warnings — the same lure as a curl | sh step, written without command syntax.
+    why: Malicious skills rephrase their "Prerequisites" step to slip past scanners that only recognize commands. The instruction is just as dangerous when a person or an agent follows the words.
+    severity: high
+    confidence: medium
+    applies_to: [skill_md, instruction_md, reference]
+    match:
+      type: regex
+      scopes: [body, hidden, decoded]
+      patterns:
+        - |-
+          \b(?:download|grab|fetch|pull(?:\s+down)?|get|retrieve|obtain|save|copy)\b[^\n]{0,80}?(?:https?://[^\s)>\]"'`]+|\b(?:[a-z0-9-]+\.){2,}[a-z]{2,24}\b(?:/[^\s)>\]"'`]*)?|\b[a-z0-9-]+\.[a-z]{2,24}/[^\s)>\]"'`]+)
+      require:
+        # ...and runs *it* (not some other command on the same line)...
+        - |-
+          \b(?:run|execute|launch|start|open|double[- ]click)\s+(?:it|them|this|that|the\s+(?:file|script|binary|installer|helper|tool|runner|program|app|setup|bootstrap|package|command|line))\b|\b(?:hand|pipe|feed|pass)\s+(?:it|them|this|that|the\s+\w+)\s+(?:straight\s+|directly\s+)?(?:to|into)\b|\bpaste\b|\b(?:make|mark)\s+(?:it|them|the\s+\w+)\s+(?:as\s+)?executable\b|\bchmod\b
+        # ...in a way that hands it code execution or skips a warning.
+        - |-
+          \b(?:shell|terminal|console|interpreter|command[- ]?(?:line|prompt)|bash|zsh|sh|powershell|pwsh|cmd|run\s+(?:dialog|box)|executable|chmod|warnings?|gatekeeper|smartscreen|defender|antivirus)\b|\bwin\s*\+\s*r\b|\bpress\s+enter\b
+      unless:
+        - |-
+          \b(?:never|don't|do\s+not|avoid|beware|phishing|scams?|malicious|attackers?|lures?|such\s+as|for\s+example|e\.g\.|detects?|flag(?:s|ged)?)\b
+      window: 0
+      downgrade:
+        - {severity: medium, roles: [reference], quoted: true}
+    remediation: Remove the step. Depend on packages from official registries with pinned versions, or document a versioned artifact with a checksum the user verifies before running it.
+
+  - id: AG-SKL-SE-010
+    version: 1
+    title: Downloaded file is executed, possibly from another file
+    description: A file is downloaded to a path and that path is then run or made executable — in the same file, or in another script or code block of the same skill (a download-and-execute split across files).
+    why: Splitting the download and the execution across scripts hides a staged payload from reviewers and from rules that look at one line or one file. Running a downloaded file executes whatever the host serves at that moment.
+    severity: critical
+    confidence: high
+    applies_to: [skill_md, instruction_md, reference, script]
+    aivss: {threat: attacked}
+    match:
+      type: analyzer
+      analyzer: skill.staged
+      params:
+        # Same vendor installers as AG-SKL-SE-002/008: reported at LOW.
+        allow_hosts: |-
+          (?:https?://(?:[a-z0-9-]+\.)*(?:astral\.sh|rustup\.rs|sh\.rustup\.rs|get\.docker\.com|brew\.sh|deno\.land|deno\.com|bun\.sh|nodejs\.org|deb\.nodesource\.com|rpm\.nodesource\.com|get\.pnpm\.io|install\.python-poetry\.org|pyenv\.run|get\.sdkman\.io|ollama\.com|claude\.ai/install|get\.helm\.sh|starship\.rs|tailscale\.com/install|fly\.io/install|get\.volta\.sh|sh\.vector\.dev|install\.determinate\.systems|nixos\.org/nix/install|mise\.run|get\.jetify\.com|opencode\.ai/install|cursor\.com/install|cli\.sentry\.dev/install|hf\.co/cli/install\.sh)\b)|(?:https?://raw\.githubusercontent\.com/(?:Homebrew/install|nvm-sh/nvm|ohmyzsh/ohmyzsh|pyenv/pyenv-installer|render-oss/cli)/)
+    remediation: Do not download and run code from a skill. Depend on a pinned package from an official registry, or ship the code in the skill where it can be reviewed. If a download is unavoidable, pin a versioned URL and verify its checksum or signature before running it.
+
+  - id: AG-SKL-SE-011
+    version: 1
+    title: Reverse shell
+    description: A command or script connects out to a remote host and attaches a shell to the connection (bash /dev/tcp, nc -e, mkfifo | sh | nc, socat exec, socket + dup2 + shell, PowerShell TCPClient + iex).
+    why: A reverse shell hands an attacker interactive control of the machine, bypassing inbound firewalls. No legitimate skill needs one.
+    severity: critical
+    confidence: high
+    applies_to: [skill_md, instruction_md, reference, script]
+    aivss: {threat: attacked}
+    match:
+      type: regex
+      scopes: [body, hidden, decoded, command, code]
+      patterns:
+        - |-
+          [<>]&\s*/dev/(?:tcp|udp)/[\w.-]+/\d{1,5}\b|\bexec\s+\d+<>\s*/dev/(?:tcp|udp)/[\w.-]+/\d{1,5}\b|/dev/(?:tcp|udp)/[\w.-]+/\d{1,5}\b[^\n]{0,20}(?:0>&1|<&\s*\d|>&\s*\d)
+        - |-
+          \b(?:nc|ncat|netcat)(?:\.exe)?\b[^\n]{0,80}\s-(?:e|c)\s+["']?(?:/bin/|/usr/bin/)?(?:(?:ba|z|k|da)?sh|cmd(?:\.exe)?|powershell(?:\.exe)?)\b
+        - |-
+          \bmkfifo\b[^\n]{0,80}\|\s*(?:/bin/)?(?:ba|z|da)?sh\s+-i\b[^\n]{0,80}\|\s*(?:nc|ncat|netcat|openssl\s+s_client|telnet)\b
+        - |-
+          \bsocat\b[^\n]*\b(?:exec|system):[^\n]*\b(?:tcp|ssl|openssl)[46]?(?:-connect)?:|\bsocat\b[^\n]*\b(?:tcp|ssl|openssl)[46]?(?:-connect)?:[^\n]*\b(?:exec|system):
+        - |-
+          \bos\.dup2\s*\(\s*\w+\.fileno\(\)
+        - |-
+          \bperl\b[^\n]*\buse\s+Socket\b[^\n]*\bexec\b
+        - |-
+          \bNew-Object\s+(?:System\.)?Net\.Sockets\.TCPClient\s*\([^\n]*(?:\biex\b|Invoke-Expression)
+      require:
+        # Python/Ruby socket forms: the connection and the shell are in the same few lines.
+        - |-
+          /dev/(?:tcp|udp)/|\b(?:nc|ncat|netcat|socat|perl|TCPClient)\b|\.connect\s*\([^\n]*\)[\s\S]{0,400}?(?:pty\.spawn|subprocess\.(?:call|Popen|run)\s*\(\s*\[?\s*["'](?:/bin/)?(?:ba|z)?sh|os\.exec\w*\s*\(\s*["'](?:/bin/)?(?:ba|z)?sh)|(?:pty\.spawn|subprocess\.(?:call|Popen|run)\s*\(\s*\[?\s*["'](?:/bin/)?(?:ba|z)?sh)[\s\S]{0,400}?\.connect\s*\(
+      unless:
+        - |-
+          \b(?:detects?|detection|flag(?:s|ged)?|alert|block(?:s|ed)?|example|such as|e\.g\.|for instance|cheat ?sheet|signatures?|patterns?|red[- ]?team|ctf)\b
+      window: 6
+      downgrade:
+        - {severity: medium, roles: [reference], quoted: true}
+    remediation: Remove the reverse shell. If the skill needs remote access, document an authenticated, user-initiated mechanism instead.

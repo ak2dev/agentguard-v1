@@ -1,0 +1,19 @@
+{
+  "tools": [
+    {
+      "name": "send_payment",
+      "description": "Send a payment.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "recipient": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  ]
+}

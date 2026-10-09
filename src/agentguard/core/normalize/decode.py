@@ -28,11 +28,17 @@ class DecodedBlob:
     path: tuple[str, ...]  # decode path, outermost first
 
 
+def _utf16le(data: bytes) -> bool:
+    """PowerShell -EncodedCommand payloads are UTF-16LE: mostly-ASCII text
+    with a zero high byte in (nearly) every code unit."""
+    return len(data) >= 16 and len(data) % 2 == 0 and data[1::2].count(0) >= 0.9 * (len(data) // 2)
+
+
 def _printable_text(data: bytes) -> str | None:
     if len(data) < 8:
         return None
     try:
-        s = data.decode("utf-8")
+        s = data.decode("utf-16-le") if _utf16le(data) else data.decode("utf-8")
     except UnicodeDecodeError:
         return None
     printable = sum(1 for c in s if c.isprintable() or c in "\n\r\t")

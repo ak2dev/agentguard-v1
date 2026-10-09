@@ -15,6 +15,7 @@ from .judge_rules import JudgeAnalyzer
 from .mcp import McpConfigAnalyzer, McpMetaAnalyzer, McpUnitsBuilder
 from .network_rules import AuthAnalyzer, OsvAnalyzer, PackageAgeAnalyzer, ProvenanceAnalyzer
 from .regex_rules import RegexRuleAnalyzer
+from .staged import StagedExecutionAnalyzer
 from .supply_chain import DriftAnalyzer, IntelAnalyzer, RegistryOfflineAnalyzer
 from .skill import (
     BundleAnalyzer,
@@ -42,6 +43,7 @@ ANALYZERS: list[type] = [
     CapabilityAnalyzer,
     TyposquatAnalyzer,
     BundleAnalyzer,
+    StagedExecutionAnalyzer,
     YaraAnalyzer,
     IntelAnalyzer,
     RegistryOfflineAnalyzer,

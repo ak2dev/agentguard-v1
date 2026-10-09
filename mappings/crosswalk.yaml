@@ -183,6 +183,13 @@ AG-SKL-INJ-009:
   owasp-llm-2025: ["LLM01:2025"]
   nsa-csi-mcp-2026-05: []
   cwe: []
+AG-SKL-INJ-010:
+  owasp-asi-2026: [ASI01]
+  owasp-mcp-2025-beta: []
+  owasp-ast-1.0: [AST01]
+  owasp-llm-2025: ["LLM01:2025"]
+  nsa-csi-mcp-2026-05: []
+  cwe: []
 AG-SKL-EXEC-001:
   owasp-asi-2026: [ASI05]
   owasp-mcp-2025-beta: []
@@ -260,6 +267,27 @@ AG-SKL-SE-008:
   owasp-llm-2025: ["LLM03:2025"]
   nsa-csi-mcp-2026-05: []
   cwe: [CWE-494]
+AG-SKL-SE-009:
+  owasp-asi-2026: [ASI09]
+  owasp-mcp-2025-beta: []
+  owasp-ast-1.0: [AST01]
+  owasp-llm-2025: ["LLM03:2025"]
+  nsa-csi-mcp-2026-05: []
+  cwe: [CWE-494]
+AG-SKL-SE-010:
+  owasp-asi-2026: [ASI05]
+  owasp-mcp-2025-beta: []
+  owasp-ast-1.0: [AST01]
+  owasp-llm-2025: ["LLM03:2025"]
+  nsa-csi-mcp-2026-05: []
+  cwe: [CWE-494]
+AG-SKL-SE-011:
+  owasp-asi-2026: [ASI05]
+  owasp-mcp-2025-beta: []
+  owasp-ast-1.0: [AST01]
+  owasp-llm-2025: []
+  nsa-csi-mcp-2026-05: []
+  cwe: [CWE-506]
 AG-SKL-CRED-001:
   owasp-asi-2026: [ASI03]
   owasp-mcp-2025-beta: []
@@ -540,6 +568,20 @@ AG-MCP-CFG-023:
   owasp-llm-2025: []
   nsa-csi-mcp-2026-05: []
   cwe: []
+AG-MCP-CFG-024:
+  owasp-asi-2026: [ASI05]
+  owasp-mcp-2025-beta: ["MCP05:2025"]
+  owasp-ast-1.0: []
+  owasp-llm-2025: []
+  nsa-csi-mcp-2026-05: [concerns/misconfiguration, recommendations/supported-projects]
+  cwe: [CWE-506]
+AG-MCP-CFG-025:
+  owasp-asi-2026: [ASI05]
+  owasp-mcp-2025-beta: ["MCP05:2025"]
+  owasp-ast-1.0: []
+  owasp-llm-2025: []
+  nsa-csi-mcp-2026-05: [concerns/misconfiguration, recommendations/constrain-and-sandbox]
+  cwe: [CWE-506]
 AG-MCP-META-001:
   owasp-asi-2026: [ASI01]
   owasp-mcp-2025-beta: ["MCP03:2025"]

@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "sheets": {
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-File",
+        "C:\\tools\\sheets-server.ps1"
+      ]
+    }
+  }
+}

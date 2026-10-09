@@ -36,6 +36,7 @@
             "AG-SKL-INJ-001",
             "AG-SKL-INJ-002",
             "AG-SKL-INJ-008",
+            "AG-SKL-INJ-010",
             "AG-SKL-SPEC-006"
           ]
         },
@@ -145,12 +146,16 @@
             "AG-MCP-CFG-002",
             "AG-MCP-CFG-003",
             "AG-MCP-CFG-006",
+            "AG-MCP-CFG-024",
+            "AG-MCP-CFG-025",
             "AG-SKL-EXEC-001",
             "AG-SKL-EXEC-002",
             "AG-SKL-EXEC-003",
             "AG-SKL-SE-002",
             "AG-SKL-SE-005",
-            "AG-SKL-SE-007"
+            "AG-SKL-SE-007",
+            "AG-SKL-SE-010",
+            "AG-SKL-SE-011"
           ]
         },
         {
@@ -185,7 +190,8 @@
             "AG-SKL-SE-001",
             "AG-SKL-SE-003",
             "AG-SKL-SE-004",
-            "AG-SKL-SE-006"
+            "AG-SKL-SE-006",
+            "AG-SKL-SE-009"
           ]
         },
         {
@@ -295,6 +301,8 @@
             "AG-MCP-CFG-002",
             "AG-MCP-CFG-003",
             "AG-MCP-CFG-006",
+            "AG-MCP-CFG-024",
+            "AG-MCP-CFG-025",
             "AG-MCP-META-009",
             "AG-MCP-META-010"
           ]
@@ -414,6 +422,7 @@
             "AG-SKL-INJ-006",
             "AG-SKL-INJ-007",
             "AG-SKL-INJ-009",
+            "AG-SKL-INJ-010",
             "AG-SKL-SE-001",
             "AG-SKL-SE-002",
             "AG-SKL-SE-003",
@@ -421,6 +430,9 @@
             "AG-SKL-SE-005",
             "AG-SKL-SE-006",
             "AG-SKL-SE-007",
+            "AG-SKL-SE-009",
+            "AG-SKL-SE-010",
+            "AG-SKL-SE-011",
             "AG-SKL-TYP-001"
           ]
         },
@@ -583,6 +595,7 @@
             "AG-SKL-INJ-003",
             "AG-SKL-INJ-008",
             "AG-SKL-INJ-009",
+            "AG-SKL-INJ-010",
             "AG-SKL-SPEC-006"
           ]
         },
@@ -639,6 +652,8 @@
             "AG-SKL-SE-001",
             "AG-SKL-SE-002",
             "AG-SKL-SE-008",
+            "AG-SKL-SE-009",
+            "AG-SKL-SE-010",
             "AG-SKL-TYP-001",
             "AG-SKL-TYP-002"
           ]
@@ -786,7 +801,9 @@
             "AG-MCP-CFG-003",
             "AG-MCP-CFG-006",
             "AG-MCP-CFG-011",
-            "AG-MCP-CFG-012"
+            "AG-MCP-CFG-012",
+            "AG-MCP-CFG-024",
+            "AG-MCP-CFG-025"
           ]
         },
         {
@@ -882,6 +899,7 @@
             "AG-CODE-028",
             "AG-MCP-CFG-004",
             "AG-MCP-CFG-006",
+            "AG-MCP-CFG-024",
             "AG-POL-001",
             "AG-POL-002",
             "AG-SC-020",
@@ -941,7 +959,8 @@
             "AG-MCP-CFG-007",
             "AG-MCP-CFG-008",
             "AG-MCP-CFG-009",
-            "AG-MCP-CFG-020"
+            "AG-MCP-CFG-020",
+            "AG-MCP-CFG-025"
           ]
         },
         {
@@ -1139,7 +1158,9 @@
             "AG-SKL-EXEC-003",
             "AG-SKL-SE-001",
             "AG-SKL-SE-002",
-            "AG-SKL-SE-008"
+            "AG-SKL-SE-008",
+            "AG-SKL-SE-009",
+            "AG-SKL-SE-010"
           ]
         },
         {
@@ -1154,11 +1175,14 @@
           "title": "Embedded Malicious Code",
           "rules": [
             "AG-CODE-023",
+            "AG-MCP-CFG-024",
+            "AG-MCP-CFG-025",
             "AG-SKL-BND-001",
             "AG-SKL-BND-004",
             "AG-SKL-HID-009",
             "AG-SKL-SE-003",
-            "AG-SKL-SE-005"
+            "AG-SKL-SE-005",
+            "AG-SKL-SE-011"
           ]
         },
         {
