@@ -20,7 +20,7 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - uses: agentguard/agentguard@<release-sha>
+      - uses: ak2dev/agentguard-v1@<release-sha>
         with:
           path: .
           fail-on: high
@@ -39,7 +39,7 @@ The only process Agent Guard ever starts is a hardened, read-only `git diff` / `
 
 ```yaml
 repos:
-  - repo: https://github.com/agentguard/agentguard
+  - repo: https://github.com/ak2dev/agentguard-v1
     rev: <release-tag>
     hooks:
       - id: agentguard

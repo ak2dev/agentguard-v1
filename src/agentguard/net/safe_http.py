@@ -28,7 +28,7 @@ from typing import Any
 
 METADATA_HOSTS = {"metadata.google.internal", "metadata", "metadata.azure.internal", "instance-data"}
 _CREDENTIAL_HEADERS = {"authorization", "cookie", "proxy-authorization", "x-api-key"}
-DEFAULT_UA = "agentguard/0.1 (+https://github.com/agentguard/agentguard; read-only security scanner)"
+DEFAULT_UA = "agentguard/0.1 (+https://github.com/ak2dev/agentguard-v1; read-only security scanner)"
 
 
 class BlockedRequest(Exception):

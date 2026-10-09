@@ -1,6 +1,6 @@
 # Agent Guard security contact (RFC 9116). Placeholder contact until the
 # project's disclosure address is final; see /security/ for the policy.
-Contact: https://github.com/agentguard/agentguard/security/advisories/new
+Contact: https://github.com/ak2dev/agentguard-v1/security/advisories/new
 Expires: 2027-09-28T00:00:00.000Z
 Preferred-Languages: en
 Policy: https://agentguard.github.io/security/

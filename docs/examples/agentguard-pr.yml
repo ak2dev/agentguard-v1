@@ -21,7 +21,7 @@ jobs:
         with:
           fetch-depth: 0             # PR mode compares against the base commit
           persist-credentials: false
-      - uses: agentguard/agentguard@v0.1.0   # pin to a release tag or commit SHA
+      - uses: ak2dev/agentguard-v1@v0.1.0   # pin to a release tag or commit SHA
         with:
           path: .
           fail-on: high

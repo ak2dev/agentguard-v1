@@ -47,8 +47,8 @@ members = ["web"]
 agentguard = "agentguard.cli.app:main"
 
 [project.urls]
-Homepage = "https://github.com/agentguard/agentguard"
-Security = "https://github.com/agentguard/agentguard/blob/main/SECURITY.md"
+Homepage = "https://github.com/ak2dev/agentguard-v1"
+Security = "https://github.com/ak2dev/agentguard-v1/blob/main/SECURITY.md"
 
 [build-system]
 requires = ["hatchling>=1.26"]

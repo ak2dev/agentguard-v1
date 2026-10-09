@@ -19,7 +19,7 @@ from ..models.enums import Severity
 from ..redact import redact_secrets
 
 TOOL_NAME = "Agent Guard"
-INFO_URI = "https://github.com/agentguard/agentguard"
+INFO_URI = "https://github.com/ak2dev/agentguard-v1"
 SEVERITY_SCORE = {Severity.critical: "9.3", Severity.high: "7.7", Severity.medium: "5.3", Severity.low: "2.1"}
 SARIF_LEVEL = {Severity.critical: "error", Severity.high: "error", Severity.medium: "warning", Severity.low: "note", Severity.info: "note"}
 
