@@ -86,7 +86,11 @@ def test_html_links_findings_to_the_scanned_commit():
     tree = ArtifactTree.from_mapping(MALICIOUS_SKILL, source=github_ref("o", "r", "a" * 40))
     html = render_html(scan(tree, ScanOptions()))
     assert f'href="https://github.com/o/r/blob/{"a" * 40}/' in html
-    assert all(h.startswith("https://") for h in re.findall(r'href="([^"]+)"', html))
+    # Every link is https://, or the index linking to a finding's own id in this report.
+    ids = set(re.findall(r'<section class="f [a-z]+" id="([0-9a-f]{32})"', html))
+    hrefs = re.findall(r'href="([^"]+)"', html)
+    assert ids and all(h.startswith("https://") or (h.startswith("#") and h[1:] in ids) for h in hrefs)
+    assert {h[1:] for h in hrefs if h.startswith("#")} == ids  # the index lists every finding
 
 
 def test_html_does_not_reveal_local_paths():
