@@ -387,19 +387,22 @@ function main(root) {
     const pack = report.rule_pack || {};
     const counts = Object.fromEntries(SEVERITIES.map((s) => [s, findings.filter((f) => f.severity === s).length]));
     const atOrAbove = findings.filter((f) => SEVERITIES.indexOf(f.severity) <= SEVERITIES.indexOf(report.fail_on || "high")).length;
-    const parts = [el("h2", { id: "result-title", tabindex: "-1" }, "Report"), renderTarget(report, meta, label)];
+    const card = el("div", { class: "result-card" }, el("h2", { id: "result-title", tabindex: "-1" }, "Report"), renderTarget(report, meta, label));
+    const parts = [card];
 
     if (!findings.length) {
-      parts.push(el("p", { class: "summary" }, `No findings from ${report.stats?.rules_evaluated ?? pack.rule_count} rules (rule pack v${pack.version}).`),
+      card.append(el("p", { class: "summary" }, `No findings from ${report.stats?.rules_evaluated ?? pack.rule_count} rules (rule pack v${pack.version}).`),
         el("p", { class: "muted" }, "That means no rule matched. It does not prove the content is safe: static rules miss paraphrased or novel attacks, and behavior that only appears at run time."));
     } else {
-      parts.push(el("p", { class: "summary" }, `${findings.length} finding${findings.length === 1 ? "" : "s"}: `,
-        ...SEVERITIES.filter((s) => counts[s]).map((s) => el("span", { class: "count" }, sevBadge(s), ` ${counts[s]}`))));
-      parts.push(el("p", {}, atOrAbove
+      card.append(el("p", { class: "summary" }, `${findings.length} finding${findings.length === 1 ? "" : "s"}: `,
+        SEVERITIES.filter((s) => counts[s]).map((s) => `${counts[s]} ${s}`).join(", ")));
+      card.append(el("div", { class: "sev-counts" }, ...SEVERITIES.map((s) =>
+        el("div", { class: `sev-count ${s}${counts[s] ? "" : " zero"}` }, el("span", { class: "n" }, String(counts[s])), sevBadge(s)))));
+      card.append(el("p", {}, atOrAbove
         ? `${atOrAbove} finding${atOrAbove === 1 ? " is" : "s are"} at or above ${(report.fail_on || "high").toUpperCase()}. Review ${atOrAbove === 1 ? "it" : "them"} before installing or enabling this.`
         : `Nothing at or above ${(report.fail_on || "high").toUpperCase()}; the findings below are lower-severity observations.`));
     }
-    parts.push(el("p", { class: "muted small" },
+    card.append(el("p", { class: "result-meta" },
       `${report.stats?.files_scanned ?? 0} file(s), ${report.inventory?.length ?? 0} component(s). Rule pack v${pack.version} (${pack.rule_count} rules, digest ${String(pack.digest || "").slice(0, 12)}), engine ${report.engine_version}.`,
       meta.fetch_ms !== undefined ? ` Fetched from GitHub in ${(meta.fetch_ms / 1000).toFixed(1)} s;` : "",
       meta.scan_ms ? ` scanned in ${(meta.scan_ms / 1000).toFixed(1)} s on this device.` : "",
@@ -409,13 +412,13 @@ function main(root) {
       link.searchParams.set("report", meta.serverKey);
       const copy = el("button", { type: "button", class: "btn secondary small" }, "Copy link");
       copy.addEventListener("click", () => navigator.clipboard?.writeText(link.href).then(() => { copy.textContent = "Copied"; }));
-      parts.push(el("p", { class: "small" }, "Permalink (unlisted; anyone with the link can view it): ", el("a", { href: link.href }, link.href), " ", copy));
-      if (meta.notice) parts.push(el("p", { class: "notice" }, meta.notice));
-      if (meta.response) parts.push(renderResponse(meta.response));
+      card.append(el("p", { class: "small" }, "Permalink (unlisted; anyone with the link can view it): ", el("a", { href: link.href }, link.href), " ", copy));
+      if (meta.notice) card.append(el("p", { class: "notice" }, meta.notice));
+      if (meta.response) card.append(renderResponse(meta.response));
     }
 
-    parts.push(renderDownloads(meta));
-    if (meta.serverKey) parts.push(renderServerActions(report, meta, label));
+    card.append(renderDownloads(meta));
+    if (meta.serverKey) card.append(renderServerActions(report, meta, label));
 
     if (report.flows?.length) {
       const names = Object.fromEntries((report.inventory || []).map((c) => [c.id, c.name]));
@@ -428,7 +431,8 @@ function main(root) {
     for (const sev of SEVERITIES) {
       const group = findings.filter((f) => f.severity === sev);
       if (!group.length) continue;
-      parts.push(el("h3", {}, sevBadge(sev), ` ${group.length}`), ...group.map((f) => renderFinding(f, report.target)));
+      parts.push(el("h3", { class: "sev-group" }, sevBadge(sev), `${group.length} finding${group.length === 1 ? "" : "s"}`),
+        ...group.map((f) => renderFinding(f, report.target)));
     }
 
     parts.push(renderCoverage(report, meta));
@@ -569,23 +573,30 @@ function main(root) {
       check);
   }
 
+  // Same text apart from case and a trailing period (a message that repeats the title).
+  function same(a, b) { const n = (x) => String(x || "").trim().replace(/\.$/, "").toLowerCase(); return n(a) === n(b); }
+
+  function fact(label, value) { return el("div", {}, el("dt", {}, label), el("dd", {}, value)); }
+
   function renderFinding(f, target) {
     const loc = locationUrl(target, f.primary);
     const mapped = (f.mappings || []).filter((m) => m.id);
     const pendingMaps = (f.mappings || []).filter((m) => !m.id);
+    const evidence = (f.evidence || []).filter((ev) => !(ev.snippet && same(ev.snippet, f.message)));
     return el("details", { class: `finding ${f.severity}`, open: f.severity === "critical" || f.severity === "high" },
-      el("summary", {}, sevBadge(f.severity), " ", el("strong", {}, f.title), f.primary ? el("span", { class: "muted" }, ` — ${where(f.primary)}`) : null),
+      el("summary", {}, sevBadge(f.severity), el("strong", {}, f.title), f.primary ? el("span", { class: "loc" }, where(f.primary)) : null),
       el("div", { class: "finding-body" },
-        el("p", {}, f.message),
-        el("dl", { class: "kv" },
-          el("dt", {}, "Rule"), el("dd", {}, el("a", { href: `${siteBase}/rules/${f.rule_id.toLowerCase()}/` }, f.rule_id), ` (v${f.rule_version})`),
-          el("dt", {}, "Confidence"), el("dd", {}, f.confidence),
-          f.score ? [el("dt", {}, "AIVSS"), el("dd", {}, `${f.score.value} (${f.score.scorer} ${f.score.scorer_version})`)] : null,
-          f.primary ? [el("dt", {}, "Location"), el("dd", {}, loc ? el("a", { href: loc }, where(f.primary)) : where(f.primary))] : null),
-        f.explanation ? el("p", {}, f.explanation) : null,
-        (f.evidence || []).length ? el("div", {}, el("h4", {}, "Evidence"), ...f.evidence.map(renderEvidence)) : null,
-        f.remediation ? el("div", {}, el("h4", {}, "How to fix"), el("p", {}, f.remediation)) : null,
-        mapped.length || pendingMaps.length ? el("p", { class: "maps" }, el("span", { class: "muted" }, "Standards: "),
+        f.message && !same(f.message, f.title) ? el("p", {}, f.message) : null,
+        el("dl", { class: "facts" },
+          fact("Rule", [el("a", { href: `${siteBase}/rules/${f.rule_id.toLowerCase()}/` }, f.rule_id), el("span", { class: "muted" }, ` v${f.rule_version}`)]),
+          fact("Confidence", f.confidence),
+          f.score ? fact("AIVSS", [String(f.score.value), el("span", { class: "muted" }, ` ${f.score.scorer} ${f.score.scorer_version}`)]) : null,
+          f.primary ? fact("Location", loc ? el("a", { href: loc }, where(f.primary)) : where(f.primary)) : null),
+        evidence.length ? el("div", {}, el("h4", {}, "Evidence"), ...evidence.map(renderEvidence)) : null,
+        f.explanation || f.remediation ? el("div", { class: "advice" },
+          f.explanation ? el("div", {}, el("h4", {}, "Why it matters"), el("p", {}, f.explanation)) : null,
+          f.remediation ? el("div", { class: "fix" }, el("h4", {}, "How to fix"), el("p", {}, f.remediation)) : null) : null,
+        mapped.length || pendingMaps.length ? el("p", { class: "maps" }, el("span", { class: "muted small" }, "Standards"),
           ...mapped.map((m) => el("span", { class: "pill", title: m.title || "" }, `${FRAMEWORK_LABEL[m.framework] || m.framework} ${m.id}`)),
           pendingMaps.length ? el("span", { class: "muted small" }, ` (${pendingMaps.length} mapping(s) pending review)`) : null) : null,
         (f.references || []).length ? el("p", { class: "small" }, "References: ",
@@ -594,11 +605,11 @@ function main(root) {
 
   function renderEvidence(ev) {
     return el("div", { class: "evidence" },
-      el("p", { class: "small" },
+      el("p", { class: "ev-cap" },
         ev.location ? el("code", {}, where(ev.location)) : null,
         ev.hidden ? el("span", { class: "pill" }, "hidden content") : null,
         ev.decode_path?.length ? el("span", { class: "pill" }, `decoded: ${ev.decode_path.join(" → ")}`) : null,
-        ev.detail ? ` ${ev.detail}` : null),
+        ev.detail ? el("span", {}, ev.detail) : null),
       ev.snippet ? el("pre", {}, el("code", {}, ev.snippet)) : null);
   }
 
