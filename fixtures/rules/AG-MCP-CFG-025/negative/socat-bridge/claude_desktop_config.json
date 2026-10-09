@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "db": {
+      "command": "socat",
+      "args": [
+        "STDIO",
+        "TCP:127.0.0.1:8765"
+      ]
+    }
+  }
+}

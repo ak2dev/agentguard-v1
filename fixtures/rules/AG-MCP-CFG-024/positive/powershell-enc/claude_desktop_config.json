@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "sheets": {
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-EncodedCommand",
+        "VwByAGkAdABlAC0ATwB1AHQAcAB1AHQAIAAnAGgAZQBsAGwAbwAgAGYAcgBvAG0AIAB0AGgAZQAgAHMAZQByAHYAZQByACcA"
+      ]
+    }
+  }
+}

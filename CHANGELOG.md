@@ -7,11 +7,18 @@ First public version.
 - Agent Guard Web server (`web/`, `agentguard-web`): paste a GitHub, npm, PyPI or MCP Registry link; it is pinned to an exact commit or version (registry digests verified), fetched through an allowlisted SSRF-hardened fetcher, scanned in a throwaway container with no network, and stored as an unlisted report with a permalink, downloads and drift against the previous scan. `docker compose up` runs it locally; CI tests the isolation against real containers.
 - Web scanner (`/scan`): paste text, drop files or a .zip, or give a public GitHub repository, folder, file or gist link; scanned in the browser by the same engine under Pyodide, with zero network requests for pasted and dropped input (tested in CI). GitHub links are pinned to a commit and findings link to the exact file and line. Deployable to Vercel with `vercel.json` security headers.
 - Commands: `scan`, `discover`, `lock`, `verify`, `rules` (`list`, `explain`, `export`), `report`, `bench`, `intel` (`status`, `update`), `schema`.
-- Rule pack 0.1.0 with 161 rules across skills and instruction files, MCP client configuration, MCP metadata, code, toxic flows, supply chain and drift, remote auth conformance, policy, coverage, and the optional LLM judge. Every rule has an unsafe and a safe fixture.
+- Rule pack 0.1.0 with 167 rules across skills and instruction files, MCP client configuration, MCP metadata, code, toxic flows, supply chain and drift, remote auth conformance, policy, coverage, and the optional LLM judge. Every rule has an unsafe and a safe fixture.
 - Outputs: terminal, JSON (schema v1), SARIF 2.1.0, Markdown, single-file HTML, CycloneDX 1.6 inventory.
 - Opt-in network features: read-only remote MCP metadata, OAuth/TLS conformance, npm provenance, OSV, package age, LLM judge (Anthropic, OpenAI-compatible, Ollama).
 - GitHub Action with PR mode and SARIF upload; pre-commit hook.
 - Pure-Python engine that runs under Pyodide.
+
+### Detection gaps: paraphrase, split payloads, CRITICAL calibration
+
+- New rules: AG-SKL-SE-009 (download-and-run step written in plain words), AG-SKL-INJ-010 (instruction override in other words), AG-SKL-SE-010 (a downloaded file is executed, also from another script of the skill, linked by normalized path), AG-SKL-SE-011 and AG-MCP-CFG-025 (reverse shells), AG-MCP-CFG-024 (encoded server command).
+- AG-SKL-SE-002 and AG-MCP-CFG-006 cover Windows binaries that run remote code (`mshta`, `regsvr32 /i:`, `rundll32 javascript:`, `msiexec /i <url>`); CFG-006 also reads decoded blobs. AG-SKL-CRED-001 matches whole credential directories (`tar czf ... ~/.ssh ~/.aws`). PowerShell `-EncodedCommand` (UTF-16LE base64) is decoded and rescanned.
+- Benchmark: every attack records the severity it warrants; results report how many reach it and recall at CRITICAL among the attacks that warrant CRITICAL. 46 new synthetic items (32 attacks, 14 benign look-alikes); the held-out ones were scanned before the rules were written. Held-out: recall at HIGH 0.62 to 0.97, attacks at their expected severity 17 to 31 of 34, no new benign finding at any severity. Details and remaining misses: `docs/benchmark.md`.
+- CI fails when `bench/results/latest.json` differs from what the current rules produce, and when a pull request makes any benchmark item worse than on the target branch.
 
 ### Real-world benchmark and false-positive tuning
 

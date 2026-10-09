@@ -72,8 +72,15 @@ jobs:
           python-version: "3.12"
       - run: python -m pip install --disable-pip-version-check "uv==0.12.19" && uv sync --frozen --group dev
       - run: uv run agentguard bench --output bench-results.json
-      - name: Compare with committed results
-        run: uv run python scripts/check_bench.py bench-results.json bench/results/latest.json
+      - name: Results of the target branch (pull requests)
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          git fetch --no-tags --depth=1 origin "$BASE_REF"
+          git show FETCH_HEAD:bench/results/latest.json > bench-base.json || rm -f bench-base.json
+      - name: Targets met, committed results fresh, no regression against the target branch
+        run: uv run python scripts/check_bench.py bench-results.json bench/results/latest.json bench-base.json
       - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: bench-results

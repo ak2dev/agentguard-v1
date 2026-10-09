@@ -3,142 +3,193 @@
   "engine_version": "0.1.0.dev0",
   "rule_pack": {
     "version": "0.1.0",
-    "digest": "2ae207179344628f571b23fed56b22b3b16c19c0cbcb1e21094d547e47e94ff2"
+    "digest": "72a4efde4b53425bf4a0b8ebeb1cb9e9ae7e85b82e751b698ab0c674145ef07b"
   },
-  "date": "2026-09-29",
+  "date": "2026-10-09",
   "split": "all",
   "corpus": {
-    "items": 224,
-    "benign": 188,
-    "malicious": 27,
-    "adversarial": 9,
+    "items": 270,
+    "benign": 202,
+    "malicious": 40,
+    "adversarial": 28,
     "sources": {
       "real": 163,
-      "synthetic": 61
+      "synthetic": 107
     }
   },
   "overall": {
     "critical": {
-      "tp": 22,
+      "tp": 43,
       "fp": 0,
-      "fn": 14,
-      "tn": 188,
+      "fn": 25,
+      "tn": 202,
       "precision": 1.0,
-      "recall": 0.6111,
-      "f1": 0.7586,
+      "recall": 0.6324,
+      "f1": 0.7748,
       "fpr": 0.0
     },
     "high": {
-      "tp": 32,
-      "fp": 3,
-      "fn": 4,
-      "tn": 185,
-      "precision": 0.9143,
-      "recall": 0.8889,
-      "f1": 0.9014,
-      "fpr": 0.016
+      "tp": 66,
+      "fp": 4,
+      "fn": 2,
+      "tn": 198,
+      "precision": 0.9429,
+      "recall": 0.9706,
+      "f1": 0.9565,
+      "fpr": 0.0198
     },
     "medium": {
-      "tp": 34,
-      "fp": 27,
-      "fn": 2,
-      "tn": 161,
-      "precision": 0.5574,
-      "recall": 0.9444,
-      "f1": 0.701,
-      "fpr": 0.1436
+      "tp": 68,
+      "fp": 28,
+      "fn": 0,
+      "tn": 174,
+      "precision": 0.7083,
+      "recall": 1.0,
+      "f1": 0.8292,
+      "fpr": 0.1386
     }
   },
   "by_split": {
     "dev": {
       "critical": {
-        "tp": 14,
+        "tp": 23,
         "fp": 0,
-        "fn": 7,
-        "tn": 101,
+        "fn": 11,
+        "tn": 105,
         "precision": 1.0,
-        "recall": 0.6667,
-        "f1": 0.8,
+        "recall": 0.6765,
+        "f1": 0.807,
         "fpr": 0.0
       },
       "high": {
-        "tp": 20,
+        "tp": 33,
         "fp": 2,
         "fn": 1,
-        "tn": 99,
-        "precision": 0.9091,
-        "recall": 0.9524,
-        "f1": 0.9302,
-        "fpr": 0.0198
+        "tn": 103,
+        "precision": 0.9429,
+        "recall": 0.9706,
+        "f1": 0.9565,
+        "fpr": 0.019
       },
       "medium": {
-        "tp": 21,
+        "tp": 34,
         "fp": 21,
         "fn": 0,
-        "tn": 80,
-        "precision": 0.5,
+        "tn": 84,
+        "precision": 0.6182,
         "recall": 1.0,
-        "f1": 0.6667,
-        "fpr": 0.2079
+        "f1": 0.7641,
+        "fpr": 0.2
       }
     },
     "heldout": {
       "critical": {
-        "tp": 8,
+        "tp": 20,
         "fp": 0,
-        "fn": 7,
-        "tn": 87,
+        "fn": 14,
+        "tn": 97,
         "precision": 1.0,
-        "recall": 0.5333,
-        "f1": 0.6956,
+        "recall": 0.5882,
+        "f1": 0.7407,
         "fpr": 0.0
       },
       "high": {
-        "tp": 12,
-        "fp": 1,
-        "fn": 3,
-        "tn": 86,
-        "precision": 0.9231,
-        "recall": 0.8,
-        "f1": 0.8572,
-        "fpr": 0.0115
+        "tp": 33,
+        "fp": 2,
+        "fn": 1,
+        "tn": 95,
+        "precision": 0.9429,
+        "recall": 0.9706,
+        "f1": 0.9565,
+        "fpr": 0.0206
       },
       "medium": {
-        "tp": 13,
-        "fp": 6,
-        "fn": 2,
-        "tn": 81,
-        "precision": 0.6842,
-        "recall": 0.8667,
-        "f1": 0.7647,
-        "fpr": 0.069
+        "tp": 34,
+        "fp": 7,
+        "fn": 0,
+        "tn": 90,
+        "precision": 0.8293,
+        "recall": 1.0,
+        "f1": 0.9067,
+        "fpr": 0.0722
+      }
+    }
+  },
+  "calibrated": {
+    "overall": {
+      "items": 68,
+      "severity_met": 64,
+      "severity_met_rate": 0.9412,
+      "critical_expected": {
+        "items": 46,
+        "tp": 43,
+        "recall": 0.9348
+      },
+      "below_expected": [
+        "h2-cred-node-kube",
+        "h2-rugpull-exec",
+        "h2-split-cred-paste",
+        "rugpull-new-tool"
+      ]
+    },
+    "by_split": {
+      "dev": {
+        "items": 34,
+        "severity_met": 33,
+        "severity_met_rate": 0.9706,
+        "critical_expected": {
+          "items": 23,
+          "tp": 23,
+          "recall": 1.0
+        },
+        "below_expected": [
+          "rugpull-new-tool"
+        ]
+      },
+      "heldout": {
+        "items": 34,
+        "severity_met": 31,
+        "severity_met_rate": 0.9118,
+        "critical_expected": {
+          "items": 23,
+          "tp": 20,
+          "recall": 0.8696
+        },
+        "below_expected": [
+          "h2-cred-node-kube",
+          "h2-rugpull-exec",
+          "h2-split-cred-paste"
+        ]
       }
     }
   },
   "categories": {
     "adv-encoding": {
       "label": "adversarial",
-      "items": 2,
+      "items": 4,
       "recall_critical": 1.0,
       "recall_high": 1.0,
       "recall_medium": 1.0,
-      "expected_rule_hit_rate": 1.0
+      "expected_rule_hit_rate": 1.0,
+      "severity_met_rate": 1.0
     },
     "adv-paraphrase": {
       "label": "adversarial",
-      "items": 2,
+      "items": 14,
       "recall_critical": 0.0,
-      "recall_high": 0.0,
-      "recall_medium": 0.0,
-      "expected_rule_hit_rate": 0.0
+      "recall_high": 1.0,
+      "recall_medium": 1.0,
+      "expected_rule_hit_rate": 0.1429,
+      "severity_met_rate": 1.0
     },
     "adv-split": {
       "label": "adversarial",
-      "items": 2,
-      "recall_critical": 0.0,
-      "recall_high": 0.5,
+      "items": 7,
+      "recall_critical": 0.7143,
+      "recall_high": 1.0,
       "recall_medium": 1.0,
-      "expected_rule_hit_rate": 0.5
+      "expected_rule_hit_rate": 0.2857,
+      "severity_met_rate": 0.8571
     },
     "adv-unicode": {
       "label": "adversarial",
@@ -146,21 +197,22 @@
       "recall_critical": 1.0,
       "recall_high": 1.0,
       "recall_medium": 1.0,
-      "expected_rule_hit_rate": 1.0
+      "expected_rule_hit_rate": 1.0,
+      "severity_met_rate": 1.0
     },
     "benign-config": {
       "label": "benign",
-      "items": 6,
+      "items": 7,
       "fpr_critical": 0.0,
       "fpr_high": 0.0,
       "fpr_medium": 0.0
     },
     "benign-instructions": {
       "label": "benign",
-      "items": 3,
+      "items": 4,
       "fpr_critical": 0.0,
-      "fpr_high": 0.0,
-      "fpr_medium": 0.0
+      "fpr_high": 0.25,
+      "fpr_medium": 0.25
     },
     "benign-locked": {
       "label": "benign",
@@ -192,18 +244,19 @@
     },
     "benign-skill": {
       "label": "benign",
-      "items": 12,
+      "items": 24,
       "fpr_critical": 0.0,
       "fpr_high": 0.0,
-      "fpr_medium": 0.0833
+      "fpr_medium": 0.0417
     },
     "cred-exfil": {
       "label": "malicious",
-      "items": 3,
-      "recall_critical": 0.6667,
-      "recall_high": 1.0,
+      "items": 5,
+      "recall_critical": 0.8,
+      "recall_high": 0.8,
       "recall_medium": 1.0,
-      "expected_rule_hit_rate": 1.0
+      "expected_rule_hit_rate": 0.8,
+      "severity_met_rate": 0.8
     },
     "env-dump": {
       "label": "malicious",
@@ -211,47 +264,62 @@
       "recall_critical": 1.0,
       "recall_high": 1.0,
       "recall_medium": 1.0,
-      "expected_rule_hit_rate": 1.0
+      "expected_rule_hit_rate": 1.0,
+      "severity_met_rate": 1.0
     },
     "prereq-lure": {
       "label": "malicious",
-      "items": 7,
-      "recall_critical": 0.7143,
+      "items": 11,
+      "recall_critical": 0.9091,
       "recall_high": 1.0,
       "recall_medium": 1.0,
-      "expected_rule_hit_rate": 1.0
+      "expected_rule_hit_rate": 0.8182,
+      "severity_met_rate": 1.0
+    },
+    "reverse-shell": {
+      "label": "malicious",
+      "items": 2,
+      "recall_critical": 1.0,
+      "recall_high": 1.0,
+      "recall_medium": 1.0,
+      "expected_rule_hit_rate": 1.0,
+      "severity_met_rate": 1.0
     },
     "rug-pull": {
       "label": "malicious",
-      "items": 3,
-      "recall_critical": 0.6667,
-      "recall_high": 0.6667,
+      "items": 4,
+      "recall_critical": 0.5,
+      "recall_high": 0.75,
       "recall_medium": 1.0,
-      "expected_rule_hit_rate": 1.0
+      "expected_rule_hit_rate": 1.0,
+      "severity_met_rate": 0.5
     },
     "stdio-injection": {
+      "label": "malicious",
+      "items": 7,
+      "recall_critical": 1.0,
+      "recall_high": 1.0,
+      "recall_medium": 1.0,
+      "expected_rule_hit_rate": 1.0,
+      "severity_met_rate": 1.0
+    },
+    "tool-poisoning": {
       "label": "malicious",
       "items": 5,
       "recall_critical": 0.6,
       "recall_high": 1.0,
       "recall_medium": 1.0,
-      "expected_rule_hit_rate": 1.0
-    },
-    "tool-poisoning": {
-      "label": "malicious",
-      "items": 4,
-      "recall_critical": 0.5,
-      "recall_high": 1.0,
-      "recall_medium": 1.0,
-      "expected_rule_hit_rate": 1.0
+      "expected_rule_hit_rate": 1.0,
+      "severity_met_rate": 1.0
     },
     "tool-shadowing": {
       "label": "malicious",
-      "items": 2,
+      "items": 3,
       "recall_critical": 0.0,
       "recall_high": 1.0,
       "recall_medium": 1.0,
-      "expected_rule_hit_rate": 1.0
+      "expected_rule_hit_rate": 1.0,
+      "severity_met_rate": 1.0
     }
   },
   "benign_hits_by_rule": {
@@ -271,6 +339,7 @@
     "AG-SKL-CRED-002:medium": 1,
     "AG-SKL-EXEC-002:medium": 1,
     "AG-SKL-HID-004:medium": 1,
+    "AG-SKL-INJ-001:high": 1,
     "AG-SKL-INJ-001:medium": 1,
     "AG-SKL-INJ-009:medium": 1,
     "AG-SKL-SE-007:medium": 1
@@ -283,22 +352,22 @@
     },
     "precision_high": {
       "target": 0.85,
-      "actual": 0.9143,
+      "actual": 0.9429,
       "met": true
     },
     "fpr_high_max": {
       "target": 0.02,
-      "actual": 0.016,
+      "actual": 0.0198,
       "met": true
     }
   },
   "performance": {
-    "total_seconds": 51.681,
-    "mean_ms_per_item": 230.7,
+    "total_seconds": 29.664,
+    "mean_ms_per_item": 109.9,
     "perf_check": {
       "skills": 100,
       "configs": 20,
-      "seconds": 1.116,
+      "seconds": 1.354,
       "target_seconds": 10,
       "met": true,
       "findings": 547

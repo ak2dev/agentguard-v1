@@ -1,7 +1,7 @@
 # Credential access and exfiltration sinks.
 rules:
   - id: AG-SKL-CRED-001
-    version: 1
+    version: 2
     title: Reads credential stores
     description: Reads SSH keys, cloud CLI credentials, kube/docker configs, package-registry tokens, .env files, keychains, browser profiles or crypto wallets.
     why: Credential files are the primary target of infostealer skills. Reading them is rarely needed by a skill's stated purpose.
@@ -16,6 +16,9 @@ rules:
           (?:~|\$HOME|%USERPROFILE%|\$env:USERPROFILE|/home/[^/\s]+|/Users/[^/\s]+|/root)?[/\\]?(?:\.ssh[/\\](?:id_[a-z0-9_]+|authorized_keys|config)|\.aws[/\\](?:credentials|config)|\.config[/\\]gcloud|\.azure[/\\]|\.kube[/\\]config|\.docker[/\\]config\.json|\.npmrc|\.pypirc|\.netrc|\.git-credentials|\.gnupg[/\\]|\.password-store|Login\s+Data|Cookies\.sqlite|key4\.db|logins\.json|wallet\.dat|\.electrum|\.ethereum[/\\]keystore|Exodus[/\\]|nkbihfbeogaeaoehlefnkodbefgpgknn|login\.keychain(?:-db)?|\.config[/\\]gh[/\\]hosts\.yml|\.claude[/\\]\.credentials\.json)
         - |-
           \bsecurity\s+(?:find-generic-password|find-internet-password|dump-keychain)\b|\bcmdkey\s+/list\b|\bvaultcmd\b
+        # A whole credential directory under the home directory (tar/zip/cp -r ~/.ssh ~/.aws).
+        - |-
+          (?:~|\$HOME|\$\{HOME\}|%USERPROFILE%|\$env:USERPROFILE)[/\\](?:\.ssh|\.aws|\.gnupg|\.kube|\.docker|\.azure|\.password-store|\.config[/\\](?:gcloud|gh))[/\\]?(?=[\s"'`)|;&,]|$)
         - |-
           (?:^|[\s"'(/\\])\.env(?:\.(?:local|production|prod|development|dev))?\b(?!\.example|\.sample|\.template)
       require:

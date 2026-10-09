@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "notes": {
+      "command": "python",
+      "args": [
+        "-m",
+        "notes_server",
+        "--db",
+        "./notes.db"
+      ]
+    }
+  }
+}

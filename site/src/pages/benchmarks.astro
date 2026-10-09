@@ -7,11 +7,11 @@ const cats = Object.entries(b.categories);
 ---
 <Base title="Benchmarks">
   <h1>Benchmark results</h1>
-  <p class="lead">Generated from <code>bench/results/latest.json</code> (engine {b.engine_version}, rule pack {b.rule_pack.version}, {b.date}). CI reruns the benchmark on every change and fails on regressions.</p>
+  <p class="lead">Generated from <code>bench/results/latest.json</code> (engine {b.engine_version}, rule pack {b.rule_pack.version}, {b.date}). CI reruns the benchmark on every change and fails if these committed results are stale or if a pull request makes any item worse.</p>
 
   <h2>Corpus</h2>
   <p>{b.corpus.items} items: {b.corpus.malicious} malicious, {b.corpus.adversarial} adversarial, {b.corpus.benign} benign. Sources: {Object.entries(b.corpus.sources).map(([k, v]) => `${v} ${k}`).join(", ")}.
-  All malicious and adversarial items are inert synthetic reproductions of documented patterns (reserved domains, no working payloads). The held-out split shares no author or template with the items used while writing rules.</p>
+  All malicious and adversarial items are inert synthetic reproductions of documented patterns (reserved domains, no working payloads). The held-out split shares no template or wording with the items used while writing rules; the round-4 held-out items were written by the same person as the round-4 rules, before those rules existed (<code>docs/benchmark.md</code>).</p>
   {b.corpus.sources.real && <p class="gap">Caveat: the {b.corpus.sources.real} real benign items are skills and MCP servers from vendor-maintained repositories at pinned commits. Rules were tuned against the ones in the dev split, so read the held-out table below for generalization. Before each tuning round the next repositories were scanned once: 16 of 43, then 7 of 28, then 1 of 79 benign items were flagged at HIGH. The full history and the benign items still flagged are in <code>docs/benchmark.md</code>.</p>}
   {!b.corpus.sources.real && <p class="gap">Caveat: the benign set is currently synthetic. Real-world benign corpora (official and popular skills and servers at pinned revisions) are added with <code>bench/fetch_real.py</code> once sources are approved in <code>bench/real_sources.yaml</code>; until then, false-positive rates here are optimistic.</p>}
 
@@ -43,13 +43,27 @@ const cats = Object.entries(b.categories);
     <tbody>{sevs.map((s) => { const m = b.by_split.heldout[s]; return (<tr><td>≥ {s}</td><td>{pct(m.precision)}</td><td>{pct(m.recall)}</td><td>{pct(m.fpr)}</td></tr>); })}</tbody>
   </table></div>)}
 
+  {b.calibrated && (<>
+  <h2>At the expected severity</h2>
+  <p class="muted">Each malicious and adversarial item records the severity its attack warrants, set when the item was written: CRITICAL for concrete code execution or credential exfiltration a scanner can show, HIGH for manipulation recognized by wording, shadowing, side channels and installers from an unknown host. Raw recall at CRITICAL above counts every positive, including the ones that should be HIGH.</p>
+  <div class="table-scroll"><table>
+    <thead><tr><th scope="col">Split</th><th scope="col">Items at or above their expected severity</th><th scope="col">CRITICAL-expected items caught at CRITICAL</th></tr></thead>
+    <tbody>
+      {[["all", b.calibrated.overall], ...Object.entries(b.calibrated.by_split)].map(([name, c]) => (
+        <tr><td>{name}</td><td>{c.severity_met} / {c.items} ({pct(c.severity_met_rate)})</td><td>{c.critical_expected.tp} / {c.critical_expected.items} ({pct(c.critical_expected.recall)})</td></tr>
+      ))}
+    </tbody>
+  </table></div>
+  {b.calibrated.overall.below_expected.length > 0 && <p class="gap">Below their expected severity: {b.calibrated.overall.below_expected.map((id, i) => <>{i > 0 && ", "}<code>{id}</code></>)}.</p>}
+  </>)}
+
   <h2>Per category</h2>
   <p class="muted">Recall for malicious/adversarial categories; false-positive rate for benign ones. Weak categories are listed as they are.</p>
   <div class="table-scroll"><table>
-    <thead><tr><th scope="col">Category</th><th scope="col">Label</th><th scope="col">Items</th><th scope="col">@critical</th><th scope="col">@high</th><th scope="col">@medium</th><th scope="col">Expected rule hit</th></tr></thead>
+    <thead><tr><th scope="col">Category</th><th scope="col">Label</th><th scope="col">Items</th><th scope="col">@critical</th><th scope="col">@high</th><th scope="col">@medium</th><th scope="col">At expected severity</th><th scope="col">Expected rule hit</th></tr></thead>
     <tbody>
       {cats.map(([name, e]) => { const k = e.label === "benign" ? "fpr" : "recall"; return (
-        <tr><td>{name}</td><td>{e.label}</td><td>{e.items}</td>{sevs.map((s) => <td>{k} {pct(e[`${k}_${s}`])}</td>)}<td>{e.expected_rule_hit_rate !== undefined ? pct(e.expected_rule_hit_rate) : "—"}</td></tr>
+        <tr><td>{name}</td><td>{e.label}</td><td>{e.items}</td>{sevs.map((s) => <td>{k} {pct(e[`${k}_${s}`])}</td>)}<td>{e.severity_met_rate !== undefined ? pct(e.severity_met_rate) : "—"}</td><td>{e.expected_rule_hit_rate !== undefined ? pct(e.expected_rule_hit_rate) : "—"}</td></tr>
       ); })}
     </tbody>
   </table></div>
