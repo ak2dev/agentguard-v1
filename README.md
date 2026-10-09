@@ -56,7 +56,7 @@ The website's `/scan` page runs the same engine in your browser (Pyodide): paste
 ```yaml
 - uses: actions/checkout@<sha>
   with: { fetch-depth: 0, persist-credentials: false }
-- uses: agentguard/agentguard@<release-sha>
+- uses: ak2dev/agentguard-v1@<release-sha>
   with: { path: ., fail-on: high }
 ```
 

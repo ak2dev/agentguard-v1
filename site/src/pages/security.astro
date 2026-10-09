@@ -9,7 +9,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
   <p>Every release is built in CI, signed with Sigstore (keyless, tied to the release workflow identity), and ships a CycloneDX SBOM and a <code>SHA256SUMS</code> file. Verify a wheel before installing it:</p>
 <pre><code>python -m pip install sigstore
 python -m sigstore verify identity \
-  --cert-identity "https://github.com/agentguard/agentguard/.github/workflows/release.yml@refs/tags/v0.1.0" \
+  --cert-identity "https://github.com/ak2dev/agentguard-v1/.github/workflows/release.yml@refs/tags/v0.1.0" \
   --cert-oidc-issuer "https://token.actions.githubusercontent.com" \
   agentguard-0.1.0-py3-none-any.whl</code></pre>
   <p class="muted">The <code>.sigstore.json</code> bundle for each file is attached to the GitHub release next to it.</p>
@@ -24,6 +24,6 @@ python -m sigstore verify identity \
   </ul>
 
   <h2>Reporting a vulnerability</h2>
-  <p>Please report vulnerabilities privately through GitHub security advisories for the <code>agentguard/agentguard</code> repository. Machine-readable contact details are in <a href={`${base}/.well-known/security.txt`}>security.txt</a>. We aim to acknowledge reports within 3 working days and to publish a fix and advisory within 90 days, crediting reporters who want credit.</p>
+  <p>Please report vulnerabilities privately through GitHub security advisories for the <code>ak2dev/agentguard-v1</code> repository. Machine-readable contact details are in <a href={`${base}/.well-known/security.txt`}>security.txt</a>. We aim to acknowledge reports within 3 working days and to publish a fix and advisory within 90 days, crediting reporters who want credit.</p>
   <p>Bypasses of detection rules (a malicious sample Agent Guard misses) are welcome as ordinary issues with an <em>inert</em> reproduction. Please do not attach live malware.</p>
 </Base>

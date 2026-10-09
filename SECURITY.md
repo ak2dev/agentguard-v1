@@ -27,7 +27,7 @@ Releases are built in GitHub Actions and signed with Sigstore (keyless). Each re
 ```bash
 python -m pip install sigstore
 python -m sigstore verify identity \
-  --cert-identity "https://github.com/agentguard/agentguard/.github/workflows/release.yml@refs/tags/vX.Y.Z" \
+  --cert-identity "https://github.com/ak2dev/agentguard-v1/.github/workflows/release.yml@refs/tags/vX.Y.Z" \
   --cert-oidc-issuer "https://token.actions.githubusercontent.com" \
   agentguard-X.Y.Z-py3-none-any.whl
 ```
