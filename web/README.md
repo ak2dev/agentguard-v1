@@ -100,7 +100,7 @@ The site stays on Vercel. The server needs a host that can run Docker containers
 
 1. Run Postgres, Redis, `agentguard-web api` and `agentguard-web dispatcher` (the images in `web/docker/`). Give only the dispatcher Docker access, and only on a host dedicated to scanning. In `compose.yaml` the Docker socket is mounted for local development; on a shared host prefer rootless Docker or a separate scan VM.
 2. Run `agentguard-web check-sandbox` at deploy time; it must print `NO-EGRESS`.
-3. Proxy the site's `/api/` to the API with a Vercel rewrite in `vercel.json`:
+3. Proxy the site's `/api/` to the API with a Vercel rewrite in `vercel.json`, placed before the catch-all rewrite to the `site` service:
    `"rewrites": [{ "source": "/api/:path*", "destination": "https://<your-api-host>/api/:path*" }]`.
    Without it the site still works: links to GitHub fall back to the browser scanner.
 4. Schedule `agentguard-web prune` daily.
