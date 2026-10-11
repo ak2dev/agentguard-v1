@@ -4,7 +4,7 @@
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
-  site: process.env.AG_SITE_URL ?? "https://agentguard.github.io",
+  site: process.env.AG_SITE_URL ?? "https://agentguard-ak2dev.vercel.app",
   base: process.env.AG_SITE_BASE ?? "/",
   output: "static",
   trailingSlash: "always",
