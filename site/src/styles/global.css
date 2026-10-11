@@ -99,8 +99,9 @@ a:hover { color: var(--accent-hover); }
 
 /* ---- page frame: dashed rails either side of the content ---------------- */
 .frame { max-width: var(--maxw); margin: 0 auto; background: var(--bg); border-inline: 1px dashed var(--line-2); }
-.main-inner { padding: 36px 0 72px; }
 .wrap { width: 100%; padding: 0 clamp(16px, 4vw, 48px); }
+.main-inner { padding-top: 36px; }
+.hero + .frame .main-inner { padding-top: 0; }
 
 /* ---- header ---------------------------------------------------------------- */
 header.site { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(10px); border-bottom: 1px dashed var(--line); }
