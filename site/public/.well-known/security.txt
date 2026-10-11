@@ -3,5 +3,5 @@
 Contact: https://github.com/ak2dev/agentguard-v1/security/advisories/new
 Expires: 2027-09-28T00:00:00.000Z
 Preferred-Languages: en
-Policy: https://agentguard.github.io/security/
-Canonical: https://agentguard.github.io/.well-known/security.txt
+Policy: https://agentguard-ak2dev.vercel.app/security/
+Canonical: https://agentguard-ak2dev.vercel.app/.well-known/security.txt
