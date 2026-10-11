@@ -1,8 +1,8 @@
-// Serves site/dist the way Vercel will: the response headers from ../vercel.json
-// (so the real Content-Security-Policy is enforced locally and in CI tests) and
-// `trailingSlash: true`. Local development and testing only.
+// Serves site/dist the way Vercel will: the `site` service's response headers from
+// ../vercel.json (so the real Content-Security-Policy is enforced locally and in CI
+// tests) and `trailingSlash: true`. Local development and testing only.
 // With AGW_API_URL set (e.g. http://127.0.0.1:8000), /api/* is proxied there,
-// as the Vercel rewrite does in production.
+// as the rewrite to the `web` service does in production.
 // Usage: node scripts/serve.mjs [port]
 import http from "node:http";
 import fs from "node:fs";
@@ -11,7 +11,7 @@ import { fileURLToPath } from "node:url";
 
 const site = fileURLToPath(new URL("..", import.meta.url));
 const dist = path.join(site, "dist");
-const config = JSON.parse(fs.readFileSync(path.join(site, "..", "vercel.json"), "utf8"));
+const config = JSON.parse(fs.readFileSync(path.join(site, "..", "vercel.json"), "utf8")).services.site;
 const rules = config.headers.map((r) => ({ re: new RegExp(`^${r.source}$`), headers: r.headers }));
 const port = Number(process.argv[2] || process.env.PORT || 4321);
 const TYPES = {

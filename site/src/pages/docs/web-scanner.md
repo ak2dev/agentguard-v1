@@ -48,15 +48,15 @@ Findings are evidence for review, not verdicts. A report with no findings means 
 
 ## Deploying on Vercel
 
-The repository root has a `vercel.json`. Import the repository as a Vercel project and keep the defaults it sets:
+The repository root has a `vercel.json` that defines the site as a Vercel [service](https://vercel.com/docs/services) named `site`, public on every path. Import the repository as a Vercel project and keep the settings it sets:
 
-- install: `npm ci --prefix site`; build: `cd site && PUBLIC_FEATURE_SCAN=1 npm run build`; output: `site/dist`;
+- root `site/`; install: `npm ci`; build: `PUBLIC_FEATURE_SCAN=1 npm run build`; output: `dist`;
 - response headers: a Content-Security-Policy that allows WebAssembly (`'wasm-unsafe-eval'`) and, for the scanner's worker, the three GitHub hosts above; every page also carries its own stricter policy, and browsers enforce both;
 - `trailingSlash: true`, matching the site's URLs.
 
 No server code, environment variables or secrets are needed.
 
-To connect the server, run it on a host that can start containers with no network (see `web/README.md`: `docker compose up` locally; Postgres, Redis, the API and the dispatcher in production), then add a rewrite so the site reaches it on its own origin and its CSP can stay `connect-src 'self'`:
+To connect the server, run it on a host that can start containers with no network (see `web/README.md`: `docker compose up` locally; Postgres, Redis, the API and the dispatcher in production), then add a rewrite before the catch-all to `site` so the site reaches it on its own origin and its CSP can stay `connect-src 'self'`:
 
 ```json
 "rewrites": [{ "source": "/api/:path*", "destination": "https://<your-api-host>/api/:path*" }]
