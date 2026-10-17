@@ -187,6 +187,9 @@ footer.site { border-top: 1px dashed var(--line); padding: 40px 0 48px; color: v
 .foot li { margin: 5px 0; }
 .foot a { color: var(--muted); text-decoration: none; }
 .foot a:hover { color: var(--fg); }
+.foot-credit { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; margin: 32px 0 0; padding-top: 20px; border-top: 1px dashed var(--line); font-size: .85rem; }
+.foot-credit-label { font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; color: var(--fg-2); }
+.foot-credit-batch { white-space: nowrap; }
 @media (max-width: 760px) { .foot { grid-template-columns: 1fr 1fr; } }
 
 /* ================= landing page ================================================ */
