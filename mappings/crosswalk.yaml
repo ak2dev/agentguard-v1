@@ -1107,6 +1107,27 @@ AG-SC-025:
   owasp-llm-2026: ["LLM04:2026"]
   nsa-csi-mcp-2026-05: [examples/tool-invocation-path-confusion, recommendations/supported-projects]
   cwe: []
+AG-SC-026:
+  owasp-asi-2026: [ASI04]
+  owasp-mcp-2025-beta: ["MCP04:2025"]
+  owasp-ast-1.0: [AST02]
+  owasp-llm-2026: ["LLM04:2026"]
+  nsa-csi-mcp-2026-05: []
+  cwe: [CWE-829]
+AG-SC-027:
+  owasp-asi-2026: [ASI04]
+  owasp-mcp-2025-beta: ["MCP04:2025"]
+  owasp-ast-1.0: [AST02]
+  owasp-llm-2026: ["LLM04:2026"]
+  nsa-csi-mcp-2026-05: []
+  cwe: [CWE-829]
+AG-SC-028:
+  owasp-asi-2026: [ASI04]
+  owasp-mcp-2025-beta: ["MCP04:2025"]
+  owasp-ast-1.0: [AST02]
+  owasp-llm-2026: ["LLM04:2026"]
+  nsa-csi-mcp-2026-05: []
+  cwe: [CWE-829]
 AG-POL-001:
   owasp-asi-2026: []
   owasp-mcp-2025-beta: ["MCP09:2025"]

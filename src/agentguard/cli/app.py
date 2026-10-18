@@ -118,6 +118,7 @@ def scan_cmd(
     osv: Annotated[bool, typer.Option("--osv", help="NETWORK: look up dependencies in OSV.")] = False,
     provenance: Annotated[bool, typer.Option("--provenance", help="NETWORK: verify npm/Sigstore provenance.")] = False,
     registry: Annotated[bool, typer.Option("--registry", help="NETWORK: MCP Registry / package age checks.")] = False,
+    check_hijackable: Annotated[bool, typer.Option("--check-hijackable", help="NETWORK: check that referenced GitHub owners, npm/PyPI packages and download domains still exist (SkillJacking).")] = False,
     llm_judge: Annotated[Optional[str], typer.Option("--llm-judge", help="NETWORK: optional LLM judge provider: anthropic | openai_compat | ollama.")] = None,
     llm_model: Annotated[Optional[str], typer.Option("--llm-model", help="Judge model (default for anthropic: claude-opus-5-5).")] = None,
     llm_endpoint: Annotated[Optional[str], typer.Option("--llm-endpoint", help="Base URL for openai_compat / ollama.")] = None,
@@ -167,7 +168,8 @@ def scan_cmd(
         options = ScanOptions(
             fail_on=threshold,
             network=NetworkOptions(live_metadata=live_metadata, auth_checks=auth_checks, osv=osv,
-                                   provenance=provenance, registry=registry, llm_judge=bool(llm_judge)),
+                                   provenance=provenance, registry=registry, hijackable=check_hijackable,
+                                   llm_judge=bool(llm_judge)),
             policy=pol,
             suppressions=list(pconf.suppressions) if pconf else [],
             baseline=load_baseline(baseline) if baseline else None,

@@ -55,3 +55,15 @@ class PackageFacts(BaseModel):
     publisher: str | None = None
     vulns: list[Vulnerability] = Field(default_factory=list)
     error: str | None = None
+
+
+class DependencyFact(BaseModel):
+    """Whether an external dependency still belongs to someone (opt-in
+    ``--check-hijackable``). ``missing`` / ``unpublished`` / ``unregistered`` /
+    ``expired`` mean anyone could register it and serve their own content."""
+
+    kind: Literal["github_owner", "npm", "pypi", "domain"]
+    name: str
+    status: Literal["exists", "missing", "unpublished", "unregistered", "expired", "no_dns", "unknown"]
+    detail: str = ""
+    error: str | None = None

@@ -1,0 +1,3 @@
+# Recorded facts are ignored unless --check-hijackable is on.
+dependency_facts:
+  - {kind: github_owner, name: ghost-maintainer, status: missing}

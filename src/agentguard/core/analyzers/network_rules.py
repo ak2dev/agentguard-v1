@@ -163,3 +163,61 @@ class PackageAgeAnalyzer(_FactsAnalyzer):
                 ctx.emit("AG-SC-023", component_ids=comp.id if comp else [], span=span, snippet=f"{f.name} created {f.created}",
                          match=f"{f.name}:age", kind=EvidenceKind.intel,
                          message=f"{f.ecosystem} package {f.name} was first published {age} day(s) ago ({f.created}).")
+
+
+class HijackableAnalyzer:
+    """Dependencies an attacker could register and take over (opt-in
+    --check-hijackable): GitHub owners that no longer exist, npm / PyPI names
+    that are not registered, and download domains that are unregistered,
+    expired or no longer resolve. Reads recorded DependencyFacts only."""
+
+    id: ClassVar[str] = "supply.hijack"
+    requires: ClassVar[frozenset[str]] = frozenset({"network"})
+    network_feature: ClassVar[str] = "hijackable"
+    rules: ClassVar[tuple[str, ...]] = ("AG-SC-026", "AG-SC-027", "AG-SC-028")
+    _RULE = {"github_owner": "AG-SC-026", "npm": "AG-SC-027", "pypi": "AG-SC-027", "domain": "AG-SC-028"}
+    _CLAIMABLE = {"missing", "unpublished", "unregistered", "expired"}
+
+    def run(self, ctx: Context) -> None:
+        from ..extract.dependencies import locate_refs
+
+        facts = {(f.kind, f.name.lower()): f for f in ctx.options.dependency_facts}
+        if not facts:
+            return
+        reported: set[tuple[str, str, str]] = set()
+        for lr in locate_refs(ctx.inventory):
+            ref = lr.ref
+            fact = facts.get((ref.kind, ref.name))
+            if fact is None or (fact.status not in self._CLAIMABLE and not (ref.kind == "domain" and fact.status == "no_dns")):
+                continue
+            key = (ref.kind, ref.name, lr.span.path)
+            if key in reported:
+                continue
+            reported.add(key)
+            sev, conf, msg = self._judge(ref.kind, ref.name, ref.install, fact.status, fact.detail)
+            unit = lr.unit
+            ctx.emit(self._RULE[ref.kind], component_ids=lr.component_id or [], span=lr.span, snippet=lr.snippet or ref.raw,
+                     match=f"{ref.kind}:{ref.name}", kind=EvidenceKind.intel, severity=sev, confidence=conf, message=msg,
+                     detail=fact.detail, hidden=bool(unit and unit.hidden), hidden_kind=unit.hidden_kind if unit else None,
+                     decode_path=unit.decode_path if unit else ())
+
+    @staticmethod
+    def _judge(kind: str, name: str, install: bool, status: str, detail: str) -> tuple[Severity, Confidence, str]:
+        why = f" ({detail})" if detail else ""
+        if kind == "github_owner":
+            msg = (f"GitHub account '{name}' no longer exists{why}; anyone can register it and serve their own "
+                   f"{'code at this URL' if install else 'repository at this link'}.")
+            return (Severity.high, Confidence.medium, msg) if install else (Severity.medium, Confidence.low, msg)
+        if kind in ("npm", "pypi"):
+            reg = "npm" if kind == "npm" else "PyPI"
+            state = "was unpublished" if status == "unpublished" else "is not registered"
+            if kind == "npm" and name.startswith("@"):
+                return (Severity.medium, Confidence.medium,
+                        f"{reg} package '{name}' {state}{why}; whoever controls the scope '{name.split('/')[0]}' can publish it.")
+            return (Severity.high, Confidence.high, f"{reg} package '{name}' {state}{why}; anyone can publish a package with this name "
+                                                    "and it will be installed.")
+        if status == "no_dns":
+            return (Severity.low, Confidence.medium,
+                    f"Download domain '{name}' does not resolve{why}; if the registration lapses, anyone can register it.")
+        state = "has expired" if status == "expired" else "is not registered"
+        return (Severity.high, Confidence.high, f"Domain of '{name}' {state}{why}; anyone can register it and serve whatever is fetched from it.")
