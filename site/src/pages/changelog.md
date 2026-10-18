@@ -14,6 +14,7 @@ First public version.
 - Rule pack 0.1.0 with 173 rules across skills, instruction files, MCP configuration, MCP metadata, code, toxic flows, supply chain, remote auth conformance, policy, coverage and the optional LLM judge.
 - Outputs: terminal, JSON (schema v1), SARIF 2.1.0, Markdown, single-file HTML, CycloneDX 1.6 inventory.
 - GitHub Action with PR mode and SARIF upload; pre-commit hook.
+- Opt-in `--check-hijackable` (SkillJacking) on the CLI and in the GitHub Action (`check-hijackable: true`): deleted GitHub owners, unregistered npm/PyPI names, unregistered or expired domains and freed cloud-app hostnames. A GitHub token, when set, goes to api.github.com only.
 - Pure-Python engine that runs under Pyodide.
 - Agent Guard Web: GitHub, npm, PyPI, MCP Registry and remote MCP server links scanned on the server in an isolated sandbox; rescans with current rules, maintainer responses, factual README badges, a self-hosted bot check, and toxic flows drawn as diagrams.
 - Optional native analyzers: tree-sitter taint for JS/TS tool handlers and shell scripts (`agentguard[code]`), and YARA rules over bundled binaries (`agentguard[yara]`).

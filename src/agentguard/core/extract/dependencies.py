@@ -1,6 +1,7 @@
 """Static extraction of external dependencies an attacker could take over
 ("SkillJacking" / "MCPJacking"): GitHub owners, npm / PyPI package names and
-download / install domains referenced by skills, scripts and MCP configs.
+download / install domains (including cloud-app hostnames such as
+``<app>.azurewebsites.net``) referenced by skills, scripts and MCP configs.
 
 Pure: this only finds references. The opt-in ``--check-hijackable`` collector
 (``agentguard.net.hijack``) looks them up; the ``supply.hijack`` analyzer
@@ -65,6 +66,21 @@ _WELL_KNOWN = regex.compile(
     r"google\.com|googleapis\.com|gstatic\.com|amazonaws\.com|cloudflare\.com|anthropic\.com|claude\.ai|claude\.com|"
     r"openai\.com|modelcontextprotocol\.io|apple\.com|ubuntu\.com|debian\.org|mozilla\.org|w3\.org|schema\.org|json-schema\.org)$"
 )
+# Cloud-app hostnames whose name is a per-app slot on the platform's domain. On
+# these platforms a deleted app's name stops resolving (no wildcard DNS) and
+# anyone can create an app with that name. Platforms with wildcard DNS
+# (herokuapp.com, vercel.app, netlify.app, github.io, ...) are not listed: a
+# free name there still resolves, so DNS says nothing.
+_CLOUD_APPS: tuple[tuple[regex.Pattern[str], str], ...] = tuple((regex.compile(p), name) for p, name in (
+    (r"^(?:[a-z0-9-]+\.)*?([a-z0-9-]+)(?:\.scm)?\.azurewebsites\.net$", "Azure App Service"),
+    (r"^(?:[a-z0-9-]+\.)*?([a-z0-9-]+)\.[a-z0-9]+\.cloudapp\.azure\.com$", "Azure (cloudapp.azure.com)"),
+    (r"^(?:[a-z0-9-]+\.)*?([a-z0-9-]+)\.trafficmanager\.net$", "Azure Traffic Manager"),
+    (r"^(?:[a-z0-9-]+\.)*?([a-z0-9-]+)\.blob\.core\.windows\.net$", "Azure Blob Storage"),
+    (r"^(?:[a-z0-9-]+\.)*?([a-z0-9-]+)\.pages\.dev$", "Cloudflare Pages"),
+    (r"^(?:[a-z0-9-]+\.)*?([a-z0-9-]+)\.workers\.dev$", "Cloudflare Workers"),
+    (r"^(?:[a-z0-9-]+\.)*?([a-z0-9-]+)\.fly\.dev$", "Fly.io"),
+    (r"^(?:[a-z0-9-]+\.)*?([a-z0-9-]+)\.[a-z]{2}-[a-z]+-\d\.elasticbeanstalk\.com$", "AWS Elastic Beanstalk"),
+))
 _NOT_PUBLIC = regex.compile(
     r"(?:^|\.)(?:localhost|local|internal|lan|home|corp|test|invalid|example|onion)$|(?:^|\.)example\.(?:com|net|org)$|^[\d.]+$|^[0-9a-f:]+$"
 )
@@ -116,6 +132,17 @@ def registrable_domain(host: str) -> str:
     if len(labels) >= 3 and len(labels[-1]) == 2 and labels[-2] in _SLD:
         return ".".join(labels[-3:])
     return ".".join(labels[-2:])
+
+
+def cloud_app_slot(host: str) -> tuple[str, str] | None:
+    """(platform, app name) when ``host`` is an app slot on a cloud platform
+    where a free name does not resolve; None otherwise."""
+    h = host.lower().rstrip(".")
+    for pat, platform in _CLOUD_APPS:
+        m = pat.match(h, timeout=TIMEOUT)
+        if m:
+            return platform, m.group(1)
+    return None
 
 
 def _pypi_norm(name: str) -> str:
@@ -205,7 +232,8 @@ def _line_refs(line: str, base: int, prose: Callable[[int], bool] | None = None)
                      install=fetch_line or bool(_GH_FETCH.search(raw + line[m.end():m.end() + 80], timeout=TIMEOUT)))
     for m in _URL.finditer(line, timeout=TIMEOUT):
         host = m.group(1).lower().rstrip(".")
-        if "." not in host or _WELL_KNOWN.search(host, timeout=TIMEOUT) or _NOT_PUBLIC.search(host, timeout=TIMEOUT):
+        if "." not in host or _NOT_PUBLIC.search(host, timeout=TIMEOUT) or (
+                _WELL_KNOWN.search(host, timeout=TIMEOUT) and cloud_app_slot(host) is None):
             continue
         path = (m.group(2) or "").split("?", 1)[0].split("#", 1)[0]
         before = line[max(0, m.start() - 40):m.start()]

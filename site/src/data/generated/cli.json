@@ -425,7 +425,7 @@
           "opts": [
             "--check-hijackable"
           ],
-          "help": "NETWORK: check that referenced GitHub owners, npm/PyPI packages and download domains still exist (SkillJacking).",
+          "help": "NETWORK: check that referenced GitHub owners, npm/PyPI packages, download domains and cloud-app hostnames still exist (SkillJacking). Uses $AGENTGUARD_GITHUB_TOKEN or $GITHUB_TOKEN, if set, for api.github.com only.",
           "default": "False",
           "required": false
         },
