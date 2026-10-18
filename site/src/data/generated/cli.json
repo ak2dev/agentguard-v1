@@ -420,6 +420,16 @@
           "required": false
         },
         {
+          "name": "check_hijackable",
+          "kind": "option",
+          "opts": [
+            "--check-hijackable"
+          ],
+          "help": "NETWORK: check that referenced GitHub owners, npm/PyPI packages and download domains still exist (SkillJacking).",
+          "default": "False",
+          "required": false
+        },
+        {
           "name": "llm_judge",
           "kind": "option",
           "opts": [

@@ -7,11 +7,15 @@ First public version.
 - Agent Guard Web server (`web/`, `agentguard-web`): paste a GitHub, npm, PyPI or MCP Registry link; it is pinned to an exact commit or version (registry digests verified), fetched through an allowlisted SSRF-hardened fetcher, scanned in a throwaway container with no network, and stored as an unlisted report with a permalink, downloads and drift against the previous scan. `docker compose up` runs it locally; CI tests the isolation against real containers.
 - Web scanner (`/scan`): paste text, drop files or a .zip, or give a public GitHub repository, folder, file or gist link; scanned in the browser by the same engine under Pyodide, with zero network requests for pasted and dropped input (tested in CI). GitHub links are pinned to a commit and findings link to the exact file and line. Deployable to Vercel with `vercel.json` security headers.
 - Commands: `scan`, `discover`, `lock`, `verify`, `rules` (`list`, `explain`, `export`), `report`, `bench`, `intel` (`status`, `update`), `schema`.
-- Rule pack 0.1.0 with 170 rules across skills and instruction files, MCP client configuration, MCP metadata, code, toxic flows, supply chain and drift, remote auth conformance, policy, coverage, and the optional LLM judge. Every rule has an unsafe and a safe fixture.
+- Rule pack 0.1.0 with 173 rules across skills and instruction files, MCP client configuration, MCP metadata, code, toxic flows, supply chain and drift, remote auth conformance, policy, coverage, and the optional LLM judge. Every rule has an unsafe and a safe fixture.
 - Outputs: terminal, JSON (schema v1), SARIF 2.1.0, Markdown, single-file HTML, CycloneDX 1.6 inventory.
-- Opt-in network features: read-only remote MCP metadata, OAuth/TLS conformance, npm provenance, OSV, package age, LLM judge (Anthropic, OpenAI-compatible, Ollama).
+- Opt-in network features: read-only remote MCP metadata, OAuth/TLS conformance, npm provenance, OSV, package age, hijackable dependencies, LLM judge (Anthropic, OpenAI-compatible, Ollama).
 - GitHub Action with PR mode and SARIF upload; pre-commit hook.
 - Pure-Python engine that runs under Pyodide.
+
+### Hijackable dependencies (SkillJacking)
+
+- `scan --check-hijackable` (network, opt-in): GitHub owners, npm/PyPI package names and download/install domains referenced by skills, scripts, package manifests and MCP configs are looked up through the SSRF-hardened client (GitHub users API, npm and PyPI registries, IANA RDAP). New rules AG-SC-026 (GitHub account no longer exists), AG-SC-027 (package not registered or fully unpublished) and AG-SC-028 (domain unregistered, expired or not resolving). Offline scans and the benchmark are unchanged.
 
 ### Scanner-bypass techniques and standards refresh (2026-10-18)
 

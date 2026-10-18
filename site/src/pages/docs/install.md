@@ -24,5 +24,5 @@ Every release is signed with Sigstore and ships a CycloneDX SBOM. See [Security]
 ## What it needs
 
 - **Filesystem:** read access to the paths you scan (and, for `agentguard scan` with no path, your agent configuration in your home directory).
-- **Network:** none by default. Network features are opt-in flags (`--live-metadata`, `--auth-checks`, `--osv`, `--provenance`, `--registry`) and every report lists the ones that were used.
+- **Network:** none by default. Network features are opt-in flags (`--live-metadata`, `--auth-checks`, `--osv`, `--provenance`, `--registry`, `--check-hijackable`) and every report lists the ones that were used.
 - **Processes:** none. Agent Guard installs an audit hook that blocks process creation, so nothing it scans can run — not even by accident.
