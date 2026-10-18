@@ -168,15 +168,16 @@ class PackageAgeAnalyzer(_FactsAnalyzer):
 class HijackableAnalyzer:
     """Dependencies an attacker could register and take over (opt-in
     --check-hijackable): GitHub owners that no longer exist, npm / PyPI names
-    that are not registered, and download domains that are unregistered,
-    expired or no longer resolve. Reads recorded DependencyFacts only."""
+    that are not registered, download domains that are unregistered, expired
+    or no longer resolve, and cloud-app hostnames whose app name may be free.
+    Reads recorded DependencyFacts only."""
 
     id: ClassVar[str] = "supply.hijack"
     requires: ClassVar[frozenset[str]] = frozenset({"network"})
     network_feature: ClassVar[str] = "hijackable"
     rules: ClassVar[tuple[str, ...]] = ("AG-SC-026", "AG-SC-027", "AG-SC-028")
     _RULE = {"github_owner": "AG-SC-026", "npm": "AG-SC-027", "pypi": "AG-SC-027", "domain": "AG-SC-028"}
-    _CLAIMABLE = {"missing", "unpublished", "unregistered", "expired"}
+    _CLAIMABLE = {"missing", "unpublished", "unregistered", "expired", "unclaimed"}
 
     def run(self, ctx: Context) -> None:
         from ..extract.dependencies import locate_refs
@@ -216,6 +217,13 @@ class HijackableAnalyzer:
                         f"{reg} package '{name}' {state}{why}; whoever controls the scope '{name.split('/')[0]}' can publish it.")
             return (Severity.high, Confidence.high, f"{reg} package '{name}' {state}{why}; anyone can publish a package with this name "
                                                     "and it will be installed.")
+        if status == "unclaimed":
+            from ..extract.dependencies import cloud_app_slot
+
+            platform, app = cloud_app_slot(name) or ("the hosting platform", name)
+            return (Severity.high, Confidence.medium,
+                    f"Cloud-app hostname '{name}' no longer resolves{why}; the slot may be claimable: anyone who creates "
+                    f"the {platform} app '{app}' serves whatever is fetched from it.")
         if status == "no_dns":
             return (Severity.low, Confidence.medium,
                     f"Download domain '{name}' does not resolve{why}; if the registration lapses, anyone can register it.")

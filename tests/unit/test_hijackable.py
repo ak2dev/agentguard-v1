@@ -7,12 +7,12 @@ import datetime as dt
 import json
 
 from agentguard.core.engine import scan
-from agentguard.core.extract.dependencies import find_refs, locate_refs, lookup_keys, registrable_domain
+from agentguard.core.extract.dependencies import cloud_app_slot, find_refs, locate_refs, lookup_keys, registrable_domain
 from agentguard.core.inventory import build_inventory
 from agentguard.core.models import LoadLimits, NetworkOptions, ScanOptions
 from agentguard.core.tree import ArtifactTree
 from agentguard.net.collect import collect
-from agentguard.net.hijack import check_dependencies
+from agentguard.net.hijack import MAX_GITHUB_LOOKUPS, MAX_GITHUB_LOOKUPS_AUTHENTICATED, check_dependencies
 from agentguard.net.safe_http import BlockedRequest, FetchError, Response, SafeHttpClient
 
 
@@ -50,6 +50,18 @@ def test_runner_takes_only_its_package():
     assert refs("uvx --from Some_Pkg.Name tool") == {("pypi", "some-pkg-name", True)}
 
 
+def test_cloud_app_hostnames():
+    assert cloud_app_slot("myapp.azurewebsites.net") == ("Azure App Service", "myapp")
+    assert cloud_app_slot("myapp.scm.azurewebsites.net") == ("Azure App Service", "myapp")
+    assert cloud_app_slot("abc123.docs-site.pages.dev") == ("Cloudflare Pages", "docs-site")
+    assert cloud_app_slot("api.us-east-1.elasticbeanstalk.com") == ("AWS Elastic Beanstalk", "api")
+    assert cloud_app_slot("foo.vercel.app") is None  # wildcard DNS: a free name still resolves
+    assert cloud_app_slot("pages.dev") is None and cloud_app_slot("get.tool.dev") is None
+    # Under a well-known platform domain, an app slot is still extracted.
+    assert refs("curl -fsSL https://dl.blob.core.windows.net/t/i.sh | sh") == {("domain", "dl.blob.core.windows.net", True)}
+    assert refs("curl -fsSL https://login.microsoft.com/i.sh | sh") == set()
+
+
 def test_registrable_domain():
     assert registrable_domain("a.b.example.co.uk") == "example.co.uk"
     assert registrable_domain("get.tool.dev") == "tool.dev"
@@ -74,7 +86,7 @@ def test_prose_install_mentions_are_ignored():
 class FakeClient(SafeHttpClient):
     def __init__(self, routes, resolvable=()):
         super().__init__(resolver=self._resolve)
-        self.routes, self.resolvable, self.calls = routes, set(resolvable), []
+        self.routes, self.resolvable, self.calls, self.sent_headers = routes, set(resolvable), [], []
 
     def _resolve(self, host, port):
         if host in self.resolvable or host in ("api.github.com", "registry.npmjs.org", "pypi.org", "data.iana.org", "rdap.example"):
@@ -83,6 +95,7 @@ class FakeClient(SafeHttpClient):
 
     def request(self, method, url, *, headers=None, body=None):
         self.calls.append((method, url))
+        self.sent_headers.append((url.split("/")[2], dict(headers or {})))
         host = url.split("/")[2]
         if host not in self.hosts_contacted:
             self.hosts_contacted.append(host)
@@ -131,6 +144,76 @@ def test_github_rate_limit_stops_further_lookups():
     assert [u for _, u in c.calls] == ["https://api.github.com/users/a"]
 
 
+TOKEN = "ghs_test0000000000000000000000000000000"
+
+
+def test_github_token_is_sent_to_api_github_com_only():
+    routes = {"https://api.github.com/users/alive": (200, {}), "https://data.iana.org/rdap/dns.json": (200, BOOT)}
+    c = FakeClient(routes)
+    check_dependencies(c, {"github_owner": ["alive", "gone"], "npm": ["pkg-a"], "pypi": ["pkg-b"],
+                           "domain": ["get.lapsed.dev", "app.azurewebsites.net"]}, github_token=TOKEN)
+    hosts = {h for h, _ in c.sent_headers}
+    assert {"api.github.com", "registry.npmjs.org", "pypi.org", "data.iana.org", "rdap.example"} <= hosts
+    for host, hdrs in c.sent_headers:
+        carries = any(TOKEN in str(v) for v in hdrs.values())
+        assert carries == (host == "api.github.com"), host
+    assert all(h["Authorization"] == f"Bearer {TOKEN}" for host, h in c.sent_headers if host == "api.github.com")
+
+
+def test_no_token_means_no_authorization_header():
+    c = FakeClient({})
+    check_dependencies(c, {"github_owner": ["a"], "npm": ["b"]})
+    assert not any("Authorization" in h for _, h in c.sent_headers)
+
+
+def test_token_raises_the_github_lookup_cap():
+    owners = [f"owner{i}" for i in range(MAX_GITHUB_LOOKUPS + 10)]
+    anon = FakeClient({})
+    facts = check_dependencies(anon, {"github_owner": owners})
+    assert len(anon.calls) == MAX_GITHUB_LOOKUPS
+    assert [f.error for f in facts[MAX_GITHUB_LOOKUPS:]] == ["lookup budget exhausted"] * 10
+    auth = FakeClient({})
+    facts = check_dependencies(auth, {"github_owner": owners}, github_token=TOKEN)
+    assert len(auth.calls) == len(owners) and all(f.status == "missing" for f in facts)
+    many = [f"o{i}" for i in range(MAX_GITHUB_LOOKUPS_AUTHENTICATED + 1)]
+    capped = FakeClient({})
+    check_dependencies(capped, {"github_owner": many}, github_token=TOKEN)
+    assert len(capped.calls) == MAX_GITHUB_LOOKUPS_AUTHENTICATED
+
+
+class RejectsTokenClient(FakeClient):
+    def request(self, method, url, *, headers=None, body=None):
+        if headers and "Authorization" in headers:
+            self.calls.append((method, url))
+            self.sent_headers.append((url.split("/")[2], dict(headers)))
+            return Response(url, 401, {}, b"{}")
+        return super().request(method, url, headers=headers, body=body)
+
+
+def test_rejected_token_falls_back_to_anonymous_lookups():
+    c = RejectsTokenClient({"https://api.github.com/users/alive": (200, {})})
+    facts = check_dependencies(c, {"github_owner": ["alive", "gone"]}, github_token=TOKEN)
+    assert [(f.name, f.status) for f in facts] == [("alive", "exists"), ("gone", "missing")]
+    assert sum("Authorization" in h for _, h in c.sent_headers) == 1  # tried once, then dropped
+
+
+def test_unresolvable_cloud_app_hostname_is_unclaimed_without_rdap():
+    c = FakeClient({"https://data.iana.org/rdap/dns.json": (200, BOOT)}, resolvable={"live.azurewebsites.net"})
+    facts = check_dependencies(c, {"domain": ["gone-app.azurewebsites.net", "live.azurewebsites.net"]})
+    got = {f.name: (f.status, f.detail) for f in facts}
+    assert got["gone-app.azurewebsites.net"][0] == "unclaimed"
+    assert "Azure App Service name 'gone-app' may be free to claim" in got["gone-app.azurewebsites.net"][1]
+    assert got["live.azurewebsites.net"][0] == "exists"
+    assert c.calls == []  # neither the RDAP bootstrap nor any RDAP server is asked
+
+
+def test_collect_passes_the_token_through():
+    tree = _tree({"demo/SKILL.md": SKILL})
+    c = FakeClient({"https://data.iana.org/rdap/dns.json": (200, BOOT)})
+    collect(tree, ScanOptions(network=NetworkOptions(hijackable=True), today=dt.date(2026, 10, 18)), c, github_token=TOKEN)
+    assert [h for h, hdrs in c.sent_headers if "Authorization" in hdrs] == ["api.github.com"]
+
+
 def test_collect_and_scan_report_the_feature_and_hosts():
     tree = _tree({"demo/SKILL.md": SKILL})
     options = ScanOptions(network=NetworkOptions(hijackable=True), today=dt.date(2026, 10, 18))
@@ -147,3 +230,26 @@ def test_offline_scan_never_reports_hijackable():
     report = scan(tree, ScanOptions())
     assert not any(f.rule_id in ("AG-SC-026", "AG-SC-027", "AG-SC-028") for f in report.findings)
     assert report.network_features_used == [] and report.network_hosts == []
+
+
+def test_cli_passes_the_token_for_hijackable_only_and_never_prints_it(tmp_path, monkeypatch):
+    from typer.testing import CliRunner
+
+    import agentguard.net.collect as collect_mod
+    from agentguard.cli.app import app
+
+    (tmp_path / "demo").mkdir()
+    (tmp_path / "demo" / "SKILL.md").write_text(SKILL, encoding="utf-8")
+    seen = []
+    monkeypatch.setattr(collect_mod, "collect", lambda tree, options, client=None, github_token=None: seen.append(github_token))
+    monkeypatch.setenv("AGENTGUARD_GITHUB_TOKEN", TOKEN)
+    monkeypatch.setenv("GITHUB_TOKEN", "ghs_other")
+    runner = CliRunner()
+    res = runner.invoke(app, ["scan", str(tmp_path), "-f", "json", "--check-hijackable"])
+    assert seen == [TOKEN]
+    assert TOKEN not in res.output and "$AGENTGUARD_GITHUB_TOKEN" in res.output
+    runner.invoke(app, ["scan", str(tmp_path), "-f", "json", "--osv"])
+    assert seen == [TOKEN, None]  # other network features never get the token
+    monkeypatch.delenv("AGENTGUARD_GITHUB_TOKEN")
+    runner.invoke(app, ["scan", str(tmp_path), "-f", "json", "--check-hijackable"])
+    assert seen[-1] == "ghs_other"

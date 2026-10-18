@@ -13,7 +13,10 @@ from .remote import probe_server
 from .safe_http import SafeHttpClient
 
 
-def collect(tree: ArtifactTree, options: ScanOptions, client: SafeHttpClient | None = None) -> None:
+def collect(tree: ArtifactTree, options: ScanOptions, client: SafeHttpClient | None = None,
+            github_token: str | None = None) -> None:
+    """``github_token`` is used for GitHub owner lookups (--check-hijackable)
+    only, and only sent to api.github.com."""
     net = options.network
     if not any(net.model_dump().values()):
         return
@@ -49,5 +52,6 @@ def collect(tree: ArtifactTree, options: ScanOptions, client: SafeHttpClient | N
         from ..core.extract.dependencies import locate_refs, lookup_keys
         from .hijack import check_dependencies
 
-        options.dependency_facts.extend(check_dependencies(client, lookup_keys(locate_refs(inv)), options.today))
+        options.dependency_facts.extend(check_dependencies(client, lookup_keys(locate_refs(inv)), options.today,
+                                                         github_token=github_token))
     options.network_hosts.extend(client.hosts_contacted)

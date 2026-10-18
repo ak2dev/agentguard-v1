@@ -3,7 +3,9 @@
 SafeHttpClient; every lookup is read-only and sends only the name checked.
 
 * GitHub owner: https://api.github.com/users/<owner> — 404 means the account
-  was deleted, renamed or suspended (the first two free the name).
+  was deleted, renamed or suspended (the first two free the name). With a
+  token (``AGENTGUARD_GITHUB_TOKEN`` or ``GITHUB_TOKEN``) these requests, and
+  only these, carry it, which raises the lookup budget.
 * npm: https://registry.npmjs.org/<name> (abbreviated metadata) — 404 means
   not registered; a document without versions means fully unpublished.
 * PyPI: HEAD https://pypi.org/pypi/<name>/json — 404 means not registered.
@@ -11,6 +13,9 @@ SafeHttpClient; every lookup is read-only and sends only the name checked.
   resolve is checked with RDAP (server from the IANA bootstrap file
   https://data.iana.org/rdap/dns.json): 404 means unregistered, a past
   expiration date or a pending-delete / redemption status means expired.
+  A cloud-app hostname (``<app>.azurewebsites.net``, ``<project>.pages.dev``,
+  ...) that does not resolve is reported as a possibly free app name instead:
+  the platform's own domain is always registered, so RDAP is not asked.
 """
 
 from __future__ import annotations
@@ -18,23 +23,31 @@ from __future__ import annotations
 import datetime as dt
 import urllib.parse
 
-from ..core.extract.dependencies import registrable_domain
+from ..core.extract.dependencies import cloud_app_slot, registrable_domain
 from ..core.models import DependencyFact
 from .safe_http import BlockedRequest, FetchError, SafeHttpClient
 
 MAX_GITHUB_LOOKUPS = 50  # unauthenticated GitHub API allows 60 requests per hour
+MAX_GITHUB_LOOKUPS_AUTHENTICATED = 500  # an Actions GITHUB_TOKEN allows 1,000 per hour, a personal token 5,000
+GITHUB_API_HOST = "api.github.com"
+_BAD_TOKEN = "GitHub rejected the token (HTTP 401)"
 _EXPIRED_STATUS = {"pending delete", "redemption period", "pending restore"}
 
 
-def check_dependencies(client: SafeHttpClient, keys: dict[str, list[str]], today: dt.date | None = None) -> list[DependencyFact]:
+def check_dependencies(client: SafeHttpClient, keys: dict[str, list[str]], today: dt.date | None = None,
+                       github_token: str | None = None) -> list[DependencyFact]:
     today = today or dt.date.today()
     out: list[DependencyFact] = []
     limited = False
+    budget = MAX_GITHUB_LOOKUPS_AUTHENTICATED if github_token else MAX_GITHUB_LOOKUPS
     for i, owner in enumerate(keys.get("github_owner", [])):
-        if limited or i >= MAX_GITHUB_LOOKUPS:
+        if limited or i >= budget:
             out.append(DependencyFact(kind="github_owner", name=owner, status="unknown", error="lookup budget exhausted"))
             continue
-        fact = github_owner(client, owner)
+        fact = github_owner(client, owner, github_token)
+        if fact.error == _BAD_TOKEN:  # a stale token: continue anonymously, with the anonymous budget
+            github_token, budget = None, MAX_GITHUB_LOOKUPS
+            fact = github_owner(client, owner) if i < budget else fact
         limited = fact.error == "GitHub API rate limit reached"
         out.append(fact)
     out += [npm_package(client, n) for n in keys.get("npm", [])]
@@ -44,17 +57,31 @@ def check_dependencies(client: SafeHttpClient, keys: dict[str, list[str]], today
         if _resolves(client, host):
             out.append(DependencyFact(kind="domain", name=host, status="exists"))
             continue
+        slot = cloud_app_slot(host)
+        if slot:
+            platform, app = slot
+            out.append(DependencyFact(kind="domain", name=host, status="unclaimed",
+                                      detail=f"{host} does not resolve; the {platform} name '{app}' may be free to claim"))
+            continue
         if bootstrap is None:
             bootstrap = rdap_bootstrap(client)
         out.append(domain_registration(client, host, bootstrap, today))
     return out
 
 
-def github_owner(client: SafeHttpClient, owner: str) -> DependencyFact:
+def _github_headers(url: str, token: str | None) -> dict[str, str]:
+    headers = {"Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28"}
+    # The token goes to the GitHub API host only (SafeHttpClient also drops it on a cross-host redirect).
+    if token and urllib.parse.urlsplit(url).hostname == GITHUB_API_HOST:
+        headers["Authorization"] = f"Bearer {token}"
+    return headers
+
+
+def github_owner(client: SafeHttpClient, owner: str, token: str | None = None) -> DependencyFact:
     fact = DependencyFact(kind="github_owner", name=owner, status="unknown")
+    url = f"https://{GITHUB_API_HOST}/users/{urllib.parse.quote(owner, safe='')}"
     try:
-        r = client.get(f"https://api.github.com/users/{urllib.parse.quote(owner)}",
-                       headers={"Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28"})
+        r = client.get(url, headers=_github_headers(url, token))
     except (BlockedRequest, FetchError) as exc:
         fact.error = str(exc)[:200]
         return fact
@@ -63,6 +90,8 @@ def github_owner(client: SafeHttpClient, owner: str) -> DependencyFact:
     elif r.status == 404:
         fact.status = "missing"
         fact.detail = "GitHub reports no such user or organization: deleted, renamed or suspended"
+    elif r.status == 401:
+        fact.error = _BAD_TOKEN
     elif r.status in (403, 429):
         fact.error = "GitHub API rate limit reached"
     else:

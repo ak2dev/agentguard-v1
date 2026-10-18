@@ -15,6 +15,9 @@ inputs:
   pr-mode:
     description: "On pull requests, report only components touched by the PR (needs `fetch-depth: 0`). Config is read from the base commit."
     default: "true"
+  check-hijackable:
+    description: "NETWORK (opt-in): check that referenced GitHub owners, npm/PyPI packages, download domains and cloud-app hostnames still exist (SkillJacking, `--check-hijackable`). When on, the workflow token is sent to api.github.com, and nowhere else, for the GitHub owner lookups."
+    default: "false"
   upload-sarif:
     description: Upload results to GitHub code scanning.
     default: "true"
@@ -53,11 +56,17 @@ runs:
         AG_PR_MODE: ${{ inputs.pr-mode }}
         AG_SARIF: ${{ inputs.sarif-file }}
         AG_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        AG_CHECK_HIJACKABLE: ${{ inputs.check-hijackable }}
+        # The workflow token, only when the network check is on (used for api.github.com only).
+        AGENTGUARD_GITHUB_TOKEN: ${{ inputs.check-hijackable == 'true' && github.token || '' }}
       run: |
         set +e
         args=(scan "$AG_PATH" --format json --output agentguard-report.json --fail-on "$AG_FAIL_ON")
         if [ "$AG_PR_MODE" = "true" ] && [ -n "$AG_BASE_SHA" ]; then
           args+=(--changed-since "$AG_BASE_SHA")
+        fi
+        if [ "$AG_CHECK_HIJACKABLE" = "true" ]; then
+          args+=(--check-hijackable)
         fi
         agentguard "${args[@]}"
         code=$?

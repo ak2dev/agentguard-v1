@@ -1,0 +1,4 @@
+# The app still exists: its hostname resolves.
+network: {hijackable: true}
+dependency_facts:
+  - {kind: domain, name: report-export-tool.azurewebsites.net, status: exists}

@@ -178,10 +178,10 @@ rules:
     remediation: Fix the package name, or register a placeholder under your own account; do not install or run the reference until it points at a real, maintained package.
 
   - id: AG-SC-028
-    version: 1
-    title: Download or install domain is unregistered, expired or does not resolve
-    description: A domain used to download, install or reach an MCP server does not resolve, and RDAP shows it unregistered or expired (high); registered but without DNS records is low (opt-in --check-hijackable).
-    why: A lapsed domain can be bought by anyone, who then serves the installer, script or MCP endpoint the skill or config trusts ("MCPJacking").
+    version: 2
+    title: Download or install domain is unregistered, expired, or a freed cloud-app slot
+    description: A domain used to download, install or reach an MCP server does not resolve, and RDAP shows it unregistered or expired (high); registered but without DNS records is low. A cloud-app hostname that no longer resolves (<app>.azurewebsites.net, <project>.pages.dev, <app>.fly.dev, ...) is high with medium confidence, because the app name may be free to claim (opt-in --check-hijackable).
+    why: A lapsed domain can be bought by anyone, and a deleted cloud app's name can be re-created by anyone with an account on the platform; either way they then serve the installer, script or MCP endpoint the skill or config trusts ("MCPJacking").
     severity: high
     confidence: high
     network: true

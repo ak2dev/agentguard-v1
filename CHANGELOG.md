@@ -16,6 +16,8 @@ First public version.
 ### Hijackable dependencies (SkillJacking)
 
 - `scan --check-hijackable` (network, opt-in): GitHub owners, npm/PyPI package names and download/install domains referenced by skills, scripts, package manifests and MCP configs are looked up through the SSRF-hardened client (GitHub users API, npm and PyPI registries, IANA RDAP). New rules AG-SC-026 (GitHub account no longer exists), AG-SC-027 (package not registered or fully unpublished) and AG-SC-028 (domain unregistered, expired or not resolving). Offline scans and the benchmark are unchanged.
+- GitHub Action input `check-hijackable` (default `false`) runs the check in CI. With `AGENTGUARD_GITHUB_TOKEN` or `GITHUB_TOKEN` set (the action passes the workflow token only when the input is on), GitHub owner lookups are authenticated, sent to `api.github.com` only, and capped at 500 per scan instead of 50; a rejected token falls back to anonymous lookups. The token is never logged; the CLI names the variable it used.
+- AG-SC-028 v2 also reports freed cloud-app slots: a referenced `<app>.azurewebsites.net`, `*.trafficmanager.net`, `*.blob.core.windows.net`, `*.cloudapp.azure.com`, `<project>.pages.dev`, `*.workers.dev`, `<app>.fly.dev` or `*.elasticbeanstalk.com` hostname that no longer resolves (high, medium confidence: the app name may be free to claim). RDAP is not asked for these.
 
 ### Scanner-bypass techniques and standards refresh (2026-10-18)
 

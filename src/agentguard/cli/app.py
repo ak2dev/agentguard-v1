@@ -7,6 +7,7 @@ the threshold, 2 = scanner error (including any analyzer failure).
 from __future__ import annotations
 
 import json
+import os
 import sys
 from enum import Enum
 from pathlib import Path
@@ -38,6 +39,8 @@ app = typer.Typer(
     pretty_exceptions_enable=False,
 )
 rules_app = typer.Typer(help="Inspect the rule pack.", no_args_is_help=True)
+# Checked in this order for --check-hijackable's GitHub owner lookups.
+GITHUB_TOKEN_VARS = ("AGENTGUARD_GITHUB_TOKEN", "GITHUB_TOKEN")
 app.add_typer(rules_app, name="rules")
 
 
@@ -118,7 +121,7 @@ def scan_cmd(
     osv: Annotated[bool, typer.Option("--osv", help="NETWORK: look up dependencies in OSV.")] = False,
     provenance: Annotated[bool, typer.Option("--provenance", help="NETWORK: verify npm/Sigstore provenance.")] = False,
     registry: Annotated[bool, typer.Option("--registry", help="NETWORK: MCP Registry / package age checks.")] = False,
-    check_hijackable: Annotated[bool, typer.Option("--check-hijackable", help="NETWORK: check that referenced GitHub owners, npm/PyPI packages and download domains still exist (SkillJacking).")] = False,
+    check_hijackable: Annotated[bool, typer.Option("--check-hijackable", help="NETWORK: check that referenced GitHub owners, npm/PyPI packages, download domains and cloud-app hostnames still exist (SkillJacking). Uses $AGENTGUARD_GITHUB_TOKEN or $GITHUB_TOKEN, if set, for api.github.com only.")] = False,
     llm_judge: Annotated[Optional[str], typer.Option("--llm-judge", help="NETWORK: optional LLM judge provider: anthropic | openai_compat | ollama.")] = None,
     llm_model: Annotated[Optional[str], typer.Option("--llm-model", help="Judge model (default for anthropic: claude-opus-5-5).")] = None,
     llm_endpoint: Annotated[Optional[str], typer.Option("--llm-endpoint", help="Base URL for openai_compat / ollama.")] = None,
@@ -190,7 +193,10 @@ def scan_cmd(
             from ..net.collect import collect
 
             _console(stderr=True).print(f"[yellow]Network features enabled:[/yellow] {', '.join(options.network.enabled())}")
-            collect(tree, options)
+            token_var = next((v for v in GITHUB_TOKEN_VARS if os.environ.get(v)), None) if check_hijackable else None
+            if token_var:  # the variable's name only; the token is never printed
+                _console(stderr=True).print(f"GitHub owner lookups authenticated with ${token_var} (sent to api.github.com only)")
+            collect(tree, options, github_token=os.environ[token_var] if token_var else None)
         if llm_judge:
             from ..judge.providers import JudgeError, make_provider
             from ..judge.runner import run_judge

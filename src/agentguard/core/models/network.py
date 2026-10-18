@@ -60,10 +60,12 @@ class PackageFacts(BaseModel):
 class DependencyFact(BaseModel):
     """Whether an external dependency still belongs to someone (opt-in
     ``--check-hijackable``). ``missing`` / ``unpublished`` / ``unregistered`` /
-    ``expired`` mean anyone could register it and serve their own content."""
+    ``expired`` mean anyone could register it and serve their own content;
+    ``unclaimed`` is a cloud-app hostname that no longer resolves, whose app
+    name may be free on the platform."""
 
     kind: Literal["github_owner", "npm", "pypi", "domain"]
     name: str
-    status: Literal["exists", "missing", "unpublished", "unregistered", "expired", "no_dns", "unknown"]
+    status: Literal["exists", "missing", "unpublished", "unregistered", "expired", "unclaimed", "no_dns", "unknown"]
     detail: str = ""
     error: str | None = None

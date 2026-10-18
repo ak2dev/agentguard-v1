@@ -1,0 +1,4 @@
+# A deleted Azure App Service app: its name no longer resolves and may be free to claim.
+network: {hijackable: true}
+dependency_facts:
+  - {kind: domain, name: report-export-tool.azurewebsites.net, status: unclaimed, detail: "report-export-tool.azurewebsites.net does not resolve; the Azure App Service name 'report-export-tool' may be free to claim"}
