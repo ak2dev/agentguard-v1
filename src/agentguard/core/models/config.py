@@ -28,7 +28,8 @@ class LoadLimits(BaseModel):
     max_json_depth: int = 64
     max_line_length_for_regex: int = 20_000
     excluded_dirs: tuple[str, ...] = (
-        ".git", "node_modules", ".venv", "venv", "__pycache__", ".tox", ".mypy_cache",
+        # __pycache__ is not skipped: a .pyc that does not match its source is a payload (AG-SKL-BND-006).
+        ".git", "node_modules", ".venv", "venv", ".tox", ".mypy_cache",
         ".pytest_cache", ".agentguard-cache",
     )
 

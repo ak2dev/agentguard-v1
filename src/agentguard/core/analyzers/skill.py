@@ -3,7 +3,9 @@ description/behavior mismatch, typosquatting, bundled content."""
 
 from __future__ import annotations
 
+import io
 import posixpath
+import zipfile
 from typing import Any, ClassVar
 
 import regex
@@ -357,9 +359,57 @@ class TyposquatAnalyzer:
 class BundleAnalyzer:
     id: ClassVar[str] = "skill.bundle"
     requires: ClassVar[frozenset[str]] = frozenset()
-    rules: ClassVar[tuple[str, ...]] = ("AG-SKL-BND-001", "AG-SKL-BND-002", "AG-SKL-BND-003")
+    rules: ClassVar[tuple[str, ...]] = ("AG-SKL-BND-001", "AG-SKL-BND-002", "AG-SKL-BND-003", "AG-SKL-BND-006", "AG-SKL-BND-007")
 
-    _NATIVE_EXT = (".so", ".dll", ".dylib", ".exe", ".pyc", ".pyd", ".jar", ".class", ".node", ".wasm", ".bin", ".msi", ".app", ".scr")
+    # .pyc is handled by AG-SKL-BND-006 (a cache that matches its source is not a finding).
+    _NATIVE_EXT = (".so", ".dll", ".dylib", ".exe", ".pyd", ".jar", ".class", ".node", ".wasm", ".bin", ".msi", ".app", ".scr")
+    # Zip-based document formats: none of them has a reason to carry scripts or executables.
+    _DOC_EXT = (".docx", ".docm", ".dotx", ".dotm", ".xlsx", ".xlsm", ".xltx", ".xltm", ".pptx", ".pptm", ".potx", ".potm",
+                ".ppsx", ".ppsm", ".odt", ".ods", ".odp", ".odg", ".epub")
+    _EXEC_MEMBER_EXT = (".sh", ".bash", ".zsh", ".command", ".ps1", ".psm1", ".bat", ".cmd", ".vbs", ".vbe", ".js", ".jse",
+                        ".wsf", ".hta", ".py", ".pyc", ".pl", ".rb", ".exe", ".dll", ".so", ".dylib", ".scr", ".msi", ".lnk",
+                        ".jar", ".elf", ".bin")
+
+    @staticmethod
+    def _pyc_source(path: str) -> str:
+        """Where Python would look for the source of a .pyc (PEP 3147 __pycache__ layout, or legacy side-by-side)."""
+        d, base = posixpath.split(path)
+        if posixpath.basename(d) == "__pycache__":
+            return posixpath.join(posixpath.dirname(d), base.split(".", 1)[0] + ".py")
+        return path[:-1]
+
+    def _check_pyc(self, ctx: Context, comp: Any, art: Any, data: bytes, span: Span) -> None:
+        tree = ctx.inventory.tree
+        src_path = self._pyc_source(art.path)
+        src = tree.files.get(src_path) if tree else None
+        if len(data) < 16:
+            problem = "is truncated (no valid header)"
+        elif src is None:
+            problem = f"has no source file ({posixpath.basename(src_path)} is missing)"
+        elif int.from_bytes(data[4:8], "little") & 1:
+            problem = "is hash-based, so its match with the source cannot be checked"
+        else:
+            recorded = int.from_bytes(data[12:16], "little")
+            actual = len(src.data) & 0xFFFFFFFF
+            if recorded == actual:
+                return  # an ordinary cache of the reviewed source
+            problem = f"was compiled from a different source ({recorded} bytes recorded, {posixpath.basename(src_path)} has {actual})"
+        ctx.emit("AG-SKL-BND-006", component_ids=comp.id, span=span, snippet=f"{art.path} ({art.size} bytes)",
+                 match=art.sha256, kind=EvidenceKind.metadata,
+                 message=f"Python bytecode {posixpath.basename(art.path)} {problem}; Python would run it instead of the source.")
+
+    def _check_document(self, ctx: Context, comp: Any, art: Any, data: bytes, span: Span) -> None:
+        try:
+            with zipfile.ZipFile(io.BytesIO(data)) as zf:  # reads the central directory only; nothing is decompressed
+                names = zf.namelist()[: ctx.options.limits.max_archive_members]
+        except (zipfile.BadZipFile, ValueError, OSError):
+            return
+        hits = sorted({n for n in names if n.lower().endswith(self._EXEC_MEMBER_EXT)})
+        if hits:
+            shown = ", ".join(hits[:5]) + (f" and {len(hits) - 5} more" if len(hits) > 5 else "")
+            ctx.emit("AG-SKL-BND-007", component_ids=comp.id, span=span, snippet=f"{art.path}: {shown}",
+                     match=art.sha256, kind=EvidenceKind.metadata,
+                     message=f"Document {posixpath.basename(art.path)} contains {len(hits)} executable member(s): {shown}.")
 
     def run(self, ctx: Context) -> None:
         tree = ctx.inventory.tree
@@ -371,6 +421,11 @@ class BundleAnalyzer:
             data = blob.data if blob else b""
             kind = binary_kind(data)
             span = Span(path=art.path)
+            if art.path.lower().endswith(".pyc"):
+                self._check_pyc(ctx, comp, art, data, span)
+                continue
+            if art.role == ArtifactRole.archive and kind == "zip" and art.path.lower().endswith(self._DOC_EXT):
+                self._check_document(ctx, comp, art, data, span)
             if art.role == ArtifactRole.binary and (kind in EXECUTABLE_KINDS or art.path.lower().endswith(self._NATIVE_EXT)):
                 ctx.emit("AG-SKL-BND-001", component_ids=comp.id, span=span, snippet=f"{art.path} ({kind or 'binary'}, {art.size} bytes)",
                          match=art.sha256, kind=EvidenceKind.metadata,

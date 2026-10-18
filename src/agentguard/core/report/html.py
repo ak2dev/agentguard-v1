@@ -121,7 +121,7 @@ _SHIELD = (
 
 _FRAMEWORK = {
     "owasp-asi-2026": "OWASP Agentic", "owasp-mcp-2025-beta": "OWASP MCP", "owasp-ast-1.0": "OWASP Skills",
-    "owasp-llm-2025": "OWASP LLM", "nsa-csi-mcp-2026-05": "NSA MCP CSI", "cwe": "CWE",
+    "owasp-llm-2026": "OWASP LLM", "nsa-csi-mcp-2026-05": "NSA MCP CSI", "cwe": "CWE",
 }
 
 

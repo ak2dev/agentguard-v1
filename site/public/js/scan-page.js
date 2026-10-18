@@ -10,12 +10,12 @@ function main(root) {
   const SEVERITIES = ["critical", "high", "medium", "low", "info"];
   const FRAMEWORK_LABEL = {
     "owasp-asi-2026": "OWASP Agentic", "owasp-mcp-2025-beta": "OWASP MCP", "owasp-ast-1.0": "OWASP Skills",
-    "owasp-llm-2025": "OWASP LLM", "nsa-csi-mcp-2026-05": "NSA MCP CSI", cwe: "CWE",
+    "owasp-llm-2026": "OWASP LLM", "nsa-csi-mcp-2026-05": "NSA MCP CSI", cwe: "CWE",
   };
   const MAX_FILES = 5000;
   const MAX_FILE_BYTES = 2 * 1024 * 1024;
   const MAX_TOTAL_BYTES = 64 * 1024 * 1024;
-  const SKIP_DIRS = new Set([".git", "node_modules", ".venv", "venv", "__pycache__", ".tox", ".mypy_cache", ".pytest_cache"]);
+  const SKIP_DIRS = new Set([".git", "node_modules", ".venv", "venv", ".tox", ".mypy_cache", ".pytest_cache"]); // __pycache__ is scanned (AG-SKL-BND-006)
   const ARCHIVE = /\.(zip|tgz|tar\.gz|tar)$/i;
   const siteBase = root.dataset.worker.replace(/\/js\/scan-worker\.js$/, "");
 

@@ -7,11 +7,16 @@ First public version.
 - Agent Guard Web server (`web/`, `agentguard-web`): paste a GitHub, npm, PyPI or MCP Registry link; it is pinned to an exact commit or version (registry digests verified), fetched through an allowlisted SSRF-hardened fetcher, scanned in a throwaway container with no network, and stored as an unlisted report with a permalink, downloads and drift against the previous scan. `docker compose up` runs it locally; CI tests the isolation against real containers.
 - Web scanner (`/scan`): paste text, drop files or a .zip, or give a public GitHub repository, folder, file or gist link; scanned in the browser by the same engine under Pyodide, with zero network requests for pasted and dropped input (tested in CI). GitHub links are pinned to a commit and findings link to the exact file and line. Deployable to Vercel with `vercel.json` security headers.
 - Commands: `scan`, `discover`, `lock`, `verify`, `rules` (`list`, `explain`, `export`), `report`, `bench`, `intel` (`status`, `update`), `schema`.
-- Rule pack 0.1.0 with 167 rules across skills and instruction files, MCP client configuration, MCP metadata, code, toxic flows, supply chain and drift, remote auth conformance, policy, coverage, and the optional LLM judge. Every rule has an unsafe and a safe fixture.
+- Rule pack 0.1.0 with 170 rules across skills and instruction files, MCP client configuration, MCP metadata, code, toxic flows, supply chain and drift, remote auth conformance, policy, coverage, and the optional LLM judge. Every rule has an unsafe and a safe fixture.
 - Outputs: terminal, JSON (schema v1), SARIF 2.1.0, Markdown, single-file HTML, CycloneDX 1.6 inventory.
 - Opt-in network features: read-only remote MCP metadata, OAuth/TLS conformance, npm provenance, OSV, package age, LLM judge (Anthropic, OpenAI-compatible, Ollama).
 - GitHub Action with PR mode and SARIF upload; pre-commit hook.
 - Pure-Python engine that runs under Pyodide.
+
+### Scanner-bypass techniques and standards refresh (2026-10-18)
+
+- New rules for the skill-scanner bypasses Trail of Bits and the Cloud Security Alliance published in June 2026: AG-SKL-BND-006 (a `.pyc`, also in `__pycache__`, with no source or compiled from a different source than the `.py` beside it; a matching cache is not reported), AG-SKL-BND-007 (a docx/xlsx/pptx/OpenDocument/epub carries scripts or executables; only the zip directory is read) and AG-SKL-SE-012 (npm, yarn, pnpm, pip, uv, Go or RubyGems pointed at an unofficial registry). AG-SKL-SE-005 now covers `os.system`/`subprocess`/`exec` running base85/base32/hex/zlib-decoded data, including XOR-wrapped decodes. `__pycache__` is no longer skipped when loading files. No change in benchmark metrics or benign hits.
+- Standards: mappings move to the OWASP Top 10 for LLM Applications 2026 (published 2026-08-03; System Prompt Leakage is now Hidden Context Exposure and the entries were re-ranked; every crosswalk id remapped one to one). CWE titles checked against CWE 4.20 (CWE-598 renamed upstream). ASI 2026, MCP Top 10 (still beta), AST 1.0 (still in public review) and the NSA MCP CSI re-checked unchanged. See `docs/sources.md`.
 
 ### Detection gaps: paraphrase, split payloads, CRITICAL calibration
 

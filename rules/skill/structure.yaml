@@ -125,6 +125,32 @@ rules:
     match: {type: analyzer, analyzer: skill.bundle}
     remediation: Reference every script from SKILL.md, or remove unused ones.
 
+  - id: AG-SKL-BND-006
+    version: 1
+    title: Python bytecode without matching source
+    description: The bundle ships a .pyc file (including in __pycache__) that has no .py source next to it, or whose header records a source size different from the .py it sits beside, or that is hash-based and cannot be checked. A cache that matches its source is not reported.
+    why: Python imports the bytecode when the header matches, so a benign utils.py can run malicious utils.cpython-312.pyc. Reviewers and scanners read the source and miss it (the Trail of Bits simple-formatter bypass, June 2026).
+    severity: high
+    confidence: high
+    applies_to: [binary]
+    aivss: {threat: attacked}
+    match: {type: analyzer, analyzer: skill.bundle}
+    remediation: Delete __pycache__ directories and .pyc files from the bundle and ship only source; Python rebuilds the cache from the reviewed source.
+    references: ["https://blog.trailofbits.com/2026/06/03/the-sorry-state-of-skill-distribution/"]
+
+  - id: AG-SKL-BND-007
+    version: 1
+    title: Office document or ebook carries executable files
+    description: A zip-based document (docx, xlsx, pptx and their macro variants, OpenDocument, epub) contains scripts, executables or libraries among its members (.sh, .ps1, .bat, .py, .js, .vbs, .exe, .dll, .so…). Only the archive directory is read; nothing is extracted.
+    why: Documents have no reason to carry scripts. A skill can tell the agent to unpack a document and run what is inside, which hides the payload from scanners that treat the document as opaque (the Trail of Bits context-loader bypass, June 2026).
+    severity: high
+    confidence: high
+    applies_to: [archive]
+    aivss: {threat: attacked}
+    match: {type: analyzer, analyzer: skill.bundle}
+    remediation: Remove the document, or replace it with a clean copy; ship any needed script as a reviewable file in the skill.
+    references: ["https://blog.trailofbits.com/2026/06/03/the-sorry-state-of-skill-distribution/"]
+
   # YARA rules (rules/yara/*.yar) match raw bytes, so they see inside bundled
   # binaries that the text analyzers skip. They need `agentguard[yara]`; without
   # it the yara analyzer is reported as skipped.

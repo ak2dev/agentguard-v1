@@ -1,11 +1,11 @@
 # Agent Guard Web API and dispatcher image (same image, different command).
 # The dispatcher also needs the Docker CLI to start scanner sandboxes.
 # Build from the repository root:  docker build -f web/docker/server.Dockerfile -t agentguard-web:local .
-FROM docker:27-cli AS dockercli
+FROM docker:29-cli AS dockercli
 
-FROM python:3.12-slim-bookworm AS build
+FROM python:3.12-slim-trixie AS build
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 PIP_NO_CACHE_DIR=1
-RUN python -m pip install "uv==0.12.19"
+RUN python -m pip install "uv==0.12.23"
 WORKDIR /src
 COPY pyproject.toml uv.lock README.md LICENSE ./
 COPY src src
@@ -19,7 +19,7 @@ RUN uv export --frozen --no-dev --no-emit-workspace --package agentguard-web -o 
  && python -m pip install --require-hashes -r /tmp/requirements.txt --target /opt/agw \
  && python -m pip install --no-deps . ./web --target /opt/agw
 
-FROM python:3.12-slim-bookworm
+FROM python:3.12-slim-trixie
 ENV PYTHONPATH=/opt/agw PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PATH=/opt/agw/bin:$PATH
 COPY --from=build /opt/agw /opt/agw
 COPY --from=dockercli /usr/local/bin/docker /usr/local/bin/docker

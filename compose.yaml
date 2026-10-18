@@ -28,18 +28,18 @@ services:
     network_mode: none
 
   redis:
-    image: redis:7.4-bookworm
+    image: redis:8.10-trixie
     command: ["redis-server", "--save", "", "--appendonly", "no"]
     read_only: true
     tmpfs: [/data]
 
   postgres:
-    image: postgres:16-bookworm
+    image: postgres:18-trixie
     environment:
       POSTGRES_USER: agw
       POSTGRES_PASSWORD: agw-dev-only
       POSTGRES_DB: agw
-    volumes: [pgdata:/var/lib/postgresql/data]
+    volumes: [pgdata:/var/lib/postgresql]
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "agw"]
       interval: 3s

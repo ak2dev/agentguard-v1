@@ -35,7 +35,7 @@ Exit codes: `0` no findings at or above `--fail-on` (default `high`), `1` findin
 
 | Area | Examples |
 |---|---|
-| Malicious skills | "Prerequisites" download-and-run lures (also in plain words, without command syntax), pipe-to-shell, downloads executed from another script, Windows binaries that run remote code (`mshta`, `regsvr32`), reverse shells, password-protected archives, ClickFix, encoded commands, Gatekeeper/Defender bypass, credential theft + exfiltration, typosquatting |
+| Malicious skills | "Prerequisites" download-and-run lures (also in plain words, without command syntax), pipe-to-shell, downloads executed from another script, Windows binaries that run remote code (`mshta`, `regsvr32`), reverse shells, password-protected archives, scripts hidden inside Office documents, Python bytecode that does not match its source, package-manager registry redirection, ClickFix, encoded commands, Gatekeeper/Defender bypass, credential theft + exfiltration, typosquatting |
 | Hidden instructions | Unicode tag characters, bidi and zero-width tricks, homoglyphs, HTML comments, off-screen and CSS-hidden text, encoded blobs (decoded and rescanned) |
 | Instruction layer | Override directives (including paraphrased ones), forged role delimiters, concealment, approval bypass, self-modification, persistence into memory/instruction files, Claude Code `!` injections and skill hooks |
 | MCP configuration | Shell-string commands, inline code, encoded commands, reverse shells, unpinned `npx -y`/`uvx`, Docker socket and home mounts, literal secrets, plain-HTTP and metadata targets, auto-approval, shadowed server names |
@@ -45,7 +45,7 @@ Exit codes: `0` no findings at or above `--fail-on` (default `high`), `1` findin
 | Supply chain | Lockfile drift and rug pulls, signed IOC feed, registry namespace and package typosquats; opt-in provenance, OSV and package-age checks |
 | Remote auth | Opt-in RFC 9728/8414/9207/8707 and PKCE conformance for remote MCP servers (unauthenticated probes only) |
 
-167 rules in rule pack 0.1.0, each with an unsafe and a safe fixture, mapped to the OWASP Top 10 for Agentic Applications (ASI), OWASP MCP Top 10, OWASP Agentic Skills Top 10 (AST), OWASP LLM Top 10, the NSA MCP security guidance (May 2026) and CWE, with an AIVSS score. The website shows the full catalog and a coverage matrix that lists gaps.
+170 rules in rule pack 0.1.0, each with an unsafe and a safe fixture, mapped to the OWASP Top 10 for Agentic Applications (ASI), OWASP MCP Top 10, OWASP Agentic Skills Top 10 (AST), OWASP LLM Top 10, the NSA MCP security guidance (May 2026) and CWE, with an AIVSS score. The website shows the full catalog and a coverage matrix that lists gaps.
 
 ## In the browser
 

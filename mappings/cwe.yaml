@@ -1,8 +1,9 @@
 framework: cwe
 name: Common Weakness Enumeration
-version: "4.x"
+version: "4.20"
 source: https://cwe.mitre.org/
-notes: Titles to be re-checked against the current CWE list during release review.
+verified: "2026-10-18"
+notes: Titles checked against the CWE REST API (content version 4.20, 2026-04-30).
 items:
   - {id: CWE-20, title: Improper Input Validation}
   - {id: CWE-22, title: "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"}
@@ -21,7 +22,7 @@ items:
   - {id: CWE-494, title: Download of Code Without Integrity Check}
   - {id: CWE-502, title: Deserialization of Untrusted Data}
   - {id: CWE-506, title: Embedded Malicious Code}
-  - {id: CWE-598, title: Use of GET Request Method With Sensitive Query Strings}
+  - {id: CWE-598, title: Use of HTTP Request With Sensitive Query String}
   - {id: CWE-798, title: Use of Hard-coded Credentials}
   - {id: CWE-829, title: Inclusion of Functionality from Untrusted Control Sphere}
   - {id: CWE-918, title: Server-Side Request Forgery (SSRF)}
