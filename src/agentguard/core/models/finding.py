@@ -35,7 +35,7 @@ FRAMEWORKS = (
     "owasp-asi-2026",
     "owasp-mcp-2025-beta",
     "owasp-ast-1.0",
-    "owasp-llm-2025",
+    "owasp-llm-2026",
     "nsa-csi-mcp-2026-05",
     "cwe",
 )

@@ -1,0 +1,16 @@
+framework: owasp-llm-2026
+name: OWASP Top 10 for LLM Applications
+version: "2026"
+source: https://genai.owasp.org/resource/owasp-genai-llm-top-10-2026/
+verified: "2026-10-18"
+items:
+  - {id: "LLM01:2026", title: Prompt Injection}
+  - {id: "LLM02:2026", title: Sensitive Information Disclosure}
+  - {id: "LLM03:2026", title: Excessive Agency}
+  - {id: "LLM04:2026", title: Supply Chain}
+  - {id: "LLM05:2026", title: Data and Model Poisoning}
+  - {id: "LLM06:2026", title: Unbounded Consumption}
+  - {id: "LLM07:2026", title: Misinformation}
+  - {id: "LLM08:2026", title: Hidden Context Exposure}
+  - {id: "LLM09:2026", title: Vector and Embedding Weaknesses}
+  - {id: "LLM10:2026", title: Improper Output Handling}

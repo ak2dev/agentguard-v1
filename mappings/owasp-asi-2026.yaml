@@ -2,7 +2,7 @@ framework: owasp-asi-2026
 name: OWASP Top 10 for Agentic Applications
 version: "2026"
 source: https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/
-verified: "2026-09-28"
+verified: "2026-10-18"
 items:
   - {id: ASI01, title: Agent Goal Hijack}
   - {id: ASI02, title: Tool Misuse & Exploitation}

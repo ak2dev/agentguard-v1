@@ -69,7 +69,7 @@ def cli_reference() -> dict:
 
 def coverage(pack: RulePack) -> dict:
     frameworks = []
-    for fw in ("owasp-asi-2026", "owasp-mcp-2025-beta", "owasp-ast-1.0", "owasp-llm-2025", "nsa-csi-mcp-2026-05", "cwe"):
+    for fw in ("owasp-asi-2026", "owasp-mcp-2025-beta", "owasp-ast-1.0", "owasp-llm-2026", "nsa-csi-mcp-2026-05", "cwe"):
         cat = pack.frameworks.get(fw)
         items = []
         for iid, title in (cat.items.items() if cat else []):

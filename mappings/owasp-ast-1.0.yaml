@@ -2,8 +2,8 @@ framework: owasp-ast-1.0
 name: OWASP Agentic Skills Top 10
 version: "1.0"
 source: https://owasp.github.io/www-project-agentic-skills-top-10/
-verified: "2026-09-28"
-notes: Upstream sources disagree on the release date (March 2026 vs 2026-08-17); ids and titles agree.
+verified: "2026-10-18"
+notes: Upstream site (checked 2026-10-18) labels this "1.0-2026" in public review with launch planned for Q4 2026; ids and titles agree with earlier copies.
 items:
   - {id: AST01, title: Malicious Skills}
   - {id: AST02, title: Supply Chain Compromise}

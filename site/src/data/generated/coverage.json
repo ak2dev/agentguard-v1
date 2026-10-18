@@ -127,6 +127,9 @@
             "AG-SKL-BND-002",
             "AG-SKL-BND-004",
             "AG-SKL-BND-005",
+            "AG-SKL-BND-006",
+            "AG-SKL-BND-007",
+            "AG-SKL-SE-012",
             "AG-SKL-TYP-001",
             "AG-SKL-TYP-002"
           ]
@@ -385,7 +388,7 @@
       "name": "OWASP Agentic Skills Top 10",
       "version": "1.0",
       "source": "https://owasp.github.io/www-project-agentic-skills-top-10/",
-      "notes": "Upstream sources disagree on the release date (March 2026 vs 2026-08-17); ids and titles agree.",
+      "notes": "Upstream site (checked 2026-10-18) labels this \"1.0-2026\" in public review with launch planned for Q4 2026; ids and titles agree with earlier copies.",
       "items": [
         {
           "id": "AST01",
@@ -404,6 +407,8 @@
             "AG-SKL-BND-002",
             "AG-SKL-BND-004",
             "AG-SKL-BND-005",
+            "AG-SKL-BND-006",
+            "AG-SKL-BND-007",
             "AG-SKL-CRED-010",
             "AG-SKL-EXEC-003",
             "AG-SKL-EXF-001",
@@ -449,6 +454,7 @@
             "AG-SC-023",
             "AG-SC-024",
             "AG-SKL-SE-008",
+            "AG-SKL-SE-012",
             "AG-SKL-TYP-002"
           ]
         },
@@ -558,14 +564,14 @@
       ]
     },
     {
-      "framework": "owasp-llm-2025",
+      "framework": "owasp-llm-2026",
       "name": "OWASP Top 10 for LLM Applications",
-      "version": "2025",
-      "source": "https://genai.owasp.org/llm-top-10/",
+      "version": "2026",
+      "source": "https://genai.owasp.org/resource/owasp-genai-llm-top-10-2026/",
       "notes": "",
       "items": [
         {
-          "id": "LLM01:2025",
+          "id": "LLM01:2026",
           "title": "Prompt Injection",
           "rules": [
             "AG-FLOW-001",
@@ -600,7 +606,7 @@
           ]
         },
         {
-          "id": "LLM02:2025",
+          "id": "LLM02:2026",
           "title": "Sensitive Information Disclosure",
           "rules": [
             "AG-CODE-020",
@@ -625,7 +631,25 @@
           ]
         },
         {
-          "id": "LLM03:2025",
+          "id": "LLM03:2026",
+          "title": "Excessive Agency",
+          "rules": [
+            "AG-CODE-040",
+            "AG-FLOW-004",
+            "AG-FLOW-006",
+            "AG-MCP-CFG-021",
+            "AG-MCP-META-009",
+            "AG-MCP-META-011",
+            "AG-MCP-META-012",
+            "AG-SKL-INJ-004",
+            "AG-SKL-INJ-005",
+            "AG-SKL-INJ-007",
+            "AG-SKL-PRIV-001",
+            "AG-SKL-PRIV-002"
+          ]
+        },
+        {
+          "id": "LLM04:2026",
           "title": "Supply Chain",
           "rules": [
             "AG-CODE-024",
@@ -649,22 +673,47 @@
             "AG-SKL-BND-001",
             "AG-SKL-BND-004",
             "AG-SKL-BND-005",
+            "AG-SKL-BND-006",
+            "AG-SKL-BND-007",
             "AG-SKL-SE-001",
             "AG-SKL-SE-002",
             "AG-SKL-SE-008",
             "AG-SKL-SE-009",
             "AG-SKL-SE-010",
+            "AG-SKL-SE-012",
             "AG-SKL-TYP-001",
             "AG-SKL-TYP-002"
           ]
         },
         {
-          "id": "LLM04:2025",
+          "id": "LLM05:2026",
           "title": "Data and Model Poisoning",
           "rules": []
         },
         {
-          "id": "LLM05:2025",
+          "id": "LLM06:2026",
+          "title": "Unbounded Consumption",
+          "rules": [
+            "AG-SYS-004"
+          ]
+        },
+        {
+          "id": "LLM07:2026",
+          "title": "Misinformation",
+          "rules": []
+        },
+        {
+          "id": "LLM08:2026",
+          "title": "Hidden Context Exposure",
+          "rules": []
+        },
+        {
+          "id": "LLM09:2026",
+          "title": "Vector and Embedding Weaknesses",
+          "rules": []
+        },
+        {
+          "id": "LLM10:2026",
           "title": "Improper Output Handling",
           "rules": [
             "AG-CODE-001",
@@ -676,54 +725,14 @@
             "AG-CODE-007",
             "AG-CODE-008"
           ]
-        },
-        {
-          "id": "LLM06:2025",
-          "title": "Excessive Agency",
-          "rules": [
-            "AG-CODE-040",
-            "AG-FLOW-004",
-            "AG-FLOW-006",
-            "AG-MCP-CFG-021",
-            "AG-MCP-META-009",
-            "AG-MCP-META-011",
-            "AG-MCP-META-012",
-            "AG-SKL-INJ-004",
-            "AG-SKL-INJ-005",
-            "AG-SKL-INJ-007",
-            "AG-SKL-PRIV-001",
-            "AG-SKL-PRIV-002"
-          ]
-        },
-        {
-          "id": "LLM07:2025",
-          "title": "System Prompt Leakage",
-          "rules": []
-        },
-        {
-          "id": "LLM08:2025",
-          "title": "Vector and Embedding Weaknesses",
-          "rules": []
-        },
-        {
-          "id": "LLM09:2025",
-          "title": "Misinformation",
-          "rules": []
-        },
-        {
-          "id": "LLM10:2025",
-          "title": "Unbounded Consumption",
-          "rules": [
-            "AG-SYS-004"
-          ]
         }
       ],
       "rules_pending_mapping": [],
       "gaps": [
-        "LLM04:2025",
-        "LLM07:2025",
-        "LLM08:2025",
-        "LLM09:2025"
+        "LLM05:2026",
+        "LLM07:2026",
+        "LLM08:2026",
+        "LLM09:2026"
       ]
     },
     {
@@ -1029,9 +1038,9 @@
     {
       "framework": "cwe",
       "name": "Common Weakness Enumeration",
-      "version": "4.x",
+      "version": "4.20",
       "source": "https://cwe.mitre.org/",
-      "notes": "Titles to be re-checked against the current CWE list during release review.",
+      "notes": "Titles checked against the CWE REST API (content version 4.20, 2026-04-30).",
       "items": [
         {
           "id": "CWE-20",
@@ -1179,6 +1188,8 @@
             "AG-MCP-CFG-025",
             "AG-SKL-BND-001",
             "AG-SKL-BND-004",
+            "AG-SKL-BND-006",
+            "AG-SKL-BND-007",
             "AG-SKL-HID-009",
             "AG-SKL-SE-003",
             "AG-SKL-SE-005",
@@ -1187,7 +1198,7 @@
         },
         {
           "id": "CWE-598",
-          "title": "Use of GET Request Method With Sensitive Query Strings",
+          "title": "Use of HTTP Request With Sensitive Query String",
           "rules": [
             "AG-MCP-CFG-019"
           ]
@@ -1208,7 +1219,8 @@
             "AG-MCP-CFG-004",
             "AG-MCP-CFG-010",
             "AG-MCP-CFG-022",
-            "AG-MCP-META-016"
+            "AG-MCP-META-016",
+            "AG-SKL-SE-012"
           ]
         },
         {

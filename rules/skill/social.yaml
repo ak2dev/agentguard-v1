@@ -108,9 +108,9 @@ rules:
     remediation: Do not ask users to paste commands. Provide installable, pinned packages, or let the agent run commands through its approval flow.
 
   - id: AG-SKL-SE-005
-    version: 1
+    version: 2
     title: Encoded command execution
-    description: A command decodes base64/hex content and executes it (PowerShell -EncodedCommand, base64 -d | sh, FromBase64String | iex, eval(atob(...))).
+    description: A command decodes base64/base85/hex or compressed content and executes it (PowerShell -EncodedCommand, base64 -d | sh, FromBase64String | iex, eval(atob(...)), os.system/subprocess/exec on base64.b85decode, bytes.fromhex or zlib.decompress output, including XOR-wrapped decodes).
     why: Encoding the command hides what runs from the user and the reviewer; legitimate setup steps have no reason to do this.
     severity: critical
     confidence: high
@@ -134,6 +134,10 @@ rules:
           \b(?:exec|eval)\s*\(\s*(?:base64\.b64decode|codecs\.decode|bytes\.fromhex|zlib\.decompress|__import__\(\s*["']base64)
         - |-
           \beval\s*\(\s*(?:atob|Buffer\.from)\s*\(
+        # Process/exec sinks fed by a decoder on the same line, e.g. os.system(bytes(b ^ k for b in base64.b85decode(d)).decode())
+        # (scanner-bypass obfuscation reported by Trail of Bits and CSA, June 2026).
+        - |-
+          \b(?:os\.(?:system|popen|exec[lv]p?e?)|subprocess\.(?:run|call|Popen|check_output|check_call|getoutput|getstatusoutput)|exec|eval)\s*\([^\n]{0,200}?\b(?:base64\.(?:b64|b32|b16|b85|a85|urlsafe_b64|standard_b64)decode|codecs\.decode|bytes\.fromhex|binascii\.(?:a2b_base64|unhexlify)|(?:zlib|gzip|bz2|lzma)\.decompress|marshal\.loads)\s*\(
     remediation: Remove encoded execution. If a command is needed, write it in plain text so users and reviewers can read it.
 
   - id: AG-SKL-SE-006
@@ -296,3 +300,44 @@ rules:
       downgrade:
         - {severity: medium, roles: [reference], quoted: true}
     remediation: Remove the reverse shell. If the skill needs remote access, document an authenticated, user-initiated mechanism instead.
+
+  - id: AG-SKL-SE-012
+    version: 1
+    title: Package manager registry redirected to an unofficial host
+    description: A command, script or config snippet points npm, yarn, pnpm, pip, uv, Go or RubyGems at a registry other than the official one (npm/yarn config set registry, registry= written to .npmrc/.yarnrc, npmRegistryServer, pip config set global.index-url, --index-url/--extra-index-url, PIP_/UV_ index variables, GOPROXY, gem sources --add).
+    why: Every later install on the machine then resolves packages through a host the skill author chose, which can serve modified packages long after the skill is removed. The change is easy to dress up as a "corporate mirror" (the Trail of Bits dev-env-setup bypass, June 2026).
+    severity: high
+    confidence: medium
+    applies_to: [skill_md, instruction_md, reference, script]
+    aivss: {threat: attacked}
+    match:
+      type: regex
+      scopes: [body, hidden, decoded, command, code]
+      patterns:
+        - |-
+          \b(?:npm|pnpm|yarn)\s+config\s+set\s+["']?(?:@[\w.-]+:)?registry["']?(?:\s*=\s*|\s+)["']?https?://
+        - |-
+          \bregistry\s*=\s*["']?https?://[^\s"']+["']?[^\n]{0,60}?>>?\s*["']?[^\s"']*\.npmrc\b
+        - |-
+          \bregistry\s+["']?https?://[^\s"']+["']?[^\n]{0,60}?>>?\s*["']?[^\s"']*\.yarnrc\b
+        - |-
+          \bnpmRegistryServer\s*:\s*["']?https?://
+        - |-
+          \bpip3?\s+config\s+set\s+(?:global|user|site)\.(?:extra-)?index-url\s+["']?https?://
+        - |-
+          (?:\bpip3?\s+install|\buv\s+pip\s+install|\buv\s+(?:add|sync))\b[^\n]*\s--(?:extra-)?index-url[=\s]+["']?https?://
+        - |-
+          \b(?:PIP_(?:EXTRA_)?INDEX_URL|UV_(?:EXTRA_)?INDEX_URL|UV_DEFAULT_INDEX|UV_INDEX)\s*=\s*["']?https?://
+        - |-
+          (?m)^\s*(?:extra-)?index-url\s*=\s*https?://
+        - |-
+          \bGOPROXY\s*=\s*["']?https?://
+        - |-
+          \bgem\s+sources\s+(?:--add|-a)\s+["']?https?://
+      unless:
+        # Official registries, the PyTorch/NVIDIA wheel indexes (the documented way to install CUDA builds) and local test registries.
+        - |-
+          https?://(?:registry\.npmjs\.org|registry\.yarnpkg\.com|pypi\.org|pypi\.python\.org|files\.pythonhosted\.org|download\.pytorch\.org|pypi\.nvidia\.com|proxy\.golang\.org|rubygems\.org|localhost|127\.0\.0\.1|\[::1\])(?:[:/"'\s]|$)
+      window: 0
+    remediation: Do not change package-manager configuration from a skill. If a private registry is genuinely required, document it for the user to configure themselves, scope it to one package namespace (npm "@scope:registry"), and never ship a script that writes ~/.npmrc, ~/.yarnrc or pip.conf.
+    references: ["https://blog.trailofbits.com/2026/06/03/the-sorry-state-of-skill-distribution/"]
