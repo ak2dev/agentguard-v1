@@ -45,4 +45,9 @@ def collect(tree: ArtifactTree, options: ScanOptions, client: SafeHttpClient | N
         if net.osv:
             osv_lookup(client, facts)
         options.package_facts.extend(facts)
+    if net.hijackable:
+        from ..core.extract.dependencies import locate_refs, lookup_keys
+        from .hijack import check_dependencies
+
+        options.dependency_facts.extend(check_dependencies(client, lookup_keys(locate_refs(inv)), options.today))
     options.network_hosts.extend(client.hosts_contacted)

@@ -1,0 +1,4 @@
+# A documentation link is not a download or install source.
+network: {hijackable: true}
+dependency_facts:
+  - {kind: domain, name: docs.teamlint-tools.dev, status: unregistered}

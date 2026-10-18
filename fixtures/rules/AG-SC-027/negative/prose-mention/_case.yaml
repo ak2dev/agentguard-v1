@@ -1,0 +1,5 @@
+# "pip install random packages" in a sentence is not an install command.
+network: {hijackable: true}
+dependency_facts:
+  - {kind: pypi, name: random, status: missing}
+  - {kind: pypi, name: packages, status: missing}

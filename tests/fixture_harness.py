@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from agentguard.core.archive import from_archive
-from agentguard.core.models import LoadLimits, Lockfile, PackageFacts, Policy, RemoteProbe, ScanOptions, Suppression
+from agentguard.core.models import DependencyFact, LoadLimits, Lockfile, PackageFacts, Policy, RemoteProbe, ScanOptions, Suppression
 from agentguard.core.parsers.safe_yaml import safe_load
 from agentguard.core.tree import ArtifactTree
 from agentguard.io.fs_loader import load_path
@@ -63,6 +63,8 @@ def load_case(rule_id: str, side: str, case_dir: Path) -> Case:
         opts["remote_probes"] = [RemoteProbe.model_validate(x) for x in cfg["remote_probes"]]
     if "package_facts" in cfg:
         opts["package_facts"] = [PackageFacts.model_validate(x) for x in cfg["package_facts"]]
+    if "dependency_facts" in cfg:
+        opts["dependency_facts"] = [DependencyFact.model_validate(x) for x in cfg["dependency_facts"]]
     if "judge_results" in cfg:
         from agentguard.core.judge_models import JudgeResult
 

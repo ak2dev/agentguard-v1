@@ -154,3 +154,36 @@ rules:
     network: true
     match: {type: analyzer, analyzer: supply.age}
     remediation: Wait, or review the package and its publisher before use.
+
+  - id: AG-SC-026
+    version: 1
+    title: Referenced GitHub account no longer exists (repojacking)
+    description: A skill, script or MCP config fetches from, clones or links to a GitHub owner (github.com/<owner>/..., raw.githubusercontent.com/<owner>/, github:<owner>/..., <owner>.github.io) that GitHub reports as nonexistent (opt-in --check-hijackable). High when the reference downloads, installs or runs code; medium for a plain link.
+    why: A deleted or renamed GitHub account name can be registered by anyone, who then serves their own code at the same URLs ("SkillJacking" / repojacking).
+    severity: high
+    confidence: medium
+    network: true
+    match: {type: analyzer, analyzer: supply.hijack}
+    remediation: Point the reference at the project's current home (or vendor the file and pin its hash); remove the skill or server if no maintained source exists.
+
+  - id: AG-SC-027
+    version: 1
+    title: Referenced npm or PyPI package is not registered
+    description: A skill install command, package.json, requirements file or MCP server entry names an npm or PyPI package that the registry does not have, or whose versions were all unpublished (opt-in --check-hijackable). Medium for npm scoped names, which only the scope owner can publish.
+    why: Anyone can publish a missing name, and the next install (often run by the agent itself) fetches the attacker's package.
+    severity: high
+    confidence: high
+    network: true
+    match: {type: analyzer, analyzer: supply.hijack}
+    remediation: Fix the package name, or register a placeholder under your own account; do not install or run the reference until it points at a real, maintained package.
+
+  - id: AG-SC-028
+    version: 1
+    title: Download or install domain is unregistered, expired or does not resolve
+    description: A domain used to download, install or reach an MCP server does not resolve, and RDAP shows it unregistered or expired (high); registered but without DNS records is low (opt-in --check-hijackable).
+    why: A lapsed domain can be bought by anyone, who then serves the installer, script or MCP endpoint the skill or config trusts ("MCPJacking").
+    severity: high
+    confidence: high
+    network: true
+    match: {type: analyzer, analyzer: supply.hijack}
+    remediation: Remove the reference or point it at the publisher's current domain, and pin downloads by hash.

@@ -37,7 +37,7 @@ from .enums import (
     Transport,
 )
 from .finding import Evidence, Finding, FlowPath, Mapping, Score, Span, SuppressionState
-from .network import PackageFacts, RemoteProbe, Vulnerability
+from .network import DependencyFact, PackageFacts, RemoteProbe, Vulnerability
 from .report import AnalyzerRun, LimitEvent, Report, ReportStats, RulePackInfo
 from .rule import AnalyzerMatch, RegexMatch, RuleDef, YaraMatch
 from .source import ImmutableRef, SourceRef

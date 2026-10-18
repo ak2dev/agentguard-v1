@@ -1,0 +1,4 @@
+network: {hijackable: true}
+dependency_facts:
+  - {kind: pypi, name: openpyxl, status: exists}
+  - {kind: pypi, name: xlsx-report-kit, status: missing}

@@ -42,7 +42,7 @@ Exit codes: `0` no findings at or above `--fail-on` (default `high`), `1` findin
 | MCP metadata | Tool poisoning, side-channel parameters, tool shadowing, name collisions, unsafe schemas, annotation lies, MCP Apps UI risks |
 | Code | Taint from tool parameters to shell, eval, deserialization, paths, URLs, SQL and templates; obfuscation, install hooks, runtime code fetch, token passthrough |
 | Toxic flows | The lethal trifecta (untrusted content + private data + egress) across all components in one agent session, shown as a concrete path |
-| Supply chain | Lockfile drift and rug pulls, signed IOC feed, registry namespace and package typosquats; opt-in provenance, OSV and package-age checks |
+| Supply chain | Lockfile drift and rug pulls, signed IOC feed, registry namespace and package typosquats; opt-in provenance, OSV and package-age checks, and `--check-hijackable` (SkillJacking: referenced GitHub owners that no longer exist, unregistered npm/PyPI names, unregistered or expired download domains) |
 | Remote auth | Opt-in RFC 9728/8414/9207/8707 and PKCE conformance for remote MCP servers (unauthenticated probes only) |
 
 170 rules in rule pack 0.1.0, each with an unsafe and a safe fixture, mapped to the OWASP Top 10 for Agentic Applications (ASI), OWASP MCP Top 10, OWASP Agentic Skills Top 10 (AST), OWASP LLM Top 10, the NSA MCP security guidance (May 2026) and CWE, with an AIVSS score. The website shows the full catalog and a coverage matrix that lists gaps.
@@ -74,6 +74,7 @@ Pull requests run in PR mode (only components touched by the change; configurati
 - **Taint analysis is intra-procedural.** Python uses the standard `ast` module. JavaScript/TypeScript is pattern-based within a tool handler unless `agentguard[code]` is installed; its tree-sitter analyzer follows destructuring, reassignment, handlers passed by name and `promisify`/import aliases, still within one function, and adds shell-script taint (`$1` → `eval`, `sh -c`). It only adds findings; it does not remove pattern-analyzer false positives.
 - **YARA rules need `agentguard[yara]`,** which has no Python 3.14 wheels yet. The browser scanner runs neither native analyzer.
 - **Flow labels are inferred** (medium or low confidence) when only a config names a server and its code or tools are unavailable.
+- **`--check-hijackable` (network, opt-in):** GitHub cannot tell a deleted or renamed account (name claimable) from a suspended one (not claimable); npm and PyPI may still reserve a missing name; registrable domains use a small second-level list instead of the Public Suffix List, and only domains that fail to resolve are checked with RDAP; at most 50 GitHub lookups per scan (unauthenticated API limit). Only references in install, download, clone or config context count, plus GitHub links (reported at medium).
 - **Provenance:** missing attestations and subject-digest mismatches are detected; full Sigstore chain verification is not.
 - **AIVSS scores are approximate:** severity-default CVSS bases and a capability proxy for the amplification factors; each score records this.
 - **NSA MCP guidance mappings use section names:** the CSI does not number its sections, so rules map to its own headings; it covers MCP only, so skill rules have none.

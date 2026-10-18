@@ -13,7 +13,7 @@ from .code import CodeAnalyzer
 from .hidden import HiddenContentAnalyzer
 from .judge_rules import JudgeAnalyzer
 from .mcp import McpConfigAnalyzer, McpMetaAnalyzer, McpUnitsBuilder
-from .network_rules import AuthAnalyzer, OsvAnalyzer, PackageAgeAnalyzer, ProvenanceAnalyzer
+from .network_rules import AuthAnalyzer, HijackableAnalyzer, OsvAnalyzer, PackageAgeAnalyzer, ProvenanceAnalyzer
 from .regex_rules import RegexRuleAnalyzer
 from .staged import StagedExecutionAnalyzer
 from .supply_chain import DriftAnalyzer, IntelAnalyzer, RegistryOfflineAnalyzer
@@ -51,6 +51,7 @@ ANALYZERS: list[type] = [
     ProvenanceAnalyzer,
     OsvAnalyzer,
     PackageAgeAnalyzer,
+    HijackableAnalyzer,
     JudgeAnalyzer,
 ]
 
