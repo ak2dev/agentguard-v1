@@ -22,7 +22,7 @@ const pyodideDir = path.dirname(require.resolve("pyodide/package.json"));
 const pyodideVersion = JSON.parse(fs.readFileSync(path.join(pyodideDir, "package.json"), "utf8")).version;
 const lock = JSON.parse(fs.readFileSync(path.join(pyodideDir, "pyodide-lock.json"), "utf8"));
 const REQUIRED = ["pydantic", "regex", "pyyaml"];
-const RUNTIME = ["pyodide.mjs", "pyodide.asm.js", "pyodide.asm.wasm", "python_stdlib.zip", "pyodide-lock.json"];
+const RUNTIME = ["pyodide.mjs", "pyodide.asm.mjs", "pyodide.asm.wasm", "python_stdlib.zip", "pyodide-lock.json"];
 const CDN = `https://cdn.jsdelivr.net/pyodide/v${pyodideVersion}/full/`;
 const cacheDir = path.join(site, ".cache", "pyodide", pyodideVersion);
 
