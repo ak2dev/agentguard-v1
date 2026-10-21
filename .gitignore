@@ -17,3 +17,4 @@ site/public/engine/
 site/src/data/engine.json
 site/test-results/
 site/playwright-report/
+deploy/aws/.env

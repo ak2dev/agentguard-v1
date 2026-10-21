@@ -1,0 +1,27 @@
+# TLS and reverse proxy for Agent Guard Web. Only /api/* is served; the site is on Vercel.
+{
+	servers {
+		# Requests arrive through the Vercel /api/ rewrite, which sets
+		# X-Forwarded-For to the visitor's address; keep it so per-client rate
+		# limits work. Direct requests can forge it, so proof-of-work and the
+		# queue cap remain the backstop (see README.md).
+		trusted_proxies static 0.0.0.0/0 ::/0
+	}
+}
+
+{$DOMAIN} {
+	request_body {
+		max_size 64KB
+	}
+	header {
+		Strict-Transport-Security "max-age=63072000"
+		X-Content-Type-Options "nosniff"
+		-Server
+	}
+	handle /api/* {
+		reverse_proxy api:8000
+	}
+	handle {
+		respond 404
+	}
+}
