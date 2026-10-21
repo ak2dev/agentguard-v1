@@ -1,0 +1,121 @@
+# Agent Guard Web on a single EC2 instance (t4g.small, Amazon Linux 2023, arm64).
+# deploy.sh builds the images, writes .env next to this file and runs:
+#   docker compose -f deploy/aws/compose.prod.yaml up -d
+# The site stays on Vercel and reaches this server through a /api/ rewrite.
+#
+# Differences from the repository's compose.yaml (local development):
+# - Caddy terminates TLS on 80/443; nothing else is published.
+# - Secrets come from .env (generated on the instance, never committed).
+# - The dispatcher joins the host's docker group instead of running as root,
+#   and scanner containers run under gVisor (AGW_DOCKER_RUNTIME=runsc).
+# - The API, Postgres and Redis sit on internal networks with no egress; only
+#   the dispatcher (fetcher) and Caddy (ACME) can reach the internet.
+# - One scan at a time (2 GB RAM: each scanner container may use 768 MB).
+name: agentguard-web
+
+x-logging: &logging
+  driver: json-file
+  options: { max-size: "10m", max-file: "3" }
+
+x-agw-env: &agw-env
+  AGW_MODE: prod
+  AGW_STORE: postgresql://agw:${POSTGRES_PASSWORD:?set in .env}@postgres:5432/agw
+  AGW_QUEUE: redis://redis:6379/0
+  AGW_SANDBOX: docker
+  AGW_SCANNER_IMAGE: agentguard-scanner:local
+  AGW_DOCKER_RUNTIME: ${AGW_DOCKER_RUNTIME:-runsc}
+  AGW_SECRET: ${AGW_SECRET:?set in .env}
+  AGW_GITHUB_TOKEN: ${AGW_GITHUB_TOKEN:-}
+  AGW_TRUST_PROXY: "1"
+  AGW_WORKERS: "1"
+
+services:
+  caddy:
+    image: caddy:2.11.7
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    environment:
+      DOMAIN: ${DOMAIN:?set in .env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks: [public, edge]
+    mem_limit: 128m
+    logging: *logging
+    depends_on:
+      api: { condition: service_started }
+
+  api:
+    image: agentguard-web:local
+    restart: unless-stopped
+    command: ["api", "--host", "0.0.0.0", "--port", "8000"]
+    environment: *agw-env
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    networks: [edge, backend]
+    mem_limit: 384m
+    logging: *logging
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_started }
+
+  dispatcher:
+    image: agentguard-web:local
+    restart: unless-stopped
+    command: ["dispatcher"]
+    environment: *agw-env
+    # The image's non-root user, plus the host's docker group so it can start
+    # scanner containers. This is control of the host's Docker daemon: keep
+    # this instance dedicated to Agent Guard.
+    group_add: ["${DOCKER_GID:?set in .env}"]
+    volumes: ["/var/run/docker.sock:/var/run/docker.sock"]
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    networks: [backend, egress]
+    mem_limit: 384m
+    logging: *logging
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_started }
+
+  redis:
+    image: redis:8.10-trixie
+    restart: unless-stopped
+    command: ["redis-server", "--save", "", "--appendonly", "no", "--maxmemory", "64mb", "--maxmemory-policy", "noeviction"]
+    read_only: true
+    tmpfs: [/data]
+    networks: [backend]
+    mem_limit: 128m
+    logging: *logging
+
+  postgres:
+    image: postgres:18-trixie
+    restart: unless-stopped
+    command: ["postgres", "-c", "shared_buffers=64MB", "-c", "max_connections=20"]
+    environment:
+      POSTGRES_USER: agw
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set in .env}
+      POSTGRES_DB: agw
+    volumes: [pgdata:/var/lib/postgresql]
+    networks: [backend]
+    mem_limit: 384m
+    logging: *logging
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "agw"]
+      interval: 3s
+      retries: 20
+
+networks:
+  public: {}                    # Caddy's published ports and ACME
+  egress: {}                    # the dispatcher's allowlisted fetches
+  edge: { internal: true }      # Caddy -> API
+  backend: { internal: true }   # API/dispatcher -> Postgres/Redis
+
+volumes:
+  pgdata: {}
+  caddy_data: {}
+  caddy_config: {}

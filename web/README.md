@@ -96,7 +96,7 @@ Tests: `cd web && uv run pytest` (no network, no Docker); `AGW_DOCKER_TESTS=1 uv
 
 ## Deploying
 
-The site stays on Vercel. The server needs a host that can run Docker containers with `--network none` (ideally with gVisor): a small VM, or a container platform where the dispatcher can start sibling containers. The API can run anywhere that reaches Redis and Postgres.
+The site stays on Vercel. The server needs a host that can run Docker containers with `--network none` (ideally with gVisor): a small VM, or a container platform where the dispatcher can start sibling containers. The API can run anywhere that reaches Redis and Postgres. A ready setup for one AWS EC2 instance (launch script, first-boot script, production Compose file with Caddy and gVisor) is in [`deploy/aws/`](../deploy/aws/README.md).
 
 1. Run Postgres, Redis, `agentguard-web api` and `agentguard-web dispatcher` (the images in `web/docker/`). Give only the dispatcher Docker access, and only on a host dedicated to scanning. In `compose.yaml` the Docker socket is mounted for local development; on a shared host prefer rootless Docker or a separate scan VM.
 2. Run `agentguard-web check-sandbox` at deploy time; it must print `NO-EGRESS`.
