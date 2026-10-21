@@ -10,7 +10,8 @@ document designs that mode. It covers (1) what it observes and why, (2) a threat
 running hostile code, (3) isolation options and their cost on this project's AWS plan, (4) a
 fake network, (5) how to drive an MCP server or a skill, (6) determinism, (7) rules,
 (8) how it fits the CLI and the web dispatcher, and (9) a phased plan with a minimal first
-slice. Section 10 lists the decisions that need your call. Every external claim is in
+slice. Section 10 lists the decisions that need your call, and Section 11 records the
+2026-10-21 checks of the design's assumptions. Every external claim is in
 [Sources](#sources), which uses the format of `docs/sources.md`.
 
 ## 0. Findings from verification that change the brief
@@ -19,16 +20,19 @@ slice. Section 10 lists the decisions that need your call. Every external claim 
    virtualization on virtual instances, and the 2026-06-18 expansion added C7i, M7i and
    their **flex** variants. `c7i-flex.large` and `m7i-flex.large` are free-tier eligible on
    accounts created after 2025-07-15. So a microVM backend (Firecracker or Kata) may be
-   possible without a `.metal` instance. Three caveats. Firecracker's own guide still says
-   "EC2 only supports KVM on `.metal` instance types" and does not test nested virtualization.
-   The EC2 API reference for `NestedVirtualization` names only 8th-generation instances,
-   while the User Guide lists C7i-flex. AWS also recommends bare metal for
-   performance-sensitive work. This needs a check in ap-southeast-2 before we rely on it
-   (Section 3.3).
-2. **The credits are already spoken for.** The current t4g.small stack costs about $20/month
-   (`deploy/aws/README.md`), and the plan has $120 until 2027-04-18. That covers one
-   always-on instance for those six months and little else. A second always-on host doesn't
-   fit. Bare metal costs $2.84/hour in Sydney (c6g.metal), so $120 buys about 42 hours. Any
+   possible without a `.metal` instance. **Checked on this project (Section 11):** in
+   ap-southeast-2 both types list `nested-virtualization`, and a dry-run launch of
+   `c7i-flex.large` with `NestedVirtualization=enabled` passes on the free plan. (The EC2 API
+   reference for `NestedVirtualization` names only 8th-generation instances; it is out of
+   date.) Two caveats remain. Firecracker's own guide still says "EC2 only supports KVM on
+   `.metal` instance types" and does not test nested virtualization, and AWS recommends bare
+   metal for performance-sensitive work. A guest has not been booted yet (Section 3.3).
+2. **The credits will be spoken for.** The project has all $120 of its credits (free plan,
+   until 2027-04-18) because the `deploy/aws` stack isn't running yet: no EC2 instances
+   exist in ap-southeast-2. Once launched, the t4g.small stack costs about $20/month
+   (`deploy/aws/README.md`), which uses those six months of credits and leaves little else.
+   A second always-on host doesn't fit. Bare metal costs $2.84/hour in Sydney (c6g.metal), so
+   $120 buys about 42 hours, and the account's 5-vCPU on-demand quota blocks it anyway. Any
    dynamic worker has to run on demand.
 3. **The MCP spec turns rug pulls into an observable protocol violation.** For 2026-07-28,
    the `tools/list` set "MUST NOT vary per-connection or as a side effect of other requests
@@ -40,10 +44,16 @@ slice. Section 10 lists the decisions that need your call. Every external claim 
    `container/start`) to a remote sink over a Unix socket. The sink is a process outside the
    sandbox, and the session is set with `--pod-init-config`. That gives syscall-level
    telemetry from the layer the attacker doesn't control, with no agent inside the sandbox.
-   `deploy/aws/bootstrap.sh` already installs `runsc`.
+   `deploy/aws/bootstrap.sh` is meant to install `runsc` (currently broken, see item 6). The
+   spike in Section 11 confirmed the events arrive.
 5. **Docker `--internal` networks are not airtight by themselves.** Containers on one "can
    still reach the gateway IP, so host services configured for that address remain
    reachable". The fake network needs an explicit host firewall rule (Section 4).
+6. **gVisor's packaging changed in 2026-07** (found by the spike, Section 11). Releases are
+   now a tarball (`gvisor.tar.zstd` or `.tar.bz2`) containing `runsc` and a `gvisor-bin/`
+   directory; the bare `.../latest/<arch>/runsc` URL returns 404. `deploy/aws/bootstrap.sh`
+   still downloads that URL, so a fresh instance currently fails at the gVisor step. That fix
+   belongs in its own PR.
 
 ---
 
@@ -109,7 +119,7 @@ sandbox becomes the primary control, not defense in depth.
 | DM-04 | IMDS / AWS credentials (D2) | No route (above); IMDSv2 hop limit 1 (already set); the worker instance has no instance role beyond Session Manager |
 | DM-05 | Resource abuse (D2, T6) | Memory, CPU, PID, file-descriptor and disk quotas; a wall-clock limit for each phase; one dynamic job at a time; stricter PoW and per-client quotas on the web |
 | DM-06 | Cross-job contamination (D4) | Fresh container, fresh network, fresh canary values per job; everything force-removed (create → start → always `rm -f`, as `DockerSandbox.run` does) |
-| DM-07 | Telemetry tampering (D5) | Evidence comes only from outside the target's control: gVisor trace points (emitted by the Sentry), the sidecar's network log, and a post-run filesystem diff (`docker diff`). Nothing from an in-sandbox agent. Trace loss (sink errors, dropped events) is recorded and reported as reduced coverage |
+| DM-07 | Telemetry tampering (D5) | Evidence comes only from outside the target's control: gVisor trace points (emitted by the Sentry), the sidecar's network log, and the write flags on `openat` (with `docker diff` as a cross-check where it sees gVisor's writes). Nothing from an in-sandbox agent. Trace loss (sink errors, dropped events) is recorded and reported as reduced coverage |
 | DM-08 | Sandbox detection and dormancy | Realistic `HOME`, user, hostname and env; canaries in real formats. Accepted limitation: delays longer than the window, time bombs, and checks for gVisor-specific behavior. The report says so. AG-CODE-027 (static anti-analysis gating) stays the complement |
 | DM-09 | Attacks on our parsers (sidecar, trace collector) | The fake-network sidecar runs under `runsc` with no egress and caps on every record. The collector reads gVisor's protobuf stream, but the strings are target-controlled, so it caps sizes and writes JSON. The trace is then parsed by the engine only inside the existing static scanner sandbox |
 | DM-10 | Hostile strings in reports (D6) | Same as TM-09/TM-10: `RedactedText`, control-character rendering, escaping. Canary values are always replaced with `<canary:kind>` |
@@ -156,12 +166,17 @@ disk plus idle Elastic IP at about $5/month).
 
 What this means:
 
-- **Phase 1–2 cost nothing extra** if they run on the existing t4g.small (operator-only),
+- **Phase 1 needs no AWS at all.** The spike in Section 11 ran gVisor inside Docker Desktop
+  on this PC.
+- **Phase 1–2 cost nothing extra** if they run on the t4g.small once it's launched (operator-only),
   or a few dollars if they run on an on-demand `c7i-flex.large` that is started for a batch
   and stopped afterwards. One hour a day comes to about $3.40/month.
-- **Bare metal doesn't fit the free plan.** It isn't free-tier eligible, and the Billing
-  guide says free plans exclude features "that could possibly deplete your credits". Even on
-  the paid plan, an always-on metal host costs about 100× the current stack.
+- **Bare metal doesn't fit the free plan.** It isn't free-tier eligible. A dry-run launch of
+  `c6g.metal` or `c5.metal` passes the permission checks, but dry runs don't check quotas:
+  the account's "Running On-Demand Standard instances" quota is 5 vCPUs (the default), and
+  those hosts have 64 and 96. Even after a quota increase on the paid plan, an always-on metal
+  host costs about 100× the current stack. `t4g.small` plus `c7i-flex.large` is 4 vCPUs,
+  which fits the quota.
 - **A second always-on host doesn't fit the credits** (Section 0.2). Before any dynamic
   worker runs, check the remaining credits with `aws freetier get-account-plan-state` and
   confirm the plan type. If the project upgrades to the paid plan, set a spend limit in AWS
@@ -169,12 +184,13 @@ What this means:
 
 ### 3.3 Before relying on nested virtualization (Phase 4 gate)
 
-1. `aws ec2 describe-instance-types --region ap-southeast-2 --filters
-   Name=processor-info.supported-features,Values=nested-virtualization` lists `c7i-flex`
-   (the User Guide and the API reference disagree).
-2. A free-plan account can launch with `--cpu-options NestedVirtualization=enabled` (a
-   `--dry-run` launch answers this).
-3. Firecracker (or Kata with Cloud Hypervisor) boots a guest under nested KVM on
+1. ~~`describe-instance-types` in ap-southeast-2 lists `c7i-flex`.~~ **Done 2026-10-21**:
+   it lists c7i, c7i-flex, c8i, c8i-flex, c8id, i7i, i7ie, m7i, m7i-flex, m8i, m8i-flex,
+   m8id, r7i, r8i, r8i-flex, r8id and x8i.
+2. ~~A free-plan account can launch with `NestedVirtualization=enabled`.~~ **Done
+   2026-10-21**: dry runs for `c7i-flex.large` and `m7i-flex.large` return "Request would
+   have succeeded".
+3. Still open: Firecracker (or Kata with Cloud Hypervisor) boots a guest under nested KVM on
    `c7i-flex.large`, and the per-job overhead (boot, memory) fits 4 GiB.
 
 ## 4. Fake network: sinkhole DNS, record-don't-forward egress
@@ -232,8 +248,8 @@ What this means:
    AG-CODE-024 surface, now with behavior.
 4. **Server session, observed.** Described next.
 5. **Teardown.** Close stdin, `SIGTERM` after a grace period, then `SIGKILL`. Record
-   processes that outlive the server (daemonization). Run `docker diff` for the filesystem
-   delta, then force-remove everything.
+   processes that outlive the server (daemonization). Run `docker diff` as a cross-check of
+   the writes seen in the trace (see the note in 5.5), then force-remove everything.
 
 ### 5.2 MCP STDIO session script
 
@@ -292,9 +308,9 @@ because its entry point is unambiguous.
 
 | Source | Events | Notes |
 |---|---|---|
-| gVisor trace points (remote sink → collector) | `syscall/openat/enter` (path, flags), `syscall/execve/enter` (path, argv), `sentry/clone`, `syscall/fork/enter`, `connect` and `sendto` (by name, or `syscall/sysno/<n>/enter`), `container/start` | The exact point list must be confirmed with `runsc trace metadata` on our build; syscall numbers differ between arm64 and x86_64 |
+| gVisor trace points (remote sink → collector) | `container/start` (argv), `sentry/clone`, `sentry/execve` (optional `binary_sha256`), `syscall/openat/enter` (path, flags), `syscall/execve/enter` (path, argv), `syscall/connect/enter` (sockaddr), `syscall/socket/enter`, `syscall/write/enter` | Names confirmed on `release-20261012.0` x86_64 (`runsc trace metadata`: 1000 points; Section 11); arm64 still to confirm. `binary_sha256` gives IOC hash matching (AG-SC-010) for anything executed |
 | Fake-network sidecar | DNS queries, TCP connects, HTTP requests, TLS ClientHello | Capped per job (e.g. 2,000 records) |
-| `docker diff` after the run | Added, changed and deleted paths | Persistence and instruction-file writes, independent of the trace |
+| File writes | `openat` with `O_WRONLY`/`O_RDWR`/`O_CREAT`/`O_APPEND` (from the trace); `docker diff` as a cross-check | In the spike, a write under `runsc do` never reached the underlying filesystem because gVisor keeps root-filesystem writes in its own overlay. If that also holds under Docker, `docker diff` misses them. Phase 1 either relies on the trace flags or registers `runsc-dyn` with the root overlay disabled, and tests which works |
 | Runner | Every JSON-RPC exchange (redacted), tool snapshots per step, notifications, exit status, stderr tail, resource peaks | Tool snapshots are normalized the same way as `agentguard.lock` |
 
 The collector writes all of this into a `RuntimeTrace` (a new
@@ -350,7 +366,7 @@ change the CRITICAL precision budget.
 | AG-CODE-022 Hardcoded outbound host | That host was resolved or contacted |
 | AG-CODE-024 Install-time hook | The hook ran and did something (network, credential read, spawn): see AG-DYN-008 |
 | AG-CODE-025 Runtime fetch of remote code | An outbound fetch followed by an `execve` or `eval`-sized write was observed |
-| AG-CODE-026 Persistence writes | `docker diff` shows a write to an rc file, crontab or autostart path |
+| AG-CODE-026 Persistence writes | An `openat` for writing (or a `docker diff` entry) on an rc file, crontab or autostart path |
 | AG-CODE-028 Native binary downloaded | An `execve` of a file created during the run |
 | AG-CODE-001/002/005/006 Tool parameter to sink | The S5 marker reached `execve` argv, a file path or an outbound URL |
 | AG-CODE-040 Undeclared capability | The observed capabilities of a tool exceed what its text and annotations declare |
@@ -459,22 +475,25 @@ dispatcher ──▶ existing scanner sandbox (network none): archive + trace �
 
 | Phase | Scope | Exit criteria | AWS cost |
 |---|---|---|---|
-| **1 — minimal slice** | `RuntimeTrace` model and `dynamic` analyzer; AG-DYN-002, -004, -005, -006, -011 and AG-SYS-005; `EvidenceKind.runtime`; `replay`; a CLI runner for **npm STDIO servers only** under `runsc-dyn` with `--network none`; steps S0–S3; canary files and variables; `docker diff`; recorded fixtures from three purpose-built test packages (startup `~/.ssh` read, a tool list that changes at +45 s, a crontab write) | Fixtures pass on Windows, Linux and Pyodide; `dynamic doctor` proves no egress on the t4g.small; one known-benign popular server gives no finding above low | $0 (operator-run on the existing instance, or locally on Linux) |
+| **1 — minimal slice** | `RuntimeTrace` model and `dynamic` analyzer; AG-DYN-002, -004, -005, -006, -011 and AG-SYS-005; `EvidenceKind.runtime`; `replay`; a CLI runner for **npm STDIO servers only** under `runsc-dyn` with `--network none`; steps S0–S3; canary files and variables; write detection from trace flags (settle the `docker diff` question in 5.5); recorded fixtures from three purpose-built test packages (startup `~/.ssh` read, a tool list that changes at +45 s, a crontab write) | Fixtures pass on Windows, Linux and Pyodide; `dynamic doctor` proves no egress; one known-benign popular server gives no finding above low | $0 (Docker Desktop locally, as in the Section 11 spike, or operator-run on the t4g.small once launched) |
 | 2 — network and inputs | Fakenet sidecar, AG-DYN-001/003; install-script phase, AG-DYN-008; PyPI wheels; opt-in S5 tool calls, AG-DYN-010 and the runtime corroboration in 7.2; S4 client-identity check, AG-DYN-007; skills (Section 5.3), AG-DYN-009; `lock --dynamic` | Adversarial benchmark gains a dynamic split; precision report for AG-DYN-* | $0–5/month (on-demand `c7i-flex.large` for x86 coverage, stopped when idle) |
 | 3 — web | `JobKind.dynamic`, `DynamicSandbox`, `archive+runtime` spec mode, quotas, a dedicated worker host, site UI section "Observed at run time" | `check-dynamic-sandbox` gate in `deploy.sh`; abuse tests (fork bomb, miner, egress flood) contained | Depends on the worker host decision; does not fit in the remaining credits as always-on |
 | 4 — stronger isolation | Optional microVM backend (Kata or Firecracker) on nested-virtualization Intel, with network evidence from the tap device | Section 3.3 checks pass; per-job overhead measured | As Phase 2, on the same on-demand instance type |
 
 Why this slice first. It needs no new infrastructure, no network component and no change to
 the web server, so it can't weaken anything that runs today. It proves the riskiest design
-choice: that gVisor trace points plus `docker diff` give stable, normalized evidence.
-Everything later builds on the same `RuntimeTrace`. Phase 1 still has to settle the exact
-trace-point names on arm64 and the collector's socket permissions (gVisor's remote sink
-connects to a Unix socket on the host).
+choice: that gVisor trace points give stable, normalized evidence. The Section 11 spike
+already showed the raw events are there. Everything later builds on the same
+`RuntimeTrace`. Phase 1 still has to settle the trace-point names on arm64, the
+`docker diff` question, the trace session under Docker's runtime (the spike used
+`runsc do`), and the collector's socket permissions (gVisor's remote sink connects to a Unix
+socket on the host).
 
 ## 10. Open questions (need your call before build)
 
-1. **Where does Phase 1 run?** The existing t4g.small, operator-only (free, arm64, shares a
-   host with the live stack), or an on-demand `c7i-flex.large` (about $0.11/hour, x86, a
+1. **Where does Phase 1 run?** Docker Desktop locally (free; enough for our own test
+   packages, as the spike showed), the t4g.small once launched, operator-only (free, arm64,
+   shares a host with the live stack), or an on-demand `c7i-flex.large` (about $0.11/hour, x86, a
    separate blast radius, and it also unlocks Phase 4)? Recommendation: the on-demand
    `c7i-flex.large` for any third-party package; the t4g.small only for our own test
    packages.
@@ -486,6 +505,46 @@ connects to a Unix socket on the host).
    (CODE/META/SC). Recommendation: a separate prefix, so a user can tell static evidence
    from observed behavior at a glance.
 
+## 11. Verification of the assumptions (2026-10-21)
+
+No Agent Guard code was written. These checks test the claims the design depends on.
+
+### 11.1 AWS (project account, ap-southeast-2; read-only calls and dry runs, nothing created)
+
+| Check | Result |
+|---|---|
+| Plan | FREE, active; $120 of $120 credits left; expires 2027-04-18 |
+| Existing instances | None in ap-southeast-2 (the `deploy/aws` stack isn't launched) |
+| Nested virtualization (`describe-instance-types`) | c7i-flex.large, m7i-flex.large, c8i-flex.large, m8i-flex.large and r8i-flex.large list `nested-virtualization`; t4g.small doesn't |
+| Free-tier eligible | c7i-flex.large, m7i-flex.large, t3.micro, t3.small, t4g.micro, t4g.small, t8i.micro, t8i.small |
+| Dry-run `RunInstances` | "Request would have succeeded" for t4g.small, c7i-flex.large, c7i-flex.large and m7i-flex.large with `NestedVirtualization=enabled`, c6g.metal and c5.metal |
+| On-demand vCPU quota (L-1216C47A) | 5 (the default). Dry runs don't check it, so the 64/96-vCPU metal hosts would fail at a real launch |
+
+### 11.2 gVisor trace spike (Docker Desktop, WSL2, x86_64)
+
+Setup: a throwaway privileged `python:3.12-slim-trixie` container (removed afterwards)
+installed gVisor `release-20261012.0` from the release tarball (SHA-512 verified). A
+~100-line Python collector listened on the remote-sink socket. An inert test payload of our
+own ran under `runsc --network=none --pod-init-config=… do`. The payload read two canary
+files, ran `sh -c`, connected to `203.0.113.10:443` (a documentation address), resolved a
+`.example.test` name and appended to `~/.bashrc`.
+
+| Design assumption | Observed |
+|---|---|
+| Trace points exist under the assumed names | Yes: `runsc trace metadata` lists 1000 points, including `syscall/openat/enter`, `syscall/execve/enter`, `syscall/connect/enter`, `syscall/socket/enter`, `syscall/write/enter`, `sentry/execve` (optional `binary_sha256`), `sentry/clone`, `container/start` |
+| Remote sink is simple to consume | Yes: AF_UNIX `SOCK_SEQPACKET`; protobuf `Handshake{version: 1}` sent by the sandbox and echoed back; then messages with an 8-byte header (`header_size` u16, `message_type` u16, `dropped_count` u32) followed by a protobuf payload |
+| Credential canary reads visible (AG-DYN-002) | `openat` of `/home/dev/.ssh/id_ed25519` and `/home/dev/.aws/credentials`, flags `O_RDONLY\|O_CLOEXEC` |
+| Spawns visible with argv (AG-DYN-004) | `syscall/execve` with `["sh", "-c", "echo spawned >/dev/null"]`, plus one attempt per `PATH` entry (to normalize), and `sentry/execve` with the resolved binary `/usr/bin/dash` |
+| IP-literal egress visible (AG-DYN-001) | `connect` to `203.0.113.10:443` with the decoded sockaddr |
+| DNS name visible without the fake network | No, as predicted: only `connect` to the resolver `192.168.65.7:53`, and to `/var/run/nscd/socket` (noise to filter). Names need the Phase 2 sidecar |
+| Persistence write visible (AG-DYN-005) | `openat ~/.bashrc` with flags `0x80441` (`O_WRONLY\|O_CREAT\|O_APPEND\|O_CLOEXEC`) |
+| Write reaches the filesystem (for `docker diff`) | No under `runsc do`: gVisor kept the write in its own overlay. Untested under Docker's runtime (Section 5.5) |
+| Event loss | 123 events, `dropped_count` 0 throughout |
+
+Not covered by the spike: arm64 (the t4g.small), the trace session under
+`docker run --runtime runsc-dyn`, the fake network, MCP STDIO driving, and a guest boot under
+nested virtualization.
+
 ---
 
 ## Sources
@@ -496,18 +555,21 @@ Same format as `docs/sources.md`. These rows move there when Phase 1 lands.
 |---|---|---|---|
 | EC2 nested virtualization (launch) | Since 2026-02-16, KVM or Hyper-V can run on virtual EC2 instances (C8i, M8i, R8i), where before only bare metal was possible | https://aws.amazon.com/about-aws/whats-new/2026/02/amazon-ec2-nested-virtualization-on-virtual | 2026-10-21 (search summary of the announcement) |
 | EC2 nested virtualization (expansion) | 2026-06-18: added C7i, R7i, M7i, C8id, R8id, M8id, C7i-flex, M7i-flex, I7i, C8i-flex, R8i-flex, M8i-flex and X8i, all commercial Regions | https://aws.amazon.com/about-aws/whats-new/2026/06/nested-virtualization-intel-us-gov-cloud/ | 2026-10-21 |
-| EC2 nested virtualization (User Guide) | Supported families incl. M7i-flex and C7i-flex; KVM and Hyper-V are the supported L1 hypervisors; no extra cost; `--cpu-options "NestedVirtualization=enabled"` at launch, or `modify-instance-cpu-options` while stopped; `describe-instance-types` filter `processor-info.supported-features=nested-virtualization`; AWS recommends evaluating bare metal for performance-sensitive work | https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/amazon-ec2-nested-virtualization.html | 2026-10-21 (read in full). **Conflict**: the `CpuOptionsRequest` API reference says only 8th-generation types (c8i, m8i, r8i and flex) are supported. TODO: confirm with `describe-instance-types` in ap-southeast-2 |
+| EC2 nested virtualization (User Guide) | Supported families incl. M7i-flex and C7i-flex; KVM and Hyper-V are the supported L1 hypervisors; no extra cost; `--cpu-options "NestedVirtualization=enabled"` at launch, or `modify-instance-cpu-options` while stopped; `describe-instance-types` filter `processor-info.supported-features=nested-virtualization`; AWS recommends evaluating bare metal for performance-sensitive work | https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/amazon-ec2-nested-virtualization.html | 2026-10-21 (read in full). The `CpuOptionsRequest` API reference says only 8th-generation types are supported; `describe-instance-types` in ap-southeast-2 agrees with the User Guide (Section 11.1) |
 | EC2 free-tier eligible types | Accounts created on or after 2025-07-15: t3.micro, t3.small, t4g.micro, t4g.small, c7i-flex.large, m7i-flex.large; free tier lasts 6 months or until credits are used; "You can't exceed your Free Tier limits" | https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-free-tier-usage.html | 2026-10-21 |
-| AWS free plan limits | Free plans don't include services and features "that could possibly deplete your credits"; upgrading to a paid plan removes the limits | https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/free-tier-plans.html · https://aws.amazon.com/free/free-tier-faqs/ | 2026-10-21 (search summary; whether a free-plan account can launch `.metal` or enable nested virtualization is **not verified**, TODO dry-run) |
+| AWS free plan limits | Free plans don't include services and features "that could possibly deplete your credits"; upgrading to a paid plan removes the limits | https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/free-tier-plans.html · https://aws.amazon.com/free/free-tier-faqs/ | 2026-10-21 (search summary). Dry runs on this account pass for nested virtualization and `.metal`; the 5-vCPU quota still blocks metal (Section 11.1) |
+| EC2 vCPU quota | "Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances" (L-1216C47A) is 5 vCPUs on this account, equal to the AWS default | Service Quotas `GetServiceQuota` / `GetAWSDefaultServiceQuota`, ap-southeast-2 | 2026-10-21 |
 | EC2 prices, ap-southeast-2 | Linux on-demand per hour, effective 2026-10-01: t4g.small 0.0212, c7i-flex.large 0.11072, m7i-flex.large 0.1197, c7i.large 0.11655, c8i.large 0.12238, c6g.metal 2.8416, c7g.metal 3.0195, m7g.metal 3.264, c5.metal 5.328 | https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/ap-southeast-2/index.csv (AWS Price List bulk file, filtered to Linux, shared tenancy, no pre-installed software, used capacity; lowest OnDemand row per type) | 2026-10-21 |
-| Project credits and current cost | Free plan, $120 credits until 2027-04-18; the stack costs about $20/month all-in | `deploy/aws/README.md` | 2026-10-21 (repository; remaining credits not re-checked, since the AWS CLI session had expired) |
+| Project credits and current cost | Free plan, $120 credits until 2027-04-18; the stack costs about $20/month all-in | `deploy/aws/README.md`; `freetier:GetAccountPlanState` | 2026-10-21: FREE plan, $120 of $120 left, expires 2027-04-18; no instances running yet |
 | Firecracker host requirements | Needs KVM and read/write access to `/dev/kvm`; x86_64 or aarch64 hosts; "EC2 only supports KVM on `.metal` instance types"; nested virtualization not mentioned | https://github.com/firecracker-microvm/firecracker/blob/main/docs/getting-started.md | 2026-10-21 (the guide predates EC2 nested virtualization; untested under it) |
 | Kata Containers host requirements | "requires nested virtualization or bare metal" | https://github.com/kata-containers/kata-containers/blob/main/docs/install/README.md | 2026-10-21 (supported hypervisors and Docker vs containerd integration: TODO) |
 | gVisor platforms | systrap is the default since mid-2023 (replaced ptrace) and is recommended for VMs and machines without virtualization support; KVM is an alternative platform | https://gvisor.dev/docs/architecture_guide/platforms/ | 2026-10-21 (whether systrap needs nested virtualization is not stated explicitly; arm64 support not stated on the page; `bootstrap.sh` installs the aarch64 build) |
 | gVisor networking | `--network=sandbox` (netstack, default), `host`, `none` (loopback only); packets go to the device in the namespace Docker sets up | https://gvisor.dev/docs/user_guide/networking/ | 2026-10-21 |
 | gVisor runtime monitoring | Trace points for all syscalls and other events, streamed to a process alongside and isolated from the sandbox | https://gvisor.dev/docs/user_guide/runtimemonitor/ · https://gvisor.dev/blog/2022/08/01/threat-detection/ | 2026-10-21 |
-| gVisor trace session config | `--pod-init-config` JSON with top-level `trace_session` (`name: "Default"`, `points[]` with `name`/`optional_fields`/`context_fields`, `sinks[]` with `name: "remote"` and `config.endpoint` = Unix socket); example points `syscall/openat/enter`, `syscall/execve/enter`, `syscall/fork/enter`, `syscall/sysno/35/enter`, `sentry/clone`, `container/start`, `sentry/signal_delivered`; `runsc trace create/list/delete/metadata` | https://github.com/google/gvisor/blob/master/pkg/sentry/seccheck/README.md | 2026-10-21 (a named `connect` point is not listed; TODO `runsc trace metadata` on our build) |
+| gVisor trace session config | `--pod-init-config` JSON with top-level `trace_session` (`name: "Default"`, `points[]` with `name`/`optional_fields`/`context_fields`, `sinks[]` with `name: "remote"` and `config.endpoint` = Unix socket); example points `syscall/openat/enter`, `syscall/execve/enter`, `syscall/fork/enter`, `syscall/sysno/35/enter`, `sentry/clone`, `container/start`, `sentry/signal_delivered`; `runsc trace create/list/delete/metadata` | https://github.com/google/gvisor/blob/master/pkg/sentry/seccheck/README.md | 2026-10-21; `syscall/connect/enter` and the other points confirmed with `runsc trace metadata` on `release-20261012.0` x86_64 (Section 11.2); arm64 TODO |
+| gVisor remote sink wire format | `SOCK_SEQPACKET`; protobuf `Handshake{version}` (current version 1) exchanged first; 8-byte header (`HeaderSize` u16, `MessageType` u16, `DroppedCount` u32) then the payload; message types 1–38 (e.g. 7 open, 10 connect, 11 execve) | https://github.com/google/gvisor/blob/master/pkg/sentry/seccheck/sinks/remote/README.md · `…/remote/wire/wire.go` · `…/remote/server/server.go` · `pkg/sentry/seccheck/points/common.proto`, `syscall.proto` | 2026-10-21 (sources read; a working collector built on it in the spike) |
 | gVisor with Docker | `runsc install` registers runtime `runsc`; `runsc install --runtime <name> -- <flags>` registers another runtime name with its own flags; restart Docker afterwards | https://gvisor.dev/docs/user_guide/quick_start/docker/ | 2026-10-21 |
+| gVisor release packaging | Since 2026-07, releases are `gvisor.tar.zstd` / `gvisor.tar.bz2` (with `.sha512`) under `releases/release/latest/${ARCH}`, holding `runsc`, `containerd-shim-runsc-v1` and a `gvisor-bin/` directory to keep next to `runsc`; `runsc install` stops auto-downloading missing binaries after September 2026; the apt repository is preferred | https://gvisor.dev/docs/user_guide/install/ | 2026-10-21 (the old `…/latest/<arch>/runsc` URL returns 404 for x86_64 and aarch64; tarball install verified in the spike) |
 | Falco + gVisor | Falco consumes gVisor events through `--pod-init-config` in Docker's daemon.json; runsc released in 2023 or later is compatible | https://falco.org/docs/event-sources/gvisor | 2026-10-21 (search summary; prior art only, Falco is not proposed) |
 | Docker internal networks | `--internal`: "no default route is configured and firewall rules are set up to drop all traffic to or from other networks"; containers can still reach the gateway IP, so host services there remain reachable | https://docs.docker.com/reference/cli/docker/network/create/ | 2026-10-21 |
 | MCP 2026-07-28 tools | `tools/list` "MUST NOT vary per-connection or as a side effect of other requests on the connection" (may vary by authorization); `listChanged` + `notifications/tools/list_changed` over `subscriptions/listen`; `tools/call` shape; tool annotations untrusted unless from trusted servers | https://modelcontextprotocol.io/specification/2026-07-28/server/tools | 2026-10-21 |
