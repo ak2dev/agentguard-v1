@@ -69,8 +69,11 @@ role. Terminating deletes the disk and all stored reports.
 
 - **Docker socket.** The dispatcher controls the host's Docker daemon (as a member of the
   `docker` group, not root) to start scanner containers, so the instance runs nothing else.
-- **gVisor** comes from Google's `latest` release channel, verified against its published
-  SHA-512 but not pinned to a version; the Compose plugin is pinned (`v5.6.0`).
+- **gVisor** comes from Google's `latest` release channel as one tarball (`gvisor.tar.zstd`,
+  the format since 2026-07), verified against its published SHA-512 but not pinned to a
+  version. `runsc` and its `gvisor-bin/` sidecar directory are unpacked side by side into
+  `/usr/local/bin`, since `runsc` looks for them next to itself. The Compose plugin is pinned
+  (`v5.6.0`).
 - **Client addresses.** Caddy keeps `X-Forwarded-For` from any sender so the per-visitor rate
   limit works behind Vercel. Someone calling the instance directly can forge it to dodge that
   limit; proof-of-work on every scan and the queue cap (50) still apply.

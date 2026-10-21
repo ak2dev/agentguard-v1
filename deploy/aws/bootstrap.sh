@@ -14,7 +14,7 @@ SWAP_SIZE="2G"
 echo "== $(date -Is) bootstrap start"
 
 dnf -y update
-dnf -y install docker git
+dnf -y install docker git tar zstd
 systemctl enable --now docker
 
 # Docker Compose v2 plugin (not packaged for AL2023), checksum-verified.
@@ -30,13 +30,14 @@ tmp="$(mktemp -d)"
 )
 
 # gVisor (runsc) for the scanner containers, checksum-verified, registered with Docker.
+# Releases since 2026-07 are one tarball; runsc runs sidecars from gvisor-bin/ next to it.
 (
   cd "$tmp"
   base="https://storage.googleapis.com/gvisor/releases/release/latest/${arch}"
-  curl -fsSLO "${base}/runsc"
-  curl -fsSLO "${base}/runsc.sha512"
-  sha512sum -c runsc.sha512
-  install -m 0755 runsc /usr/local/bin/runsc
+  curl -fsSLO "${base}/gvisor.tar.zstd"
+  curl -fsSLO "${base}/gvisor.tar.zstd.sha512"
+  sha512sum -c gvisor.tar.zstd.sha512
+  tar --zstd --no-same-owner -xf gvisor.tar.zstd -C /usr/local/bin runsc gvisor-bin
 )
 rm -rf "$tmp"
 /usr/local/bin/runsc install
