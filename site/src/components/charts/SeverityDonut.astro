@@ -1,0 +1,35 @@
+---
+// Findings by severity in the sample report (donut; severity colors, labelled legend).
+import Figure from "./Figure.astro";
+const { sample } = Astro.props;
+const order = ["critical", "high", "medium", "low", "info"];
+const segs = order.map((s) => ({ s, n: sample.findings_by_severity[s] ?? 0 })).filter((x) => x.n > 0);
+const total = segs.reduce((a, x) => a + x.n, 0);
+const R = 64, r = 44, cx = 80, cy = 80;
+let a = -Math.PI / 2;
+const pt = (rad, ang) => `${cx + rad * Math.cos(ang)},${cy + rad * Math.sin(ang)}`;
+const arcs = segs.map((x) => {
+  const a0 = a, a1 = a + (2 * Math.PI * x.n) / total;
+  a = a1;
+  const large = a1 - a0 > Math.PI ? 1 : 0;
+  const d = segs.length === 1
+    ? `M${pt(R, a0)}A${R},${R} 0 1 1 ${pt(R, a0 + Math.PI)}A${R},${R} 0 1 1 ${pt(R, a0)}M${pt(r, a0)}A${r},${r} 0 1 0 ${pt(r, a0 + Math.PI)}A${r},${r} 0 1 0 ${pt(r, a0)}Z`
+    : `M${pt(R, a0)}A${R},${R} 0 ${large} 1 ${pt(R, a1)}L${pt(r, a1)}A${r},${r} 0 ${large} 0 ${pt(r, a0)}Z`;
+  return { ...x, d };
+});
+const byRule = sample.findings;
+---
+<Figure id="donut" title="What the sample scan found"
+  note="Findings by severity in the sample report below, a real scan of an inert malicious skill from the benchmark corpus.">
+  <div class="donut-row">
+    <svg viewBox="0 0 160 160" class="donut" role="img" aria-labelledby="donut-d">
+      <desc id="donut-d">{segs.map((x) => `${x.n} ${x.s}`).join(", ")}; {total} findings in all.</desc>
+      {arcs.map((x) => <g class="mark"><title>{x.n} {x.s}</title><path class={`f-${x.s} donut-gap`} d={x.d} /></g>)}
+      <text class="donut-n" x={cx} y={cy + 6} text-anchor="middle">{total}</text>
+      <text class="c-sub" x={cx} y={cy + 24} text-anchor="middle">findings</text>
+    </svg>
+    <ul class="donut-list">
+      {byRule.map((f) => <li><span class={`sev ${f.severity}`}>{f.severity}</span> <code>{f.rule_id}</code> <span class="muted">{f.title}</span></li>)}
+    </ul>
+  </div>
+</Figure>

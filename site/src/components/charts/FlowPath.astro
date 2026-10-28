@@ -1,0 +1,75 @@
+---
+// A concrete toxic-flow path, as Agent Guard reports it (the example in "Toxic flows").
+import Figure from "./Figure.astro";
+// wide layout (760 × 300)
+const N = {
+  page: { x: 0, y: 150, w: 120, name: "Web page", role: "attacker-written" },
+  fin: { x: 168, y: 150, w: 128, name: "fetch", role: "untrusted content", hot: true },
+  agent: { x: 342, y: 150, w: 92, name: "Agent", role: "follows the text", solid: true },
+  fs: { x: 322, y: 28, w: 132, name: "filesystem", role: "reads private data", hot: true },
+  fout: { x: 480, y: 150, w: 128, name: "fetch", role: "external egress", hot: true },
+  out: { x: 654, y: 150, w: 106, name: "Outside", role: "attacker host" },
+};
+const H = 56;
+const mid = (n) => n.y + H / 2;
+const steps = [
+  ["1", "A page with hidden instructions comes in through fetch"],
+  ["2", "The agent reads secrets with filesystem"],
+  ["3", "and sends them out with fetch"],
+];
+// narrow layout: a column, filesystem beside the agent
+const col = [
+  { k: "page", name: "Web page", role: "attacker-written" },
+  { k: "fin", name: "fetch", role: "untrusted content", hot: true },
+  { k: "agent", name: "Agent", role: "follows the text", solid: true },
+  { k: "fout", name: "fetch", role: "external egress", hot: true },
+  { k: "out", name: "Outside", role: "attacker host" },
+];
+const cw = 200, ch = 50, cg = 22;
+---
+<Figure id="flowpath" title="A toxic flow, as a path"
+  note="The path Agent Guard reports for one claude-desktop session. Each label comes with the evidence behind it, and breaking any one hop breaks the flow.">
+  <ol class="legend" slot="legend">{steps.map(([n, t]) => <li><span class="flow-step">{n}</span>{t}</li>)}</ol>
+  <svg class="v-wide big" viewBox="0 0 760 236" role="img" aria-labelledby="flowpath-w-d">
+    <desc id="flowpath-w-d">A web page with hidden instructions enters through the fetch tool. The agent reads private data with the filesystem server and sends it out with fetch to an attacker host. fetch, filesystem and the agent are in one claude-desktop session.</desc>
+    <defs><marker id="fp-hot" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="d-head hot" d="M1 1L9 5L1 9z" /></marker></defs>
+    <rect class="d-frame" x="148" y="8" width="480" height="218" rx="14" />
+    <text class="d-module" x="160" y="218">claude-desktop session</text>
+    {Object.values(N).map((n) => (
+      <g>
+        <rect class={`d-box${n.hot ? " hot" : ""}${n.solid ? " solid" : ""}`} x={n.x} y={n.y} width={n.w} height={H} rx="10" />
+        <text class={`d-name${n.solid ? " on" : ""}`} x={n.x + n.w / 2} y={n.y + 24} text-anchor="middle">{n.name}</text>
+        <text class={`d-role${n.solid ? " on" : ""}`} x={n.x + n.w / 2} y={n.y + 41} text-anchor="middle">{n.role}</text>
+      </g>
+    ))}
+    <path class="d-edge hot flowline" d={`M${N.page.x + N.page.w + 2},${mid(N.page)}H${N.fin.x - 4}`} marker-end="url(#fp-hot)" />
+    <path class="d-edge hot flowline" d={`M${N.fin.x + N.fin.w + 2},${mid(N.fin)}H${N.agent.x - 4}`} marker-end="url(#fp-hot)" />
+    <path class="d-edge hot flowline" d={`M${N.agent.x + 30},${N.agent.y - 2}V${N.fs.y + H + 4}`} marker-end="url(#fp-hot)" />
+    <path class="d-edge hot flowline" d={`M${N.agent.x + N.agent.w - 30},${N.fs.y + H + 2}V${N.agent.y - 4}`} marker-end="url(#fp-hot)" />
+    <path class="d-edge hot flowline" d={`M${N.agent.x + N.agent.w + 2},${mid(N.agent)}H${N.fout.x - 4}`} marker-end="url(#fp-hot)" />
+    <path class="d-edge hot flowline" d={`M${N.fout.x + N.fout.w + 2},${mid(N.fout)}H${N.out.x - 4}`} marker-end="url(#fp-hot)" />
+    {[[134, mid(N.page) - 14, "1"], [N.agent.x + 14, 116, "2"], [641, mid(N.fout) - 14, "3"]].map(([x, y, n]) => (
+      <g><circle class="venn-core" cx={x} cy={y} r="10" /><text class="d-step on-step" x={x} y={y + 4} text-anchor="middle">{n}</text></g>
+    ))}
+  </svg>
+  <svg class="v-narrow big" viewBox={`0 0 360 ${col.length * (ch + cg)}`} role="img" aria-labelledby="flowpath-n-d">
+    <desc id="flowpath-n-d">Web page, then fetch (untrusted content), then the agent, which reads private data with filesystem, then fetch (external egress), then an attacker host.</desc>
+    <defs><marker id="fp-hot-n" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="d-head hot" d="M1 1L9 5L1 9z" /></marker></defs>
+    {col.map((n, i) => {
+      const y = i * (ch + cg);
+      return (
+        <g>
+          <rect class={`d-box${n.hot ? " hot" : ""}${n.solid ? " solid" : ""}`} x="0" y={y} width={cw} height={ch} rx="10" />
+          <text class={`d-name${n.solid ? " on" : ""}`} x={cw / 2} y={y + 22} text-anchor="middle">{n.name}</text>
+          <text class={`d-role${n.solid ? " on" : ""}`} x={cw / 2} y={y + 38} text-anchor="middle">{n.role}</text>
+          {i < col.length - 1 && <path class="d-edge hot flowline" d={`M${cw / 2},${y + ch + 2}V${y + ch + cg - 4}`} marker-end="url(#fp-hot-n)" />}
+        </g>
+      );
+    })}
+    <rect class="d-box hot" x="236" y={2 * (ch + cg)} width="124" height={ch} rx="10" />
+    <text class="d-name" x="298" y={2 * (ch + cg) + 22} text-anchor="middle">filesystem</text>
+    <text class="d-role" x="298" y={2 * (ch + cg) + 38} text-anchor="middle">private data</text>
+    <path class="d-edge hot flowline" d={`M${cw + 4},${2 * (ch + cg) + 18}H232`} marker-end="url(#fp-hot-n)" />
+    <path class="d-edge hot flowline" d={`M234,${2 * (ch + cg) + 34}H${cw + 6}`} marker-end="url(#fp-hot-n)" />
+  </svg>
+</Figure>

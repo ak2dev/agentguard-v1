@@ -1,0 +1,49 @@
+---
+// What the benchmark corpus is made of (one stacked bar, 2px surface gaps).
+import Figure from "./Figure.astro";
+const { corpus } = Astro.props;
+const attacks = corpus.malicious + corpus.adversarial;
+const real = corpus.sources.real ?? 0;
+const segs = [
+  { name: "Attacks (synthetic)", n: attacks, cls: "s1", text: "c-on-fill" },
+  { name: "Benign (synthetic look-alikes)", n: corpus.benign - real, cls: "s2", text: "c-on-fill" },
+  { name: "Benign (real repositories)", n: real, cls: "s3", text: "c-on-fill" },
+].filter((s) => s.n > 0);
+const total = segs.reduce((a, s) => a + s.n, 0);
+
+function layout(W) {
+  const H = 64, barH = 28, y = 8;
+  let x = 0;
+  const parts = segs.map((s, i) => {
+    const w = (W - 2 * (segs.length - 1)) * s.n / total;
+    const p = { ...s, x, w, first: i === 0, last: i === segs.length - 1, fits: w > String(s.n).length * 8 + 16 };
+    x += w + 2;
+    return p;
+  });
+  // rounded outer ends only
+  const path = (p) => {
+    const r = 4, l = p.first ? r : 0, rt = p.last ? r : 0;
+    return `M${p.x + l},${y}H${p.x + p.w - rt}${rt ? `Q${p.x + p.w},${y} ${p.x + p.w},${y + rt}` : ""}V${y + barH - rt}${rt ? `Q${p.x + p.w},${y + barH} ${p.x + p.w - rt},${y + barH}` : ""}H${p.x + l}${l ? `Q${p.x},${y + barH} ${p.x},${y + barH - l}` : ""}V${y + l}${l ? `Q${p.x},${y} ${p.x + l},${y}` : ""}Z`;
+  };
+  return { W, H, y, barH, parts: parts.map((p) => ({ ...p, d: path(p) })) };
+}
+const views = [["v-wide", layout(640)], ["v-narrow", layout(360)]];
+---
+<Figure id="corpus" title={`${total} benchmark items`}
+  note="Attacks are inert synthetic reproductions of documented patterns. Most benign items are real skills and MCP servers from vendor repositories at pinned commits; the synthetic benign items are look-alikes of the attacks.">
+  <ul class="legend" slot="legend">{segs.map((s) => <li><span class={`key ${s.cls}`}></span>{s.name} <span class="n">{s.n}</span></li>)}</ul>
+  {views.map(([cls, L]) => (
+    <svg class={cls} viewBox={`0 0 ${L.W} ${L.H}`} role="img" aria-labelledby={`corpus-${cls}-d`}>
+      <desc id={`corpus-${cls}-d`}>{segs.map((s) => `${s.name}: ${s.n} of ${total}.`).join(" ")}</desc>
+      {L.parts.map((p) => (
+        <g class="mark">
+          <title>{p.name}: {p.n} ({Math.round(100 * p.n / total)}%)</title>
+          <path class={p.cls} d={p.d} />
+          {p.fits && <text class={p.text} x={p.x + 10} y={L.y + L.barH / 2 + 4}>{p.n}</text>}
+        </g>
+      ))}
+      <text class="c-ax" x="0" y={L.H - 8}>0</text>
+      <text class="c-ax" x={L.W} y={L.H - 8} text-anchor="end">{total}</text>
+    </svg>
+  ))}
+</Figure>

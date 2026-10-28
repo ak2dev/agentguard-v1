@@ -1,6 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import data from "../../data/generated/rules.json";
+import RulesByArea from "../../components/charts/RulesByArea.astro";
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const groups = [
   ["AG-SKL-", "Skills and instruction files"], ["AG-MCP-CFG-", "MCP client configuration"], ["AG-MCP-META-", "MCP tool, prompt and resource metadata"],
@@ -12,6 +13,7 @@ const ids = (m) => m.filter((x) => x.id && x.framework !== "cwe").map((x) => x.i
 <Base title="Rule catalog" wide>
   <h1>Rule catalog</h1>
   <p class="lead">{data.rules.length} rules in rule pack {data.rule_pack.version}. Every rule has unsafe and safe fixtures that CI runs on every change. Rules marked <span class="pill">network</span> run only with an opt-in network flag.</p>
+  <RulesByArea rules={data.rules} />
   <div class="filter" id="rule-filter-host" hidden>
     <label for="rule-filter">Filter</label>
     <input id="rule-filter" type="search" placeholder="ID, title or standard (e.g. ASI01)" />

@@ -1,6 +1,10 @@
 ---
 import Base from "../layouts/Base.astro";
 import b from "../data/generated/bench.json";
+import CorpusChart from "../components/charts/CorpusChart.astro";
+import MetricsChart from "../components/charts/MetricsChart.astro";
+import RoundsChart from "../components/charts/RoundsChart.astro";
+import TargetsChart from "../components/charts/TargetsChart.astro";
 const sevs = ["critical", "high", "medium"];
 const pct = (x) => (x === null || x === undefined ? "—" : `${(x * 100).toFixed(1)}%`);
 const cats = Object.entries(b.categories);
@@ -13,9 +17,12 @@ const cats = Object.entries(b.categories);
   <p>{b.corpus.items} items: {b.corpus.malicious} malicious, {b.corpus.adversarial} adversarial, {b.corpus.benign} benign. Sources: {Object.entries(b.corpus.sources).map(([k, v]) => `${v} ${k}`).join(", ")}.
   All malicious and adversarial items are inert synthetic reproductions of documented patterns (reserved domains, no working payloads). The held-out split shares no template or wording with the items used while writing rules; the round-4 held-out items were written by the same person as the round-4 rules, before those rules existed (<code>docs/benchmark.md</code>).</p>
   {b.corpus.sources.real && <p class="gap">Caveat: the {b.corpus.sources.real} real benign items are skills and MCP servers from vendor-maintained repositories at pinned commits. Rules were tuned against the ones in the dev split, so read the held-out table below for generalization. Before each tuning round the next repositories were scanned once: 16 of 43, then 7 of 28, then 1 of 79 benign items were flagged at HIGH. The full history and the benign items still flagged are in <code>docs/benchmark.md</code>.</p>}
+  <CorpusChart corpus={b.corpus} />
+  {b.corpus.sources.real && <RoundsChart />}
   {!b.corpus.sources.real && <p class="gap">Caveat: the benign set is currently synthetic. Real-world benign corpora (official and popular skills and servers at pinned revisions) are added with <code>bench/fetch_real.py</code> once sources are approved in <code>bench/real_sources.yaml</code>; until then, false-positive rates here are optimistic.</p>}
 
   <h2>Targets</h2>
+  <TargetsChart targets={b.targets} perf={b.performance.perf_check} />
   <div class="table-scroll"><table>
     <thead><tr><th scope="col">Target</th><th scope="col">Required</th><th scope="col">Actual</th><th scope="col">Status</th></tr></thead>
     <tbody>
@@ -27,11 +34,12 @@ const cats = Object.entries(b.categories);
 
   <h2>Overall (item level)</h2>
   <p class="muted">An item counts as flagged at a threshold when it has at least one finding at or above that severity. Coverage (AG-SYS), policy (AG-POL) and configuration-posture flow findings (AG-FLOW) are reported separately and not counted as detections.</p>
+  <MetricsChart overall={b.overall} />
   <div class="table-scroll"><table>
     <thead><tr><th scope="col">Threshold</th><th scope="col">Precision</th><th scope="col">Recall</th><th scope="col">F1</th><th scope="col">FPR</th><th scope="col">TP / FP / FN / TN</th></tr></thead>
     <tbody>
       {sevs.map((s) => { const m = b.overall[s]; return (
-        <tr><td>≥ {s}</td><td>{pct(m.precision)}</td><td>{pct(m.recall)}</td><td>{pct(m.f1)}</td><td>{pct(m.fpr)}</td><td>{m.tp} / {m.fp} / {m.fn} / {m.tn}</td></tr>
+        <tr><td>≥ {s}</td><td>{pct(m.precision)}</td><td>{pct(m.recall)}</td><td>{pct(m.f1)}</td><td>{pct(m.fpr)}</td><td class="nowrap">{m.tp} / {m.fp} / {m.fn} / {m.tn}</td></tr>
       ); })}
     </tbody>
   </table></div>

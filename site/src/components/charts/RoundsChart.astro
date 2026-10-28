@@ -1,0 +1,50 @@
+---
+// Benign items flagged at HIGH on each round's held-out set, measured once before
+// tuning on it. History from docs/benchmark.md ("How the real items were used");
+// it is not in bench/results, which only holds the current run.
+import Figure from "./Figure.astro";
+const rounds = [
+  { round: "Before", set: "43 items", flagged: 19, total: 43 },
+  { round: "Round 1", set: "43 items", flagged: 16, total: 43 },
+  { round: "Round 2", set: "28 items", flagged: 7, total: 28 },
+  { round: "Round 3", set: "79 items", flagged: 1, total: 79 },
+  { round: "Round 5", set: "61 items", flagged: 1, total: 61 },
+];
+const pct = (r) => (100 * r.flagged) / r.total;
+const fmt = (p) => (p < 10 ? p.toFixed(1) : Math.round(p).toString()) + "%";
+
+function layout(W) {
+  const H = 270, left = 38, right = 8, top = 22, bottom = 56;
+  const plotW = W - left - right, plotH = H - top - bottom;
+  const band = plotW / rounds.length, bar = Math.min(24, band - 14);
+  const max = 50;
+  const y = (v) => top + plotH * (1 - v / max);
+  const ticks = [0, 10, 20, 30, 40, 50].map((t) => ({ y: y(t), label: `${t}%` }));
+  const bars = rounds.map((r, i) => {
+    const v = pct(r), x = left + band * i + (band - bar) / 2, h = Math.max(1, plotH * v / max), rr = Math.min(4, h);
+    const top_ = y(v);
+    const d = `M${x},${top + plotH}V${top_ + rr}Q${x},${top_} ${x + rr},${top_}H${x + bar - rr}Q${x + bar},${top_} ${x + bar},${top_ + rr}V${top + plotH}Z`;
+    return { d, cx: x + bar / 2, ty: top_ - 6, text: fmt(v), r };
+  });
+  return { W, H, left, right, top, plotH, ticks, bars };
+}
+const views = [["v-wide", layout(640)], ["v-narrow", layout(360)]];
+---
+<Figure id="rounds" title="False positives on each round's held-out set"
+  note="Benign items flagged at HIGH or above, on repositories the rules had not been tuned on, scanned once before each tuning round. Each round used a new set, so the bars compare generalization, not one fixed corpus. Round 5 is microsoft/skills, still held out.">
+  {views.map(([cls, L]) => (
+    <svg class={cls} viewBox={`0 0 ${L.W} ${L.H}`} role="img" aria-labelledby={`rounds-${cls}-d`}>
+      <desc id={`rounds-${cls}-d`}>{rounds.map((r) => `${r.round}: ${r.flagged} of ${r.total} flagged (${fmt(pct(r))}).`).join(" ")}</desc>
+      {L.ticks.map((t) => <><line class={t.label === "0%" ? "c-base" : "c-grid"} x1={L.left} x2={L.W - L.right} y1={t.y} y2={t.y} /><text class="c-ax" x={L.left - 6} y={t.y + 4} text-anchor="end">{t.label}</text></>)}
+      {L.bars.map((b) => (
+        <g class="mark">
+          <title>{b.r.round}: {b.r.flagged} of {b.r.total} benign items flagged at HIGH</title>
+          <path class="s1" d={b.d} />
+          <text class="c-val" x={b.cx} y={b.ty} text-anchor="middle">{b.text}</text>
+          <text class="c-lbl strong" x={b.cx} y={L.top + L.plotH + 20} text-anchor="middle">{b.r.round}</text>
+          <text class="c-sub" x={b.cx} y={L.top + L.plotH + 37} text-anchor="middle">{b.r.flagged} / {b.r.total}</text>
+        </g>
+      ))}
+    </svg>
+  ))}
+</Figure>

@@ -1,0 +1,57 @@
+---
+// One row per framework, one cell per framework item, shaded by how many rules
+// map to it. Items with no rule are drawn as an outlined gap.
+import Figure from "./Figure.astro";
+const { frameworks } = Astro.props;
+const short = { "owasp-asi-2026": "OWASP ASI", "owasp-mcp-2025-beta": "OWASP MCP", "owasp-ast-1.0": "OWASP AST",
+  "owasp-llm-2026": "OWASP LLM", "nsa-csi-mcp-2026-05": "NSA MCP CSI", "cwe": "CWE" };
+const bins = [
+  { cls: "h1", label: "1–2 rules", hi: 2 }, { cls: "h2", label: "3–5", hi: 5 },
+  { cls: "h3", label: "6–10", hi: 10 }, { cls: "h4", label: "11 or more", hi: Infinity },
+];
+const binOf = (n) => (n === 0 ? null : bins.find((b) => n <= b.hi));
+const rows = frameworks.filter((f) => f.items.length).map((f) => ({
+  name: short[f.framework] ?? f.name, items: f.items, gaps: f.items.filter((i) => !i.rules.length).length,
+}));
+const cols = Math.max(...rows.map((r) => r.items.length));
+
+function layout(W) {
+  const narrow = W < 500, labelW = narrow ? 0 : 108, right = narrow ? 0 : 64;
+  const cell = Math.min(26, (W - labelW - right) / cols), gap = 2, rowH = narrow ? cell + 26 : cell + 10;
+  const out = rows.map((r, ri) => {
+    const top = 4 + ri * rowH + (narrow ? 18 : 0);
+    return { ...r, top, cells: r.items.map((it, ci) => {
+      const b = binOf(it.rules.length);
+      return { it, x: labelW + ci * cell, y: top, s: cell - gap, cls: b ? b.cls : "h0" };
+    }) };
+  });
+  return { W, H: 8 + rows.length * rowH + (narrow ? 18 : 0), narrow, labelW, cell, rows: out };
+}
+const views = [["v-wide big", layout(760)], ["v-narrow big", layout(360)]];
+---
+<Figure id="heatmap" title="Rules mapped to each standard"
+  note="Each square is one item of the framework (for example ASI01). Gaps are left visible rather than filled with weak mappings. Hover a square for its title and rule count; the tables below list every rule.">
+  <ul class="legend" slot="legend">
+    <li><span class="key gap-key"></span>Gap, no rule</li>
+    {bins.map((b) => <li><span class={`key ${b.cls}`}></span>{b.label}</li>)}
+  </ul>
+  {views.map(([cls, L]) => (
+    <svg class={cls} viewBox={`0 0 ${L.W} ${L.H}`} role="img" aria-labelledby={`heatmap-${cls.split(" ")[0]}-d`}>
+      <desc id={`heatmap-${cls.split(" ")[0]}-d`}>{rows.map((r) => `${r.name}: ${r.items.length} items, ${r.gaps} without a rule.`).join(" ")}</desc>
+      {L.rows.map((r) => (
+        <g>
+          {L.narrow
+            ? <text class="c-lbl strong" x="0" y={r.top - 7}>{r.name} <tspan class="c-sub">{r.gaps ? `${r.gaps} gap${r.gaps > 1 ? "s" : ""}` : "no gaps"}</tspan></text>
+            : <><text class="c-lbl strong" x="0" y={r.top + L.cell / 2 + 3}>{r.name}</text>
+               <text class="c-sub" x={L.labelW + r.items.length * L.cell + 8} y={r.top + L.cell / 2 + 3}>{r.gaps ? `${r.gaps} gap${r.gaps > 1 ? "s" : ""}` : "no gaps"}</text></>}
+          {r.cells.map((c) => (
+            <g class="mark">
+              <title>{c.it.id} {c.it.title}: {c.it.rules.length ? `${c.it.rules.length} rule${c.it.rules.length > 1 ? "s" : ""}` : "gap, no rule yet"}</title>
+              <rect class={c.cls} x={c.x + (c.cls === "h0" ? 0.75 : 0)} y={c.y + (c.cls === "h0" ? 0.75 : 0)} width={c.s - (c.cls === "h0" ? 1.5 : 0)} height={c.s - (c.cls === "h0" ? 1.5 : 0)} rx="3" />
+            </g>
+          ))}
+        </g>
+      ))}
+    </svg>
+  ))}
+</Figure>

@@ -1,0 +1,10 @@
+---
+// A chart card: title, one-line note, optional HTML legend, then the SVG(s).
+const { id, title, note } = Astro.props;
+---
+<figure class="chart" aria-labelledby={`${id}-title`}>
+  <h3 id={`${id}-title`}>{title}</h3>
+  {note && <p class="chart-note">{note}</p>}
+  <slot name="legend" />
+  <slot />
+</figure>

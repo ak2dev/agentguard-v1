@@ -1,0 +1,36 @@
+{
+  "findings_by_severity": {
+    "critical": 2,
+    "high": 1,
+    "medium": 2,
+    "low": 0,
+    "info": 0
+  },
+  "findings": [
+    {
+      "rule_id": "AG-FLOW-005",
+      "severity": "critical",
+      "title": "Private data can reach a known exfiltration sink"
+    },
+    {
+      "rule_id": "AG-SKL-CRED-010",
+      "severity": "critical",
+      "title": "Credential access combined with network egress"
+    },
+    {
+      "rule_id": "AG-SKL-EXF-001",
+      "severity": "high",
+      "title": "Known exfiltration sink"
+    },
+    {
+      "rule_id": "AG-SKL-CRED-002",
+      "severity": "medium",
+      "title": "Harvests token variables or dumps the environment"
+    },
+    {
+      "rule_id": "AG-SKL-MIS-001",
+      "severity": "medium",
+      "title": "Description/behavior mismatch"
+    }
+  ]
+}

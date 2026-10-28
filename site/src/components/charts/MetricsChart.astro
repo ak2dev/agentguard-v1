@@ -1,0 +1,47 @@
+---
+// Precision, recall and F1 at each severity threshold (grouped columns).
+import Figure from "./Figure.astro";
+const { overall } = Astro.props;
+const groups = ["critical", "high", "medium"];
+const series = [["precision", "Precision", "s1"], ["recall", "Recall", "s2"], ["f1", "F1", "s3"]];
+const pct = (x) => Math.round(x * 100);
+
+function layout(W) {
+  const H = 280, left = 44, right = 8, top = 22, bottom = 46;
+  const plotW = W - left - right, plotH = H - top - bottom;
+  const band = plotW / groups.length;
+  const bar = Math.min(24, (band - 24) / 3 - 2);
+  const y = (v) => top + plotH * (1 - v);
+  const ticks = [0, 0.25, 0.5, 0.75, 1].map((t) => ({ y: y(t), label: `${t * 100}%` }));
+  const bars = groups.flatMap((g, gi) => {
+    const x0 = left + band * gi + (band - (bar * 3 + 4)) / 2;
+    return series.map(([key, name, cls], si) => {
+      const v = overall[g][key] ?? 0;
+      const x = x0 + si * (bar + 2), h = Math.max(1, plotH * v);
+      const r = Math.min(4, h);
+      // 4px rounded data end, square at the baseline
+      const d = `M${x},${top + plotH}V${y(v) + r}Q${x},${y(v)} ${x + r},${y(v)}H${x + bar - r}Q${x + bar},${y(v)} ${x + bar},${y(v) + r}V${top + plotH}Z`;
+      return { d, cls, cx: x + bar / 2, ty: y(v) - 6, text: pct(v), tip: `≥ ${g.toUpperCase()} · ${name}: ${(v * 100).toFixed(1)}%` };
+    });
+  });
+  const labels = groups.map((g, gi) => {
+    const x = left + band * gi + band / 2 + 6, w = (g.length + 2) * 8.4;  // ≈ label width at 13px semibold caps
+    return { x, dot: x - w / 2 - 8, g };
+  });
+  return { W, H, left, right, top, plotH, ticks, bars, labels };
+}
+const views = [["v-wide", layout(640)], ["v-narrow", layout(360)]];
+const med = overall.medium;
+---
+<Figure id="metrics" title="Precision, recall and F1 by threshold"
+  note={`An item counts as flagged at a threshold when it has a finding at or above it. At MEDIUM, precision drops to ${pct(med.precision)}%: treat MEDIUM as review material, not a gate.`}>
+  <ul class="legend" slot="legend">{series.map(([, name, cls]) => <li><span class={`key ${cls}`}></span>{name}</li>)}</ul>
+  {views.map(([cls, L]) => (
+    <svg class={cls} viewBox={`0 0 ${L.W} ${L.H}`} role="img" aria-labelledby={`metrics-${cls}-d`}>
+      <desc id={`metrics-${cls}-d`}>{groups.map((g) => `At ${g}: precision ${pct(overall[g].precision)}%, recall ${pct(overall[g].recall)}%, F1 ${pct(overall[g].f1)}%.`).join(" ")}</desc>
+      {L.ticks.map((t) => <><line class={t.label === "0%" ? "c-base" : "c-grid"} x1={L.left} x2={L.W - L.right} y1={t.y} y2={t.y} /><text class="c-ax" x={L.left - 6} y={t.y + 4} text-anchor="end">{t.label}</text></>)}
+      {L.bars.map((b) => <g class="mark"><title>{b.tip}</title><path class={b.cls} d={b.d} /><text class="c-val" x={b.cx} y={b.ty} text-anchor="middle">{b.text}</text></g>)}
+      {L.labels.map((l) => <><circle class={`d-${l.g}`} cx={l.dot} cy={L.top + L.plotH + 22} r="4" /><text class="c-lbl strong" x={l.x} y={L.top + L.plotH + 26} text-anchor="middle">≥ {l.g.toUpperCase()}</text></>)}
+    </svg>
+  ))}
+</Figure>
