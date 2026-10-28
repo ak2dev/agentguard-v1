@@ -179,40 +179,11 @@ const flows = [
       <h2 id="graph-title">See the whole session, not one file</h2>
       <p>Toxic-flow analysis joins every skill and server an agent can reach into one capability graph.</p>
     </div>
-    <div class="graph">
-      <svg viewBox="0 0 900 440" role="img" aria-labelledby="graph-desc">
-        <desc id="graph-desc">A web-fetch tool brings untrusted content to the agent; the agent can read private files and send data to a chat service. Together these form the lethal trifecta.</desc>
-        <defs>
-          <pattern id="dots" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r="1.2" fill="#ff7a33" fill-opacity=".38"></circle></pattern>
-          <radialGradient id="fade" cx="50%" cy="45%" r="55%"><stop offset="0" stop-color="#fff" stop-opacity="1"></stop><stop offset="1" stop-color="#fff" stop-opacity="0"></stop></radialGradient>
-          <mask id="m"><rect width="900" height="440" fill="url(#fade)"></rect></mask>
-        </defs>
-        <circle cx="450" cy="250" r="235" fill="url(#dots)" mask="url(#m)"></circle>
-        <circle cx="450" cy="250" r="235" fill="none" stroke="#3b3733"></circle>
-        <ellipse cx="450" cy="250" rx="235" ry="80" fill="none" stroke="#2a2724"></ellipse>
-        <ellipse cx="450" cy="250" rx="110" ry="235" fill="none" stroke="#2a2724"></ellipse>
-        <path class="flowline" d="M300 110 C 360 150, 400 190, 450 230" fill="none" stroke="#ff7a33" stroke-width="2"></path>
-        <path class="flowline" d="M450 230 C 520 210, 570 160, 620 130" fill="none" stroke="#ff7a33" stroke-width="2"></path>
-        <path class="flowline" d="M450 230 C 480 290, 520 330, 560 360" fill="none" stroke="#ff7a33" stroke-width="2"></path>
-        <g fill="#0e0d0c" stroke="#ff7a33" stroke-width="2">
-          <circle cx="300" cy="110" r="24"></circle><circle cx="620" cy="130" r="24"></circle><circle cx="560" cy="360" r="24"></circle>
-        </g>
-        <circle cx="450" cy="230" r="30" fill="#e2560f"></circle>
-        <g fill="none" stroke="#ff7a33" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M291 110h18M300 101c4 3 6 6 6 9s-2 6-6 9c-4-3-6-6-6-9s2-6 6-9z"></path>
-          <path d="M612 124h16v13h-16zM615 124v-3a5 5 0 0 1 10 0v3"></path>
-          <path d="M570 352l-19 7 7 3 3 7z"></path>
-        </g>
-        <path d="M438 230h24M450 218v24" stroke="#fff" stroke-width="2.4" stroke-linecap="round"></path>
-        <g fill="#d8d1c8" font-size="15" font-weight="600" text-anchor="middle">
-          <text x="300" y="158">web-fetch</text><text x="620" y="178">filesystem</text><text x="560" y="408">slack</text><text x="450" y="284">agent</text>
-        </g>
-        <g fill="#a69e94" font-size="13" text-anchor="middle">
-          <text x="300" y="176">untrusted content</text><text x="620" y="196">private data</text><text x="560" y="426">external egress</text>
-        </g>
-      </svg>
-      <p class="callout c1"><strong>Lethal trifecta</strong>Untrusted content, private data and egress, reachable in one session.</p>
-      <p class="callout c2"><strong>A path you can break</strong>Each label comes with the evidence behind it.</p>
+    <div class="graph" data-globe>
+      <canvas class="globe" role="img" aria-labelledby="graph-desc"></canvas>
+      <p id="graph-desc" class="visually-hidden">A web-fetch tool brings untrusted content to the agent; the agent can read private files and send data to a chat service. Together these form the lethal trifecta.</p>
+      <p class="callout" data-anchor="fetch" data-side="left"><strong>Lethal trifecta</strong>Untrusted content, private data and egress, reachable in one session.</p>
+      <p class="callout" data-anchor="slack" data-side="right"><strong>A path you can break</strong>Each label comes with the evidence behind it.</p>
     </div>
     <div class="features">
       <div><Icon name="offline" /><h3>Offline by default</h3><p>The core scan needs no network and no account. Network checks are opt-in flags, listed in every report.</p></div>
@@ -236,4 +207,5 @@ const flows = [
     </div>
   </section>
   <script is:inline src={`${base}/js/tabs.js`}></script>
+  <script is:inline src={`${base}/js/globe.js`}></script>
 </Base>
