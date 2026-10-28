@@ -3,143 +3,142 @@
   "engine_version": "0.1.0.dev0",
   "rule_pack": {
     "version": "0.1.0",
-    "digest": "2a0688bcab233a3259cc10661594d4c36ca5e6b7c7249e63697f566be847bc89"
+    "digest": "0de4f12a8d8d25873d0633286721d88a4153aa061835904928ac9a35e6325d75"
   },
-  "date": "2026-10-18",
+  "date": "2026-10-28",
   "split": "all",
   "corpus": {
-    "items": 270,
-    "benign": 202,
+    "items": 286,
+    "benign": 210,
     "malicious": 40,
-    "adversarial": 28,
+    "adversarial": 36,
     "sources": {
       "real": 163,
-      "synthetic": 107
+      "synthetic": 123
     }
   },
   "overall": {
     "critical": {
-      "tp": 43,
+      "tp": 52,
       "fp": 0,
-      "fn": 25,
-      "tn": 202,
+      "fn": 24,
+      "tn": 210,
       "precision": 1.0,
-      "recall": 0.6324,
-      "f1": 0.7748,
+      "recall": 0.6842,
+      "f1": 0.8125,
       "fpr": 0.0
     },
     "high": {
-      "tp": 66,
+      "tp": 74,
       "fp": 4,
       "fn": 2,
-      "tn": 198,
-      "precision": 0.9429,
-      "recall": 0.9706,
-      "f1": 0.9565,
-      "fpr": 0.0198
+      "tn": 206,
+      "precision": 0.9487,
+      "recall": 0.9737,
+      "f1": 0.961,
+      "fpr": 0.019
     },
     "medium": {
-      "tp": 68,
-      "fp": 28,
+      "tp": 76,
+      "fp": 32,
       "fn": 0,
-      "tn": 174,
-      "precision": 0.7083,
+      "tn": 178,
+      "precision": 0.7037,
       "recall": 1.0,
-      "f1": 0.8292,
-      "fpr": 0.1386
+      "f1": 0.8261,
+      "fpr": 0.1524
     }
   },
   "by_split": {
     "dev": {
       "critical": {
-        "tp": 23,
+        "tp": 31,
         "fp": 0,
         "fn": 11,
-        "tn": 105,
+        "tn": 131,
         "precision": 1.0,
-        "recall": 0.6765,
-        "f1": 0.807,
+        "recall": 0.7381,
+        "f1": 0.8493,
         "fpr": 0.0
       },
       "high": {
-        "tp": 33,
+        "tp": 41,
         "fp": 2,
         "fn": 1,
-        "tn": 103,
-        "precision": 0.9429,
-        "recall": 0.9706,
-        "f1": 0.9565,
-        "fpr": 0.019
+        "tn": 129,
+        "precision": 0.9535,
+        "recall": 0.9762,
+        "f1": 0.9647,
+        "fpr": 0.0153
       },
       "medium": {
-        "tp": 34,
-        "fp": 21,
+        "tp": 42,
+        "fp": 30,
         "fn": 0,
-        "tn": 84,
-        "precision": 0.6182,
+        "tn": 101,
+        "precision": 0.5833,
         "recall": 1.0,
-        "f1": 0.7641,
-        "fpr": 0.2
+        "f1": 0.7368,
+        "fpr": 0.229
       }
     },
     "heldout": {
       "critical": {
-        "tp": 20,
+        "tp": 21,
         "fp": 0,
-        "fn": 14,
-        "tn": 97,
+        "fn": 13,
+        "tn": 79,
         "precision": 1.0,
-        "recall": 0.5882,
-        "f1": 0.7407,
+        "recall": 0.6176,
+        "f1": 0.7636,
         "fpr": 0.0
       },
       "high": {
         "tp": 33,
         "fp": 2,
         "fn": 1,
-        "tn": 95,
+        "tn": 77,
         "precision": 0.9429,
         "recall": 0.9706,
         "f1": 0.9565,
-        "fpr": 0.0206
+        "fpr": 0.0253
       },
       "medium": {
         "tp": 34,
-        "fp": 7,
+        "fp": 2,
         "fn": 0,
-        "tn": 90,
-        "precision": 0.8293,
+        "tn": 77,
+        "precision": 0.9444,
         "recall": 1.0,
-        "f1": 0.9067,
-        "fpr": 0.0722
+        "f1": 0.9714,
+        "fpr": 0.0253
       }
     }
   },
   "calibrated": {
     "overall": {
-      "items": 68,
-      "severity_met": 64,
-      "severity_met_rate": 0.9412,
+      "items": 76,
+      "severity_met": 73,
+      "severity_met_rate": 0.9605,
       "critical_expected": {
-        "items": 46,
-        "tp": 43,
-        "recall": 0.9348
+        "items": 54,
+        "tp": 52,
+        "recall": 0.963
       },
       "below_expected": [
         "h2-cred-node-kube",
         "h2-rugpull-exec",
-        "h2-split-cred-paste",
         "rugpull-new-tool"
       ]
     },
     "by_split": {
       "dev": {
-        "items": 34,
-        "severity_met": 33,
-        "severity_met_rate": 0.9706,
+        "items": 42,
+        "severity_met": 41,
+        "severity_met_rate": 0.9762,
         "critical_expected": {
-          "items": 23,
-          "tp": 23,
+          "items": 31,
+          "tp": 31,
           "recall": 1.0
         },
         "below_expected": [
@@ -148,17 +147,16 @@
       },
       "heldout": {
         "items": 34,
-        "severity_met": 31,
-        "severity_met_rate": 0.9118,
+        "severity_met": 32,
+        "severity_met_rate": 0.9412,
         "critical_expected": {
           "items": 23,
-          "tp": 20,
-          "recall": 0.8696
+          "tp": 21,
+          "recall": 0.913
         },
         "below_expected": [
           "h2-cred-node-kube",
-          "h2-rugpull-exec",
-          "h2-split-cred-paste"
+          "h2-rugpull-exec"
         ]
       }
     }
@@ -185,11 +183,11 @@
     "adv-split": {
       "label": "adversarial",
       "items": 7,
-      "recall_critical": 0.7143,
+      "recall_critical": 0.8571,
       "recall_high": 1.0,
       "recall_medium": 1.0,
-      "expected_rule_hit_rate": 0.2857,
-      "severity_met_rate": 0.8571
+      "expected_rule_hit_rate": 0.4286,
+      "severity_met_rate": 1.0
     },
     "adv-unicode": {
       "label": "adversarial",
@@ -199,6 +197,13 @@
       "recall_medium": 1.0,
       "expected_rule_hit_rate": 1.0,
       "severity_met_rate": 1.0
+    },
+    "benign-composition": {
+      "label": "benign",
+      "items": 8,
+      "fpr_critical": 0.0,
+      "fpr_high": 0.0,
+      "fpr_medium": 0.5
     },
     "benign-config": {
       "label": "benign",
@@ -248,6 +253,15 @@
       "fpr_critical": 0.0,
       "fpr_high": 0.0,
       "fpr_medium": 0.0417
+    },
+    "composition": {
+      "label": "adversarial",
+      "items": 8,
+      "recall_critical": 1.0,
+      "recall_high": 1.0,
+      "recall_medium": 1.0,
+      "expected_rule_hit_rate": 1.0,
+      "severity_met_rate": 1.0
     },
     "cred-exfil": {
       "label": "malicious",
@@ -325,16 +339,18 @@
   "benign_hits_by_rule": {
     "AG-MCP-META-020:medium": 6,
     "AG-CODE-024:medium": 5,
+    "AG-MCP-META-009:medium": 5,
     "AG-CODE-020:medium": 3,
-    "AG-MCP-META-009:medium": 3,
+    "AG-SKL-CRED-001:medium": 3,
     "AG-SKL-INJ-002:medium": 3,
     "AG-CODE-027:medium": 2,
-    "AG-SKL-CRED-001:medium": 2,
+    "AG-CODE-040:medium": 2,
     "AG-SKL-INJ-004:high": 2,
     "AG-SKL-INJ-004:medium": 2,
     "AG-SKL-INJ-007:medium": 2,
+    "AG-SKL-MIS-001:medium": 2,
+    "AG-CODE-002:medium": 1,
     "AG-CODE-025:high": 1,
-    "AG-CODE-040:medium": 1,
     "AG-SKL-BND-002:medium": 1,
     "AG-SKL-CRED-002:medium": 1,
     "AG-SKL-EXEC-002:medium": 1,
@@ -352,22 +368,22 @@
     },
     "precision_high": {
       "target": 0.85,
-      "actual": 0.9429,
+      "actual": 0.9487,
       "met": true
     },
     "fpr_high_max": {
       "target": 0.02,
-      "actual": 0.0198,
+      "actual": 0.019,
       "met": true
     }
   },
   "performance": {
-    "total_seconds": 42.648,
-    "mean_ms_per_item": 158.0,
+    "total_seconds": 35.874,
+    "mean_ms_per_item": 125.4,
     "perf_check": {
       "skills": 100,
       "configs": 20,
-      "seconds": 1.62,
+      "seconds": 1.643,
       "target_seconds": 10,
       "met": true,
       "findings": 547

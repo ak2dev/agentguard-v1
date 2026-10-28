@@ -1,0 +1,83 @@
+---
+// A concrete toxic-flow path, as Agent Guard reports it (the example in "Toxic flows").
+import Figure from "./Figure.astro";
+import Node from "./Node.astro";
+import { monoW, nodeW } from "./measure.js";
+const steps = [
+  ["01", "A page with hidden instructions comes in through fetch"],
+  ["02", "The agent reads secrets with filesystem"],
+  ["03", "and sends them out with fetch"],
+];
+// open chevron heads: right, left, up, down
+const head = {
+  r: (x, y) => `M${x - 6},${y - 4}L${x},${y}L${x - 6},${y + 4}`,
+  l: (x, y) => `M${x + 6},${y - 4}L${x},${y}L${x + 6},${y + 4}`,
+  u: (x, y) => `M${x - 4},${y + 6}L${x},${y}L${x + 4},${y + 6}`,
+  d: (x, y) => `M${x - 4},${y - 6}L${x},${y}L${x + 4},${y - 6}`,
+};
+const N = {
+  page: { eyebrow: "Source", name: "Web page", role: "attacker-written", tone: "plain" },
+  fin: { eyebrow: "MCP tool", name: "fetch", role: "untrusted content", tone: "hot" },
+  agent: { eyebrow: "LLM", name: "Agent", role: "follows the text", tone: "solid" },
+  fs: { eyebrow: "MCP server", name: "filesystem", role: "reads private data", tone: "hot" },
+  fout: { eyebrow: "MCP tool", name: "fetch", role: "external egress", tone: "hot" },
+  out: { eyebrow: "Sink", name: "Outside", role: "attacker host", tone: "plain" },
+};
+const chip = (x, y, n) => ({ x, y, n });
+
+// wide: one row sized to the text, filesystem above the agent, all inside the session frame
+const H = 74, gapX = 52, row = 168, mid = row + H / 2, fsY = 42, inset = 22;
+const order = ["page", "fin", "agent", "fout", "out"];
+// one width for every box, the widest text's, so the row reads evenly
+const nw = Math.max(...Object.values(N).map(nodeW));
+const w = Object.fromEntries(Object.keys(N).map((k) => [k, nw]));
+const x = {};
+order.reduce((acc, k) => ((x[k] = acc), acc + w[k] + gapX), 0);
+const WW = x.out + w.out;
+x.fs = x.agent + w.agent / 2 - w.fs / 2;
+const ac = x.agent + w.agent / 2, upX = ac - 18, downX = ac + 18;
+const frame = { x: x.fin - inset, w: x.fout + w.fout + inset - (x.fin - inset), y: 16, h: row + H + 22 - 16 };
+const tabText = "SESSION · CLAUDE-DESKTOP", tabW = Math.ceil(monoW(tabText)) + 16;
+const between = (a, b) => (x[a] + w[a] + x[b]) / 2;
+const wide = [
+  { d: `M${x.page + w.page + 3},${mid}H${x.fin - 4}`, h: head.r(x.fin - 4, mid) },
+  { d: `M${x.fin + w.fin + 3},${mid}H${x.agent - 4}`, h: head.r(x.agent - 4, mid) },
+  { d: `M${upX},${row - 3}V${fsY + H + 4}`, h: head.u(upX, fsY + H + 4) },
+  { d: `M${downX},${fsY + H + 3}V${row - 4}`, h: head.d(downX, row - 4) },
+  { d: `M${x.agent + w.agent + 3},${mid}H${x.fout - 4}`, h: head.r(x.fout - 4, mid) },
+  { d: `M${x.fout + w.fout + 3},${mid}H${x.out - 4}`, h: head.r(x.out - 4, mid) },
+];
+const wideChips = [chip(between("page", "fin"), mid, "01"), chip(upX, (fsY + H + row) / 2, "02"), chip(between("fout", "out"), mid, "03")];
+const widePacket = `M${x.page + w.page} ${mid} H${upX} V${fsY + 44} H${downX} V${mid} H${x.out}`;
+
+// narrow (360 wide): a column, filesystem beside the agent
+const cw = 204, fsN = { x: 228, w: 132 }, gap = 30, ys = [0, 1, 2, 3, 4].map((i) => i * (H + gap)), cx = cw / 2;
+const col = ["page", "fin", "agent", "fout", "out"];
+const narrowChips = [chip(cx, ys[0] + H + gap / 2, "01"), chip(fsN.x + fsN.w / 2, ys[2] - 15, "02"), chip(cx, ys[3] + H + gap / 2, "03")];
+const narrowPacket = `M${cx} ${H} V${ys[2] + 26} H${fsN.x + 60} V${ys[2] + 50} H${cx} V${ys[4]}`;
+---
+<Figure id="flowpath" title="A toxic flow, as a path"
+  note="The path Agent Guard reports for one claude-desktop session. Each label comes with the evidence behind it, and breaking any one hop breaks the flow.">
+  <ol class="legend" slot="legend">{steps.map(([n, t]) => <li><span class="flow-step">{n}</span>{t}</li>)}</ol>
+  <svg class="v-wide xl" viewBox={`0 0 ${WW} ${row + H + 26}`} role="img" aria-labelledby="flowpath-w-d">
+    <desc id="flowpath-w-d">A web page with hidden instructions enters through the fetch tool. The agent reads private data with the filesystem server and sends it out with fetch to an attacker host. fetch, filesystem and the agent are in one claude-desktop session.</desc>
+    <rect class="d-frame" x={frame.x} y={frame.y} width={frame.w} height={frame.h} rx="14" />
+    <rect class="frame-tab" x={frame.x + 12} y={frame.y - 8} width={tabW} height="16" />
+    <text class="frame-label" x={frame.x + 20} y={frame.y + 3.5}>{tabText}</text>
+    {wide.map((p) => <g><path class="wire hot" d={p.d} /><path class="wire-head hot" d={p.h} /></g>)}
+    {/* under the nodes: the packet shows on the wires and passes behind each card */}
+    <circle class="packet" r="4"><animateMotion dur="6s" repeatCount="indefinite" path={widePacket} /></circle>
+    {[...order, "fs"].map((k) => <Node x={x[k]} y={k === "fs" ? fsY : row} w={w[k]} h={H} {...N[k]} />)}
+    {wideChips.map((c) => <g><rect class="chip" x={c.x - 15} y={c.y - 9} width="30" height="18" rx="9" /><text class="chip-text" x={c.x} y={c.y + 3.5} text-anchor="middle">{c.n}</text></g>)}
+  </svg>
+  <svg class="v-narrow xl" viewBox={`0 0 360 ${ys[4] + H}`} role="img" aria-labelledby="flowpath-n-d">
+    <desc id="flowpath-n-d">Web page, then fetch (untrusted content), then the agent, which reads private data with filesystem, then fetch (external egress), then an attacker host.</desc>
+    {ys.slice(0, -1).map((y) => <g><path class="wire hot" d={`M${cx},${y + H + 2}V${y + H + gap - 3}`} /><path class="wire-head hot" d={head.d(cx, y + H + gap - 3)} /></g>)}
+    <path class="wire hot" d={`M${cw + 2},${ys[2] + 26}H${fsN.x - 3}`} /><path class="wire-head hot" d={head.r(fsN.x - 3, ys[2] + 26)} />
+    <path class="wire hot" d={`M${fsN.x - 2},${ys[2] + 50}H${cw + 3}`} /><path class="wire-head hot" d={head.l(cw + 3, ys[2] + 50)} />
+    <circle class="packet" r="4"><animateMotion dur="6s" repeatCount="indefinite" path={narrowPacket} /></circle>
+    {col.map((k, i) => <Node x={0} y={ys[i]} w={cw} h={H} {...N[k]} />)}
+    <Node x={fsN.x} y={ys[2]} w={fsN.w} h={H} eyebrow="MCP server" name="filesystem" role="private data" tone="hot" />
+    {narrowChips.map((c) => <g><rect class="chip" x={c.x - 15} y={c.y - 9} width="30" height="18" rx="9" /><text class="chip-text" x={c.x} y={c.y + 3.5} text-anchor="middle">{c.n}</text></g>)}
+  </svg>
+</Figure>

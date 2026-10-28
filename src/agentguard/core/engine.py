@@ -113,7 +113,7 @@ def scan(tree: ArtifactTree, options: ScanOptions | None = None, pack: RulePack 
         rules_evaluated=len(evaluated),
         findings_by_severity={s.value: by_sev.get(s.value, 0) for s in Severity},
         suppressed=len(suppressed),
-        limit_events=sorted(tree.limit_events, key=lambda e: (e.kind, e.path)),
+        limit_events=sorted(ctx.data["limit_events"], key=lambda e: (e.kind, e.path)),  # type: ignore[arg-type]
     )
     report = Report(
         engine_version=ENGINE_VERSION,

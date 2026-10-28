@@ -1,0 +1,54 @@
+---
+// How many rules cover each area (horizontal bars, from the generated rule catalog).
+import Figure from "./Figure.astro";
+const { rules } = Astro.props;
+// Skill rules are split by family so the bar names what they catch.
+const areas = [
+  ["Malicious skills", ["AG-SKL-SE-", "AG-SKL-EXEC-", "AG-SKL-EXF-", "AG-SKL-CRED-", "AG-SKL-TYP-", "AG-SKL-MIS-", "AG-SKL-PRIV-"]],
+  ["Hidden instructions", ["AG-SKL-HID-"]],
+  ["Instruction layer", ["AG-SKL-INJ-"]],
+  ["Skill structure", ["AG-SKL-BND-", "AG-SKL-SPEC-"]],
+  ["MCP configuration", ["AG-MCP-CFG-"]],
+  ["MCP metadata", ["AG-MCP-META-"]],
+  ["Server and script code", ["AG-CODE-"]],
+  ["Supply chain and drift", ["AG-SC-"]],
+  ["Remote auth", ["AG-AUTH-"]],
+  ["Toxic flows", ["AG-FLOW-"]],
+  ["Policy and coverage", ["AG-POL-", "AG-SYS-"]],
+  ["LLM judge (optional)", ["AG-LLM-"]],
+];
+const rows = areas.map(([name, prefixes]) => ({ name, n: rules.filter((r) => prefixes.some((p) => r.id.startsWith(p))).length }))
+  .filter((r) => r.n > 0).sort((a, b) => b.n - a.n);
+const counted = rows.reduce((a, r) => a + r.n, 0);
+const max = Math.max(...rows.map((r) => r.n));
+
+function layout(W) {
+  const narrow = W < 500, labelW = narrow ? 150 : 190, rowH = 26, bar = 14, right = 34;
+  const plotW = W - labelW - right;
+  const items = rows.map((r, i) => {
+    const y = 6 + i * rowH, w = Math.max(2, plotW * r.n / max), x = labelW, rr = Math.min(4, w);
+    const d = `M${x},${y}H${x + w - rr}Q${x + w},${y} ${x + w},${y + rr}V${y + bar - rr}Q${x + w},${y + bar} ${x + w - rr},${y + bar}H${x}Z`;
+    return { ...r, y, w, d };
+  });
+  return { W, H: 10 + rows.length * rowH, labelW, bar, items };
+}
+const views = [["v-wide", layout(640)], ["v-narrow", layout(360)]];
+---
+<Figure id="areas" title={`${rules.length} rules by area`}
+  note="Every rule has an unsafe and a safe fixture that CI runs on every change. A higher count is not better coverage: one well-made rule can cover a whole technique.">
+  {views.map(([cls, L]) => (
+    <svg class={cls} viewBox={`0 0 ${L.W} ${L.H}`} role="img" aria-labelledby={`areas-${cls}-d`}>
+      <desc id={`areas-${cls}-d`}>{rows.map((r) => `${r.name}: ${r.n}.`).join(" ")}</desc>
+      <line class="c-base" x1={L.labelW} x2={L.labelW} y1="0" y2={L.H - 4} />
+      {L.items.map((r) => (
+        <g class="mark">
+          <title>{r.name}: {r.n} rules</title>
+          <text class="c-lbl" x={L.labelW - 10} y={r.y + L.bar / 2 + 4} text-anchor="end">{r.name}</text>
+          <path class="s1" d={r.d} />
+          <text class="c-val" x={L.labelW + r.w + 6} y={r.y + L.bar / 2 + 4}>{r.n}</text>
+        </g>
+      ))}
+    </svg>
+  ))}
+  {counted !== rules.length && <p class="chart-note">{rules.length - counted} rules belong to no area above.</p>}
+</Figure>

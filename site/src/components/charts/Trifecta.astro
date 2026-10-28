@@ -1,0 +1,39 @@
+---
+// The lethal trifecta as a three-set Venn diagram.
+import Figure from "./Figure.astro";
+const sets = [
+  { cls: "venn-1", name: "Untrusted content", sub: "web pages, issues, email" },
+  { cls: "venn-2", name: "Private data", sub: "files, secrets, mail" },
+  { cls: "venn-3", name: "External egress", sub: "HTTP, chat, webhooks" },
+];
+function layout(W) {
+  const k = W / 640, r = 108 * k, top = r + 52;  // room for two label lines above the top circles
+  const c = [[248 * k, top], [392 * k, top], [320 * k, top + 118 * k]];
+  const labels = [
+    { x: c[0][0] - r * 0.55, y: top - r - 30, anchor: "middle" },
+    { x: c[1][0] + r * 0.55, y: top - r - 30, anchor: "middle" },
+    { x: c[2][0], y: c[2][1] + r + 22, anchor: "middle" },
+  ];
+  const core = [320 * k, top + 40 * k];
+  return { W, H: c[2][1] + r + 44, k, r, c, labels, core };
+}
+const views = [["v-wide", layout(640)], ["v-narrow", layout(360)]];
+---
+<Figure id="trifecta" title="The lethal trifecta"
+  note="Each capability is ordinary on its own. When one agent session can take in untrusted content, read private data and send data out, instructions hidden in that content can make the agent leak the data. Agent Guard reports the overlap, not the parts.">
+  {views.map(([cls, L]) => (
+    <svg class={cls} viewBox={`0 0 ${L.W} ${L.H}`} role="img" aria-labelledby={`trifecta-${cls}-d`}>
+      <desc id={`trifecta-${cls}-d`}>Three overlapping circles: untrusted content, private data and external egress. Where all three overlap is the lethal trifecta, a toxic flow.</desc>
+      {sets.map((s, i) => <circle class={s.cls} cx={L.c[i][0]} cy={L.c[i][1]} r={L.r} />)}
+      {sets.map((s, i) => (
+        <g>
+          <text class="d-name" x={L.labels[i].x} y={L.labels[i].y} text-anchor={L.labels[i].anchor}>{s.name}</text>
+          <text class="d-role" x={L.labels[i].x} y={L.labels[i].y + 16} text-anchor={L.labels[i].anchor}>{s.sub}</text>
+        </g>
+      ))}
+      <circle class="venn-core" cx={L.core[0]} cy={L.core[1]} r={30 * Math.max(L.k, 0.8)} />
+      <text class="d-name on" x={L.core[0]} y={L.core[1] - 2} text-anchor="middle">toxic</text>
+      <text class="d-role on" x={L.core[0]} y={L.core[1] + 13} text-anchor="middle">flow</text>
+    </svg>
+  ))}
+</Figure>

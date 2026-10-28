@@ -1,15 +1,24 @@
-"""Intra-procedural taint analysis for Python MCP tool handlers (stdlib ``ast``;
-parse-only, nothing is imported or executed).
+"""Taint analysis for Python MCP tool handlers (stdlib ``ast``; parse-only,
+nothing is imported or executed).
 
 Sources: the handler's parameters. Propagation: assignments (incl. augmented,
 annotated, tuple unpacking, for-targets, with-as), f-strings, concatenation,
 %-formatting, str.format, str methods, subscripts/attributes of tainted values,
 and calls taking tainted arguments (conservative). Sinks are listed in SINKS.
+
+With a ``Resolver``, a tainted argument passed to a helper function of the same
+component is followed into it: a function of the same file, one imported from a
+module of the component (``from .shell import run``, ``from . import engine``,
+sibling and package imports), or a method of the same class through ``self``.
+Each helper is summarized per parameter (which sinks that parameter reaches,
+after the helper's own sanitizers), at most MAX_DEPTH helpers deep. Installed
+packages, dynamic imports and ``getattr`` dispatch are not followed.
 """
 
 from __future__ import annotations
 
 import ast
+import posixpath
 from dataclasses import dataclass, field
 
 SHELL_TRUE_FUNCS = {"subprocess.run", "subprocess.call", "subprocess.check_call", "subprocess.check_output", "subprocess.Popen"}
@@ -48,6 +57,11 @@ class TaintHit:
     source: str         # tainted variable reaching the sink
     sanitized: bool = False
     path: list[int] = field(default_factory=list)  # lines of the propagation chain
+    via: list[tuple[str, int]] = field(default_factory=list)  # (file, line) of each helper step, ending at the sink
+    helper: str = ""  # first helper the parameter was passed to
+
+
+MAX_DEPTH = 3
 
 
 def dotted(node: ast.AST) -> str:
@@ -62,11 +76,15 @@ def dotted(node: ast.AST) -> str:
 
 
 class _Taint(ast.NodeVisitor):
-    def __init__(self, params: list[str], aliases: dict[str, str]) -> None:
+    def __init__(self, params: list[str], aliases: dict[str, str], resolver: Resolver | None = None,
+                 where: tuple[str, str | None] = ("", None), depth: int = 0) -> None:
         self.tainted: dict[str, int] = {p: 0 for p in params}  # name -> line where it became tainted
         self.hits: list[TaintHit] = []
         self.aliases = aliases
         self.source_text_hints: str = ""
+        self.resolver = resolver
+        self.where = where  # (file, enclosing class) of the function being analyzed
+        self.depth = depth
 
     # -- helpers -----------------------------------------------------------
     def canon(self, name: str) -> str:
@@ -182,6 +200,30 @@ class _Taint(ast.NodeVisitor):
             hit("sql", src)
         elif name in TEMPLATE_FUNCS or method in TEMPLATE_METHODS:
             hit("template", src)
+        elif self.resolver is not None:
+            self._helper(node)
+
+    def _helper(self, node: ast.Call) -> None:
+        assert self.resolver is not None
+        target = self.resolver.resolve(self.where[0], node.func, self.where[1])
+        if target is None:
+            return
+        params = target.params()
+        passed: list[tuple[str, str]] = []  # (helper parameter, tainted argument)
+        for i, arg in enumerate(node.args):
+            if isinstance(arg, ast.Starred):
+                break
+            src = self.tainted_in(arg)
+            if src and i < len(params):
+                passed.append((params[i], src))
+        for kw in node.keywords:
+            src = self.tainted_in(kw.value)
+            if src and kw.arg in params:
+                passed.append((kw.arg, src))
+        for param, src in passed:
+            for h in self.resolver.summary(target, param, self.depth + 1):
+                self.hits.append(TaintHit(h.kind, node.lineno, node.col_offset + 1, h.sink, src, h.sanitized,
+                                          via=[(target.path, h.line), *h.via], helper=target.name))
 
 
 def _safe_loader(kw: dict[str, ast.AST]) -> bool:
@@ -213,13 +255,19 @@ def import_aliases(tree: ast.Module) -> dict[str, str]:
     return aliases
 
 
-def analyze_function(fn: ast.FunctionDef | ast.AsyncFunctionDef, aliases: dict[str, str], source: str) -> list[TaintHit]:
+def analyze_function(fn: ast.FunctionDef | ast.AsyncFunctionDef, aliases: dict[str, str], source: str,
+                     resolver: Resolver | None = None, where: tuple[str, str | None] = ("", None)) -> list[TaintHit]:
     params = [a.arg for a in fn.args.args + fn.args.kwonlyargs + fn.args.posonlyargs if a.arg not in ("self", "cls", "ctx", "context")]
     if fn.args.vararg:
         params.append(fn.args.vararg.arg)
     if fn.args.kwarg:
         params.append(fn.args.kwarg.arg)
-    t = _Taint(params, aliases)
+    return _run(fn, params, aliases, source, resolver, where, 0)
+
+
+def _run(fn: ast.FunctionDef | ast.AsyncFunctionDef, params: list[str], aliases: dict[str, str], source: str,
+         resolver: Resolver | None, where: tuple[str, str | None], depth: int) -> list[TaintHit]:
+    t = _Taint(params, aliases, resolver, where, depth)
     for stmt in fn.body:
         t.visit(stmt)
     body_src = ast.get_source_segment(source, fn) or ""
@@ -233,6 +281,132 @@ def analyze_function(fn: ast.FunctionDef | ast.AsyncFunctionDef, aliases: dict[s
         h.path = sorted({ln for n, ln in t.tainted.items() if ln})
         out.append(h)
     return out
+
+
+# -- helpers across the component -------------------------------------------------
+@dataclass(frozen=True)
+class Target:
+    path: str
+    fn: ast.FunctionDef | ast.AsyncFunctionDef
+    cls: str | None
+
+    @property
+    def name(self) -> str:
+        return f"{self.cls}.{self.fn.name}" if self.cls else self.fn.name
+
+    def params(self) -> list[str]:
+        names = [a.arg for a in self.fn.args.posonlyargs + self.fn.args.args]
+        if self.cls and names and not any(isinstance(d, ast.Name) and d.id == "staticmethod" for d in self.fn.decorator_list):
+            names = names[1:]  # self / cls
+        return names + [a.arg for a in self.fn.args.kwonlyargs]
+
+
+@dataclass
+class _Module:
+    tree: ast.Module
+    source: str
+    aliases: dict[str, str]
+    functions: dict[str, ast.FunctionDef | ast.AsyncFunctionDef]
+    classes: dict[str, dict[str, ast.FunctionDef | ast.AsyncFunctionDef]]
+    names: dict[str, tuple[str | None, str | None]]  # local name -> (module file, function name or None for a module)
+
+
+class Resolver:
+    """Finds the function a call refers to among one component's Python files,
+    and summarizes which sinks each of its parameters reaches."""
+
+    def __init__(self, sources: dict[str, str], root: str) -> None:
+        self.sources = sources
+        self.root = root
+        self._modules: dict[str, _Module | None] = {}
+        self._summaries: dict[tuple[str, str | None, str, str, int], list[TaintHit]] = {}
+        self._active: set[tuple[str, str | None, str, str]] = set()
+
+    def module(self, path: str) -> _Module | None:
+        if path not in self._modules:
+            self._modules[path] = self._load(path)
+        return self._modules[path]
+
+    def _load(self, path: str) -> _Module | None:
+        source = self.sources.get(path)
+        if source is None:
+            return None
+        try:
+            tree = ast.parse(source)
+        except (SyntaxError, ValueError, RecursionError, MemoryError):
+            return None
+        functions = {n.name: n for n in tree.body if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))}
+        classes = {c.name: {n.name: n for n in c.body if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))}
+                   for c in tree.body if isinstance(c, ast.ClassDef)}
+        here = posixpath.dirname(path)
+        names: dict[str, tuple[str | None, str | None]] = {}
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                for a in node.names:
+                    local = a.asname or a.name.split(".")[0]
+                    names[local] = (self._file(a.name if a.asname else a.name.split(".")[0], 0, here), None)
+            elif isinstance(node, ast.ImportFrom):
+                for a in node.names:
+                    local = a.asname or a.name
+                    as_module = self._file(f"{node.module}.{a.name}" if node.module else a.name, node.level, here)
+                    if as_module:
+                        names[local] = (as_module, None)
+                    elif node.module:
+                        names[local] = (self._file(node.module, node.level, here), a.name)
+        return _Module(tree, source, import_aliases(tree), functions, classes, names)
+
+    def _file(self, module: str, level: int, here: str) -> str | None:
+        from ..correlate.links import py_module_paths  # avoid an import cycle at load time
+        return next((p for p in py_module_paths(module, level, here, self.root) if p in self.sources), None)
+
+    def resolve(self, path: str, func: ast.AST, cls: str | None) -> Target | None:
+        mod = self.module(path)
+        if mod is None:
+            return None
+        if isinstance(func, ast.Name):
+            if func.id in mod.functions:
+                return Target(path, mod.functions[func.id], None)
+            file, name = mod.names.get(func.id, (None, None))
+            other = self.module(file) if file and name else None
+            if other is not None and name in other.functions:
+                return Target(file, other.functions[name], None)  # type: ignore[arg-type]
+            return None
+        if isinstance(func, ast.Attribute) and isinstance(func.value, ast.Name):
+            head = func.value.id
+            if head in ("self", "cls") and cls and func.attr in mod.classes.get(cls, {}):
+                return Target(path, mod.classes[cls][func.attr], cls)
+            file, name = mod.names.get(head, (None, None))
+            other = self.module(file) if file and name is None else None
+            if other is not None and func.attr in other.functions:
+                return Target(file, other.functions[func.attr], None)  # type: ignore[arg-type]
+        return None
+
+    def summary(self, target: Target, param: str, depth: int) -> list[TaintHit]:
+        """Sinks ``param`` of ``target`` reaches (lines in ``target.path``)."""
+        if depth > MAX_DEPTH:
+            return []
+        key = (target.path, target.cls, target.fn.name, param)
+        if key in self._active:
+            return []  # recursion
+        cached = self._summaries.get((*key, depth))
+        if cached is not None:
+            return cached
+        mod = self.module(target.path)
+        if mod is None:
+            return []
+        self._active.add(key)
+        try:
+            hits = _run(target.fn, [param], mod.aliases, mod.source, self, (target.path, target.cls), depth)
+        finally:
+            self._active.discard(key)
+        self._summaries[(*key, depth)] = hits
+        return hits
+
+
+def enclosing_classes(tree: ast.Module) -> dict[int, str]:
+    """Line of each method → name of its class (top-level classes)."""
+    return {n.lineno: c.name for c in tree.body if isinstance(c, ast.ClassDef)
+            for n in c.body if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))}
 
 
 def tool_functions(tree: ast.Module) -> list[ast.FunctionDef | ast.AsyncFunctionDef]:

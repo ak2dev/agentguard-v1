@@ -1,0 +1,56 @@
+---
+// Bullet chart: each benchmark target against its actual, on its own scale.
+// The shaded zone is where the target is met; the tick is the target.
+import Figure from "./Figure.astro";
+const { targets, perf } = Astro.props;
+const pct1 = (x) => `${(x * 100).toFixed(1)}%`;
+const rows = [
+  { name: "Precision at CRITICAL", t: targets.precision_critical, max: 1, higher: true, fmt: pct1, axis: ["0%", "100%"] },
+  { name: "Precision at HIGH", t: targets.precision_high, max: 1, higher: true, fmt: pct1, axis: ["0%", "100%"] },
+  { name: "False-positive rate at HIGH", t: targets.fpr_high_max, max: 0.05, higher: false, fmt: pct1, axis: ["0%", "5%"] },
+  ...(perf ? [{ name: "Scan time",
+    t: { target: perf.target_seconds, actual: perf.seconds, met: perf.met }, max: 12, higher: false,
+    fmt: (s) => `${s.toFixed(1)} s`, axis: ["0 s", "12 s"] }] : []),
+];
+
+function layout(W) {
+  const narrow = W < 500;
+  const labelW = narrow ? 0 : 214, statusW = narrow ? 0 : 110, rowH = narrow ? 80 : 52;
+  const x0 = labelW, x1 = W - statusW - 6, trackW = x1 - x0;
+  const items = rows.map((r, i) => {
+    const top = 8 + i * rowH + (narrow ? 22 : 0);
+    const sx = (v) => x0 + trackW * Math.min(1, v / r.max);
+    const tx = sx(r.t.target);
+    const zone = r.higher ? { x: tx, w: x1 - tx } : { x: x0, w: tx - x0 };
+    const ax = sx(r.t.actual);
+    return { r, top, tx, zone, ax, mid: top + 14 };
+  });
+  return { W, H: 16 + rows.length * rowH + (narrow ? 22 : 8), narrow, x0, x1, items };
+}
+const views = [["v-wide", layout(640)], ["v-narrow", layout(360)]];
+---
+<Figure id="targets" title="Targets and actuals"
+  note={`CI fails when a target is missed. Each row has its own scale; the shaded zone is where the target is met.${perf ? ` Scan time is for ${perf.skills} skills and ${perf.configs} server configs.` : ""}`}>
+  <ul class="legend" slot="legend"><li><span class="key s1"></span>Actual</li><li><span class="key target"></span>Target</li><li><span class="key zone"></span>Target met</li></ul>
+  {views.map(([cls, L]) => (
+    <svg class={cls} viewBox={`0 0 ${L.W} ${L.H}`} role="img" aria-labelledby={`targets-${cls}-d`}>
+      <desc id={`targets-${cls}-d`}>{rows.map((r) => `${r.name}: ${r.fmt(r.t.actual)} against a target of ${r.higher ? "at least" : "at most"} ${r.fmt(r.t.target)}, ${r.t.met ? "met" : "not met"}.`).join(" ")}</desc>
+      {L.items.map((it) => (
+        <g class="mark">
+          <title>{it.r.name}: {it.r.fmt(it.r.t.actual)} (target {it.r.higher ? "≥" : "≤"} {it.r.fmt(it.r.t.target)}, {it.r.t.met ? "met" : "not met"})</title>
+          {L.narrow
+            ? <text class="c-lbl strong" x={L.x0} y={it.top - 8}>{it.r.name}</text>
+            : <text class="c-lbl strong" x="0" y={it.mid + 4}>{it.r.name}</text>}
+          <rect class="c-track" x={L.x0} y={it.mid - 10} width={L.x1 - L.x0} height="20" rx="4" />
+          <rect class="c-zone" x={it.zone.x} y={it.mid - 10} width={Math.max(0, it.zone.w)} height="20" rx="4" />
+          <rect class="s1" x={L.x0} y={it.mid - 4} width={Math.max(2, it.ax - L.x0)} height="8" rx="3" />
+          <line class="c-target" x1={it.tx} x2={it.tx} y1={it.mid - 13} y2={it.mid + 13} />
+          {L.narrow
+            ? <text class="c-sub" x={L.x0} y={it.mid + 26}>{it.r.fmt(it.r.t.actual)} · target {it.r.higher ? "≥" : "≤"} {it.r.fmt(it.r.t.target)} · <tspan class={it.r.t.met ? "c-ok" : "c-miss"}>{it.r.t.met ? "✓ met" : "✕ not met"}</tspan></text>
+            : <><text class="c-val" x={L.x1 + 12} y={it.mid - 1}>{it.r.fmt(it.r.t.actual)}</text>
+               <text class={it.r.t.met ? "c-ok" : "c-miss"} x={L.x1 + 12} y={it.mid + 14}>{it.r.t.met ? "✓ met" : "✕ not met"} · {it.r.higher ? "≥" : "≤"} {it.r.fmt(it.r.t.target)}</text></>}
+        </g>
+      ))}
+    </svg>
+  ))}
+</Figure>

@@ -215,8 +215,8 @@ footer.site { border-top: 1px dashed var(--line); padding: 40px 0 48px; color: v
 .tile { position: relative; background: var(--surface); border: 1px solid var(--line); padding: clamp(22px, 3vw, 38px); min-height: 220px; display: flex; flex-direction: column; justify-content: flex-end; }
 .tile h3 { font-size: 1.15rem; letter-spacing: -0.01em; margin: 18px 0 8px; }
 .tile p { color: var(--fg-2); margin: 0; font-size: .95rem; line-height: 1.45; }
-.tile .c { position: absolute; width: 9px; height: 9px; border: 1px solid var(--line-2); background: var(--bg); }
-.tile .c.tl { top: -5px; left: -5px; } .tile .c.tr { top: -5px; right: -5px; } .tile .c.bl { bottom: -5px; left: -5px; } .tile .c.br { bottom: -5px; right: -5px; }
+.tile .c, .chart > .c { position: absolute; width: 9px; height: 9px; border: 1px solid var(--line-2); background: var(--bg); }
+.tile .c.tl, .chart > .c.tl { top: -5px; left: -5px; } .tile .c.tr, .chart > .c.tr { top: -5px; right: -5px; } .tile .c.bl, .chart > .c.bl { bottom: -5px; left: -5px; } .tile .c.br, .chart > .c.br { bottom: -5px; right: -5px; }
 .tile.orange { background: var(--orange); border-color: var(--orange); justify-content: flex-start; }
 .tile.orange h3, .tile.orange p { color: var(--on-orange); }
 .tile.orange .icon { color: #fff; }
@@ -476,3 +476,140 @@ footer.site { border-top: 1px dashed var(--line); padding: 40px 0 48px; color: v
 .icon.small-icon, .small-icon { width: 18px; height: 18px; }
 .split .badge .small-icon { color: var(--high); }
 .calm .icon { width: 22px; height: 22px; color: #fff; }
+
+/* ---- charts and diagrams ----------------------------------------------------
+   Static SVG drawn at build time (no inline styles or scripts: the CSP forbids
+   them). Series colors are the brand orange plus two partners, stepped into the
+   dark-mode lightness band and checked for color-vision separation; the heat ramp
+   is one orange hue, dim (few) to bright (many). Each chart is drawn twice, wide
+   and narrow, so text stays legible on a phone. */
+:root {
+  --viz-1: #e8641f;   /* orange */
+  --viz-2: #4a8fe0;   /* blue */
+  --viz-3: #b98a14;   /* gold */
+  --heat-1: #90461b; --heat-2: #bb541d; --heat-3: #e8641f; --heat-4: #ffa06b;
+}
+.chart { position: relative; margin: 22px 0 12px; background: var(--surface); border: 1px solid var(--line); padding: clamp(18px, 2.6vw, 28px); }
+.chart h3 { margin: 0 0 4px; }
+.chart .chart-note { margin: 0 0 14px; color: var(--muted); font-size: .9rem; max-width: 72ch; }
+.chart svg { display: block; width: 100%; height: auto; max-width: 820px; margin: 0 auto; overflow: visible; }
+/* Wide or narrow drawing by the card's own width (a docs column is narrower than
+   the window). Wide drawings are 640 units across, or 760 for the ".big" ones;
+   below these widths their text would shrink under ~11px. */
+.chart { container-type: inline-size; }
+.chart .v-narrow { display: none; max-width: 460px; }
+@container (max-width: 559px) { .chart .v-wide { display: none; } .chart .v-narrow { display: block; } }
+@container (max-width: 659px) { .chart .v-wide.big { display: none; } .chart .v-narrow.big { display: block; } }
+/* ".xl" drawings are wider still (about 1000 units): narrow below 880px, and not capped at 820px */
+.chart svg.v-wide.xl { max-width: 100%; }
+@container (max-width: 879px) { .chart .v-wide.xl { display: none; } .chart .v-narrow.xl { display: block; } }
+.charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 520px), 1fr)); gap: 14px; }
+.charts .chart { margin: 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; list-style: none; padding: 0; margin: 0 0 12px; font-size: .88rem; color: var(--fg-2); }
+.legend li { display: inline-flex; align-items: center; gap: 7px; max-width: none; }
+.legend .n { color: var(--muted); font-variant-numeric: tabular-nums; }
+.key { width: 11px; height: 11px; border-radius: 3px; flex: none; background: var(--line-2); }
+.key.s1 { background: var(--viz-1); } .key.s2 { background: var(--viz-2); } .key.s3 { background: var(--viz-3); }
+.key.h1 { background: var(--heat-1); } .key.h2 { background: var(--heat-2); } .key.h3 { background: var(--heat-3); } .key.h4 { background: var(--heat-4); }
+.key.gap-key { background: transparent; border: 1.5px dashed var(--crit); }
+.key.critical { background: var(--crit); } .key.high { background: var(--high); } .key.medium { background: var(--med); }
+.key.low { background: var(--low); } .key.info { background: var(--info); }
+.key.target { width: 3px; height: 14px; border-radius: 1px; background: var(--fg); }
+.key.zone { background: var(--surface-2); border: 1px solid var(--line-2); }
+
+/* SVG parts */
+.chart text { font-family: var(--font); }
+.c-ax { fill: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.c-lbl { fill: var(--fg-2); font-size: 13px; }
+.c-lbl.strong { fill: var(--fg); font-weight: 600; }
+.c-val { fill: var(--fg); font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.c-sub { fill: var(--muted); font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.c-on-fill { fill: #1a0b03; font-size: 12px; font-weight: 700; }
+.c-on-dim { fill: #fff8f2; font-size: 12px; font-weight: 700; }
+.c-ok { fill: var(--ok); font-size: 12px; font-weight: 600; }
+.c-miss { fill: var(--crit); font-size: 12px; font-weight: 600; }
+.c-grid { stroke: var(--line); stroke-width: 1; }
+.c-base { stroke: var(--line-2); stroke-width: 1; }
+.c-track { fill: var(--surface-2); }
+.c-zone { fill: #2a2622; }
+.c-target { stroke: var(--fg); stroke-width: 2.5; stroke-linecap: round; }
+.s1 { fill: var(--viz-1); } .s2 { fill: var(--viz-2); } .s3 { fill: var(--viz-3); }
+.h1 { fill: var(--heat-1); } .h2 { fill: var(--heat-2); } .h3 { fill: var(--heat-3); } .h4 { fill: var(--heat-4); }
+.h0 { fill: none; stroke: var(--crit); stroke-width: 1.5; stroke-dasharray: 3 3; }
+.f-critical { fill: var(--crit); } .f-high { fill: var(--high); } .f-medium { fill: var(--med); } .f-low { fill: var(--low); } .f-info { fill: var(--info); }
+.d-critical { fill: var(--crit); } .d-high { fill: var(--high); } .d-medium { fill: var(--med); }
+.mark { transition: opacity .15s; }
+.mark:hover { opacity: .8; }
+.donut-gap { stroke: var(--surface); stroke-width: 2; }
+
+/* diagrams */
+.d-box { fill: var(--surface-2); stroke: var(--line-2); stroke-width: 1.2; }
+.d-box.hot { stroke: var(--accent); }
+.d-box.solid { fill: var(--orange); stroke: var(--orange); }
+.d-frame { fill: none; stroke: var(--line-2); stroke-dasharray: 5 5; }
+.d-edge { fill: none; stroke: var(--fg-2); stroke-width: 1.5; }
+.d-edge.hot { stroke: var(--accent); stroke-width: 2; }
+.d-edge.dim { stroke: var(--line-2); }
+.d-head { fill: var(--fg-2); } .d-head.hot { fill: var(--accent); }
+.d-name { fill: var(--fg); font-size: 14px; font-weight: 600; }
+.d-name.on { fill: var(--on-orange); }
+.d-role { fill: var(--muted); font-size: 12px; }
+.d-role.on { fill: #ffe3d2; }
+.d-code { fill: var(--accent); font: 12px var(--mono); }
+.d-step { fill: var(--accent); font: 600 12px var(--mono); }
+.d-module { fill: var(--muted); font: 12px var(--mono); }
+.d-bracket { fill: none; stroke: var(--line-2); stroke-width: 1.2; }
+.venn-1 { fill: var(--viz-1); fill-opacity: .12; stroke: var(--viz-1); stroke-width: 1.5; }
+.venn-2 { fill: var(--viz-2); fill-opacity: .12; stroke: var(--viz-2); stroke-width: 1.5; }
+.venn-3 { fill: var(--viz-3); fill-opacity: .12; stroke: var(--viz-3); stroke-width: 1.5; }
+.venn-core { fill: var(--orange); }
+.d-axis { stroke: var(--line-2); stroke-width: 1.5; }
+.d-dot { fill: var(--bg); stroke: var(--fg-2); stroke-width: 2; }
+.d-dot.hot { stroke: var(--accent); fill: var(--accent); }
+
+
+.donut-row { display: flex; flex-wrap: wrap; align-items: center; gap: 20px 32px; }
+.chart svg.donut { width: 160px; max-width: 160px; margin: 0; flex: none; }
+.donut-n { fill: var(--fg); font-size: 30px; font-weight: 600; }
+.donut-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: .92rem; flex: 1 1 300px; }
+.donut-list li { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
+.d-step.on-step { fill: var(--on-orange); font-size: 11px; }
+.diff-add { fill: var(--accent); font: 12px var(--mono); }
+.diff-del { fill: var(--muted); font: 12px var(--mono); }
+.sev-chip { font-size: 10px; letter-spacing: .06em; }
+.wrap-anywhere { overflow-wrap: anywhere; }
+.nowrap { white-space: nowrap; }
+
+/* diagram nodes and wires (Node.astro): quiet cards, hairline wires, one accent */
+.node-card { fill: #181613; stroke: var(--line-2); stroke-width: 1; }
+.node-sheen { stroke: #ffffff; stroke-opacity: .07; stroke-width: 1; }
+.node-rule { fill: var(--accent); }
+.node-hot .node-card { stroke: #4b3324; }
+.node-solid .node-card { fill: var(--orange); stroke: #ef6a26; }
+.node-solid .node-sheen { stroke-opacity: .3; }
+.node-eyebrow { fill: var(--muted); font: 600 9.5px var(--mono); letter-spacing: .12em; }
+.node-hot .node-eyebrow { fill: var(--accent); }
+.node-solid .node-eyebrow { fill: #ffd4bd; }
+.node-name { fill: var(--fg); font-size: 15px; font-weight: 600; letter-spacing: -.01em; }
+.node-solid .node-name { fill: #fff; }
+.node-role { fill: var(--muted); font-size: 12px; }
+.node-solid .node-role { fill: #ffe1cf; }
+.wire { fill: none; stroke: var(--line-2); stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round; }
+.wire.hot { stroke: var(--accent); stroke-opacity: .85; }
+.wire-head { fill: none; stroke: var(--fg-2); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.wire-head.hot { stroke: var(--accent); }
+.packet { fill: var(--accent); stroke: var(--bg); stroke-width: 2; }
+@media (prefers-reduced-motion: reduce) { .packet { display: none; } }
+.chip { fill: var(--surface); stroke: var(--accent); stroke-width: 1; }
+.chip-text { fill: var(--accent); font: 600 10px var(--mono); letter-spacing: .06em; }
+.frame-tab { fill: var(--surface); }
+.frame-label { fill: var(--muted); font: 600 9.5px var(--mono); letter-spacing: .12em; }
+.term { fill: #120f0d; stroke: var(--line-2); stroke-width: 1; }
+.term-bar { stroke: var(--line); stroke-width: 1; }
+.term-dot { fill: none; stroke: var(--line-2); stroke-width: 1; }
+.term-title { fill: var(--muted); font: 11px var(--mono); }
+.finding-card { fill: var(--surface-2); stroke: var(--line-2); stroke-width: 1; }
+.finding-rule { fill: var(--high); }
+.flow-step { display: inline-block; flex: none; padding: 1px 7px; border-radius: 999px; background: transparent; border: 1px solid var(--accent); color: var(--accent); font: 600 10.5px var(--mono); letter-spacing: .06em; }
+.halo { fill: var(--accent); fill-opacity: .14; stroke: var(--accent); stroke-opacity: .35; stroke-width: 1; }
+.d-code.strong-code { fill: var(--fg); font-weight: 600; font-size: 13px; }

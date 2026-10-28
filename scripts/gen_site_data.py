@@ -99,6 +99,9 @@ def main() -> None:
                               "rule_pack": pack.version, "rule_count": len(pack.rules)})
     report = scan(load_path(SAMPLE_FIXTURE), ScanOptions())
     write(ROOT / "site" / "public" / "sample-report.html", render_html(report))
+    write(OUT / "sample.json", {"findings_by_severity": report.stats.findings_by_severity,
+                                "findings": [{"rule_id": f.rule_id, "severity": f.severity.value, "title": f.title}
+                                             for f in report.findings]})
     for name, build in SCHEMAS.items():
         write(ROOT / "schemas" / f"{name}.v1.json", build())
     print(f"site data: {len(pack.rules)} rules, sample report with {len(report.findings)} findings")

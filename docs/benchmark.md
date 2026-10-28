@@ -10,8 +10,8 @@ numbers), and on a pull request that makes any item worse than on the target bra
 
 | Source | Label | Items | Split |
 |---|---|---|---|
-| Synthetic malicious / adversarial (`bench/generate_synthetic.py`) | malicious, adversarial | 68 | dev / heldout by template author |
-| Synthetic benign, including look-alikes of the attacks | benign | 39 | dev / heldout by template author |
+| Synthetic malicious / adversarial (`bench/generate_synthetic.py`) | malicious, adversarial | 76 | dev / heldout by template author |
+| Synthetic benign, including look-alikes of the attacks | benign | 47 | dev / heldout by template author |
 | anthropics/skills @ `8a1541c4a3ff` (13 Apache-2.0 skills) | benign | 13 | dev |
 | openai/skills @ `49f948faa925` (35 Apache-2.0 / MIT skills) | benign | 35 | dev |
 | modelcontextprotocol/servers @ `f46d9578190b` (7 reference servers) | benign | 7 | dev |
@@ -19,7 +19,7 @@ numbers), and on a pull request that makes any item worse than on the target bra
 | huggingface/skills @ `80f9fa530e46` (25 skills) | benign | 25 | dev |
 | supabase-community/supabase-mcp @ `4cc6660f6566` (3 packages) | benign | 3 | dev |
 | microsoft/skills @ `23d0dac5f83f` (61 skills) | benign | 61 | **heldout** |
-| cloudflare/mcp-server-cloudflare @ `1d7a16b25db7` (18 servers) | benign | 18 | **heldout** |
+| cloudflare/mcp-server-cloudflare @ `1d7a16b25db7` (18 servers) | benign | 18 | dev (held-out until round 5) |
 
 Real items are vendored verbatim, one benchmark item per skill or server directory, by
 `bench/fetch_real.py` from `bench/real_sources.yaml` (pinned commit + tarball SHA-256, license
@@ -42,9 +42,12 @@ source is `dev` once any rule was changed after looking at its findings:
 | 1 | anthropics/skills | same 43 items | 16 / 43 |
 | 2 | + openai/skills, MCP servers, playwright-mcp | huggingface/skills, supabase-mcp (28 items) | 7 / 28 |
 | 3 | + huggingface/skills, supabase-mcp | microsoft/skills, cloudflare MCP (79 items) | **1 / 79** |
+| 5 | + cloudflare MCP | microsoft/skills (61 items), unchanged by round 5 | 1 / 61 |
 
-Only the last row's sources are labelled `heldout` in the manifest; no rule was changed in
-response to them. (The round-3 fix of a backtracking bug in a pattern written in round 2 was
+Until round 5, the last row's sources were labelled `heldout` and no rule was changed in
+response to them. In round 5 a new false positive on one cloudflare server was inspected and
+fixed (round 5 below), so cloudflare is `dev` now; microsoft/skills is the only held-out real
+source. (The round-3 fix of a backtracking bug in a pattern written in round 2 was
 found through a round-2 held-out item; the 7 / 28 figure is from before that fix.) For
 comparison, the pre-tuning rules flag 8 / 28 of the round-2 held-out items (rounds 1-2
 generalized poorly: 8 → 7) and 3 / 79 of the final held-out items (tuned rules: 1 / 79).
@@ -124,7 +127,8 @@ Still below the expected severity (reported, not tuned):
   description/behavior mismatch).
 - `h2-split-cred-paste` (held-out): credentials read in one script, written to a temp file and
   uploaded by another; AG-SKL-CRED-010 needs both halves in one file (HIGH; AG-FLOW-005 links
-  them at CRITICAL, but flows are not counted as detections).
+  them at CRITICAL, but flows are not counted as detections). Reported at CRITICAL since
+  round 5.
 - `h2-rugpull-exec` (held-out): a rug pull whose new tool description tells the agent to run
   `curl ... | sh`; the pipe-to-shell rules do not read tool descriptions (HIGH through
   AG-SC-001/005).
@@ -141,30 +145,88 @@ patterns are standard lists (LOLBAS, common reverse-shell references) that the h
 also draw on. Paraphrase detection is lexical: wording outside the verb and noun lists still
 gets through, which is what the optional LLM judge is for.
 
+## Round 5: composition across files (2026-10-28)
+
+Round 5 targets payloads split across the files of one skill or server. Protocol:
+
+1. **Items first.** A new author, `h3`, wrote 8 attacks (category `composition`) and 8
+   look-alikes (`benign-composition`) before any code changed. Four attacks are skills:
+   credentials relayed through a cache or temp file, through one script running another, or
+   through a sibling import. Four are MCP servers whose tool handler passes its parameter to a
+   helper that runs it (same file, `from .shell import`, `from . import`, and a TypeScript
+   `./lib` import).
+2. **Scanned once, before the change.** 1 of 8 attacks at its expected severity
+   (`h3-comp-runs-script`, and only because its second script both reads the token variable and
+   posts it to webhook.site, so it never tested linking); 0 of 8 look-alikes at ≥ HIGH, 4 at
+   MEDIUM.
+3. **Change: AG-SKL-CRED-010 v3.** `src/agentguard/core/correlate/links.py` links the files of
+   one skill: a path one file writes and another names (after resolving `$HOME`, temp
+   directories, `./`, and Python `Path.home() / ...`, `os.path.join`, `expanduser`), one script
+   running another (also through `$(dirname "$0")` and a directory variable), and Python or
+   JavaScript imports within the skill. A chain has at most three links and one "runs" link,
+   and markdown is only ever an end: a SKILL.md that runs two scripts does not link them.
+   Skills with more than 200 files are not traced and the report says so (`links_not_traced`).
+4. **After.** All four split-skill attacks and the round-4 `h2-split-cred-paste` are reported at
+   CRITICAL, with the link as evidence ("collect.sh writes /tmp/.c, which share.py reads"). No
+   other item changed: no look-alike, no real benign item.
+5. **Change: helper-following taint (AG-CODE-001..008, one version up each).** A tool parameter
+   passed to a helper of the same server is followed into it. Python (`pytaint.Resolver`):
+   functions of the same file, relative, sibling and package imports, and `self.` methods,
+   summarized per parameter. JS/TS (`code.JsResolver`, the pattern analyzer, so it works in
+   the default install and the browser): same-file functions and relative named, namespace and
+   `require` imports. Both stop three helpers deep, never follow installed packages, and let a
+   sanitizer in the caller or the helper (containment check, host allowlist, quoting) apply as
+   it does to direct code. The finding names the helper and the sink's file and line ("execSync
+   in runCmd(), src/lib/run.ts:4").
+6. **After, and one real false positive.** All four MCP attacks are reported at CRITICAL; the
+   argv look-alike gains a MEDIUM AG-CODE-002 (a tool path passed after `--` as a git argument).
+   Two real benign servers rose to HIGH:
+   - `modelcontextprotocol/servers filesystem` (dev): its handlers call `validatePath()` before
+     the helper; the helper hits ignored the caller's containment check. Fixed (step 5).
+   - `cloudflare radar` (held-out): `fetchRadarApi(endpoint)` builds
+     ``new URL(`${RADAR_API_BASE}${endpoint}`)``, so the input only sets the path. Three causes,
+     all fixed: the JS URL check followed a variable built on a constant base (Python already
+     required the scheme/host to be tainted; JS now does too), a tool's input named inside a
+     string literal (`'/entities/ip'`) counted as passing it, and `Record<string, unknown>`
+     split into two parameters. Inspecting it moved cloudflare to `dev` (above).
+
+   After the fixes no real benign item differs from before round 5.
+
+All 16 h3 items were scanned one at a time while this was written, so all of them are `dev`
+(`TUNED_ON`); round 5 has no held-out synthetic items. The pre-change scan in step 2 is the
+only measurement taken before tuning.
+
+Known gaps: the skill link is about files, not values, so a script that reads the relay file
+and, separately, makes an unrelated request is reported as if it sent the file. The JS helper
+resolution is pattern-based: default exports, re-exports, class methods and helpers passed as
+values are not followed, and the tree-sitter analyzer (`agentguard[code]`) does not follow
+helpers yet.
+
 ## Results (bench/results/latest.json)
 
 Item level; AG-FLOW/AG-SYS/AG-POL findings are not counted as detections.
 
 | Threshold | Precision | Recall | FPR | TP / FP / FN / TN |
 |---|---|---|---|---|
-| ≥ CRITICAL | 1.000 | 0.632 | 0.000 | 43 / 0 / 25 / 202 |
-| ≥ HIGH | 0.943 | 0.971 | 0.020 | 66 / 4 / 2 / 198 |
-| ≥ MEDIUM | 0.708 | 1.000 | 0.139 | 68 / 28 / 0 / 174 |
+| ≥ CRITICAL | 1.000 | 0.684 | 0.000 | 52 / 0 / 24 / 210 |
+| ≥ HIGH | 0.949 | 0.974 | 0.019 | 74 / 4 / 2 / 206 |
+| ≥ MEDIUM | 0.704 | 1.000 | 0.152 | 76 / 32 / 0 / 178 |
 
-At the expected severity: 64 of 68 positives; 43 of 46 CRITICAL-expected items are caught at
-CRITICAL. Raw recall at CRITICAL (0.632) also counts the 22 items whose attacks warrant HIGH.
+At the expected severity: 73 of 76 positives; 52 of 54 CRITICAL-expected items are caught at
+CRITICAL. Raw recall at CRITICAL (0.684) also counts the 22 items whose attacks warrant HIGH.
 
-Held-out split at ≥ HIGH: precision 0.943, recall 0.971, FPR 0.021 (2 of 97 benign items).
-The FPR at HIGH over all benign items (0.0198) is just inside the 0.02 target: the round-4 benign
-look-alikes added one false positive from an existing rule (below).
+Held-out split at ≥ HIGH: precision 0.943, recall 0.971, FPR 0.025 (2 of 79 benign items: the
+same two as before round 5; the rate rose only because cloudflare's 18 servers left the split).
+The FPR at HIGH over all benign items (0.019, 4 of 210) is just inside the 0.02 target.
 
 These numbers are for the default install. With the optional `agentguard[code,yara]` analyzers installed
 (tree-sitter taint, YARA), every item's flags, maximum severity and fired rules were identical
-(2026-10-02, Python 3.12): no new detections and no new false positives on this corpus.
+(2026-10-02, Python 3.12, before round 5): no new detections and no new false positives on this corpus.
+Round 5's items and changes have not been scanned with the optional analyzers yet.
 Recall on every malicious and adversarial item is unchanged by the tuning (no item's flags,
 maximum severity or expected-rule hit changed).
 
-MEDIUM is noisy on real code (28 of 202 benign items; mostly AG-MCP-META-020, AG-CODE-024
+MEDIUM is noisy on real code (32 of 210 benign items; mostly AG-MCP-META-020, AG-CODE-024
 npm lifecycle scripts and AG-CODE-020): treat MEDIUM as review material, not a gate.
 
 ### Benign items still flagged at HIGH, and why they are left

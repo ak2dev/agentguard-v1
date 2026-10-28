@@ -1,15 +1,17 @@
 ---
 import Base from "../layouts/Base.astro";
 import cov from "../data/generated/coverage.json";
+import CoverageHeatmap from "../components/charts/CoverageHeatmap.astro";
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 <Base title="Standards coverage">
   <h1>Standards coverage</h1>
   <p class="lead">Which rules address each item of each framework, generated from <code>mappings/*.yaml</code>. Gaps are shown, not hidden. Mappings Agent Guard is unsure of stay empty with a TODO rather than being invented.</p>
+  <CoverageHeatmap frameworks={cov.frameworks} />
   {cov.frameworks.map((fw) => (
     <section>
       <h2>{fw.name} <span class="muted">{fw.version}</span></h2>
-      {fw.source && <p class="muted">Source: <a href={fw.source} rel="noreferrer">{fw.source}</a></p>}
+      {fw.source && <p class="muted wrap-anywhere">Source: <a href={fw.source} rel="noreferrer">{fw.source}</a></p>}
       {fw.notes && <p class="muted">{fw.notes}</p>}
       {fw.items.length > 0 ? (
         <div class="table-scroll">

@@ -13,6 +13,17 @@ First public version.
 - GitHub Action with PR mode and SARIF upload; pre-commit hook.
 - Pure-Python engine that runs under Pyodide.
 
+### Site charts and diagrams
+
+- Benchmarks page: corpus makeup, false positives on each round's held-out set, targets against actuals, and precision / recall / F1 by threshold. Rule catalog: rules by area. Coverage: a heatmap of rules per standard item with the gaps outlined. Sample report: findings by severity. How it works (now an Astro page): the scan pipeline, the lethal trifecta, a toxic-flow path and how lock / verify catches a rug pull.
+- Static SVG drawn at build time from the generated data (no inline styles or scripts, so the CSP is unchanged), in a wide and a narrow drawing chosen by the card's width. Series colors and the heat ramp were checked for color-vision separation on the dark surface. `gen_site_data.py` also writes `sample.json` (the sample report's findings).
+
+### Cross-file tracing (round 5)
+
+- AG-SKL-CRED-010 v3: credential access and network egress in two files of a skill are reported when the files are linked: one writes a file the other reads (paths normalized, including `Path.home() / ...`, `os.path.join` and `expanduser`), one script runs the other (also through `$(dirname "$0")`), or one imports the other. At most three links and one "runs" link; a SKILL.md that runs two scripts does not link them. Skills with more than 200 files are reported as `links_not_traced` instead.
+- AG-CODE-001..008 (one version up each): a tool parameter passed to a helper of the same server is followed into it, up to three helpers deep. Python: same-file functions, relative, sibling and package imports, `self.` methods. JS/TS (pattern analyzer, so also in the browser): same-file functions and relative named, namespace and `require` imports. A sanitizer in the caller or the helper applies as in direct code; installed packages are never followed. The JS URL check now requires the scheme or host to be tainted, as the Python one does.
+- Benchmark round 5: 16 new items (8 composition attacks, 8 look-alikes); all 8 attacks reach CRITICAL, `h2-split-cred-paste` too, and no real benign item changed. The cloudflare MCP servers moved to dev after a false positive on one of them was inspected and fixed; microsoft/skills is the remaining held-out real source. See `docs/benchmark.md`.
+
 ### Hijackable dependencies (SkillJacking)
 
 - `scan --check-hijackable` (network, opt-in): GitHub owners, npm/PyPI package names and download/install domains referenced by skills, scripts, package manifests and MCP configs are looked up through the SSRF-hardened client (GitHub users API, npm and PyPI registries, IANA RDAP). New rules AG-SC-026 (GitHub account no longer exists), AG-SC-027 (package not registered or fully unpublished) and AG-SC-028 (domain unregistered, expired or not resolving). Offline scans and the benchmark are unchanged.

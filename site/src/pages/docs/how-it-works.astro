@@ -1,0 +1,49 @@
+---
+import Doc from "../../layouts/Doc.astro";
+import Pipeline from "../../components/charts/Pipeline.astro";
+import Trifecta from "../../components/charts/Trifecta.astro";
+import FlowPath from "../../components/charts/FlowPath.astro";
+import LockVerify from "../../components/charts/LockVerify.astro";
+const frontmatter = { title: "How it works", description: "The scan pipeline, capability labels, toxic flows and rug-pull detection." };
+---
+<Doc frontmatter={frontmatter}>
+  <h1>How it works</h1>
+
+  <Pipeline />
+
+  <ol>
+    <li><strong>Discover</strong> agent configuration, skills and instruction files (or load the path you give).</li>
+    <li><strong>Load safely:</strong> size, count and depth limits; archive-bomb caps; symlinks, junctions and path escapes are refused and reported; YAML is safe-loaded with anchors, aliases and custom tags rejected.</li>
+    <li><strong>Normalize:</strong> Unicode is NFKC-normalized and look-alike characters are folded, with offsets mapped back to the original; invisible characters are removed; encoded blobs (base64, hex, percent, gzip) are decoded to depth 3 and rescanned; hidden Markdown (comments, off-screen text, alt text, CSS-hidden elements) is extracted.</li>
+    <li><strong>Analyze</strong> with independent analyzers: skill spec and structure, hidden content, data-defined pattern rules, MCP configuration, MCP metadata, code (taint from tool parameters, followed into helper functions of the same server: Python via the standard <code>ast</code> module, JS/TS by pattern), supply chain and policy. Two optional analyzers need native extensions and are reported as skipped without them: tree-sitter taint for JS/TS handlers and shell scripts (<code>agentguard[code]</code>), and YARA rules over the raw bytes of bundled files (<code>agentguard[yara]</code>).</li>
+    <li><strong>Correlate:</strong> deduplicate, escalate findings found inside hidden content by one severity, combine credential access with egress (also across linked files of a skill: a file one script writes and another reads, one script running another, or an import), and build the <strong>capability graph</strong> for toxic flows.</li>
+    <li><strong>Score</strong> each finding (AIVSS v0.8, pluggable) and apply suppressions, baselines and policy.</li>
+    <li><strong>Report</strong> as terminal output, JSON, SARIF 2.1.0, Markdown or a single-file HTML report.</li>
+  </ol>
+
+  <p>The engine is a pure function of its inputs: <code>scan(tree, options) → report</code>. It never touches the filesystem or network itself, so the same input and rule pack always produce the same report, and the same engine runs in the browser under Pyodide.</p>
+
+  <h2>Severity rules</h2>
+  <ul>
+    <li><strong>CRITICAL requires high confidence</strong> and deterministic evidence; a lower-confidence critical match is reported as high (tagged <code>capped-by-confidence</code>).</li>
+    <li>Matches inside hidden or encoded content are escalated one level (tagged <code>hidden</code>).</li>
+    <li>Results from the optional LLM judge can never be critical.</li>
+  </ul>
+
+  <h2>Toxic flows</h2>
+  <p>Every skill, server and tool gets capability labels: <code>reads_private_data</code>, <code>ingests_untrusted_content</code>, <code>external_egress</code>, <code>destructive</code> and <code>code_exec</code>. The labels come from code and config evidence, tool annotations and descriptions, and a list of well-known servers. Components that can be active in the same agent session are grouped, and dangerous combinations are reported as a path.</p>
+
+  <Trifecta />
+
+  <p>For example:</p>
+  <blockquote><p>In one claude-desktop session: fetch can bring untrusted third-party content into the conversation; filesystem can read private data; fetch can send data outside. Instructions hidden in that untrusted content could make the agent read private data with filesystem and send it out with fetch.</p></blockquote>
+
+  <FlowPath />
+
+  <p>The cross-component lethal trifecta is HIGH by default, because almost every multi-server setup has one. It becomes CRITICAL when data can reach a known exfiltration sink, or when no hop requires approval.</p>
+
+  <h2>Rug pulls: lock and verify</h2>
+  <p>A static scan sees a server as it is today. <code>agentguard lock</code> writes <code>agentguard.lock</code>; <code>agentguard verify</code> compares a later scan with it and shows each change as a diff.</p>
+
+  <LockVerify />
+</Doc>
