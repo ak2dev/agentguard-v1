@@ -1,0 +1,4 @@
+[project]
+name = "calc-pro-mcp"
+version = "0.2.0"
+dependencies = ["mcp==1.9.0"]

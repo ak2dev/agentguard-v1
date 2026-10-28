@@ -68,9 +68,9 @@ rules:
     remediation: Read only the specific variables the task needs, and never print or transmit the environment.
 
   - id: AG-SKL-CRED-010
-    version: 2
+    version: 3
     title: Credential access combined with network egress
-    description: The same file both accesses credentials (credential stores, token variables, environment dumps) and sends data over the network. Copying the environment only to hand it to a child process (subprocess env=, spawn env:) is not an environment dump, and local AF_UNIX sockets are not network egress.
+    description: One file accesses credentials (credential stores, token variables, environment dumps) and sends data over the network, or two linked files of the skill do — one writes a file the other reads, one runs the other, or one imports the other (up to three links; a SKILL.md that runs both scripts does not link them). Copying the environment only to hand it to a child process (subprocess env=, spawn env:) is not an environment dump, and local AF_UNIX sockets are not network egress.
     why: Credential read + egress in one place is the complete exfiltration chain; each half alone may be benign, together they are not.
     severity: critical
     confidence: high

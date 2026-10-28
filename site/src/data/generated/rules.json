@@ -1,7 +1,7 @@
 {
   "rule_pack": {
     "version": "0.1.0",
-    "digest": "2a0688bcab233a3259cc10661594d4c36ca5e6b7c7249e63697f566be847bc89"
+    "digest": "0de4f12a8d8d25873d0633286721d88a4153aa061835904928ac9a35e6325d75"
   },
   "rules": [
     {
@@ -453,9 +453,9 @@
     },
     {
       "id": "AG-CODE-001",
-      "version": 1,
+      "version": 2,
       "title": "Tool parameter reaches a shell command",
-      "description": "A tool handler passes a model-controlled parameter into a shell (exec, shell=True, os.system, spawn with shell:true).",
+      "description": "A tool handler passes a model-controlled parameter into a shell (exec, shell=True, os.system, spawn with shell:true). The parameter is also followed into helper functions of the same server (same file, relative, sibling or package imports, and methods through self), up to three helpers deep; installed packages are not followed.",
       "why": "Any prompt injection that reaches the model becomes arbitrary command execution on the host — the most common MCP CVE class.",
       "severity": "critical",
       "confidence": "high",
@@ -525,9 +525,9 @@
     },
     {
       "id": "AG-CODE-002",
-      "version": 1,
+      "version": 2,
       "title": "Tool parameter passed as a process argument",
-      "description": "A model-controlled parameter becomes an argument of a spawned process (no shell).",
+      "description": "A model-controlled parameter becomes an argument of a spawned process (no shell). The parameter is also followed into helper functions of the same server (same file, relative, sibling or package imports, and methods through self), up to three helpers deep; installed packages are not followed.",
       "why": "Argument injection (e.g. a value starting with \"--\") can change what the program does.",
       "severity": "medium",
       "confidence": "medium",
@@ -585,9 +585,9 @@
     },
     {
       "id": "AG-CODE-003",
-      "version": 1,
+      "version": 2,
       "title": "Tool parameter reaches eval/exec",
-      "description": "A model-controlled parameter is evaluated as code (eval, exec, compile, new Function, vm.run*).",
+      "description": "A model-controlled parameter is evaluated as code (eval, exec, compile, new Function, vm.run*). The parameter is also followed into helper functions of the same server (same file, relative, sibling or package imports, and methods through self), up to three helpers deep; installed packages are not followed.",
       "why": "Direct code execution from model output.",
       "severity": "critical",
       "confidence": "high",
@@ -655,9 +655,9 @@
     },
     {
       "id": "AG-CODE-004",
-      "version": 1,
+      "version": 2,
       "title": "Unsafe deserialization of tool input",
-      "description": "A model-controlled value is deserialized with pickle, marshal, unsafe YAML or similar.",
+      "description": "A model-controlled value is deserialized with pickle, marshal, unsafe YAML or similar. The parameter is also followed into helper functions of the same server (same file, relative, sibling or package imports, and methods through self), up to three helpers deep; installed packages are not followed.",
       "why": "Unsafe deserialization executes code embedded in the data.",
       "severity": "high",
       "confidence": "high",
@@ -710,9 +710,9 @@
     },
     {
       "id": "AG-CODE-005",
-      "version": 2,
+      "version": 3,
       "title": "Tool parameter used as a filesystem path",
-      "description": "A model-controlled parameter is used to read, write or delete files without evidence of containment checks.",
+      "description": "A model-controlled parameter is used to read, write or delete files without evidence of containment checks. The parameter is also followed into helper functions of the same server (same file, relative, sibling or package imports, and methods through self), up to three helpers deep; installed packages are not followed.",
       "why": "Path traversal lets injected instructions read secrets or overwrite files outside the intended directory.",
       "severity": "high",
       "confidence": "medium",
@@ -770,9 +770,9 @@
     },
     {
       "id": "AG-CODE-006",
-      "version": 1,
+      "version": 2,
       "title": "Tool parameter controls an outbound request URL (SSRF)",
-      "description": "A model-controlled value determines the scheme/host of an outbound HTTP request.",
+      "description": "A model-controlled value determines the scheme/host of an outbound HTTP request. The parameter is also followed into helper functions of the same server (same file, relative, sibling or package imports, and methods through self), up to three helpers deep; installed packages are not followed.",
       "why": "SSRF reaches internal services and cloud metadata endpoints from the server's network position.",
       "severity": "high",
       "confidence": "medium",
@@ -814,8 +814,8 @@
       "match_type": "analyzer",
       "examples": {
         "unsafe": {
-          "path": "server/pyproject.toml",
-          "text": "[project]\nname = \"demo-mcp\"\nversion = \"0.1.0\"\ndependencies = [\"mcp==1.9.0\"]"
+          "path": "server/demo/http.py",
+          "text": "import httpx\n\n\ndef get(url: str) -> str:\n    return httpx.get(url, timeout=10).text"
         },
         "safe": {
           "path": "server/pyproject.toml",
@@ -825,9 +825,9 @@
     },
     {
       "id": "AG-CODE-007",
-      "version": 1,
+      "version": 2,
       "title": "Tool parameter concatenated into SQL",
-      "description": "A model-controlled value is interpolated into an SQL string that is executed.",
+      "description": "A model-controlled value is interpolated into an SQL string that is executed. The parameter is also followed into helper functions of the same server (same file, relative, sibling or package imports, and methods through self), up to three helpers deep; installed packages are not followed.",
       "why": "SQL injection through tool calls exposes or destroys data.",
       "severity": "high",
       "confidence": "medium",
@@ -880,9 +880,9 @@
     },
     {
       "id": "AG-CODE-008",
-      "version": 1,
+      "version": 2,
       "title": "Tool parameter compiled as a template (SSTI)",
-      "description": "A model-controlled value is used as template source (Jinja2 Template, from_string, render_template_string, ejs/handlebars compile).",
+      "description": "A model-controlled value is used as template source (Jinja2 Template, from_string, render_template_string, ejs/handlebars compile). The parameter is also followed into helper functions of the same server (same file, relative, sibling or package imports, and methods through self), up to three helpers deep; installed packages are not followed.",
       "why": "Server-side template injection usually leads to code execution.",
       "severity": "high",
       "confidence": "medium",
@@ -5497,9 +5497,9 @@
     },
     {
       "id": "AG-SKL-CRED-010",
-      "version": 2,
+      "version": 3,
       "title": "Credential access combined with network egress",
-      "description": "The same file both accesses credentials (credential stores, token variables, environment dumps) and sends data over the network. Copying the environment only to hand it to a child process (subprocess env=, spawn env:) is not an environment dump, and local AF_UNIX sockets are not network egress.",
+      "description": "One file accesses credentials (credential stores, token variables, environment dumps) and sends data over the network, or two linked files of the skill do — one writes a file the other reads, one runs the other, or one imports the other (up to three links; a SKILL.md that runs both scripts does not link them). Copying the environment only to hand it to a child process (subprocess env=, spawn env:) is not an environment dump, and local AF_UNIX sockets are not network egress.",
       "why": "Credential read + egress in one place is the complete exfiltration chain; each half alone may be benign, together they are not.",
       "severity": "critical",
       "confidence": "high",

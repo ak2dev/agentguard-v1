@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import ast
 import json
+import posixpath
 import urllib.parse
 from dataclasses import dataclass
 from typing import ClassVar
@@ -134,12 +135,28 @@ _JS_SANITIZERS = {
 }
 
 
+def _fixed_prefix(handler: str, names: list[str], params: list[str]) -> set[str]:
+    """Derived names whose value starts with something not tainted (a string
+    literal, or `${BASE}` / BASE + with BASE untainted): tainted input only
+    reaches the path or query of such a URL, not its scheme or host (as
+    pytaint._url_prefix_tainted)."""
+    out: set[str] = set()
+    for m in regex.finditer(r"\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*(?::[^=\n]{1,100})?=\s*(?:new\s+URL\(\s*)?"
+                            r"(?:[`'\"](?!\$\{)[^`'\"\n]|`\$\{\s*([A-Za-z_$][\w$.]*)\s*\}|([A-Za-z_$][\w$.]*)\s*\+)",
+                            handler, timeout=TIMEOUT):
+        base = (m.group(2) or m.group(3) or "").split(".")[0]
+        if m.group(1) not in params and (not base or base not in names):
+            out.add(m.group(1))
+    return out
+
+
 def js_taint(handler: str, params: list[str]) -> list[_Hit]:
     names = _js_params(handler, params)
     if not names:
         return []
     hits: list[_Hit] = []
     contained = {k for k, rx in _JS_SANITIZERS.items() if rx.search(handler, timeout=TIMEOUT)}
+    fixed_host = _fixed_prefix(handler, names, params)
     for rx, kind in _JS_SINKS:
         if kind in contained:
             continue
@@ -153,7 +170,8 @@ def js_taint(handler: str, params: list[str]) -> list[_Hit]:
             for n in names:
                 pat = rf"(?<![\w$.'\"]){regex.escape(n)}(?![\w$])"
                 if kind_eff == "url":
-                    ok = bool(regex.match(rf"\s*(?:{regex.escape(n)}\b|`\$\{{\s*{regex.escape(n)}\b)", first, timeout=TIMEOUT))
+                    ok = n not in fixed_host and bool(
+                        regex.match(rf"\s*(?:{regex.escape(n)}\b|`\$\{{\s*{regex.escape(n)}\b)", first, timeout=TIMEOUT))
                 elif kind_eff == "sql":
                     ok = bool(regex.search(rf"\$\{{[^}}]*\b{regex.escape(n)}\b|['\"]\s*\+\s*{regex.escape(n)}\b", first, timeout=TIMEOUT))
                 else:
@@ -162,6 +180,189 @@ def js_taint(handler: str, params: list[str]) -> list[_Hit]:
                     hits.append(_Hit(kind_eff, m.start(), m.group(0).rstrip("( "), n, direct=True))
                     break
     return hits
+
+
+# ---- JS/TS helpers: a tainted argument followed into a function of the component ----
+_JS_CALL = regex.compile(r"(?<![\w$.])([A-Za-z_$][\w$]*)(?:\.([A-Za-z_$][\w$]*))?\s*\(")
+# String literals, and the literal parts of template strings (their ${...} parts stay code).
+_JS_STRING_TEXT = regex.compile(r"'(?:[^'\\\n]|\\.)*'|\"(?:[^\"\\\n]|\\.)*\"|(?<=`|\})[^`$]*(?=`|\$\{)")
+_JS_NOT_CALLS = {"if", "for", "while", "switch", "catch", "return", "function", "typeof", "await", "new", "super",
+                 "require", "import", "async", "with", "delete", "void"}
+_JS_IMPORT_NAMED = regex.compile(r"\bimport\s*(?:type\s+)?\{([^}]{1,600})\}\s*from\s*(['\"])(\.{1,2}/[^'\"\n]+)\2")
+_JS_IMPORT_NS = regex.compile(r"\bimport\s*\*\s*as\s+([A-Za-z_$][\w$]*)\s+from\s*(['\"])(\.{1,2}/[^'\"\n]+)\2")
+_JS_REQUIRE_NAMED = regex.compile(r"\b(?:const|let|var)\s*\{([^}]{1,600})\}\s*=\s*require\(\s*(['\"])(\.{1,2}/[^'\"\n]+)\2\s*\)")
+_JS_REQUIRE_NS = regex.compile(r"\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*require\(\s*(['\"])(\.{1,2}/[^'\"\n]+)\2\s*\)")
+
+
+@dataclass
+class _JsFunction:
+    path: str
+    name: str
+    params: list[str]
+    body: str
+    base: int  # offset of body in the file
+
+
+def _split_args(args: str, brackets: str = "([{", closers: str = ")]}") -> list[str]:
+    out, depth, cur, quote = [], 0, [], ""
+    for ch in args:
+        if quote:
+            quote = "" if ch == quote else quote
+        elif ch in "\"'`":
+            quote = ch
+        elif ch in brackets:
+            depth += 1
+        elif ch in closers:
+            depth -= 1
+        elif ch == "," and depth == 0:
+            out.append("".join(cur))
+            cur = []
+            continue
+        cur.append(ch)
+    if "".join(cur).strip():
+        out.append("".join(cur))
+    return out
+
+
+def _param_names(params: str) -> list[str]:
+    names = []
+    # Generics (Record<string, unknown>) hold commas; the '>' of an arrow type closes nothing.
+    for p in _split_args(params.replace("=>", "->"), "([{<", ")]}>"):
+        p = p.strip().removeprefix("...")
+        m = regex.match(r"([A-Za-z_$][\w$]*)", p)
+        names.append(m.group(1) if m and not p.startswith(("{", "[")) else "")
+    return names
+
+
+class JsResolver:
+    """Functions of one component's JS/TS files, found by name in the same file or
+    through a relative import (named, namespace, or ``require``). Default exports,
+    re-exports and class methods are not followed."""
+
+    def __init__(self, sources: dict[str, str]) -> None:
+        self.sources = sources
+        self._imports: dict[str, dict[str, tuple[str, str | None]]] = {}
+
+    def _file(self, spec: str, here: str) -> str | None:
+        from ..correlate.links import js_module_paths  # avoid an import cycle at load time
+        return next((p for p in js_module_paths(spec, here) if p in self.sources), None)
+
+    def imports(self, path: str) -> dict[str, tuple[str, str | None]]:
+        if path not in self._imports:
+            text, here = self.sources.get(path, ""), posixpath.dirname(path)
+            out: dict[str, tuple[str, str | None]] = {}
+            for rx in (_JS_IMPORT_NAMED, _JS_REQUIRE_NAMED):
+                for m in rx.finditer(text, timeout=TIMEOUT):
+                    file = self._file(m.group(3), here)
+                    for part in m.group(1).split(","):
+                        bits = regex.split(r"\s+as\s+|\s*:\s*", part.strip())
+                        if file and bits and bits[0]:
+                            out[bits[-1].strip()] = (file, bits[0].strip())
+            for rx in (_JS_IMPORT_NS, _JS_REQUIRE_NS):
+                for m in rx.finditer(text, timeout=TIMEOUT):
+                    file = self._file(m.group(3), here)
+                    if file:
+                        out[m.group(1)] = (file, None)
+            self._imports[path] = out
+        return self._imports[path]
+
+    def function(self, path: str, name: str) -> _JsFunction | None:
+        text = self.sources.get(path)
+        if text is None:
+            return None
+        n = regex.escape(name)
+        m = regex.search(rf"\bfunction\s*\*?\s*{n}\s*(?:<[^>(]{{0,200}}>)?\s*\(|"
+                         rf"\b(?:const|let|var)\s+{n}\s*(?::[^=\n]{{0,200}})?=\s*(?:async\s+)?(?:function\s*\w*\s*)?\(",
+                         text, timeout=TIMEOUT)
+        if m is None:
+            return None
+        params = _call_args(text, m.end() - 1)
+        after = m.end() + len(params) + 1
+        rest = regex.match(r"\s*(?::[^={]{0,200})?\s*(=>)?\s*", text[after:after + 300])
+        start = after + (rest.end() if rest else 0)
+        if start < len(text) and text[start] == "{":
+            return _JsFunction(path, name, _param_names(params), _block(text, start), start + 1)
+        line_end = text.find("\n", start)
+        return _JsFunction(path, name, _param_names(params), text[start:line_end if line_end >= 0 else len(text)], start)
+
+    def resolve(self, path: str, name: str, member: str | None) -> _JsFunction | None:
+        if member is None:
+            fn = self.function(path, name)
+            if fn is not None:
+                return fn
+        file, exported = self.imports(path).get(name, (None, None))
+        if file is None:
+            return None
+        if member is None and exported is not None:
+            return self.function(file, exported)
+        if member is not None and exported is None:
+            return self.function(file, member)
+        return None
+
+    def hits(self, path: str, body: str, names: list[str], depth: int = 1,
+             active: frozenset[tuple[str, str, int]] = frozenset()) -> list[tuple[_Hit, str, list[tuple[str, int]]]]:
+        """Taint hits reached through helpers called in ``body``: (hit at the call
+        offset in ``body``, first helper, [(file, line) of each step to the sink])."""
+        out: list[tuple[_Hit, str, list[tuple[str, int]]]] = []
+        if depth > pytaint.MAX_DEPTH or not names:
+            return out
+        # A containment / allowlist check in the caller covers what its helpers do, as in js_taint.
+        contained = {k for k, rx in _JS_SANITIZERS.items() if rx.search(body, timeout=TIMEOUT)}
+        for m in _JS_CALL.finditer(body, timeout=TIMEOUT):
+            name, member = m.group(1), m.group(2)
+            if name in _JS_NOT_CALLS:
+                continue
+            fn = self.resolve(path, name, member)
+            if fn is None:
+                continue
+            text = self.sources[fn.path]
+            for i, arg in enumerate(_split_args(_call_args(body, m.end() - 1))):
+                code = _JS_STRING_TEXT.sub(" ", arg)  # a name inside a string literal is text, not the value
+                src = next((n for n in names if regex.search(rf"(?<![\w$.'\"]){regex.escape(n)}(?![\w$])", code,
+                                                             timeout=TIMEOUT)), None)
+                if src is None or i >= len(fn.params) or not fn.params[i] or (fn.path, fn.name, i) in active:
+                    continue
+                inner = active | {(fn.path, fn.name, i)}
+                for h in js_taint(fn.body, [fn.params[i]]):
+                    if h.kind not in contained:
+                        line = text.count("\n", 0, fn.base + h.offset) + 1
+                        out.append((_Hit(h.kind, m.start(), h.sink, src, direct=False), fn.name, [(fn.path, line)]))
+                for h, _first, via in self.hits(fn.path, fn.body, _js_params(fn.body, [fn.params[i]]), depth + 1, inner):
+                    if h.kind not in contained:
+                        line = text.count("\n", 0, fn.base + h.offset) + 1
+                        out.append((_Hit(h.kind, m.start(), h.sink, src, direct=False), fn.name, [(fn.path, line), *via]))
+        return out
+
+
+def _block(text: str, open_idx: int, limit: int = 20000) -> str:
+    """Text inside the braces opening at ``open_idx`` (strings and comments skipped)."""
+    depth, i, end, quote = 0, open_idx, min(len(text), open_idx + limit), ""
+    while i < end:
+        ch = text[i]
+        if quote:
+            if ch == "\\":
+                i += 2
+                continue
+            if ch == quote:
+                quote = ""
+        elif text.startswith("//", i):
+            nl = text.find("\n", i)
+            i = end if nl < 0 else nl
+            continue
+        elif text.startswith("/*", i):
+            close = text.find("*/", i + 2)
+            i = end if close < 0 else close + 2
+            continue
+        elif ch in "\"'`":
+            quote = ch
+        elif ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0:
+                return text[open_idx + 1 : i]
+        i += 1
+    return text[open_idx + 1 : end]
 
 
 # ---- capability-evidence patterns --------------------------------------------
@@ -306,21 +507,49 @@ class CodeAnalyzer:
             return
         aliases = pytaint.import_aliases(tree)
         fns = {f.lineno: f for f in pytaint.tool_functions(tree)}
+        classes = pytaint.enclosing_classes(tree)
+        resolver = self._resolver(ctx, at)
         for fn in fns.values():
             tool = next((h.tool for h in hs if at.index.line_col(h.start)[0] == fn.lineno), fn.name)
             try:
-                hits = pytaint.analyze_function(fn, aliases, at.text)
+                hits = pytaint.analyze_function(fn, aliases, at.text, resolver, (at.path, classes.get(fn.lineno)))
             except RecursionError:
                 continue
             for hit in hits:
+                sink = hit.sink
+                if hit.via:
+                    end_path, end_line = hit.via[-1]
+                    sink = f"{hit.sink} in {hit.helper}(), {end_path}:{end_line}"
                 self._emit_taint(ctx, at, tool, hit.kind, Span(path=at.path, start_line=hit.line, start_col=hit.col),
-                                 hit.sink, hit.source, Confidence.medium if hit.sanitized else Confidence.high, caps,
-                                 [Span(path=at.path, start_line=ln) for ln in hit.path[:5]])
+                                 sink, hit.source, Confidence.medium if hit.sanitized else Confidence.high, caps,
+                                 [*(Span(path=at.path, start_line=ln) for ln in hit.path[:5]),
+                                  *(Span(path=p, start_line=ln) for p, ln in hit.via)])
             body = ast.get_source_segment(at.text, fn) or ""
             self._handler_caps(body, (at.artifact.component_id, tool), caps, "python")
 
+    def _resolver(self, ctx: Context, at: ArtifactText) -> pytaint.Resolver:
+        """One resolver per component: its Python files, parsed once."""
+        cache: dict[str, pytaint.Resolver] = ctx.data.setdefault("py_resolvers", {})  # type: ignore[assignment]
+        cid = at.artifact.component_id
+        if cid not in cache:
+            comp = ctx.inventory.components.get(cid)
+            sources = {t.path: t.text for t in ctx.texts("source_code", "script")
+                       if t.artifact.component_id == cid and t.path.endswith(".py")}
+            cache[cid] = pytaint.Resolver(sources, comp.root if comp else "")
+        return cache[cid]
+
+    def _js_resolver(self, ctx: Context, at: ArtifactText) -> JsResolver:
+        cache: dict[str, JsResolver] = ctx.data.setdefault("js_resolvers", {})  # type: ignore[assignment]
+        cid = at.artifact.component_id
+        if cid not in cache:
+            cache[cid] = JsResolver({t.path: t.text for t in ctx.texts("source_code", "script")
+                                     if t.artifact.component_id == cid
+                                     and t.artifact.language in ("javascript", "typescript")})
+        return cache[cid]
+
     # -- JS / TS -----------------------------------------------------------------
     def _js(self, ctx: Context, at: ArtifactText, hs: list[ToolHandler], caps: dict) -> None:
+        resolver = self._js_resolver(ctx, at)
         for h in hs:
             body = at.text[h.start : h.end]
             for hit in js_taint(body, h.params):
@@ -328,6 +557,12 @@ class CodeAnalyzer:
                 sl, sc = at.index.line_col(off)
                 self._emit_taint(ctx, at, h.tool, hit.kind, Span(path=at.path, start_line=sl, start_col=sc), hit.sink,
                                  hit.source, Confidence.high if hit.direct else Confidence.medium, caps, [])
+            for hit, helper, via in resolver.hits(at.path, body, _js_params(body, h.params)):
+                sl, sc = at.index.line_col(h.start + hit.offset)
+                end_path, end_line = via[-1]
+                self._emit_taint(ctx, at, h.tool, hit.kind, Span(path=at.path, start_line=sl, start_col=sc),
+                                 f"{hit.sink} in {helper}(), {end_path}:{end_line}", hit.source, Confidence.high, caps,
+                                 [Span(path=p, start_line=ln) for p, ln in via])
             self._handler_caps(body, (at.artifact.component_id, h.tool), caps, at.artifact.language)
 
     def _emit_taint(self, ctx: Context, at: ArtifactText, tool: str, kind: str, span: Span, sink: str, source: str,

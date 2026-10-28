@@ -15,9 +15,11 @@
 # anthropics/skills; openai/skills, modelcontextprotocol/servers and
 # microsoft/playwright-mcp were held out, measured once, then tuned on in
 # round 2; huggingface/skills and supabase-mcp were the round-2 held-out set,
-# measured once, then tuned on in round 3. `heldout` sources (microsoft/skills,
-# cloudflare/mcp-server-cloudflare) were added after all tuning and scanned
-# once; no rule was changed in response to them. See docs/benchmark.md.
+# measured once, then tuned on in round 3. microsoft/skills and
+# cloudflare/mcp-server-cloudflare were added after all tuning and scanned once;
+# cloudflare moved to dev in round 5, when a false positive of the new helper
+# taint on one of its servers was inspected and fixed. microsoft/skills is the
+# remaining `heldout` real source. See docs/benchmark.md.
 sources:
   - id: anthropic-academy-guide
     repo: anthropics/skills
@@ -1330,7 +1332,7 @@ sources:
     subpath: "apps/ai-gateway"
     license: Apache-2.0
     license_file: /LICENSE
-    split: heldout
+    split: dev
     category: benign-real-server
     archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
     exclude: ['worker-configuration.d.ts']
@@ -1340,7 +1342,7 @@ sources:
     subpath: "apps/auditlogs"
     license: Apache-2.0
     license_file: /LICENSE
-    split: heldout
+    split: dev
     category: benign-real-server
     archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
     exclude: ['worker-configuration.d.ts']
@@ -1350,7 +1352,7 @@ sources:
     subpath: "apps/autorag"
     license: Apache-2.0
     license_file: /LICENSE
-    split: heldout
+    split: dev
     category: benign-real-server
     archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
     exclude: ['worker-configuration.d.ts']
@@ -1360,7 +1362,7 @@ sources:
     subpath: "apps/browser-rendering"
     license: Apache-2.0
     license_file: /LICENSE
-    split: heldout
+    split: dev
     category: benign-real-server
     archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
     exclude: ['worker-configuration.d.ts']
@@ -1370,7 +1372,7 @@ sources:
     subpath: "apps/cloudflare-blog"
     license: Apache-2.0
     license_file: /LICENSE
-    split: heldout
+    split: dev
     category: benign-real-server
     archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
     exclude: ['worker-configuration.d.ts']
@@ -1380,7 +1382,7 @@ sources:
     subpath: "apps/cloudflare-one-casb"
     license: Apache-2.0
     license_file: /LICENSE
-    split: heldout
+    split: dev
     category: benign-real-server
     archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
     exclude: ['worker-configuration.d.ts']
@@ -1390,7 +1392,7 @@ sources:
     subpath: "apps/demo-day"
     license: Apache-2.0
     license_file: /LICENSE
-    split: heldout
+    split: dev
     category: benign-real-server
     archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
     exclude: ['worker-configuration.d.ts']
@@ -1400,7 +1402,7 @@ sources:
     subpath: "apps/dex-analysis"
     license: Apache-2.0
     license_file: /LICENSE
-    split: heldout
+    split: dev
     category: benign-real-server
     archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
     exclude: ['worker-configuration.d.ts']
@@ -1410,7 +1412,7 @@ sources:
     subpath: "apps/dns-analytics"
     license: Apache-2.0
     license_file: /LICENSE
-    split: heldout
+    split: dev
     category: benign-real-server
     archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
     exclude: ['worker-configuration.d.ts']
@@ -1420,7 +1422,7 @@ sources:
     subpath: "apps/docs-ai-search"
     license: Apache-2.0
     license_file: /LICENSE
-    split: heldout
+    split: dev
     category: benign-real-server
     archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
     exclude: ['worker-configuration.d.ts']
@@ -1430,7 +1432,7 @@ sources:
     subpath: "apps/graphql"
     license: Apache-2.0
     license_file: /LICENSE
-    split: heldout
+    split: dev
     category: benign-real-server
     archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
     exclude: ['worker-configuration.d.ts']
@@ -1440,7 +1442,7 @@ sources:
     subpath: "apps/logpush"
     license: Apache-2.0
     license_file: /LICENSE
-    split: heldout
+    split: dev
     category: benign-real-server
     archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
     exclude: ['worker-configuration.d.ts']
@@ -1450,7 +1452,7 @@ sources:
     subpath: "apps/radar"
     license: Apache-2.0
     license_file: /LICENSE
-    split: heldout
+    split: dev
     category: benign-real-server
     archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
     exclude: ['worker-configuration.d.ts']
@@ -1460,7 +1462,7 @@ sources:
     subpath: "apps/sandbox-container"
     license: Apache-2.0
     license_file: /LICENSE
-    split: heldout
+    split: dev
     category: benign-real-server
     archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
     exclude: ['worker-configuration.d.ts']
@@ -1470,7 +1472,7 @@ sources:
     subpath: "apps/stack-mcp"
     license: Apache-2.0
     license_file: /LICENSE
-    split: heldout
+    split: dev
     category: benign-real-server
     archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
     exclude: ['worker-configuration.d.ts']
@@ -1480,7 +1482,7 @@ sources:
     subpath: "apps/workers-bindings"
     license: Apache-2.0
     license_file: /LICENSE
-    split: heldout
+    split: dev
     category: benign-real-server
     archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
     exclude: ['worker-configuration.d.ts']
@@ -1490,7 +1492,7 @@ sources:
     subpath: "apps/workers-builds"
     license: Apache-2.0
     license_file: /LICENSE
-    split: heldout
+    split: dev
     category: benign-real-server
     archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
     exclude: ['worker-configuration.d.ts']
@@ -1500,7 +1502,7 @@ sources:
     subpath: "apps/workers-observability"
     license: Apache-2.0
     license_file: /LICENSE
-    split: heldout
+    split: dev
     category: benign-real-server
     archive_sha256: 7f51f5fe1d6e7abedc20a73c9f5cb73c47c3eebc9dc4e161432bddee4a3907ad
     exclude: ['worker-configuration.d.ts']
