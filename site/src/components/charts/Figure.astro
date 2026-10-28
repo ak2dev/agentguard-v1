@@ -1,8 +1,11 @@
 ---
 // A chart card: title, one-line note, optional HTML legend, then the SVG(s).
+// Square corners with corner markers, like the home page tiles.
 const { id, title, note } = Astro.props;
 ---
 <figure class="chart" aria-labelledby={`${id}-title`}>
+  <i class="c tl" aria-hidden="true"></i><i class="c tr" aria-hidden="true"></i>
+  <i class="c bl" aria-hidden="true"></i><i class="c br" aria-hidden="true"></i>
   <h3 id={`${id}-title`}>{title}</h3>
   {note && <p class="chart-note">{note}</p>}
   <slot name="legend" />

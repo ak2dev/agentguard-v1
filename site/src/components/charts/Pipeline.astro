@@ -1,6 +1,8 @@
 ---
 // The scan pipeline, with the package each step lives in.
 import Figure from "./Figure.astro";
+import Node from "./Node.astro";
+import { PAD, monoW, nodeW } from "./measure.js";
 const steps = [
   ["Discover", "agent configs", "io"],
   ["Load", "safe limits", "io"],
@@ -10,53 +12,57 @@ const steps = [
   ["Score", "AIVSS, policy", "core"],
   ["Report", "SARIF, HTML", "core"],
 ];
-// wide: one row of boxes, package brackets below, opt-in analyzers above Analyze
-const W = 760, bw = 100, gap = (W - bw * steps.length) / (steps.length - 1), by = 64, bh = 74;
+const num = (i) => String(i + 1).padStart(2, "0");
+const right = (x, y) => `M${x - 6},${y - 4}L${x},${y}L${x - 6},${y + 4}`;
+const down = (x, y) => `M${x - 4},${y - 6}L${x},${y}L${x + 4},${y - 6}`;
+// wide: one row of equal nodes sized to the longest text, package brackets
+// below, opt-in analyzers above Analyze
+const bw = Math.max(...steps.map(([name, role], i) => nodeW({ eyebrow: num(i), name, role })));
+const gap = 28, by = 64, bh = 74;
+const W = bw * steps.length + gap * (steps.length - 1);
 const xs = steps.map((_, i) => i * (bw + gap));
 const span = (a, b) => ({ x1: xs[a] + 4, x2: xs[b] + bw - 4 });
 const io = span(0, 1), core = span(2, 6);
 const ax = xs[3] + bw / 2;
+const pill = "NET · JUDGE · OPT-IN", pillW = Math.ceil(monoW(pill)) + 2 * PAD + 8;
+const tone = (i) => (i === 0 || i === steps.length - 1 ? "hot" : "plain");
 // narrow: a column
-const NW = 360, rh = 50, rg = 14;
+const NW = 360, rh = 64, rg = 16;
 ---
 <Figure id="pipeline" title="The scan pipeline"
   note="Everything from Normalize to Report is the pure core: scan(tree, options) → report, with no filesystem, network or clock access, so the same code runs in the CLI, in CI and in the browser. Network checks and the LLM judge are opt-in and listed in every report.">
-  <svg class="v-wide big" viewBox={`0 0 ${W} 222`} role="img" aria-labelledby="pipeline-w-d">
+  <svg class="v-wide xl" viewBox={`0 0 ${W} 232`} role="img" aria-labelledby="pipeline-w-d">
     <desc id="pipeline-w-d">{steps.map(([n, s], i) => `${i + 1}. ${n} (${s}).`).join(" ")} Discover and Load run in the io package; the rest in the pure core. Optional network checks and the LLM judge feed Analyze.</desc>
-    <defs><marker id="pl-head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="d-head" d="M1 1L9 5L1 9z" /></marker></defs>
-    <rect class="d-box" x={ax - 86} y="4" width="172" height="28" rx="14" />
-    <text class="d-module" x={ax} y="22" text-anchor="middle">net · judge (opt-in)</text>
-    <line class="d-edge" x1={ax} x2={ax} y1="32" y2={by - 4} marker-end="url(#pl-head)" />
-    {steps.map(([name, sub], i) => (
+    <rect class="node-card" x={ax - pillW / 2} y="6" width={pillW} height="28" rx="14" />
+    <line class="node-sheen" x1={ax - pillW / 2 + 12} x2={ax + pillW / 2 - 12} y1="6.75" y2="6.75" />
+    <text class="node-eyebrow" x={ax} y="23.5" text-anchor="middle">{pill}</text>
+    <path class="wire" d={`M${ax},35V${by - 3}`} /><path class="wire-head" d={down(ax, by - 3)} />
+    {steps.map(([name, sub], i) => <Node x={xs[i]} y={by} w={bw} h={bh} eyebrow={num(i)} name={name} role={sub} tone={tone(i)} />)}
+    {steps.slice(0, -1).map((_, i) => (
+      <g><path class="wire" d={`M${xs[i] + bw + 3},${by + bh / 2}H${xs[i + 1] - 4}`} /><path class="wire-head" d={right(xs[i + 1] - 4, by + bh / 2)} /></g>
+    ))}
+    {[[io, "IO"], [core, "CORE · PURE, DETERMINISTIC, RUNS IN THE BROWSER"]].map(([s, label]) => (
       <g>
-        <rect class={`d-box${i === 0 || i === steps.length - 1 ? " hot" : ""}`} x={xs[i]} y={by} width={bw} height={bh} rx="10" />
-        <text class="d-step" x={xs[i] + 12} y={by + 20}>{String(i + 1).padStart(2, "0")}</text>
-        <text class="d-name" x={xs[i] + 12} y={by + 42}>{name}</text>
-        <text class="d-role" x={xs[i] + 12} y={by + 60}>{sub}</text>
-        {i < steps.length - 1 && <line class="d-edge" x1={xs[i] + bw + 2} x2={xs[i + 1] - 3} y1={by + bh / 2} y2={by + bh / 2} marker-end="url(#pl-head)" />}
+        <path class="d-bracket" d={`M${s.x1},${by + bh + 16}v8H${s.x2}v-8`} />
+        <text class="node-eyebrow" x={(s.x1 + s.x2) / 2} y={by + bh + 44} text-anchor="middle">{label}</text>
       </g>
     ))}
-    {[[io, "io"], [core, "core · pure, deterministic, runs in the browser"]].map(([s, label]) => (
-      <g>
-        <path class="d-bracket" d={`M${s.x1},${by + bh + 14}v8H${s.x2}v-8`} />
-        <text class="d-module" x={(s.x1 + s.x2) / 2} y={by + bh + 42} text-anchor="middle">{label}</text>
-      </g>
-    ))}
-    <text class="d-role" x="0" y="214">cli, GitHub Action and web server wrap the same pipeline</text>
+    <text class="node-role" x={W / 2} y="224" text-anchor="middle">cli, GitHub Action and web server wrap the same pipeline</text>
   </svg>
-  <svg class="v-narrow big" viewBox={`0 0 ${NW} ${steps.length * (rh + rg)}`} role="img" aria-labelledby="pipeline-n-d">
+  <svg class="v-narrow xl" viewBox={`0 0 ${NW} ${steps.length * (rh + rg) - rg}`} role="img" aria-labelledby="pipeline-n-d">
     <desc id="pipeline-n-d">{steps.map(([n, s], i) => `${i + 1}. ${n} (${s}), in ${steps[i][2]}.`).join(" ")}</desc>
-    <defs><marker id="pl-head-n" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="d-head" d="M1 1L9 5L1 9z" /></marker></defs>
     {steps.map(([name, sub, mod], i) => {
       const y = i * (rh + rg);
       return (
-        <g>
-          <rect class={`d-box${i === 0 || i === steps.length - 1 ? " hot" : ""}`} x="0" y={y} width={NW} height={rh} rx="10" />
-          <text class="d-step" x="14" y={y + 30}>{String(i + 1).padStart(2, "0")}</text>
-          <text class="d-name" x="46" y={y + 22}>{name}</text>
-          <text class="d-role" x="46" y={y + 39}>{sub}</text>
-          <text class="d-module" x={NW - 14} y={y + 30} text-anchor="end">{mod}</text>
-          {i < steps.length - 1 && <line class="d-edge" x1="30" x2="30" y1={y + rh + 1} y2={y + rh + rg - 2} marker-end="url(#pl-head-n)" />}
+        <g class={`node node-${tone(i)}`}>
+          <rect class="node-card" x="0" y={y} width={NW} height={rh} rx="10" />
+          <line class="node-sheen" x1="10" x2={NW - 10} y1={y + 0.75} y2={y + 0.75} />
+          {tone(i) === "hot" && <rect class="node-rule" x="1" y={y + 14} width="2.5" height={rh - 28} rx="1.25" />}
+          <text class="node-eyebrow" x={PAD} y={y + 36}>{num(i)}</text>
+          <text class="node-name" x={NW / 2} y={y + 29} text-anchor="middle">{name}</text>
+          <text class="node-role" x={NW / 2} y={y + 47} text-anchor="middle">{sub}</text>
+          <text class="node-eyebrow" x={NW - PAD} y={y + 36} text-anchor="end">{mod.toUpperCase()}</text>
+          {i < steps.length - 1 && <><path class="wire" d={`M34,${y + rh + 2}V${y + rh + rg - 3}`} /><path class="wire-head" d={down(34, y + rh + rg - 3)} /></>}
         </g>
       );
     })}
