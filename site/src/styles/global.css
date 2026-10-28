@@ -152,8 +152,23 @@ tbody tr:hover { background: var(--surface); }
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
 .card h2, .card h3 { margin-top: 0; }
 .card h2 { font-size: 1.15rem; letter-spacing: -0.01em; }
-.sev { display: inline-block; font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; padding: 2px 9px; border-radius: 999px; border: 1px solid currentColor; }
-.sev.critical { color: var(--crit); } .sev.high { color: var(--high); } .sev.medium { color: var(--med); } .sev.low { color: var(--low); } .sev.info { color: var(--info); }
+/* Severity badge: a soft tint of the severity color, a hairline border in it,
+   and a status dot, so the level reads by shape and label, not only by color. */
+.sev {
+  --sev: var(--info);
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 22px; padding: 0 9px 0 8px; border-radius: 999px;
+  font: 600 .68rem/1 var(--font); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap;
+  vertical-align: middle; color: var(--sev);
+  background: rgba(255, 255, 255, .04);
+  background: color-mix(in srgb, var(--sev) 11%, transparent);
+  border: 1px solid var(--line-2);
+  border-color: color-mix(in srgb, var(--sev) 32%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05);
+}
+.sev::before { content: ""; width: 6px; height: 6px; border-radius: 50%; flex: none; background: var(--sev); box-shadow: 0 0 0 2.5px color-mix(in srgb, var(--sev) 22%, transparent); }
+.sev.critical { --sev: var(--crit); } .sev.high { --sev: var(--high); } .sev.medium { --sev: var(--med); } .sev.low { --sev: var(--low); } .sev.info { --sev: var(--info); }
+.sev.critical { background: color-mix(in srgb, var(--sev) 15%, transparent); border-color: color-mix(in srgb, var(--sev) 45%, transparent); }
 .pill { display: inline-block; padding: 2px 10px; border: 1px solid var(--line-2); border-radius: 999px; font-size: .82rem; margin: 0 4px 4px 0; white-space: nowrap; color: var(--fg-2); text-decoration: none; }
 a.pill:hover { border-color: var(--accent); color: var(--accent); }
 .gap { color: var(--crit); font-weight: 600; }
@@ -576,7 +591,10 @@ footer.site { border-top: 1px dashed var(--line); padding: 40px 0 48px; color: v
 .d-step.on-step { fill: var(--on-orange); font-size: 11px; }
 .diff-add { fill: var(--accent); font: 12px var(--mono); }
 .diff-del { fill: var(--muted); font: 12px var(--mono); }
-.sev-chip { font-size: 10px; letter-spacing: .06em; }
+/* the same badge drawn in SVG (lock / verify diagram) */
+.svg-sev-bg { fill: var(--high); fill-opacity: .11; stroke: var(--high); stroke-opacity: .32; stroke-width: 1; }
+.svg-sev-dot { fill: var(--high); }
+.svg-sev-text { fill: var(--high); font: 600 10px var(--font); letter-spacing: .08em; }
 .wrap-anywhere { overflow-wrap: anywhere; }
 .nowrap { white-space: nowrap; }
 
