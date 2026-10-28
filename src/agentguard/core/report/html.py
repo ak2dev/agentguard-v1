@@ -57,8 +57,9 @@ h3{font-size:1.08rem;margin:0}
 .count.zero{background:transparent;border-style:dashed}.count.zero b{color:var(--muted)}.count.zero .sev{opacity:.55}
 .muted{color:var(--muted)}
 .note{color:var(--muted);margin:16px 0 0;font-size:.93rem;max-width:90ch}
-.sev{display:inline-block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:2px 9px;border-radius:999px;border:1px solid currentColor;white-space:nowrap;line-height:1.5}
-.critical .sev,.sev.critical{color:var(--crit)}.high .sev,.sev.high{color:var(--high)}.medium .sev,.sev.medium{color:var(--med)}.low .sev,.sev.low{color:var(--low)}.info .sev,.sev.info{color:var(--info)}
+.sev{--sev:var(--info);display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 9px 0 8px;border-radius:999px;font-size:.68rem;font-weight:600;line-height:1;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;vertical-align:middle;color:var(--sev);background:color-mix(in srgb,var(--sev) 11%,transparent);border:1px solid color-mix(in srgb,var(--sev) 32%,transparent)}
+.sev::before{content:"";width:6px;height:6px;border-radius:50%;flex:none;background:var(--sev);box-shadow:0 0 0 2.5px color-mix(in srgb,var(--sev) 22%,transparent)}
+.critical .sev,.sev.critical{--sev:var(--crit);background:color-mix(in srgb,var(--sev) 15%,transparent);border-color:color-mix(in srgb,var(--sev) 45%,transparent)}.high .sev,.sev.high{--sev:var(--high)}.medium .sev,.sev.medium{--sev:var(--med)}.low .sev,.sev.low{--sev:var(--low)}.info .sev,.sev.info{--sev:var(--info)}
 .rule{color:var(--muted);font-family:"AG Mono",ui-monospace,monospace;font-size:.8rem;white-space:nowrap}
 code,pre{font:13px/1.55 "AG Mono",ui-monospace,SFMono-Regular,Consolas,monospace}
 code{background:var(--code);border:1px solid var(--line);border-radius:6px;padding:.1em .4em;overflow-wrap:anywhere}
