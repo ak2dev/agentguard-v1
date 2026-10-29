@@ -728,6 +728,7 @@ footer.site { border-top: 1px dashed var(--line); padding: 32px 0 0; color: var(
 .sev-count.critical { --sev: var(--crit); } .sev-count.high { --sev: var(--high); } .sev-count.medium { --sev: var(--med); } .sev-count.low { --sev: var(--low); }
 .sev-count .n { font-size: 1.75rem; font-weight: 500; line-height: 1; letter-spacing: -.03em; font-variant-numeric: tabular-nums; color: var(--sev); }
 .sev-count:not(.zero) { border-style: solid; border-color: color-mix(in srgb, var(--sev) 36%, transparent); background: color-mix(in srgb, var(--sev) 6%, transparent); }
+.sev-count .sev { padding: 0 7px; letter-spacing: .05em; }
 .sev-count.zero .n { color: var(--muted); } .sev-count.zero .sev { opacity: .5; }
 .board-note { margin: 14px 0 0; text-align: center; color: var(--muted); font-size: .9rem; max-width: none; }
 .report-facts { display: flex; flex-wrap: wrap; gap: 1px; margin: 0; background: var(--line); border-top: 1px solid var(--line); }
