@@ -757,15 +757,16 @@ footer.site { border-top: 1px dashed var(--line); padding: 32px 0 0; color: var(
 
 /* ---- charts and diagrams ----------------------------------------------------
    Static SVG drawn at build time (no inline styles or scripts: the CSP forbids
-   them). Series colors are the brand orange plus two partners, stepped into the
-   dark-mode lightness band and checked for color-vision separation; the heat ramp
-   is one orange hue, dim (few) to bright (many). Each chart is drawn twice, wide
-   and narrow, so text stays legible on a phone. */
+   them). Series colors are the site's orange (--accent) plus two partners, stepped
+   into the dark-mode lightness band and checked for color-vision separation; the heat
+   ramp is one orange hue, dim (few) to bright (many), ending on the site's two oranges.
+   Solid diagram nodes use the panel orange, like the orange surfaces on the home page.
+   Each chart is drawn twice, wide and narrow, so text stays legible on a phone. */
 :root {
-  --viz-1: #e8641f;   /* orange */
+  --viz-1: #ff7a33;   /* orange: --accent */
   --viz-2: #4a8fe0;   /* blue */
   --viz-3: #b98a14;   /* gold */
-  --heat-1: #90461b; --heat-2: #bb541d; --heat-3: #e8641f; --heat-4: #ffa06b;
+  --heat-1: #7a2c0a; --heat-2: #a33b0d; --heat-3: #cf4a0f; --heat-4: #ff7a33;
 }
 .chart { position: relative; margin: 22px 0 12px; background: var(--surface); border: 1px solid var(--line); padding: clamp(18px, 2.6vw, 28px); }
 .chart h3 { margin: 0 0 4px; }
@@ -823,7 +824,7 @@ footer.site { border-top: 1px dashed var(--line); padding: 32px 0 0; color: var(
 /* diagrams */
 .d-box { fill: var(--surface-2); stroke: var(--line-2); stroke-width: 1.2; }
 .d-box.hot { stroke: var(--accent); }
-.d-box.solid { fill: var(--orange); stroke: var(--orange); }
+.d-box.solid { fill: var(--panel); stroke: var(--panel); }
 .d-frame { fill: none; stroke: var(--line-2); stroke-dasharray: 5 5; }
 .d-edge { fill: none; stroke: var(--fg-2); stroke-width: 1.5; }
 .d-edge.hot { stroke: var(--accent); stroke-width: 2; }
@@ -840,7 +841,7 @@ footer.site { border-top: 1px dashed var(--line); padding: 32px 0 0; color: var(
 .venn-1 { fill: var(--viz-1); fill-opacity: .12; stroke: var(--viz-1); stroke-width: 1.5; }
 .venn-2 { fill: var(--viz-2); fill-opacity: .12; stroke: var(--viz-2); stroke-width: 1.5; }
 .venn-3 { fill: var(--viz-3); fill-opacity: .12; stroke: var(--viz-3); stroke-width: 1.5; }
-.venn-core { fill: var(--orange); }
+.venn-core { fill: var(--panel); }
 .d-axis { stroke: var(--line-2); stroke-width: 1.5; }
 .d-dot { fill: var(--bg); stroke: var(--fg-2); stroke-width: 2; }
 .d-dot.hot { stroke: var(--accent); fill: var(--accent); }
@@ -866,7 +867,7 @@ footer.site { border-top: 1px dashed var(--line); padding: 32px 0 0; color: var(
 .node-sheen { stroke: #ffffff; stroke-opacity: .07; stroke-width: 1; }
 .node-rule { fill: var(--accent); }
 .node-hot .node-card { stroke: #4b3324; }
-.node-solid .node-card { fill: var(--orange); stroke: #ef6a26; }
+.node-solid .node-card { fill: var(--panel); stroke: #e4560f; }
 .node-solid .node-sheen { stroke-opacity: .3; }
 .node-eyebrow { fill: var(--muted); font: 600 9.5px var(--mono); letter-spacing: .12em; }
 .node-hot .node-eyebrow { fill: var(--accent); }
