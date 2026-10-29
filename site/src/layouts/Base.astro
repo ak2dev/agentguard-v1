@@ -8,6 +8,7 @@ import "@fontsource-variable/jetbrains-mono";
 import "../styles/global.css";
 import Wordmark from "../components/Wordmark.astro";
 import Logo from "../components/Logo.astro";
+import HeaderMenus from "../components/HeaderMenus.astro";
 
 // `bleed` drops the content column's padding (the landing page lays out its own blocks);
 // `black` gives the page a pure black background (html.black in global.css).
@@ -18,8 +19,8 @@ const scanEnabled = import.meta.env.PUBLIC_FEATURE_SCAN === "1";
 const path = Astro.url.pathname;
 const nav = [
   ...(scanEnabled ? [["Scan", "/scan/"]] : []),
-  ["Docs", "/docs/"],
-  ["Rules", "/rules/"],
+  ["Docs", "/docs/", "docs"],
+  ["Rules", "/rules/", "rules"],
   ["Coverage", "/coverage/"],
   ["Benchmarks", "/benchmarks/"],
   ["Security", "/security/"],
@@ -40,6 +41,7 @@ const csp = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 's
     <link rel="preload" href={interLatin} as="font" type="font/woff2" crossorigin="anonymous" />
     <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
     <script is:inline src={`${base}/js/floater.js`} defer></script>
+    <script is:inline src={`${base}/js/menus.js`} defer></script>
   </head>
   <body>
     <a class="skip" href="#content">Skip to content</a>
@@ -48,8 +50,8 @@ const csp = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 's
         <a class="brand" href={`${base}/`}><Wordmark /></a>
         <nav class="main" aria-label="Main">
           <ul>
-            {nav.map(([label, href]) => (
-              <li><a href={`${base}${href}`} aria-current={path.startsWith(`${base}${href}`) ? "page" : undefined}>{label}</a></li>
+            {nav.map(([label, href, menu]) => (
+              <li><a href={`${base}${href}`} aria-current={path.startsWith(`${base}${href}`) ? "page" : undefined} data-menu={menu} aria-controls={menu && `menu-${menu}`} aria-expanded={menu && "false"}>{label}{menu && <svg class="chev" viewBox="0 0 10 10" aria-hidden="true"><path d="M3 4 5 2l2 2M3 6l2 2 2-2" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" /></svg>}</a></li>
             ))}
           </ul>
         </nav>
@@ -58,6 +60,7 @@ const csp = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 's
           {scanEnabled && <a class="btn" href={`${base}/scan/`}>Scan a link</a>}
         </div>
       </div>
+      <HeaderMenus />
     </header>
     <div class="floater" data-floater>
       <div class="floater-in">

@@ -133,9 +133,50 @@ header.site::after { content: ""; position: absolute; left: 0; right: 0; bottom:
 .brand svg { width: 34px; height: 34px; color: var(--orange); flex: none; }
 .brand:hover { color: var(--fg); }
 nav.main { flex: 1; }
-nav.main ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 34px; list-style: none; margin: 0; padding: 0; }
-nav.main a { color: var(--fg); text-decoration: none; font-weight: 500; font-size: 1.06rem; }
-nav.main a[aria-current="page"], nav.main a:hover { color: var(--accent); }
+nav.main ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 10px; list-style: none; margin: 0; padding: 0; }
+/* each item is a pill that lights up on hover, and stays lit while its dropdown is open */
+nav.main a { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border: 1px solid transparent; border-radius: 6px; color: var(--fg); text-decoration: none; font-weight: 500; font-size: 1.06rem; transition: background-color .15s ease, border-color .15s ease; }
+nav.main a:hover, nav.main a.menu-open { background: #1c1a17; border-color: #34302c; color: var(--fg); }
+nav.main a[aria-current="page"] { color: var(--accent); }
+nav.main .chev { width: 10px; height: 10px; flex: none; color: var(--muted); }
+
+/* ---- header dropdowns (public/js/menus.js) -------------------------------------------
+   Centred under the bar, over the page. Opening fades and grows them from the top edge;
+   closing is quicker. An invisible strip above each one bridges the gap to its nav item. */
+.menu {
+  position: absolute; left: 50%; top: calc(100% + 2px); z-index: 25; width: min(920px, calc(100vw - 48px));
+  background: var(--surface); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 24px 60px rgba(0, 0, 0, .55);
+  opacity: 0; visibility: hidden; transform: translateX(-50%) scale(.96); transform-origin: 50% 0;
+  transition: opacity .12s ease-in, transform .12s ease-in, visibility 0s linear .12s;
+}
+.menu.wide { width: min(1180px, calc(100vw - 48px)); }
+.menu.open { opacity: 1; visibility: visible; transform: translateX(-50%) scale(1); transition: opacity .18s cubic-bezier(.2, .8, .2, 1), transform .18s cubic-bezier(.2, .8, .2, 1); }
+.menu.instant { transition: none; }
+.menu::before { content: ""; position: absolute; left: 0; right: 0; bottom: 100%; height: 30px; }
+.menu ul { list-style: none; margin: 0; padding: 0; }
+.menu li { margin: 0; max-width: none; }
+.menu-cols { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 10px; }
+.menu-col { padding: 8px 4px 6px; }
+.menu-col + .menu-col { border-left: 1px solid var(--line); }
+.menu-head { margin: 0 0 6px; padding: 0 12px; font-size: .8rem; color: var(--muted); }
+.menu-item { display: block; padding: 9px 12px; border: 1px solid transparent; border-radius: 6px; color: var(--fg); text-decoration: none; transition: background-color .12s ease, border-color .12s ease; }
+.menu-item:hover, .menu-item:focus-visible { background: #1f1c19; border-color: #34302c; color: var(--fg); outline: none; }
+.menu-item b { display: block; font-weight: 600; font-size: .92rem; line-height: 1.3; }
+.menu-item b em { font-style: normal; font-weight: 500; color: var(--muted); font-size: .82rem; margin-left: 4px; }
+.menu-item > span, .menu-item span span { display: block; color: var(--muted); font-size: .82rem; line-height: 1.35; margin-top: 2px; }
+.menu-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 10px 0; }
+.menu-grid li { padding: 2px 10px; }
+.menu-grid li:not(:nth-child(3n + 1)) { border-left: 1px solid var(--line); }
+.menu-item.with-icon { display: flex; gap: 10px; align-items: flex-start; }
+.menu-item.with-icon .icon { width: 18px; height: 18px; flex: none; margin-top: 1px; color: var(--fg-2); }
+.menu-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 20px; padding: 11px 22px; border-top: 1px solid var(--line); font-size: .82rem; }
+.menu-foot ul { display: flex; gap: 18px; }
+.menu-foot a { color: var(--muted); text-decoration: none; }
+.menu-foot a:hover { color: var(--fg); }
+.menu-foot .menu-all { color: var(--accent); }
+.menu-foot .menu-all:hover { color: var(--accent-hover); }
+@media (max-width: 899px) { .menu { display: none; } }
+@media (prefers-reduced-motion: reduce) { .menu, .menu.open { transform: translateX(-50%); transition: opacity .01s, visibility 0s; } }
 .bar-actions { display: flex; gap: 8px; }
 .bar-actions .btn { font-size: 1.06rem; padding: 10px 18px; }
 
@@ -415,9 +456,17 @@ footer.site { padding: 32px 0 0; color: var(--muted); font-size: .95rem; }
 }
 
 /* segmented tabs, a heading that retypes its last words, and plan-style columns */
-.typed { position: relative; }
-.typed.typing { color: var(--accent); background: rgba(255, 122, 51, .14); box-shadow: 0 0 0 .08em rgba(255, 122, 51, .14); border-radius: 2px; }
-.typed.typing::after { content: ""; display: inline-block; width: 2px; height: .9em; margin-left: 2px; background: var(--accent); vertical-align: -.08em; animation: blink 1s steps(1) infinite; }
+/* Retyped words (public/js/home.js), as in the reference: they turn red inside a soft box as
+   if selected (.picked), wipe out right to left while the box resizes to the new words, wipe
+   in left to right, hold, then turn back as the box fades. --wipe (0 to 1) drives the soft
+   edge of the wipe. */
+.typed { position: relative; isolation: isolate; display: inline-block; white-space: nowrap; vertical-align: bottom; }
+.typed::before { content: ""; position: absolute; inset: -.06em -.2em -.12em; z-index: -1; border-radius: 4px; background: radial-gradient(90% 150% at 28% 28%, #3e241c 0%, #2d1a15 58%, #26150f 100%); box-shadow: inset 0 0 0 1px rgba(255, 140, 110, .06); opacity: 0; transition: opacity .35s ease; }
+.typed.picked::before { opacity: 1; transition-duration: .06s; }
+.typed.sizing { transition: width .28s cubic-bezier(.2, .8, .2, 1); }
+.typed-text { display: inline-block; transition: color .15s ease; -webkit-mask-image: linear-gradient(to right, #000 calc(var(--wipe, 1) * 125% - 25%), transparent calc(var(--wipe, 1) * 125%)); mask-image: linear-gradient(to right, #000 calc(var(--wipe, 1) * 125% - 25%), transparent calc(var(--wipe, 1) * 125%)); }
+.typed.picked .typed-text { color: #b52a16; }
+@media (max-width: 759px) { .typed, .typed-text { display: inline; white-space: normal; } }
 .seg { display: flex; justify-content: center; margin: -24px auto 40px; }
 .seg [role="tablist"] { display: inline-flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 5px; border: 1px solid var(--line-2); border-radius: 999px; background: #161412; }
 .seg [role="tab"] { font: inherit; font-weight: 500; font-size: 1.06rem; color: var(--fg); background: transparent; border: 0; border-radius: 999px; padding: 10px 18px; cursor: pointer; display: inline-flex; align-items: center; gap: 9px; }
@@ -682,8 +731,8 @@ footer.site { padding: 32px 0 0; color: var(--muted); font-size: .95rem; }
   .bar { min-height: auto; }
   .bar { gap: 8px 16px; }
   nav.main { order: 3; flex-basis: 100%; overflow-x: auto; }
-  nav.main ul { flex-wrap: nowrap; justify-content: flex-start; gap: 18px; padding-bottom: 4px; }
-  nav.main a { white-space: nowrap; font-size: 1rem; }
+  nav.main ul { flex-wrap: nowrap; justify-content: flex-start; gap: 2px; padding-bottom: 4px; }
+  nav.main a { white-space: nowrap; font-size: 1rem; padding: 6px 9px; }
   .bar-actions { display: none; }
   .band { padding-inline: 12px; }
   .hero { min-height: 0; padding: 72px 20px 110px; }

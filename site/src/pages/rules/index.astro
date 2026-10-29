@@ -21,7 +21,7 @@ const ids = (m) => m.filter((x) => x.id && x.framework !== "cwe").map((x) => x.i
   {groups.map(([prefix, label]) => {
     const rules = data.rules.filter((r) => r.id.startsWith(prefix));
     return rules.length ? (
-      <section>
+      <section id={prefix.toLowerCase().replace(/-$/, "")}>
         <h2>{label}</h2>
         <div class="table-scroll">
           <table class="rules-table">

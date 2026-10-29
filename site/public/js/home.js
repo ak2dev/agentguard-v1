@@ -115,44 +115,91 @@
     }, 0.2);
   }
 
-  // ---- typed headings ---------------------------------------------------------------
-  // Deletes the current words, then types the new ones in, highlighted until done.
-  const typer = (el) => {
+  // ---- retyped words ---------------------------------------------------------------
+  // As in the reference video: the words turn red inside a soft box as if selected, hold,
+  // wipe out right to left while the box resizes to the new words, wipe in left to right,
+  // hold again, then turn back as the box fades (.typed in global.css).
+  const WIPE_OUT = 300, WIPE_IN = 260;
+  const retyper = (el) => {
+    const text = el.querySelector(".typed-text");
     let job = 0;
-    return (text) => {
-      const id = ++job;
-      if (still) { el.textContent = text; return; }
-      el.classList.add("typing");
-      const step = () => {
-        if (id !== job) return;
-        const now = el.textContent;
-        if (!text.startsWith(now)) { el.textContent = now.slice(0, -1); return setTimeout(step, 18); }
-        if (now.length < text.length) { el.textContent = text.slice(0, now.length + 1); return setTimeout(step, 42); }
-        setTimeout(() => { if (id === job) el.classList.remove("typing"); }, 700);
+    const live = (id) => id === job;
+    const wait = (ms, id) => new Promise((r) => setTimeout(() => r(live(id)), ms));
+    const wipe = (from, to, ms, id) => new Promise((done) => {
+      const t0 = performance.now();
+      const step = (now) => {
+        if (!live(id)) return done(false);
+        const f = Math.min(1, (now - t0) / ms), e = f < 0.5 ? 2 * f * f : 1 - (-2 * f + 2) ** 2 / 2;
+        text.style.setProperty("--wipe", (from + (to - from) * e).toFixed(3));
+        if (f < 1) requestAnimationFrame(step); else done(true);
       };
-      step();
+      requestAnimationFrame(step);
+    });
+    const widthOf = (words) => {
+      const probe = text.cloneNode();
+      probe.textContent = words;
+      probe.style.setProperty("position", "absolute");
+      probe.style.setProperty("visibility", "hidden");
+      el.append(probe);
+      const w = probe.getBoundingClientRect().width;
+      probe.remove();
+      return w;
+    };
+    return async (words, { lead = 350, hold = 1400 } = {}) => {
+      const id = ++job;
+      el.classList.remove("sizing");
+      el.style.removeProperty("width");
+      if (still) { text.textContent = words; text.style.removeProperty("--wipe"); return; }
+      el.classList.add("picked");
+      if (!(await wait(lead, id))) return;
+      if (matchMedia("(min-width: 760px)").matches) {
+        el.style.setProperty("width", `${el.getBoundingClientRect().width}px`);
+        void el.offsetWidth;
+        el.classList.add("sizing");
+        el.style.setProperty("width", `${widthOf(words)}px`);
+      }
+      const shown = parseFloat(text.style.getPropertyValue("--wipe") || "1");
+      if (shown > 0 && !(await wipe(shown, 0, WIPE_OUT * shown, id))) return;
+      text.textContent = words;
+      if (!(await wipe(0, 1, WIPE_IN, id))) return;
+      el.classList.remove("sizing");
+      el.style.removeProperty("width");
+      if (!(await wait(hold, id))) return;
+      el.classList.remove("picked");
     };
   };
+  // The checks heading starts generic; a second after it scrolls into view it is selected and
+  // retyped to the open tab's words, and again on every tab change.
   const tabsHost = document.querySelector("[data-tabs]");
   const headWord = document.querySelector("[data-typed]");
   if (tabsHost && headWord) {
-    const type = typer(headWord);
-    let shown = headWord.textContent;
+    const retype = retyper(headWord);
+    let target = headWord.textContent, auto = 0, started = false;
+    const to = (words, opts) => { if (words && words !== target) { target = words; retype(words, opts); } };
     tabsHost.addEventListener("tabchange", (e) => {
-      const phrase = e.detail.panel && e.detail.panel.dataset.phrase;
-      if (phrase && phrase !== shown) { shown = phrase; type(phrase); }
+      if (!started) return;
+      clearTimeout(auto);
+      to(e.detail.panel && e.detail.panel.dataset.phrase, { lead: 350 });
     });
+    onView(headWord.parentElement, (v) => {
+      if (!v || started) return;
+      started = true;
+      auto = setTimeout(() => {
+        const open = document.querySelector('.seg-panel:not([hidden])');
+        to((open && open.dataset.phrase) || headWord.dataset.final, { lead: 1700 });
+      }, 1000);
+    }, 0.6);
   }
-  // Types out once when it first scrolls into view; left alone if it is on screen at load.
+  // Wiped in once when it first scrolls into view; left alone if it is on screen at load.
   for (const el of document.querySelectorAll("[data-type-once]")) {
     if (still || el.getBoundingClientRect().top < innerHeight) continue;
-    const text = el.textContent, type = typer(el);
-    el.textContent = "";
+    const text = el.querySelector(".typed-text"), words = text.textContent, retype = retyper(el);
+    text.style.setProperty("--wipe", "0");
     let done = false;
     onView(el.parentElement, (v) => {
       if (!v || done) return;
       done = true;
-      type(text);
+      retype(words, { lead: 150 });
     }, 1);
   }
 
