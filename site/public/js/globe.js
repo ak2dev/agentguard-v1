@@ -16,7 +16,7 @@
   const START = -66 * DEG;         // centre longitude when it starts turning
   const REST = -78 * DEG;          // centre longitude with reduced motion
   const STEP = 1.1;                // degrees between land dots
-  const ACCENT = "240,97,43", DOTS = "232,78,30";
+  const ACCENT = "255,122,51", DOTS = "248,98,24";
   const LIGHT = norm([0.55, 0.35, 0.76]);
   // Paths from components/Icon.astro (24×24, stroked).
   const ICONS = {
@@ -192,16 +192,16 @@
           ctx.stroke();
         }
         ctx.save();
-        ctx.shadowColor = "rgba(239,81,34,0.75)";
+        ctx.shadowColor = "rgba(248,98,24,0.8)";
         ctx.shadowBlur = r * 1.4;
-        ctx.fillStyle = "#ef5122";
+        ctx.fillStyle = "#f2621c";
         ctx.beginPath();
         ctx.arc(n.x, n.y, r, 0, 2 * Math.PI);
         ctx.fill();
         ctx.restore();
         icon(n, r * 0.95, "#fff");
       } else {
-        ctx.fillStyle = "rgba(20,20,20,0.92)";
+        ctx.fillStyle = "rgba(14,13,12,0.92)";
         ctx.strokeStyle = `rgb(${ACCENT})`;
         ctx.lineWidth = 1.5;
         ctx.beginPath();

@@ -190,7 +190,7 @@
         const h = (0.18 + 0.82 * Math.abs(a)) * env * (H / 2 - 4);
         for (let y = -h; y <= h; y += 4) {
           const o = 0.18 + 0.5 * (1 - Math.abs(y) / (h + 1));
-          ctx.fillStyle = `rgba(239,81,34,${o.toFixed(2)})`;
+          ctx.fillStyle = `rgba(248,98,24,${o.toFixed(2)})`;
           ctx.fillRect(x, mid + y, 1.6, 1.6);
         }
       }
