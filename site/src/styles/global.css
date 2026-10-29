@@ -52,7 +52,7 @@
   --info: #b5b0a8;
   --ok: #86efac;
   --radius: 12px;
-  --radius-lg: 16px;
+  --radius-lg: 24px;
   --outer: 1666px;            /* the outer rails (hero, bands, header) */
   --inner: 1350px;            /* the content column between the inner rails */
   --maxw: var(--inner);
@@ -116,7 +116,7 @@ a:hover { color: var(--accent-hover); }
 @media (max-width: 1400px) { .frame { border-inline: 0; } }
 @media (max-width: 1352px) { .column { border-inline: 0; } }
 /* a band that spans the outer rails, with a full-width dashed rule under it */
-.band { position: relative; padding: 8px clamp(12px, 1vw, 20px); }
+.band { position: relative; padding: 10px 20px; }
 .band::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--dash-x); }
 .band.top::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: var(--dash-x); }
 
@@ -679,7 +679,7 @@ footer.site { padding: 32px 0 0; color: var(--muted); font-size: .95rem; }
   nav.main ul { flex-wrap: nowrap; justify-content: flex-start; gap: 18px; padding-bottom: 4px; }
   nav.main a { white-space: nowrap; font-size: 1rem; }
   .bar-actions { display: none; }
-  .band { padding-inline: 8px; }
+  .band { padding-inline: 12px; }
   .hero { min-height: 0; padding: 72px 20px 110px; }
   .hero h1 { margin-bottom: 28px; }
   .hero p { margin-bottom: 36px; }
