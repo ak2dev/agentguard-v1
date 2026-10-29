@@ -1,10 +1,8 @@
 ---
-// A bento tile with square corner markers.
-interface Props { span?: string; tone?: "" | "orange"; }
-const { span = "span-6", tone = "" } = Astro.props;
+// A bento tile. The corner markers sit on the bento grid as a whole (.blk.open).
+interface Props { span?: string; tone?: "" | "orange"; class?: string }
+const { span = "span-6", tone = "", class: cls = "" } = Astro.props;
 ---
-<article class={`tile ${span} ${tone}`.trim()}>
-  <i class="c tl" aria-hidden="true"></i><i class="c tr" aria-hidden="true"></i>
-  <i class="c bl" aria-hidden="true"></i><i class="c br" aria-hidden="true"></i>
+<article class={`tile ${span} ${tone} ${cls}`.trim().replace(/\s+/g, " ")}>
   <slot />
 </article>

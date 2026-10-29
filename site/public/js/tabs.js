@@ -15,6 +15,7 @@
         if (panels[j]) panels[j].hidden = i !== j;
       });
       if (focus) tabs[i].focus();
+      host.dispatchEvent(new CustomEvent("tabchange", { detail: { index: i, panel: panels[i] } }));
     };
     tabs.forEach((t, i) => {
       t.addEventListener("click", () => select(i, false));

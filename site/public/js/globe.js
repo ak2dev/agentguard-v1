@@ -12,10 +12,10 @@
 
   const DEG = Math.PI / 180;
   const TILT = 14 * DEG;           // latitude at the centre of the view
-  const SPEED = 3.6 * DEG;         // per second, west to east as the Earth turns
+  const SPEED = 2.4 * DEG;         // per second, west to east as the Earth turns
   const START = -66 * DEG;         // centre longitude when it starts turning
   const REST = -78 * DEG;          // centre longitude with reduced motion
-  const STEP = 1.45;               // degrees between land dots
+  const STEP = 1.1;                // degrees between land dots
   const ACCENT = "255,122,51", DOTS = "248,98,24";
   const LIGHT = norm([0.55, 0.35, 0.76]);
   // Paths from components/Icon.astro (24×24, stroked).
@@ -123,16 +123,16 @@
     ctx.lineWidth = 1;
     ctx.strokeStyle = "rgba(255,255,255,0.035)";
     ctx.stroke(back);
-    ctx.strokeStyle = "rgba(255,255,255,0.11)";
+    ctx.strokeStyle = "rgba(255,255,255,0.085)";
     ctx.stroke(front);
-    ctx.strokeStyle = "rgba(255,255,255,0.16)";
+    ctx.strokeStyle = "rgba(255,255,255,0.13)";
     ctx.beginPath();
     ctx.arc(cx, cy, R, 0, 2 * Math.PI);
     ctx.stroke();
 
     // Land dots, lit from the upper right and dimmed towards the limb, batched by brightness.
     if (land) {
-      const s = Math.max(1.4, R * 0.0088), half = s / 2, levels = 12, buckets = [];
+      const s = Math.max(1.2, R * 0.0062), half = s / 2, levels = 12, buckets = [];
       for (let k = 0; k < levels; k++) buckets.push(new Path2D());
       for (let i = 0; i < land.length; i += 3) {
         const x = land[i], y = land[i + 1], z0 = land[i + 2];
@@ -141,12 +141,12 @@
         const Y = y * ct - z * st, sy = cy - Y * R;
         if (sy > H + s) continue;
         const lit = Math.max(0, X * LIGHT[0] + Y * LIGHT[1] + Z * LIGHT[2]);
-        const b = (0.13 + 0.87 * lit) * Math.min(1, Z / 0.2);
+        const b = (0.1 + 0.9 * lit * lit) * Math.min(1, Z / 0.2);
         buckets[Math.min(levels - 1, (b * levels) | 0)].rect(cx + X * R - half, sy - half, s, s);
       }
       const dots = fade * ease((t - landAt) / 0.9);
       for (let k = 0; k < levels; k++) {
-        ctx.fillStyle = `rgba(${DOTS},${(((k + 0.5) / levels) * dots).toFixed(3)})`;
+        ctx.fillStyle = `rgba(${DOTS},${(((k + 0.5) / levels) * dots * 0.85).toFixed(3)})`;
         ctx.fill(buckets[k]);
       }
     }
@@ -173,8 +173,6 @@
     }
 
     // Pins: outlined, except the agent, which is filled, glows and pulses.
-    ctx.font = '600 13px "Inter Variable", "Inter Fallback", sans-serif';
-    ctx.textAlign = "center";
     for (const n of nodes) {
       const [X, Y, Z] = view(n.v);
       const pop = ease((t - n.at) / 0.5);
@@ -212,8 +210,6 @@
         ctx.stroke();
         icon(n, r * 0.95, `rgb(${ACCENT})`);
       }
-      ctx.fillStyle = "#d8d1c8";
-      ctx.fillText(n.label, n.x, n.y + r + 18);
     }
     ctx.globalAlpha = 1;
 
@@ -253,8 +249,8 @@
     if (w === W && d === dpr) return;
     W = w;
     dpr = d;
-    R = Math.min(W * (W < 700 ? 0.44 : 0.29), 300);
-    pin = Math.max(14, R * 0.068);
+    R = Math.min(W * (W < 700 ? 0.44 : 0.31), 330);
+    pin = Math.max(13, R * 0.058);
     cx = W / 2;
     cy = R + 30;
     H = Math.round(cy + R * 0.62);
