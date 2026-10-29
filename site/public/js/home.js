@@ -4,6 +4,15 @@
 // JavaScript (or with reduced motion) the page reads the same, standing still.
 (function () {
   const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // ---- hero height -----------------------------------------------------------------
+  // The hero is sized from where it starts, which is lower when the header's links wrap.
+  const hero = document.querySelector(".hero");
+  if (hero && window.ResizeObserver) {
+    const place = () => document.documentElement.style.setProperty("--hero-top", `${Math.round(hero.getBoundingClientRect().top + scrollY)}px`);
+    place();
+    new ResizeObserver(place).observe(document.querySelector("header.site"));
+  }
+
   const onView = (el, fn, threshold = 0.35) => {
     if (!window.IntersectionObserver) return fn(true);
     new IntersectionObserver(([e]) => fn(e.isIntersecting), { threshold }).observe(el);
