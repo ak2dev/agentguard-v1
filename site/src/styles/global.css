@@ -495,8 +495,9 @@ footer.site { border-top: 1px dashed var(--line); padding: 32px 0 0; color: var(
    if selected (.picked), wipe out right to left while the box resizes to the new words, wipe
    in left to right, hold, then turn back as the box fades. --wipe (0 to 1) drives the soft
    edge of the wipe. */
-.typed { position: relative; isolation: isolate; display: inline-block; white-space: nowrap; vertical-align: bottom; }
-.typed::before { content: ""; position: absolute; inset: -.06em -.2em -.12em; z-index: -1; border-radius: 4px; background: radial-gradient(90% 150% at 28% 28%, #3e241c 0%, #2d1a15 58%, #26150f 100%); box-shadow: inset 0 0 0 1px rgba(255, 140, 110, .06); opacity: 0; transition: opacity .35s ease; }
+/* a small margin and a slimmer left overhang keep the box clear of the word before it */
+.typed { position: relative; isolation: isolate; display: inline-block; white-space: nowrap; vertical-align: bottom; margin-left: .14em; }
+.typed::before { content: ""; position: absolute; inset: -.06em -.2em -.12em -.14em; z-index: -1; border-radius: 4px; background: radial-gradient(90% 150% at 28% 28%, #3e241c 0%, #2d1a15 58%, #26150f 100%); box-shadow: inset 0 0 0 1px rgba(255, 140, 110, .06); opacity: 0; transition: opacity .35s ease; }
 .typed.picked::before { opacity: 1; transition-duration: .06s; }
 .typed.sizing { transition: width .28s cubic-bezier(.2, .8, .2, 1); }
 .typed-text { display: inline-block; transition: color .15s ease; -webkit-mask-image: linear-gradient(to right, #000 calc(var(--wipe, 1) * 125% - 25%), transparent calc(var(--wipe, 1) * 125%)); mask-image: linear-gradient(to right, #000 calc(var(--wipe, 1) * 125% - 25%), transparent calc(var(--wipe, 1) * 125%)); }
