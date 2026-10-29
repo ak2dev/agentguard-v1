@@ -543,7 +543,7 @@ footer.site { border-top: 1px dashed var(--line); padding: 32px 0 0; color: var(
 .term-tile .tt { flex: 0 1 44%; padding-bottom: 36px; }
 .term-tile .tt h3 { margin-top: 0; }
 .terminal-wrap { flex: 1 1 56%; min-width: 0; align-self: stretch; display: flex; flex-direction: column; justify-content: center; gap: 22px; padding: 40px 0 0; background: radial-gradient(60% 70% at 70% 60%, rgba(255, 122, 51, .07), transparent 70%); }
-.terminal { border: 1px solid var(--line-2); border-right: 0; border-radius: 6px 0 0 6px; background: #161412; font-family: var(--font); font-size: .95rem; padding: 18px 20px 16px; overflow: hidden; position: relative; }
+.terminal { border: 1px solid var(--line-2); border-right: 0; border-radius: 6px 0 0 6px; background: #000000; font-family: var(--font); font-size: .95rem; padding: 18px 20px 16px; overflow: hidden; position: relative; }
 .terminal::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 14px; background-image: radial-gradient(rgba(255,122,51,.35) 1px, transparent 1.3px); background-size: 6px 6px; }
 .terminal p { margin: 0 0 10px; color: var(--fg); max-width: none; white-space: nowrap; overflow: hidden; text-overflow: clip; font-weight: 500; }
 .terminal .hi { color: var(--accent); }
@@ -553,7 +553,7 @@ footer.site { border-top: 1px dashed var(--line); padding: 32px 0 0; color: var(
 .terminal .tline { opacity: 0; animation: rowin .5s ease forwards; }
 .terminal .tline:nth-of-type(3) { animation-delay: .4s; } .terminal .tline:nth-of-type(4) { animation-delay: .9s; } .terminal .tline:nth-of-type(5) { animation-delay: 1.4s; }
 .terminal .last { margin: 6px 0 14px; }
-.prompt { position: relative; border: 1px solid var(--line-2); border-right: 0; border-radius: 6px 0 0 6px; background: #161412; height: 96px; padding: 12px 16px; color: var(--muted); font: .95rem/1.5 var(--mono); }
+.prompt { position: relative; border: 1px solid var(--line-2); border-right: 0; border-radius: 6px 0 0 6px; background: #000000; height: 96px; padding: 12px 16px; color: var(--muted); font: .95rem/1.5 var(--mono); }
 .prompt .cursor { display: inline-block; width: 8px; height: 1.05em; background: var(--fg); vertical-align: -3px; margin-left: 4px; animation: blink 1s steps(1) infinite; }
 .prompt .enter { position: absolute; right: 0; bottom: 12px; display: inline-flex; align-items: center; gap: 10px; padding: 7px 10px 7px 16px; border-radius: 6px 0 0 6px; background: var(--orange); color: #1a0b03; font: 500 .95rem/1 var(--font); }
 .prompt .enter b { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 4px; background: rgba(0,0,0,.12); font-weight: 600; }
