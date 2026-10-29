@@ -22,8 +22,8 @@ const ids = (m) => m.filter((x) => x.id && x.framework !== "cwe").map((x) => x.i
     const rules = data.rules.filter((r) => r.id.startsWith(prefix));
     return rules.length ? (
       <section id={prefix.toLowerCase().replace(/-$/, "")}>
-        <h2>{label}</h2>
-        <div class="table-scroll">
+        <h2>{label}<span class="h-count">{rules.length} {rules.length === 1 ? "rule" : "rules"}</span></h2>
+        <div class="corners"><div class="table-scroll">
           <table class="rules-table">
             <thead><tr><th scope="col">ID</th><th scope="col">Title</th><th scope="col">Severity</th><th scope="col">Confidence</th><th scope="col">Standards</th></tr></thead>
             <tbody>
@@ -38,7 +38,7 @@ const ids = (m) => m.filter((x) => x.id && x.framework !== "cwe").map((x) => x.i
               ))}
             </tbody>
           </table>
-        </div>
+        </div></div>
       </section>
     ) : null;
   })}
