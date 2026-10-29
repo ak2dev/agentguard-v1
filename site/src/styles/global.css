@@ -277,17 +277,14 @@ footer.site { padding: 32px 0 0; color: var(--muted); font-size: .95rem; }
 }
 .blk.open { border-block: 0; }
 
-/* hero: a rounded orange panel with a fine dot texture and a sunrise at its foot */
+/* hero: a rounded orange panel with a fine dot texture */
 .hero {
   position: relative; overflow: hidden; isolation: isolate; border-radius: var(--radius-lg); max-width: var(--outer); margin: 0 auto;
   min-height: clamp(560px, calc(100vh - 102px), 860px); display: flex; flex-direction: column; align-items: center; justify-content: center;
   padding: 96px clamp(20px, 5vw, 80px) 120px; text-align: center; color: var(--on-orange);
   /* the hero and the call-to-action band use the panel orange a little darker */
   --orange: #e94211;
-  background:
-    radial-gradient(26% 30% at 50% 104%, #fffbe2 0%, #fde8a6 26%, rgba(250, 190, 110, .75) 46%, rgba(243, 120, 60, .25) 70%, rgba(233, 66, 17, 0) 100%),
-    radial-gradient(60% 50% at 50% 100%, rgba(246, 110, 50, .55), rgba(233, 66, 17, 0) 70%),
-    linear-gradient(180deg, #e64212 0%, var(--orange) 55%, #e84910 100%);
+  background: linear-gradient(180deg, #e64212 0%, var(--orange) 55%, #e84910 100%);
 }
 .hero::before {
   content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
