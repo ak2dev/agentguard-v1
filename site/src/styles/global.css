@@ -274,9 +274,8 @@ dl.kv dd { margin: 0; }
 }
 
 /* ---- footer ------------------------------------------------------------------ */
-/* the footer is set off from the page by a full-width dashed rule, like the header */
-.foot-band { border-top: 1px dashed var(--line); }
-footer.site { padding: 32px 0 0; color: var(--muted); font-size: .95rem; }
+/* the footer is set off from the page by a dashed rule across the content column */
+footer.site { border-top: 1px dashed var(--line); padding: 32px 0 0; color: var(--muted); font-size: .95rem; }
 /* in the content column, with the same side padding as the page above it */
 .foot-in { padding: 0 clamp(16px, 3.2vw, 44px); }
 .foot { display: grid; grid-template-columns: minmax(180px, 1fr) repeat(4, minmax(0, 1fr)); gap: 32px 28px; padding-bottom: 64px; }
