@@ -61,8 +61,6 @@
   --font: "Inter Variable", "Inter Fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-display: var(--font);
   --mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  /* long dashes for the full-width rules between bands */
-  --dash-x: repeating-linear-gradient(to right, var(--rail) 0 18px, transparent 18px 30px);
   color-scheme: dark;
 }
 
@@ -119,12 +117,12 @@ a:hover { color: var(--accent-hover); }
 @media (max-width: 1352px) { .column { border-inline: 0; } }
 /* a band that spans the outer rails, with a full-width dashed rule under it */
 .band { position: relative; padding: 10px 20px; }
-.band::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--dash-x); }
-.band.top::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: var(--dash-x); }
+.band::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; border-top: 1px dashed var(--line); }
+.band.top::before { content: ""; position: absolute; left: 0; right: 0; top: 0; border-top: 1px dashed var(--line); }
 
 /* ---- header ------------------------------------------------------------------------ */
 header.site { position: relative; z-index: 20; background: var(--bg); }
-header.site::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--dash-x); }
+header.site::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; border-top: 1px dashed var(--line); }
 .bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 28px; min-height: 76px; padding-block: 8px; max-width: var(--outer); margin: 0 auto; padding-inline: clamp(16px, 1.4vw, 24px); }
 .brand { display: inline-flex; align-items: center; gap: 11px; color: var(--fg); text-decoration: none; font-weight: 650; letter-spacing: -0.02em; font-size: 1.35rem; line-height: 1; }
 .brand svg { width: 34px; height: 34px; color: var(--orange); flex: none; }
@@ -246,7 +244,7 @@ footer.site { padding: 32px 0 0; color: var(--muted); font-size: .95rem; }
 .foot a { color: var(--fg); text-decoration: none; font-weight: 500; font-size: 1rem; }
 .foot a:hover { color: var(--accent); }
 .foot-bottom { position: relative; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 24px; padding: 22px clamp(16px, 2.2vw, 36px) 26px; font-size: .88rem; }
-.foot-bottom::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: var(--dash-x); }
+.foot-bottom::before { content: ""; position: absolute; left: 0; right: 0; top: 0; border-top: 1px dashed var(--line); }
 .foot-bottom ul { display: flex; flex-wrap: wrap; list-style: none; margin: 0; padding: 0; }
 .foot-bottom li + li::before { content: "|"; color: var(--line-2); margin: 0 9px; }
 .foot-bottom a { color: var(--muted); text-decoration: none; }
