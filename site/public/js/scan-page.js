@@ -382,56 +382,91 @@ function main(root) {
     return el("p", {}, "Scanned ", meta.name ? el("code", {}, meta.name) : label, ".");
   }
 
+  const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
+
+  // One cell of the facts row under the report's top: a label, a large value and a note.
+  function stat(label, value, sub) {
+    return el("div", {}, el("dt", {}, label), el("dd", {}, el("span", { class: "v" }, String(value)), sub ? el("span", { class: "sub" }, sub) : null));
+  }
+
   function renderReport(report, meta, label) {
     const findings = report.findings || [];
     const pack = report.rule_pack || {};
     const counts = Object.fromEntries(SEVERITIES.map((s) => [s, findings.filter((f) => f.severity === s).length]));
+    const failOn = (report.fail_on || "high").toUpperCase();
     const atOrAbove = findings.filter((f) => SEVERITIES.indexOf(f.severity) <= SEVERITIES.indexOf(report.fail_on || "high")).length;
-    const card = el("div", { class: "result-card" }, el("h2", { id: "result-title", tabindex: "-1" }, "Report"), renderTarget(report, meta, label));
-    const parts = [card];
+    const files = report.stats?.files_scanned ?? 0;
+    const components = report.inventory?.length ?? 0;
 
-    if (!findings.length) {
-      card.append(el("p", { class: "summary" }, `No findings from ${report.stats?.rules_evaluated ?? pack.rule_count} rules (rule pack v${pack.version}).`),
-        el("p", { class: "muted" }, "That means no rule matched. It does not prove the content is safe: static rules miss paraphrased or novel attacks, and behavior that only appears at run time."));
-    } else {
-      card.append(el("p", { class: "summary" }, `${findings.length} finding${findings.length === 1 ? "" : "s"}: `,
-        SEVERITIES.filter((s) => counts[s]).map((s) => `${counts[s]} ${s}`).join(", ")));
-      card.append(el("div", { class: "sev-counts" }, ...SEVERITIES.map((s) =>
-        el("div", { class: `sev-count ${s}${counts[s] ? "" : " zero"}` }, el("span", { class: "n" }, String(counts[s])), sevBadge(s)))));
-      card.append(el("p", {}, atOrAbove
-        ? `${atOrAbove} finding${atOrAbove === 1 ? " is" : "s are"} at or above ${(report.fail_on || "high").toUpperCase()}. Review ${atOrAbove === 1 ? "it" : "them"} before installing or enabling this.`
-        : `Nothing at or above ${(report.fail_on || "high").toUpperCase()}; the findings below are lower-severity observations.`));
-    }
-    card.append(el("p", { class: "result-meta" },
-      `${report.stats?.files_scanned ?? 0} file(s), ${report.inventory?.length ?? 0} component(s). Rule pack v${pack.version} (${pack.rule_count} rules, digest ${String(pack.digest || "").slice(0, 12)}), engine ${report.engine_version}.`,
-      meta.fetch_ms !== undefined ? ` Fetched from GitHub in ${(meta.fetch_ms / 1000).toFixed(1)} s;` : "",
-      meta.scan_ms ? ` scanned in ${(meta.scan_ms / 1000).toFixed(1)} s on this device.` : "",
-      meta.serverKey ? ` Scanned by Agent Guard Web in an isolated sandbox${meta.cached ? " (cached result for this exact version and rule pack)" : ""}.` : ""));
+    const verdict = !findings.length
+      ? el("div", { class: "verdict" }, el("strong", {}, "That means no rule matched."),
+        "It does not prove the content is safe: static rules miss paraphrased or novel attacks, and behavior that only appears at run time.")
+      : atOrAbove
+        ? el("div", { class: "verdict hot" }, el("strong", {}, `${plural(atOrAbove, "finding")} ${atOrAbove === 1 ? "is" : "are"} at or above ${failOn}.`),
+          `Review ${atOrAbove === 1 ? "it" : "them"} before installing or enabling this.`)
+        : el("div", { class: "verdict" }, el("strong", {}, `Nothing at or above ${failOn}.`), "The findings below are lower-severity observations.");
+    const summary = findings.length
+      ? `${plural(findings.length, "finding")}: ${SEVERITIES.filter((s) => counts[s]).map((s) => `${counts[s]} ${s}`).join(", ")}`
+      : `No findings from ${report.stats?.rules_evaluated ?? pack.rule_count} rules`;
+    const board = el("div", { class: "board corners" },
+      el("div", { class: "board-head" }, el("span", { class: "summary" }, summary), el("span", { class: "accent" }, `Threshold: ${failOn}`)),
+      el("ul", { class: "sev-counts", "aria-label": "Findings by severity" }, ...SEVERITIES.map((s) =>
+        el("li", { class: `sev-count ${s}${counts[s] ? "" : " zero"}` }, el("span", { class: "n" }, String(counts[s])), sevBadge(s)))),
+      el("p", { class: "board-note" }, `${plural(files, "file")} and ${plural(components, "component")} scanned`));
+
+    const facts = el("dl", { class: "report-facts" },
+      stat("Files", files, plural(components, "component")),
+      stat("Rule pack", `v${pack.version}`, `${pack.rule_count} rules · digest ${String(pack.digest || "").slice(0, 12)}`),
+      stat("Engine", report.engine_version, meta.serverKey
+        ? `Agent Guard Web, in an isolated sandbox${meta.cached ? " (cached result for this exact version and rule pack)" : ""}`
+        : "Run on this device"),
+      meta.scan_ms ? stat("Scan time", `${(meta.scan_ms / 1000).toFixed(1)} s`,
+        meta.fetch_ms !== undefined ? `Fetched from GitHub in ${(meta.fetch_ms / 1000).toFixed(1)} s` : "On this device") : null);
+
+    const extra = [];
     if (meta.serverKey) {
       const link = new URL(`${siteBase}/scan/`, location.href);
       link.searchParams.set("report", meta.serverKey);
       const copy = el("button", { type: "button", class: "btn secondary small" }, "Copy link");
       copy.addEventListener("click", () => navigator.clipboard?.writeText(link.href).then(() => { copy.textContent = "Copied"; }));
-      card.append(el("p", { class: "small" }, "Permalink (unlisted; anyone with the link can view it): ", el("a", { href: link.href }, link.href), " ", copy));
-      if (meta.notice) card.append(el("p", { class: "notice" }, meta.notice));
-      if (meta.response) card.append(renderResponse(meta.response));
+      extra.push(el("p", { class: "small" }, "Permalink (unlisted; anyone with the link can view it): ", el("a", { href: link.href }, link.href), " ", copy));
+      if (meta.notice) extra.push(el("p", { class: "notice" }, meta.notice));
+      if (meta.response) extra.push(renderResponse(meta.response));
+      extra.push(renderServerActions(report, meta, label));
     }
 
-    card.append(renderDownloads(meta));
-    if (meta.serverKey) card.append(renderServerActions(report, meta, label));
+    const parts = [el("div", { class: "report corners" },
+      el("div", { class: "report-top" },
+        el("div", { class: "report-intro" }, el("h2", { id: "result-title", tabindex: "-1" }, "Report"), renderTarget(report, meta, label), verdict),
+        board),
+      facts,
+      renderDownloads(meta),
+      extra.length ? el("div", { class: "report-extra" }, ...extra) : null,
+      el("div", { class: "plans-foot", "aria-hidden": "true" }))];
 
     if (report.flows?.length) {
       const names = Object.fromEntries((report.inventory || []).map((c) => [c.id, c.name]));
-      parts.push(el("h3", {}, "Dangerous combinations"),
-        el("ul", { class: "flows" }, ...report.flows.map((fl) => el("li", {},
-          flowDiagram(fl, names),
-          fl.narrative ? el("p", { class: "muted" }, fl.narrative) : null))));
+      // Each flow comes from one finding (report.flows is the findings' flow paths): its title
+      // and rule sit beside the diagram.
+      parts.push(el("h3", { class: "report-h" }, "Dangerous combinations"),
+        el("ul", { class: "flows corners" }, ...report.flows.map((fl) => {
+          const f = findings.find((x) => x.flow?.narrative === fl.narrative);
+          return el("li", { class: fl.nodes.length > 2 ? "long" : null },
+            el("div", {},
+              f ? el("p", { class: "flow-title" }, sevBadge(f.severity), el("strong", {}, f.title)) : null,
+              fl.narrative ? el("p", { class: "flow-note" }, fl.narrative) : null,
+              f ? el("p", { class: "flow-rule" }, el("a", { href: `${siteBase}/rules/${f.rule_id.toLowerCase()}/` }, f.rule_id), ` · ${f.confidence} confidence`) : null),
+            el("div", { class: "flow-frame corners" },
+              el("div", { class: "pipe-ends", "aria-hidden": "true" }, el("span", {}, "Source"), el("span", {}, "Sink")),
+              flowDiagram(fl, names)));
+        })));
     }
 
+    if (findings.length) parts.push(el("h3", { class: "report-h" }, "Findings"));
     for (const sev of SEVERITIES) {
       const group = findings.filter((f) => f.severity === sev);
       if (!group.length) continue;
-      parts.push(el("h3", { class: "sev-group" }, sevBadge(sev), `${group.length} finding${group.length === 1 ? "" : "s"}`),
+      parts.push(el("h4", { class: "sev-group" }, sevBadge(sev), plural(group.length, "finding")),
         ...group.map((f) => renderFinding(f, report.target)));
     }
 
@@ -462,12 +497,15 @@ function main(root) {
     const steps = fl.nodes.map((id, i) => ({ id, name: names[id] || id, role: stepRole(fl.labels?.[id] || [], i, fl.nodes.length) }));
     const agent = String((fl.edges?.[0]?.[2]) || "").replace(/^agent:/, "") || "agent";
     const vertical = root.clientWidth < 620;   // the result box is hidden (0 px) while it is rebuilt
-    const BW = 200, BH = 64, GAP = vertical ? 46 : 74;
+    const BW = 210, BH = 68, GAP = vertical ? 46 : 96;
     const n = steps.length;
     const w = vertical ? BW : n * BW + (n - 1) * GAP;
     const h = vertical ? n * BH + (n - 1) * GAP : BH;
     const svg = document.createElementNS(NS, "svg");
     svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+    // Drawn at its own size so its text matches the page's; CSS only shrinks it to fit.
+    svg.setAttribute("width", String(w));
+    svg.setAttribute("height", String(h));
     svg.setAttribute("class", "flow-graph" + (vertical ? " vertical" : ""));
     svg.setAttribute("role", "img");
     svg.setAttribute("aria-label", steps.map((s) => `${s.name} (${s.role})`).join(", then via the agent, "));
@@ -486,9 +524,9 @@ function main(root) {
     steps.forEach((s, i) => {
       const x = vertical ? 0 : i * (BW + GAP), y = vertical ? i * (BH + GAP) : 0;
       const cls = i === 0 ? "source" : i === n - 1 ? "sink" : "middle";
-      svg.append(node("rect", { x: x + 1, y: y + 1, width: BW - 2, height: BH - 2, rx: 10, class: `flow-box ${cls}` }));
-      svg.append(node("text", { x: x + BW / 2, y: y + 27, class: "flow-name" }, clip(s.name, 24)));
-      svg.append(node("text", { x: x + BW / 2, y: y + 47, class: "flow-role" }, clip(s.role, 30)));
+      svg.append(node("rect", { x: x + 0.5, y: y + 0.5, width: BW - 1, height: BH - 1, rx: 3, class: `flow-box ${cls}` }));
+      svg.append(node("text", { x: x + BW / 2, y: y + 29, class: "flow-name" }, clip(s.name, 24)));
+      svg.append(node("text", { x: x + BW / 2, y: y + 49, class: `flow-role ${cls}` }, clip(s.role, 30)));
       if (i < n - 1) {
         const [x1, y1, x2, y2] = vertical ? [BW / 2, y + BH, BW / 2, y + BH + GAP] : [x + BW, BH / 2, x + BW + GAP, BH / 2];
         svg.append(node("line", { x1, y1, x2: vertical ? x2 : x2 - 2, y2: vertical ? y2 - 2 : y2, class: "flow-edge", "marker-end": "url(#flow-arrow)" }));
@@ -576,7 +614,7 @@ function main(root) {
   // Same text apart from case and a trailing period (a message that repeats the title).
   function same(a, b) { const n = (x) => String(x || "").trim().replace(/\.$/, "").toLowerCase(); return n(a) === n(b); }
 
-  function fact(label, value) { return el("div", {}, el("dt", {}, label), el("dd", {}, value)); }
+  function fact(label, value, cls) { return el("div", { class: cls }, el("dt", {}, label), el("dd", {}, value)); }
 
   function renderFinding(f, target) {
     const loc = locationUrl(target, f.primary);
@@ -586,12 +624,12 @@ function main(root) {
     return el("details", { class: `finding ${f.severity}`, open: f.severity === "critical" || f.severity === "high" },
       el("summary", {}, sevBadge(f.severity), el("strong", {}, f.title), f.primary ? el("span", { class: "loc" }, where(f.primary)) : null),
       el("div", { class: "finding-body" },
-        f.message && !same(f.message, f.title) ? el("p", {}, f.message) : null,
+        f.message && !same(f.message, f.title) ? el("p", { class: "finding-msg" }, f.message) : null,
         el("dl", { class: "facts" },
           fact("Rule", [el("a", { href: `${siteBase}/rules/${f.rule_id.toLowerCase()}/` }, f.rule_id), el("span", { class: "muted" }, ` v${f.rule_version}`)]),
           fact("Confidence", f.confidence),
           f.score ? fact("AIVSS", [String(f.score.value), el("span", { class: "muted" }, ` ${f.score.scorer} ${f.score.scorer_version}`)]) : null,
-          f.primary ? fact("Location", loc ? el("a", { href: loc }, where(f.primary)) : where(f.primary)) : null),
+          f.primary ? fact("Location", loc ? el("a", { href: loc }, where(f.primary)) : where(f.primary), "wide") : null),
         evidence.length ? el("div", {}, el("h4", {}, "Evidence"), ...evidence.map(renderEvidence)) : null,
         f.explanation || f.remediation ? el("div", { class: "advice" },
           f.explanation ? el("div", {}, el("h4", {}, "Why it matters"), el("p", {}, f.explanation)) : null,
@@ -606,6 +644,7 @@ function main(root) {
   function renderEvidence(ev) {
     return el("div", { class: "evidence" },
       el("p", { class: "ev-cap" },
+        el("span", { class: "ev-dots", "aria-hidden": "true" }, el("i"), el("i"), el("i")),
         ev.location ? el("code", {}, where(ev.location)) : null,
         ev.hidden ? el("span", { class: "pill" }, "hidden content") : null,
         ev.decode_path?.length ? el("span", { class: "pill" }, `decoded: ${ev.decode_path.join(" → ")}`) : null,
@@ -628,7 +667,7 @@ function main(root) {
   function renderDownloads(meta = {}) {
     const formats = [["json", "JSON", "application/json", "json"], ["sarif", "SARIF", "application/sarif+json", "sarif"],
       ["html", "HTML report", "text/html", "html"], ["markdown", "Markdown", "text/markdown", "md"], ["cyclonedx", "CycloneDX", "application/vnd.cyclonedx+json", "cdx.json"]];
-    const row = el("p", { class: "downloads" }, el("span", { class: "muted" }, "Download: "));
+    const row = el("div", { class: "downloads" }, el("span", { class: "label" }, "Download"));
     for (const [fmt, name, type, ext] of formats) {
       if (meta.serverKey) {
         const href = `${siteBase}/api/reports/${meta.serverKey}${fmt === "json" ? "" : `?format=${fmt}`}`;

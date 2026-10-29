@@ -8,49 +8,85 @@ export function getStaticPaths() {
 const { rule } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const fwName = Object.fromEntries(Object.entries(data.frameworks).map(([k, v]) => [k, v.name]));
+// the same short names as the standards chips in a scan report (public/js/scan-page.js)
+const fwShort = {
+  "owasp-asi-2026": "OWASP Agentic", "owasp-mcp-2025-beta": "OWASP MCP", "owasp-ast-1.0": "OWASP Skills",
+  "owasp-llm-2026": "OWASP LLM", "nsa-csi-mcp-2026-05": "NSA MCP CSI", cwe: "CWE",
+};
+const detection = rule.match_type === "regex" ? "Pattern" : rule.match_type === "yara" ? "YARA" : "Analyzer";
+const detectionNote = (rule.match_type === "regex" ? "Data-defined pattern rule" : rule.match_type === "yara" ? "YARA rule over raw file bytes · requires the optional agentguard[yara] extra" : "Analyzer rule")
+  + (rule.network ? " · requires an opt-in network feature" : "");
+const { unsafe, safe } = rule.examples;
 ---
 <Base title={rule.id} description={rule.title}>
-  <p><a href={`${base}/rules/`}>← All rules</a></p>
-  <h1><code>{rule.id}</code> {rule.title}</h1>
-  <dl class="kv">
-    <dt>Severity</dt><dd><span class={`sev ${rule.severity}`}>{rule.severity}</span></dd>
-    <dt>Confidence</dt><dd>{rule.confidence}</dd>
-    <dt>Rule version</dt><dd>{rule.version} (rule pack {data.rule_pack.version})</dd>
-    <dt>Detection</dt><dd>{rule.match_type === "regex" ? "data-defined pattern rule" : rule.match_type === "yara" ? "YARA rule over raw file bytes · requires the optional agentguard[yara] extra" : "analyzer rule"}{rule.network && " · requires an opt-in network feature"}</dd>
-  </dl>
+  <p class="crumb"><a href={`${base}/rules/`}>← All rules</a></p>
 
-  <h2>What it detects</h2>
-  <p>{rule.description}</p>
-  {rule.why && (<><h2>Why it matters</h2><p>{rule.why}</p></>)}
+  <article class="report corners rule-head">
+    <div class="report-top">
+      <div class="report-intro">
+        <p class="rule-id"><code>{rule.id}</code></p>
+        <h1>{rule.title}</h1>
+        <p>{rule.description}</p>
+      </div>
+      <div class="board corners">
+        <div class="board-head">
+          <span class="summary">Version {rule.version} · rule pack {data.rule_pack.version}</span>
+          {rule.network && <span class="accent">Opt-in network rule</span>}
+        </div>
+        <dl class="rule-cells">
+          <div><dt>Severity</dt><dd><span class={`sev ${rule.severity}`}>{rule.severity}</span></dd></div>
+          <div><dt>Confidence</dt><dd>{rule.confidence}</dd></div>
+          <div><dt>Detection</dt><dd>{detection}</dd></div>
+          <div><dt>Standards</dt><dd>{rule.mappings.length}</dd></div>
+        </dl>
+        <p class="board-note">{detectionNote}</p>
+      </div>
+    </div>
+    <div class="advice">
+      {rule.why && <div><h2 class="cell-h">Why it matters</h2><p>{rule.why}</p></div>}
+      <div class="fix"><h2 class="cell-h">How to fix</h2><p>{rule.remediation}</p></div>
+    </div>
+    <div class="plans-foot" aria-hidden="true"></div>
+  </article>
 
-  {rule.examples.unsafe && (
-    <>
-      <h2>Unsafe example</h2>
-      <p class="muted">From the inert positive fixture <code>{rule.examples.unsafe.path}</code> (reserved domains, fake tokens; secrets redacted).</p>
-      <pre><code>{rule.examples.unsafe.text}</code></pre>
-    </>
+  {(unsafe || safe) && (
+    <section>
+      <h2 class="report-h">Examples</h2>
+      <p class="muted">From the rule's inert fixtures, which CI runs on every change (reserved domains, fake tokens; secrets redacted).</p>
+      <div class="examples">
+        {unsafe && (
+          <figure class="evidence">
+            <figcaption class="ev-cap"><span class="ev-dots" aria-hidden="true"><i></i><i></i><i></i></span><code>{unsafe.path}</code><span class="ex-tag bad">Unsafe · triggers the rule</span></figcaption>
+            <pre><code>{unsafe.text}</code></pre>
+          </figure>
+        )}
+        {safe && (
+          <figure class="evidence">
+            <figcaption class="ev-cap"><span class="ev-dots" aria-hidden="true"><i></i><i></i><i></i></span><code>{safe.path}</code><span class="ex-tag good">Safe · does not trigger it</span></figcaption>
+            <pre><code>{safe.text}</code></pre>
+          </figure>
+        )}
+      </div>
+    </section>
   )}
-  {rule.examples.safe && (
-    <>
-      <h2>Safe example</h2>
-      <p class="muted">From the negative fixture <code>{rule.examples.safe.path}</code> — this does not trigger the rule.</p>
-      <pre><code>{rule.examples.safe.text}</code></pre>
-    </>
+
+  <section>
+    <h2 class="report-h">Standards</h2>
+    <div class="corners"><div class="table-scroll">
+      <table class="std-table">
+        <thead><tr><th scope="col">Framework</th><th scope="col">ID</th><th scope="col">Title</th></tr></thead>
+        <tbody>
+          {rule.mappings.map((m) => (
+            <tr><td title={fwName[m.framework]}>{fwShort[m.framework] ?? fwName[m.framework] ?? m.framework}</td><td>{m.id ? <code>{m.id}</code> : <span class="muted">—</span>}</td><td>{m.title ?? (m.todo ? <span class="muted">TODO: {m.todo}</span> : "")}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div></div>
+  </section>
+  {rule.references.length > 0 && (
+    <section>
+      <h2 class="report-h">References</h2>
+      <ul class="refs corners">{rule.references.map((r) => <li><a href={r} rel="noreferrer">{r}</a></li>)}</ul>
+    </section>
   )}
-
-  <h2>Remediation</h2>
-  <p>{rule.remediation}</p>
-
-  <h2>Standards</h2>
-  <div class="table-scroll">
-    <table>
-      <thead><tr><th scope="col">Framework</th><th scope="col">ID</th><th scope="col">Title</th></tr></thead>
-      <tbody>
-        {rule.mappings.map((m) => (
-          <tr><td>{fwName[m.framework] ?? m.framework}</td><td>{m.id ? <code>{m.id}</code> : <span class="muted">—</span>}</td><td>{m.title ?? (m.todo ? <span class="muted">TODO: {m.todo}</span> : "")}</td></tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-  {rule.references.length > 0 && (<><h2>References</h2><ul>{rule.references.map((r) => <li><a href={r} rel="noreferrer">{r}</a></li>)}</ul></>)}
 </Base>
