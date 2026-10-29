@@ -24,12 +24,15 @@ Python 3.12+. Optional extras: `agentguard[code]` (tree-sitter taint for JS/TS t
 agentguard scan ./skills/my-skill          # a skill folder, a repo, or an MCP config file
 agentguard scan . -v                       # evidence, remediation and standards per finding
 agentguard scan . -f sarif -o ag.sarif     # also: json, markdown, html
+agentguard report -i ag.json -f html       # re-render a saved JSON report (no rescan)
 agentguard discover -f cyclonedx           # inventory as a CycloneDX 1.6 BOM
 agentguard lock && agentguard verify       # pin skills/tool definitions, then detect rug pulls with a diff
 agentguard rules explain AG-SKL-SE-002     # what a rule detects, why, and how to fix it
 ```
 
 Exit codes: `0` no findings at or above `--fail-on` (default `high`), `1` findings at or above it, `2` scanner error (including any analyzer failure — never a silent pass).
+
+The HTML report is one self-contained file you can attach or archive. It has no scripts, loads nothing from anywhere else (the fonts are embedded and a strict Content-Security-Policy is set) and works offline. It looks like the website's report: a verdict and severity counts, a finding index, and for each finding the evidence, why it matters, the fix and the standards it maps to. It prints in a light theme. The website's sample report is one, generated from an inert malicious skill in the benchmark corpus.
 
 ## What it catches
 
@@ -49,7 +52,11 @@ Exit codes: `0` no findings at or above `--fail-on` (default `high`), `1` findin
 
 ## In the browser
 
-The website's `/scan` page runs the same engine in your browser (Pyodide): paste a `SKILL.md` or MCP config, drop a folder or `.zip`, or give a public GitHub repository, folder, file or gist link. Pasted and dropped input never leaves your device (a CI test asserts zero network requests); for GitHub links your browser fetches the files straight from GitHub, pinned to a commit. npm, PyPI, MCP Registry and remote MCP server links go to the Agent Guard Web server (`web/`): pinned to an exact version, fetched through an allowlist (or probed read-only, for a remote server) and scanned in a throwaway container with no network. Reports have unlisted permalinks, rescans with current rules, factual README badges and maintainer responses. See `site/src/pages/docs/web-scanner.md` and `web/README.md`.
+The website's `/scan` page runs the same engine in your browser (Pyodide). You can paste a `SKILL.md` or MCP config, or drop a folder or `.zip`; pasted and dropped input never leaves your device (a CI test asserts zero network requests).
+
+Links go to the Agent Guard Web server (`web/`). That covers a public GitHub repository, folder, file or gist, an npm or PyPI package, an MCP Registry name, or a remote MCP server. Each is pinned to an exact commit or version, fetched through an allowlist (or probed read-only, for a remote server) and scanned in a throwaway container with no network. If the server is unavailable, GitHub links are scanned in your browser instead, with the files fetched straight from GitHub.
+
+Server reports have unlisted permalinks, rescans with current rules, factual README badges and maintainer responses. Every report downloads as JSON, SARIF, HTML, Markdown or CycloneDX. See `site/src/pages/docs/web-scanner.md` and `web/README.md`.
 
 ## CI
 
@@ -84,7 +91,7 @@ The action is offline by default. `check-hijackable: true` adds the `--check-hij
 
 ## Project layout
 
-`src/agentguard/core` is the pure engine (runs under Pyodide) and `webscan.py` its browser entry points; `io`, `net`, `judge` and `cli` are host-side. Rules are data in `rules/`, standards crosswalk in `mappings/`, fixtures in `fixtures/rules/`, benchmark in `bench/`, website and browser scanner in `site/` (deployed with `vercel.json`), Milestone 2 server design in `web/`. Design and threat model: `docs/`.
+`src/agentguard/core` is the pure engine (runs under Pyodide) and `webscan.py` its browser entry points; `io`, `net`, `judge` and `cli` are host-side. Rules are data in `rules/`, standards crosswalk in `mappings/`, fixtures in `fixtures/rules/`, benchmark in `bench/`, website and browser scanner in `site/` (deployed to Vercel with `vercel.json`), the Agent Guard Web server in `web/`, and a one-instance AWS deployment for it in `deploy/aws/` (connecting the site takes an `/api/*` rewrite, described there). Design and threat model: `docs/`.
 
 ## License
 
