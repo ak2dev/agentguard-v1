@@ -154,12 +154,13 @@ nav.main .chev { width: 10px; height: 10px; flex: none; color: var(--muted); }
 }
 .menu.wide { width: min(1180px, calc(100vw - 48px)); }
 .menu.open, .menu.closing { opacity: 1; visibility: visible; }
-.menu.open { clip-path: var(--full); animation: menu-pour .56s both; }
-.menu.closing { clip-path: var(--from); animation: menu-drain .3s both; }
+/* unhurried, so it reads as one continuous pour: about 1 s in, half that out */
+.menu.open { clip-path: var(--full); animation: menu-pour .95s both; }
+.menu.closing { clip-path: var(--from); animation: menu-drain .5s both; }
 @keyframes menu-pour {
   0% { clip-path: var(--from); opacity: 0; animation-timing-function: cubic-bezier(.45, 0, .3, 1); }
   10% { opacity: 1; }
-  36% { clip-path: var(--bar); animation-timing-function: cubic-bezier(.4, 0, .2, 1); }
+  32% { clip-path: var(--bar); animation-timing-function: cubic-bezier(.16, 1, .3, 1); }
   100% { clip-path: var(--full); opacity: 1; }
 }
 @keyframes menu-drain {
@@ -169,13 +170,13 @@ nav.main .chev { width: 10px; height: 10px; flex: none; color: var(--muted); }
   100% { clip-path: var(--from); opacity: 0; }
 }
 .menu.instant, .menu.instant * { transition: none !important; animation: none !important; }
-.menu-col, .menu-grid li, .menu-foot { opacity: 0; transform: translateY(10px); filter: blur(4px); transition: opacity .12s ease, transform .12s ease, filter .12s ease; }
-.menu.open .menu-col, .menu.open .menu-grid li, .menu.open .menu-foot { opacity: 1; transform: none; filter: none; transition: opacity .34s ease, transform .6s cubic-bezier(.22, 1, .36, 1), filter .34s ease; }
-.menu.open .menu-col:nth-child(1), .menu.open .menu-grid li:nth-child(3n + 1) { transition-delay: .2s; }
-.menu.open .menu-col:nth-child(2), .menu.open .menu-grid li:nth-child(3n + 2) { transition-delay: .25s; }
-.menu.open .menu-col:nth-child(3), .menu.open .menu-grid li:nth-child(3n + 3) { transition-delay: .3s; }
-.menu.open .menu-col:nth-child(4) { transition-delay: .35s; }
-.menu.open .menu-foot { transition-delay: .38s; }
+.menu-col, .menu-grid li, .menu-foot { opacity: 0; transform: translateY(12px); filter: blur(5px); transition: opacity .2s ease, transform .2s ease, filter .2s ease; }
+.menu.open .menu-col, .menu.open .menu-grid li, .menu.open .menu-foot { opacity: 1; transform: none; filter: none; transition: opacity .6s ease, transform 1s cubic-bezier(.16, 1, .3, 1), filter .6s ease; }
+.menu.open .menu-col:nth-child(1), .menu.open .menu-grid li:nth-child(3n + 1) { transition-delay: .3s; }
+.menu.open .menu-col:nth-child(2), .menu.open .menu-grid li:nth-child(3n + 2) { transition-delay: .38s; }
+.menu.open .menu-col:nth-child(3), .menu.open .menu-grid li:nth-child(3n + 3) { transition-delay: .46s; }
+.menu.open .menu-col:nth-child(4) { transition-delay: .54s; }
+.menu.open .menu-foot { transition-delay: .62s; }
 .menu::before { content: ""; position: absolute; left: 0; right: 0; bottom: 100%; height: 30px; }
 .menu ul { list-style: none; margin: 0; padding: 0; }
 .menu li { margin: 0; max-width: none; }
