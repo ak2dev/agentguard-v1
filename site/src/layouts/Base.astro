@@ -7,9 +7,11 @@ import interLatin from "@fontsource-variable/inter/files/inter-latin-opsz-normal
 import "@fontsource-variable/jetbrains-mono";
 import "../styles/global.css";
 import Wordmark from "../components/Wordmark.astro";
+import Logo from "../components/Logo.astro";
 
-interface Props { title: string; description?: string; wide?: boolean }
-const { title, description = "Offline-first security scanner for AI agent skills, instruction files and MCP servers." } = Astro.props;
+// `bleed` drops the content column's padding (the landing page lays out its own blocks).
+interface Props { title: string; description?: string; wide?: boolean; bleed?: boolean }
+const { title, description = "Offline-first security scanner for AI agent skills, instruction files and MCP servers.", bleed = false } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const scanEnabled = import.meta.env.PUBLIC_FEATURE_SCAN === "1";
 const path = Astro.url.pathname;
@@ -36,11 +38,12 @@ const csp = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 's
     <title>{title === "Agent Guard" ? title : `${title} · Agent Guard`}</title>
     <link rel="preload" href={interLatin} as="font" type="font/woff2" crossorigin="anonymous" />
     <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
+    <script is:inline src={`${base}/js/floater.js`} defer></script>
   </head>
   <body>
     <a class="skip" href="#content">Skip to content</a>
     <header class="site">
-      <div class="wrap bar">
+      <div class="bar">
         <a class="brand" href={`${base}/`}><Wordmark /></a>
         <nav class="main" aria-label="Main">
           <ul>
@@ -55,22 +58,30 @@ const csp = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 's
         </div>
       </div>
     </header>
+    <div class="floater" data-floater>
+      <div class="floater-in">
+        <a class="mark" href={`${base}/`} aria-label="Agent Guard home"><Logo /></a>
+        {scanEnabled
+          ? <a class="btn" href={`${base}/scan/`}>Scan a link</a>
+          : <a class="btn" href={`${base}/docs/install/`}>Install</a>}
+      </div>
+    </div>
     <main id="content">
-      <slot name="hero" />
+      {Astro.slots.has("hero") && <div class="band"><slot name="hero" /></div>}
       <div class="frame">
-        <div class="wrap main-inner">
+        <div class={bleed ? "column main-inner bleed" : "column main-inner"}>
           <slot />
         </div>
       </div>
+      {Astro.slots.has("after") && <div class="band top"><slot name="after" /></div>}
     </main>
-    <div class="frame">
+    <div class="frame plain">
       <footer class="site">
-        <div class="wrap">
+        <div class="foot-in">
           <div class="foot">
             <div>
               <a class="brand" href={`${base}/`}><Wordmark /></a>
-              <p>Open source (Apache-2.0). No analytics, no cookies, no third-party requests.</p>
-              <p>Findings are evidence for review, not verdicts. A scan with no findings never means "safe".</p>
+              <p class="foot-note">Open source (Apache-2.0). No analytics, no cookies, no third-party requests. Findings are evidence for review, not verdicts; a scan with no findings never means "safe".</p>
             </div>
             <div>
               <h2>Product</h2>
@@ -79,6 +90,15 @@ const csp = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 's
                 <li><a href={`${base}/docs/install/`}>Install</a></li>
                 <li><a href={`${base}/sample-report/`}>Sample report</a></li>
                 <li><a href={`${base}/changelog/`}>Changelog</a></li>
+              </ul>
+            </div>
+            <div>
+              <h2>Docs</h2>
+              <ul>
+                <li><a href={`${base}/docs/quickstart/`}>Quickstart</a></li>
+                <li><a href={`${base}/docs/cli/`}>CLI</a></li>
+                <li><a href={`${base}/docs/ci/`}>CI</a></li>
+                <li><a href={`${base}/docs/config/`}>Configuration</a></li>
               </ul>
             </div>
             <div>
@@ -100,10 +120,18 @@ const csp = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 's
               </ul>
             </div>
           </div>
+        </div>
+        <div class="foot-bottom">
           <p class="foot-credit">
             <span class="foot-credit-label">Part of</span>
             <span>Minor degree · MDC course projects · 3rd semester · CSE Cyber Security <span class="foot-credit-batch">(Batch 2025–2029)</span></span>
           </p>
+          <ul>
+            <li><a href={`${base}/privacy/`}>Privacy</a></li>
+            <li><a href={`${base}/security/`}>Report security issues</a></li>
+            <li><a href={`${base}/terms/`}>Terms</a></li>
+            <li><a href={`${base}/docs/limitations/`}>Limitations</a></li>
+          </ul>
         </div>
       </footer>
     </div>
