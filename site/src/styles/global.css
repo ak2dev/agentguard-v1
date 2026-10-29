@@ -136,6 +136,8 @@ nav.main a { display: inline-flex; align-items: center; gap: 6px; padding: 7px 1
 nav.main a:hover, nav.main a.menu-open { background: #1c1a17; border-color: #34302c; color: var(--fg); }
 nav.main a[aria-current="page"] { color: var(--accent); }
 nav.main .chev { width: 10px; height: 10px; flex: none; color: var(--muted); }
+/* where the links wrap onto several rows, slimmer pills keep the header as short as before */
+@media (max-width: 1100px) { nav.main a { padding: 2px 8px; } nav.main ul { gap: 2px 4px; } }
 
 /* ---- header dropdowns (public/js/menus.js) -------------------------------------------
    Centred under the bar, over the page. Opening fades and grows them from the top edge;
@@ -329,7 +331,7 @@ footer.site { border-top: 1px dashed var(--line); padding: 32px 0 0; color: var(
      is where it starts (public/js/home.js sets it; 86px under a one-row header). */
   --overhang: 30px;
   min-height: clamp(480px, calc(100vh - var(--hero-top, 86px) + var(--overhang)), 1100px); display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 96px clamp(20px, 5vw, 80px) calc(96px + var(--overhang)); text-align: center; color: var(--on-orange);
+  padding: clamp(40px, 10vh, 96px) clamp(20px, 5vw, 80px) calc(clamp(40px, 10vh, 96px) + var(--overhang)); text-align: center; color: var(--on-orange);
   background: radial-gradient(70% 45% at 50% 108%, var(--glow) 0%, rgba(248, 98, 24, 0) 100%), linear-gradient(180deg, #c8470e 0%, var(--panel) 62%, #e4560f 100%);
 }
 .hero::before {
@@ -339,9 +341,16 @@ footer.site { border-top: 1px dashed var(--line); padding: 32px 0 0; color: var(
   -webkit-mask-image: radial-gradient(85% 95% at 50% 70%, rgba(0,0,0,.55) 0%, rgba(0,0,0,.28) 55%, transparent 100%);
   mask-image: radial-gradient(85% 95% at 50% 70%, rgba(0,0,0,.55) 0%, rgba(0,0,0,.28) 55%, transparent 100%);
 }
-.hero h1 { color: var(--on-orange); font-size: clamp(2.5rem, 3.35vw, 4rem); font-weight: 500; letter-spacing: -0.034em; line-height: 1; max-width: 12em; margin: 0 auto 54px; }
-.hero p { color: var(--on-orange-muted); font-size: clamp(1.05rem, 1.1vw, 1.3rem); line-height: 1.3; margin: 0 auto 64px; max-width: 36em; text-wrap: balance; letter-spacing: -0.01em; }
-.hero code { background: rgba(0,0,0,.2); border-color: rgba(255,255,255,.22); color: #fff; }
+/* the hero's text keeps the earlier site's sizes */
+.hero h1 { color: var(--on-orange); font-size: clamp(2.4rem, 4.6vw, 3.75rem); font-weight: 600; letter-spacing: -0.028em; line-height: 1.02; max-width: 16em; margin: 44px auto 34px; }
+.hero p { color: var(--on-orange-muted); font-size: clamp(1rem, 1.3vw, 1.1rem); line-height: 1.4; margin: 0 auto 48px; max-width: 32em; text-wrap: balance; }
+.hero code { background: rgba(0,0,0,.28); border-color: rgba(255,255,255,.18); color: #fff; }
+.hero .hero-actions { gap: 12px; }
+.hero .btn.light { background: #fff8f2; color: #1d1a17; border-color: #fff8f2; padding: 15px 30px; font-size: 1rem; }
+.hero .btn.light:hover { background: #fff; }
+.announce { display: inline-flex; align-items: center; gap: 12px; border: 1px solid rgba(255,255,255,.55); border-radius: 999px; padding: 6px 7px 6px 20px; color: #fff; text-decoration: none; font-weight: 500; font-size: 1rem; background: rgba(0,0,0,.16); }
+.announce:hover { color: #fff; background: rgba(0,0,0,.18); }
+.announce .arrow { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #fff; color: var(--panel); font-weight: 900; }
 .hero-actions { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; }
 
 /* capability graph: a canvas globe (public/js/globe.js) that places each callout beside
@@ -731,8 +740,8 @@ footer.site { border-top: 1px dashed var(--line); padding: 32px 0 0; color: var(
   nav.main a { white-space: nowrap; font-size: 1rem; padding: 6px 9px; }
   .bar-actions { display: none; }
   .band { padding-inline: 12px; }
-  .hero { min-height: 0; padding: 72px 20px 110px; }
-  .hero h1 { margin-bottom: 28px; }
+  .hero { min-height: 0; padding: 72px 20px; }
+  .hero h1 { margin: 28px auto 24px; }
   .hero p { margin-bottom: 36px; }
   .section { padding-top: 88px; }
   .section-head { margin-bottom: 40px; }

@@ -90,12 +90,16 @@ const strip = [
 ---
 <Base title="Agent Guard" bleed>
   <section class="hero" slot="hero" aria-labelledby="hero-title">
+    {scanEnabled
+      ? <a class="announce" href={`${base}/scan/`}>New · Scan skills and MCP configs in your browser <span class="arrow" aria-hidden="true">→</span></a>
+      : <a class="announce" href={`${base}/benchmarks/`}>Rule pack {meta.rule_pack} · measured on real repositories <span class="arrow" aria-hidden="true">→</span></a>}
     <h1 id="hero-title">Check what your agent is about to trust</h1>
     <p>Agent Guard scans agent skills, instruction files and MCP servers before anything is installed, enabled or merged — and says exactly why, and how to fix it.</p>
     <div class="hero-actions">
       {scanEnabled
         ? <a class="btn light" href={`${base}/scan/`}>Scan a link</a>
-        : <a class="btn light" href={`${base}/docs/install/`}>Install for free</a>}
+        : <a class="btn light" href={`${base}/docs/install/`}>Install</a>}
+      <code>uvx agentguard scan</code>
     </div>
   </section>
 
