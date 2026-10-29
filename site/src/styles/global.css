@@ -119,6 +119,8 @@ a:hover { color: var(--accent-hover); }
 .band { position: relative; padding: 10px 20px; }
 .band::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; border-top: 1px dashed var(--line); }
 .band.top::before { content: ""; position: absolute; left: 0; right: 0; top: 0; border-top: 1px dashed var(--line); }
+/* a band right above the footer leaves its bottom rule to the footer's */
+.band.top::after { display: none; }
 
 /* ---- header ------------------------------------------------------------------------ */
 header.site { position: relative; z-index: 20; background: var(--bg); }
@@ -231,6 +233,8 @@ dl.kv dd { margin: 0; }
 }
 
 /* ---- footer ------------------------------------------------------------------ */
+/* the footer is set off from the page by a full-width dashed rule, like the header */
+.foot-band { border-top: 1px dashed var(--line); }
 footer.site { padding: 32px 0 0; color: var(--muted); font-size: .95rem; }
 /* in the content column, with the same side padding as the page above it */
 .foot-in { padding: 0 clamp(16px, 3.2vw, 44px); }

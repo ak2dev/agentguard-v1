@@ -75,65 +75,67 @@ const csp = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 's
       </div>
       {Astro.slots.has("after") && <div class="band top"><slot name="after" /></div>}
     </main>
-    <div class="frame">
-      <footer class="site column">
-        <div class="foot-in">
-          <div class="foot">
-            <div>
-              <a class="brand" href={`${base}/`}><Wordmark /></a>
-              <p class="foot-note">Open source (Apache-2.0). No analytics, no cookies, no third-party requests. Findings are evidence for review, not verdicts; a scan with no findings never means "safe".</p>
-            </div>
-            <div>
-              <h2>Product</h2>
-              <ul>
-                {scanEnabled && <li><a href={`${base}/scan/`}>Web scanner</a></li>}
-                <li><a href={`${base}/docs/install/`}>Install</a></li>
-                <li><a href={`${base}/sample-report/`}>Sample report</a></li>
-                <li><a href={`${base}/changelog/`}>Changelog</a></li>
-              </ul>
-            </div>
-            <div>
-              <h2>Docs</h2>
-              <ul>
-                <li><a href={`${base}/docs/quickstart/`}>Quickstart</a></li>
-                <li><a href={`${base}/docs/cli/`}>CLI</a></li>
-                <li><a href={`${base}/docs/ci/`}>CI</a></li>
-                <li><a href={`${base}/docs/config/`}>Configuration</a></li>
-              </ul>
-            </div>
-            <div>
-              <h2>Evidence</h2>
-              <ul>
-                <li><a href={`${base}/rules/`}>Rule catalog</a></li>
-                <li><a href={`${base}/coverage/`}>Standards coverage</a></li>
-                <li><a href={`${base}/benchmarks/`}>Benchmarks</a></li>
-                <li><a href={`${base}/docs/limitations/`}>Limitations</a></li>
-              </ul>
-            </div>
-            <div>
-              <h2>Trust</h2>
-              <ul>
-                <li><a href={`${base}/security/`}>Security</a></li>
-                <li><a href={`${base}/privacy/`}>Privacy</a></li>
-                <li><a href={`${base}/terms/`}>Terms</a></li>
-                <li><a href={`${base}/.well-known/security.txt`}>security.txt</a></li>
-              </ul>
+    <div class="foot-band">
+      <div class="frame">
+        <footer class="site column">
+          <div class="foot-in">
+            <div class="foot">
+              <div>
+                <a class="brand" href={`${base}/`}><Wordmark /></a>
+                <p class="foot-note">Open source (Apache-2.0). No analytics, no cookies, no third-party requests. Findings are evidence for review, not verdicts; a scan with no findings never means "safe".</p>
+              </div>
+              <div>
+                <h2>Product</h2>
+                <ul>
+                  {scanEnabled && <li><a href={`${base}/scan/`}>Web scanner</a></li>}
+                  <li><a href={`${base}/docs/install/`}>Install</a></li>
+                  <li><a href={`${base}/sample-report/`}>Sample report</a></li>
+                  <li><a href={`${base}/changelog/`}>Changelog</a></li>
+                </ul>
+              </div>
+              <div>
+                <h2>Docs</h2>
+                <ul>
+                  <li><a href={`${base}/docs/quickstart/`}>Quickstart</a></li>
+                  <li><a href={`${base}/docs/cli/`}>CLI</a></li>
+                  <li><a href={`${base}/docs/ci/`}>CI</a></li>
+                  <li><a href={`${base}/docs/config/`}>Configuration</a></li>
+                </ul>
+              </div>
+              <div>
+                <h2>Evidence</h2>
+                <ul>
+                  <li><a href={`${base}/rules/`}>Rule catalog</a></li>
+                  <li><a href={`${base}/coverage/`}>Standards coverage</a></li>
+                  <li><a href={`${base}/benchmarks/`}>Benchmarks</a></li>
+                  <li><a href={`${base}/docs/limitations/`}>Limitations</a></li>
+                </ul>
+              </div>
+              <div>
+                <h2>Trust</h2>
+                <ul>
+                  <li><a href={`${base}/security/`}>Security</a></li>
+                  <li><a href={`${base}/privacy/`}>Privacy</a></li>
+                  <li><a href={`${base}/terms/`}>Terms</a></li>
+                  <li><a href={`${base}/.well-known/security.txt`}>security.txt</a></li>
+                </ul>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="foot-bottom">
-          <p class="foot-credit">
-            <span class="foot-credit-label">Part of</span>
-            <span>Minor degree · MDC course projects · 3rd semester · CSE Cyber Security <span class="foot-credit-batch">(Batch 2025–2029)</span></span>
-          </p>
-          <ul>
-            <li><a href={`${base}/privacy/`}>Privacy</a></li>
-            <li><a href={`${base}/security/`}>Report security issues</a></li>
-            <li><a href={`${base}/terms/`}>Terms</a></li>
-            <li><a href={`${base}/docs/limitations/`}>Limitations</a></li>
-          </ul>
-        </div>
-      </footer>
+          <div class="foot-bottom">
+            <p class="foot-credit">
+              <span class="foot-credit-label">Part of</span>
+              <span>Minor degree · MDC course projects · 3rd semester · CSE Cyber Security <span class="foot-credit-batch">(Batch 2025–2029)</span></span>
+            </p>
+            <ul>
+              <li><a href={`${base}/privacy/`}>Privacy</a></li>
+              <li><a href={`${base}/security/`}>Report security issues</a></li>
+              <li><a href={`${base}/terms/`}>Terms</a></li>
+              <li><a href={`${base}/docs/limitations/`}>Limitations</a></li>
+            </ul>
+          </div>
+        </footer>
+      </div>
     </div>
   </body>
 </html>
