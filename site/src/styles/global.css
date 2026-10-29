@@ -282,10 +282,12 @@ footer.site { padding: 32px 0 0; color: var(--muted); font-size: .95rem; }
   position: relative; overflow: hidden; isolation: isolate; border-radius: var(--radius-lg); max-width: var(--outer); margin: 0 auto;
   min-height: clamp(560px, calc(100vh - 102px), 860px); display: flex; flex-direction: column; align-items: center; justify-content: center;
   padding: 96px clamp(20px, 5vw, 80px) 120px; text-align: center; color: var(--on-orange);
+  /* the hero and the call-to-action band use the panel orange a little lighter */
+  --orange: #f16237;
   background:
-    radial-gradient(26% 30% at 50% 104%, #fffbe2 0%, #fde8a6 26%, rgba(250, 190, 110, .75) 46%, rgba(243, 120, 60, .25) 70%, rgba(239, 81, 34, 0) 100%),
-    radial-gradient(60% 50% at 50% 100%, rgba(246, 110, 50, .55), rgba(239, 81, 34, 0) 70%),
-    linear-gradient(180deg, #ee5021 0%, var(--orange) 55%, #f0561f 100%);
+    radial-gradient(26% 30% at 50% 104%, #fffbe2 0%, #fde8a6 26%, rgba(250, 190, 110, .75) 46%, rgba(243, 120, 60, .25) 70%, rgba(241, 98, 55, 0) 100%),
+    radial-gradient(60% 50% at 50% 100%, rgba(246, 110, 50, .55), rgba(241, 98, 55, 0) 70%),
+    linear-gradient(180deg, #f06136 0%, var(--orange) 55%, #f16635 100%);
 }
 .hero::before {
   content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
@@ -510,9 +512,10 @@ footer.site { padding: 32px 0 0; color: var(--muted); font-size: .95rem; }
 .cta-band {
   position: relative; overflow: hidden; isolation: isolate; max-width: var(--outer); margin: 0 auto; border-radius: var(--radius-lg); text-align: center; color: #fff;
   padding: clamp(88px, 9vw, 150px) 20px 0;
+  --orange: #f16237;
   background:
-    radial-gradient(24% 34% at 50% 100%, #fffbe2 0%, #fde8a6 26%, rgba(250, 190, 110, .7) 46%, rgba(243, 120, 60, .2) 72%, rgba(239, 81, 34, 0) 100%),
-    linear-gradient(180deg, #ee5021 0%, var(--orange) 70%, #f0561f 100%);
+    radial-gradient(24% 34% at 50% 100%, #fffbe2 0%, #fde8a6 26%, rgba(250, 190, 110, .7) 46%, rgba(243, 120, 60, .2) 72%, rgba(241, 98, 55, 0) 100%),
+    linear-gradient(180deg, #f06136 0%, var(--orange) 70%, #f16635 100%);
 }
 .cta-band::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background-image: radial-gradient(rgba(255, 236, 214, .42) .7px, transparent 1px); background-size: 5px 4px; -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,.45), rgba(0,0,0,.2)); mask-image: linear-gradient(to bottom, rgba(0,0,0,.45), rgba(0,0,0,.2)); }
 .cta-band h2 { position: relative; color: #fff; font-size: clamp(2.3rem, 3.35vw, 4rem); font-weight: 500; letter-spacing: -0.034em; line-height: 1.02; margin: 0 0 34px; }
@@ -527,7 +530,7 @@ footer.site { padding: 32px 0 0; color: var(--muted); font-size: .95rem; }
 .floaties .f5 { --r: 4deg; right: 21%; top: 37%; animation-delay: -3s; } .floaties .f6 { --r: -22deg; right: 7%; top: 48%; animation-delay: -5s; }
 @keyframes bob { to { transform: rotate(var(--r)) translateY(-14px); } }
 @media (max-width: 760px) { .floaties { display: none; } }
-.cta-strip { position: relative; overflow: hidden; border-top: 1px solid rgba(255,255,255,.14); background: rgba(239, 81, 34, .55); }
+.cta-strip { position: relative; overflow: hidden; border-top: 1px solid rgba(255,255,255,.14); background: rgba(241, 98, 55, .55); }
 .cta-strip .marquee { gap: 54px; padding: 20px 0; animation-duration: 50s; }
 .cta-strip .marquee span { color: #fff; font-size: 1.06rem; font-weight: 500; }
 .cta-strip .marquee span::before { display: none; }
