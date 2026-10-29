@@ -231,9 +231,9 @@ dl.kv dd { margin: 0; }
 }
 
 /* ---- footer ------------------------------------------------------------------ */
-.frame.plain { background-image: none; }
 footer.site { padding: 32px 0 0; color: var(--muted); font-size: .95rem; }
-.foot-in { padding: 0 clamp(16px, 2.2vw, 36px); }
+/* in the content column, with the same side padding as the page above it */
+.foot-in { padding: 0 clamp(16px, 3.2vw, 44px); }
 .foot { display: grid; grid-template-columns: minmax(180px, 1fr) repeat(4, minmax(0, 1fr)); gap: 32px 28px; padding-bottom: 64px; }
 .foot .brand { font-size: 1.2rem; }
 .foot .brand svg { width: 30px; height: 30px; }
@@ -243,7 +243,7 @@ footer.site { padding: 32px 0 0; color: var(--muted); font-size: .95rem; }
 .foot li { margin: 0 0 10px; }
 .foot a { color: var(--fg); text-decoration: none; font-weight: 500; font-size: 1rem; }
 .foot a:hover { color: var(--accent); }
-.foot-bottom { position: relative; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 24px; padding: 22px clamp(16px, 2.2vw, 36px) 26px; font-size: .88rem; }
+.foot-bottom { position: relative; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 24px; padding: 22px clamp(16px, 3.2vw, 44px) 26px; font-size: .88rem; }
 .foot-bottom::before { content: ""; position: absolute; left: 0; right: 0; top: 0; border-top: 1px dashed var(--line); }
 .foot-bottom ul { display: flex; flex-wrap: wrap; list-style: none; margin: 0; padding: 0; }
 .foot-bottom li + li::before { content: "|"; color: var(--line-2); margin: 0 9px; }
