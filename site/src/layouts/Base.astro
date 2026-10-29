@@ -10,10 +10,9 @@ import Wordmark from "../components/Wordmark.astro";
 import Logo from "../components/Logo.astro";
 import HeaderMenus from "../components/HeaderMenus.astro";
 
-// `bleed` drops the content column's padding (the landing page lays out its own blocks);
-// `black` gives the page a pure black background (html.black in global.css).
-interface Props { title: string; description?: string; wide?: boolean; bleed?: boolean; black?: boolean }
-const { title, description = "Offline-first security scanner for AI agent skills, instruction files and MCP servers.", bleed = false, black = false } = Astro.props;
+// `bleed` drops the content column's padding (the landing page lays out its own blocks).
+interface Props { title: string; description?: string; wide?: boolean; bleed?: boolean }
+const { title, description = "Offline-first security scanner for AI agent skills, instruction files and MCP servers.", bleed = false } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const scanEnabled = import.meta.env.PUBLIC_FEATURE_SCAN === "1";
 const path = Astro.url.pathname;
@@ -28,14 +27,14 @@ const nav = [
 const csp = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests";
 ---
 <!doctype html>
-<html lang="en" class={black ? "black" : undefined}>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="Content-Security-Policy" content={csp} />
     <meta name="referrer" content="no-referrer" />
     <meta name="color-scheme" content="dark" />
-    <meta name="theme-color" content={black ? "#000000" : "#0e0d0c"} />
+    <meta name="theme-color" content="#0e0d0c" />
     <meta name="description" content={description} />
     <title>{title === "Agent Guard" ? title : `${title} · Agent Guard`}</title>
     <link rel="preload" href={interLatin} as="font" type="font/woff2" crossorigin="anonymous" />
