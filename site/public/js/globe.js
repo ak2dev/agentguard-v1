@@ -12,7 +12,7 @@
 
   const DEG = Math.PI / 180;
   const TILT = 14 * DEG;           // latitude at the centre of the view
-  const SPEED = 3.6 * DEG;         // per second, west to east as the Earth turns
+  const SPEED = 2.4 * DEG;         // per second, west to east as the Earth turns
   const START = -66 * DEG;         // centre longitude when it starts turning
   const REST = -78 * DEG;          // centre longitude with reduced motion
   const STEP = 1.1;                // degrees between land dots
