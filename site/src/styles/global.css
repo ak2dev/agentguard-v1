@@ -273,7 +273,16 @@ tbody tr:hover { background: var(--surface); }
 .rules-table td:nth-child(4) { color: var(--fg-2); }
 .rules-table td:last-child { font-size: .88rem; }
 .h-count { margin-left: 12px; font-size: .95rem; font-weight: 400; letter-spacing: 0; color: var(--muted); white-space: nowrap; }
-.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; margin: 18px 0; }
+/* separate square cards; column counts divide 12, so rows stay full */
+.cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 18px 0; }
+.cards > .card { position: relative; border-radius: 0; transition: background-color .15s ease, border-color .15s ease; }
+/* the title link covers its whole card, so the card is the click target */
+.cards > .card h2 a::after { content: ""; position: absolute; inset: 0; }
+.cards > .card:hover { background: var(--surface-2); border-color: #34302c; }
+.cards > .card:has(a:focus-visible) { outline: 2px solid var(--accent); outline-offset: -2px; }
+.cards > .card a:focus-visible { outline: 0; }
+@media (max-width: 1100px) { .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .cards { grid-template-columns: minmax(0, 1fr); } }
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 20px; }
 .card h2, .card h3 { margin-top: 0; }
 .card h2 { font-size: 1.15rem; font-weight: 600; letter-spacing: -0.01em; }
