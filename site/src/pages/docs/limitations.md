@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/Doc.astro
 title: Limitations
-description: What Agent Guard does not do, stated plainly.
+description: What Agent Guard does not do yet, stated plainly, and what comes next.
 ---
 
 # Limitations
@@ -18,3 +18,17 @@ description: What Agent Guard does not do, stated plainly.
 - **Benchmark caveats.** Malicious and adversarial items are synthetic, written by the same person as the rules; the round-4 held-out items were scanned before the round-4 rules existed, but their author knew what the rules would target. The 163 real benign skills and servers come from eight vendor repositories, and rules were tuned against all of them except microsoft/skills. Before each tuning round, the next repositories were scanned once: 16 of 43, then 7 of 28, then 1 of 79 benign items were flagged at HIGH. Real skills unlike those repositories will produce more false positives. MEDIUM is noisy on real code (about 15% of benign items).
 - **Some findings are downgraded rather than removed.** A quoted prompt pattern in a reference document, a chat-template token in a code span, a CLI reference that documents an approval flag, or quarantine removal on a Homebrew-installed binary is reported at MEDIUM instead of HIGH or CRITICAL. A payload written to look like such a mention is still reported, but at MEDIUM.
 - **A few client config paths are unverified** because the vendor does not document them: Claude Desktop on Linux (no official build), Claude Code's plugin folder, and the legacy Windsurf and `~/.codex/skills` folders. `agentguard discover` labels them and says why; everything else was checked against vendor documentation (see `docs/sources.md`).
+
+## Next mile
+
+What comes after the first version, roughly in order. Each item closes a limitation above or a gap that real use will expose.
+
+1. **Host the scan server.** The site runs on Vercel; the Agent Guard Web server still needs a public host that can run Docker containers with `--network none` (ideally gVisor). Until then it runs locally with `docker compose up`, and the public site scans GitHub links in the browser instead.
+2. **First release.** Publish 0.1.0 to PyPI and tag the GitHub Action, with Sigstore-signed artifacts and a CycloneDX SBOM (the release workflow is in place).
+3. **Sandboxed dynamic analysis.** Run servers and skill scripts in an isolated, credential-free sandbox and record what they actually do: processes, files touched, connections attempted. This reaches behavior a static scan cannot see, such as code downloaded at run time.
+4. **Runtime enforcement.** A gateway between the agent and its MCP servers that checks tool definitions against `agentguard.lock` on every connection, so a rug pull is blocked rather than found at the next scan.
+5. **Independent malicious samples.** Measure against real malicious skills and attacks written by other people, not only the author's synthetic set, and bring MEDIUM noise on real code down.
+6. **Close known detection gaps.** Credential paths built with `path.join`, byte transforms without a recognizable decoder, JS/TS taint through default exports, re-exports and class methods, and tree-sitter taint across functions and files.
+7. **Supply-chain depth.** Full Sigstore certificate-chain verification for provenance, and CycloneDX 1.7 output.
+8. **Standards updates.** AIVSS v1.0 scoring when it is published, and rules for the NSA MCP guidance items that have none yet (audit logs, denial of service, logging and detection).
+9. **Policy as code.** Rego and CEL adapters next to the built-in policy engine.

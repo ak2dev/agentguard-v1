@@ -311,9 +311,11 @@ a.pill:hover { border-color: var(--accent); color: var(--accent); }
 .doc-nav a[aria-current="page"] { color: var(--fg); background: var(--surface-2); }
 .doc h1 { font-size: clamp(2rem, 3.6vw, 2.6rem); }
 .doc h1 + p { font-size: 1.05rem; color: var(--muted); }
+.doc :not(pre) > code { overflow-wrap: anywhere; }
 @media (max-width: 860px) {
-  .doc-layout { grid-template-columns: 1fr; gap: 12px; }
+  .doc-layout { grid-template-columns: minmax(0, 1fr); gap: 12px; }
   .doc-nav ul { position: static; display: flex; flex-wrap: wrap; gap: 4px; }
+  .doc > table { display: block; overflow-x: auto; }
 }
 
 /* ---- footer ------------------------------------------------------------------ */
@@ -879,9 +881,11 @@ footer.site { border-top: 1px dashed var(--line); padding: 32px 0 0; color: var(
   th, td { padding: 8px 8px; }
   .bar { min-height: auto; }
   .bar { gap: 8px 16px; }
-  nav.main { order: 3; flex-basis: 100%; overflow-x: auto; }
-  nav.main ul { flex-wrap: nowrap; justify-content: flex-start; gap: 2px; padding-bottom: 4px; }
-  nav.main a { white-space: nowrap; font-size: 1rem; padding: 6px 9px; }
+  /* Two rows of three fixed slots: every link stays visible, and the geometry does not
+     depend on the font's widths (see tests/e2e/navigation.spec.mjs). */
+  nav.main { order: 3; flex-basis: 100%; }
+  nav.main ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; padding-bottom: 4px; }
+  nav.main a { display: flex; justify-content: center; white-space: nowrap; font-size: 1rem; padding: 6px 4px; }
   .bar-actions { display: none; }
   .band { padding-inline: 12px; }
   .hero { min-height: 0; padding: 72px 20px; }

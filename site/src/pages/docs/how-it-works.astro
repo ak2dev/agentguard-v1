@@ -4,10 +4,67 @@ import Pipeline from "../../components/charts/Pipeline.astro";
 import Trifecta from "../../components/charts/Trifecta.astro";
 import FlowPath from "../../components/charts/FlowPath.astro";
 import LockVerify from "../../components/charts/LockVerify.astro";
-const frontmatter = { title: "How it works", description: "The scan pipeline, capability labels, toxic flows and rug-pull detection." };
+const frontmatter = { title: "How it works", description: "Why Agent Guard exists, the gaps it closes, the scan pipeline, the architecture, toxic flows and rug-pull detection." };
 ---
 <Doc frontmatter={frontmatter}>
   <h1>How it works</h1>
+  <p>Why Agent Guard exists, what other scanners leave open, and how a scan works from input to report.</p>
+
+  <h2>The problem</h2>
+  <p>Coding agents now install skills (<code>SKILL.md</code> bundles), follow instruction files (<code>AGENTS.md</code>, <code>CLAUDE.md</code>, Cursor rules) and connect to MCP servers. Each one runs with the agent's access: your files, your shell, your credentials and the network. The model reads their text as instructions, and some of it runs before the model sees it (Claude Code's <code>!</code> commands and skill hooks).</p>
+  <p>That makes them a supply chain with very little review. A skill can tell the agent to "install a prerequisite" that is malware, hide instructions in invisible Unicode or an HTML comment, or read <code>~/.ssh</code> and post it to a webhook. Often the attack is plain language, which no antivirus signature matches. A server can change its tools after you approve it (a rug pull). A skill can depend on a GitHub account, package or domain that anyone can now register (SkillJacking: AIR Security counted 925 such skills).</p>
+  <p>The question to answer, before anything is installed, enabled or merged: <strong>is it safe to give this skill or MCP server to my agent, and if not, exactly why, and how do I fix it?</strong></p>
+
+  <h2>Gaps in current tools</h2>
+  <p>Checked against each project's own documentation on 2026-10-30. These tools change quickly; see their pages for the current state.</p>
+  <div class="table-scroll"><table>
+    <thead><tr><th>Tool</th><th>What it covers</th><th>What it leaves open</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://github.com/snyk/agent-scan">Snyk Agent Scan</a></td><td>MCP servers, skills and agent configs on your machine</td><td>Starts stdio MCP servers by running the commands in your config (it asks first; CI needs <code>--dangerously-run-mcp-servers</code>). Sends configs, tool descriptions and skill files to the Snyk API and needs a Snyk token. Its docs don't describe pinning tool definitions between scans.</td></tr>
+      <tr><td><a href="https://github.com/cisco-ai-defense/skill-scanner">Cisco skill-scanner</a></td><td>Agent skills: static, bytecode and dataflow analyzers run locally</td><td>Skills only, no MCP configs or servers. The LLM, VirusTotal and AI Defense analyzers need API keys and send content out.</td></tr>
+      <tr><td><a href="https://github.com/cisco-ai-defense/mcp-scanner">Cisco mcp-scanner</a></td><td>MCP servers, tools, prompts and resources</td><td>MCP only, no skills. Connects to live servers and launches stdio servers to read their tools. The LLM and AI Defense engines need API keys.</td></tr>
+      <tr><td><a href="https://www.openclaw.ai/blog/virustotal-partnership">ClawHub + VirusTotal</a></td><td>Skills published to ClawHub, at publish time and daily</td><td>Only covers that one registry, and uploads bundles to VirusTotal. OpenClaw says a skill that uses natural language to instruct an agent to do something malicious "won't trigger a virus signature".</td></tr>
+    </tbody>
+  </table></div>
+  <p>Common gaps across them:</p>
+  <ul>
+    <li><strong>Scanning by running.</strong> Listing a server's tools by starting it executes the code you are trying to judge.</li>
+    <li><strong>Your setup leaves the machine.</strong> Cloud analysis needs an account and sends what you have installed to a third party.</li>
+    <li><strong>Split coverage.</strong> Skills, instruction files, client configs, tool metadata and server code are checked by different tools, or not at all, so a risk that spans them is missed.</li>
+    <li><strong>Signatures miss language.</strong> Malicious instructions are text, not malware.</li>
+    <li><strong>Known bypasses.</strong> <a href="https://blog.trailofbits.com/2026/06/03/the-sorry-state-of-skill-distribution/">Trail of Bits</a> got four malicious skills past ClawHub, the skills.sh scanners and Cisco's skill-scanner (June 2026), and the <a href="https://labs.cloudsecurityalliance.org/research/csa-research-note-ai-agent-skill-scanner-bypass-20260610-csa/">Cloud Security Alliance</a> found that obfuscation and splitting content across files degraded commercial scanners.</li>
+    <li><strong>One point in time.</strong> A scan at install says nothing about the server you connect to next week, or about dependencies that can be taken over.</li>
+    <li><strong>False assurance.</strong> "Benign" or "no issues" reads as safe, even when parts of the input were never analyzed.</li>
+  </ul>
+
+  <h2>How Agent Guard closes them</h2>
+  <div class="table-scroll"><table>
+    <thead><tr><th>Gap</th><th>Agent Guard</th></tr></thead>
+    <tbody>
+      <tr><td>Scanning by running</td><td>Parse-only. A process-wide audit hook blocks process creation; the only exception is a hardened, read-only <code>git</code> call in PR mode. Tool definitions come from manifests, <code>server.json</code> and source code. Listing a live server is opt-in, read-only and for remote servers only; stdio servers are never started.</td></tr>
+      <tr><td>Your setup leaves the machine</td><td>Offline by default, no account, no telemetry. Network features are opt-in flags, and every report lists the ones used. In the browser, pasted and dropped input never leaves the device (a CI test asserts zero network requests).</td></tr>
+      <tr><td>Split coverage</td><td>One engine for skills, instruction files, MCP client configs, MCP tool metadata and server code, across Claude, Cursor, VS Code, Copilot, Codex, Gemini CLI, Windsurf, Zed, Cline and OpenClaw.</td></tr>
+      <tr><td>Signatures miss language</td><td>Instruction-layer rules (overrides, concealment, approval bypass, persistence, paraphrased download-and-run lures), hidden-content detection with decoding and rescanning, and an optional LLM judge for paraphrase that can never raise a finding to CRITICAL.</td></tr>
+      <tr><td>Known bypasses</td><td>The published techniques are reproduced inertly in the benchmark and covered: blank-line padding, a script inside an Office document, Python bytecode that does not match its source, registry redirection, encoded and split payloads (linked across files of a skill). What is still missed is listed in <a href="../limitations/">Limitations</a>.</td></tr>
+      <tr><td>Per-component analysis</td><td>Toxic flows: capability labels on every component, combined across everything active in one agent session, reported as a concrete path.</td></tr>
+      <tr><td>One point in time</td><td><code>lock</code> / <code>verify</code> pins skill files and normalized tool definitions and shows any change as a diff. <code>--check-hijackable</code> finds dependencies anyone can claim. A signed IOC feed flags known-bad hashes, domains and publishers.</td></tr>
+      <tr><td>False assurance</td><td>A clean scan says "No findings from N rules (rule pack vX)", never "safe". Analyzers that did not run and content skipped by limits are listed. An analyzer error exits with code 2, never a silent pass. Benchmark misses are published.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Objectives</h2>
+  <ol>
+    <li><strong>Answer before install:</strong> whether a skill, instruction file or MCP server is risky, why (evidence at file and line), and how to fix it.</li>
+    <li><strong>Never execute what is scanned</strong>, on a laptop, in CI or on a server.</li>
+    <li><strong>Private by default:</strong> offline, no account, no telemetry.</li>
+    <li><strong>One engine everywhere:</strong> the CLI, the GitHub Action, the browser and the web server produce the same report from the same input.</li>
+    <li><strong>Honest and repeatable:</strong> never "safe"; same input and rule pack give a byte-identical report.</li>
+    <li><strong>Measured accuracy:</strong> CRITICAL precision of at least 0.95, a benign false-positive rate of at most 0.02 at HIGH, and 100 skills plus 20 server configs in under 10 seconds, all published on the <a href="../../benchmarks/">benchmarks</a> page.</li>
+    <li><strong>Standards-aligned:</strong> every rule maps to the OWASP Top 10 for Agentic Applications, OWASP MCP Top 10, OWASP Agentic Skills Top 10, OWASP LLM Top 10, the NSA MCP guidance and CWE, with an AIVSS score.</li>
+  </ol>
+
+  <h2>Methodology</h2>
+  <p>Every scan runs the same seven stages.</p>
 
   <Pipeline />
 
@@ -23,12 +80,43 @@ const frontmatter = { title: "How it works", description: "The scan pipeline, ca
 
   <p>The engine is a pure function of its inputs: <code>scan(tree, options) → report</code>. It never touches the filesystem or network itself, so the same input and rule pack always produce the same report, and the same engine runs in the browser under Pyodide.</p>
 
-  <h2>Severity rules</h2>
+  <h3>How rules are built and checked</h3>
+  <ul>
+    <li><strong>Rules are data.</strong> Each rule is YAML in the rule pack with an unsafe and a safe fixture; CI runs every fixture, so a rule that stops firing, or starts firing on its safe example, fails the build.</li>
+    <li><strong>A benchmark with held-out rounds.</strong> 123 synthetic items (76 attacks, 47 benign look-alikes) and 163 real benign skills and servers from eight vendor repositories at pinned commits. Each tuning round is first measured on items the rules have not seen. CI fails if the committed results are stale or a change makes any item worse.</li>
+    <li><strong>Primary sources, dated.</strong> Specs, client config paths and attack techniques are checked against vendor documentation or the original research, and each check is recorded with its date in <code>docs/sources.md</code>.</li>
+    <li><strong>Safety and determinism tests.</strong> No process may start across the whole fixture corpus; the same input must give byte-identical output; the browser scanner must make zero requests for pasted input.</li>
+  </ul>
+
+  <h3>Severity rules</h3>
   <ul>
     <li><strong>CRITICAL requires high confidence</strong> and deterministic evidence; a lower-confidence critical match is reported as high (tagged <code>capped-by-confidence</code>).</li>
     <li>Matches inside hidden or encoded content are escalated one level (tagged <code>hidden</code>).</li>
     <li>Results from the optional LLM judge can never be critical.</li>
   </ul>
+
+  <h2>Architecture</h2>
+  <p>One pure-Python engine, wrapped by three hosts. The hosts do the I/O; the engine only turns a file tree into a report.</p>
+  <pre><code>{`                 ┌──────────────────────────────────────┐
+                 │  Engine (agentguard.core)            │
+                 │  rule pack · analyzers · correlation │
+                 │  scoring · renderers                 │
+                 └──────────────────┬───────────────────┘
+        ┌───────────────────────────┼────────────────────────────┐
+  CLI + GitHub Action       Browser /scan page          Agent Guard Web server
+  discover · load · lock    Pyodide in a Web Worker     API → dispatcher → fetcher
+  opt-in network, judge     input stays on device       → no-network container
+  SARIF to code scanning    GitHub links pinned         → stored report`}</code></pre>
+  <div class="table-scroll"><table>
+    <thead><tr><th>Part</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td>Engine</td><td><code>src/agentguard/core</code>: no filesystem, network or clock access. Loads the rule pack, runs the analyzers, correlates, scores and renders JSON, SARIF, Markdown, HTML and CycloneDX. <code>schemas/report.v1.json</code> is the only contract between the engine and every UI.</td></tr>
+      <tr><td>CLI and GitHub Action</td><td>Finds agent configuration on the machine, loads folders, repositories and configs under safety limits, writes and checks lockfiles, and runs the opt-in network checks and LLM judge. In pull requests it scans only the components a change touches and reads its own configuration from the base commit.</td></tr>
+      <tr><td>Browser scanner</td><td>The <a href="../../scan/">/scan</a> page (see <a href="../web-scanner/">Web scanner</a>) runs the engine under Pyodide in a Web Worker. Pasted text and dropped folders or <code>.zip</code> files are scanned on the device; public GitHub links are pinned to a commit and fetched from GitHub.</td></tr>
+      <tr><td>Agent Guard Web server</td><td>For links to GitHub, npm, PyPI, the MCP Registry or a remote MCP server. The dispatcher pins each link to an exact commit or version (registry digests verified), downloads it through an allowlisted, SSRF-hardened fetcher, and scans it in a throwaway container with no network, a read-only filesystem and no privileges (optionally under gVisor). Reports are stored with an unlisted permalink, keyed by reference, rule pack and engine version. The site reaches it through an <code>/api/</code> rewrite.</td></tr>
+      <tr><td>Shared data</td><td>Rule pack (<code>rules/</code>), standards crosswalk (<code>mappings/</code>), signed IOC feed (<code>intel/</code>) and the benchmark corpus (<code>bench/</code>).</td></tr>
+    </tbody>
+  </table></div>
 
   <h2>Toxic flows</h2>
   <p>Every skill, server and tool gets capability labels: <code>reads_private_data</code>, <code>ingests_untrusted_content</code>, <code>external_egress</code>, <code>destructive</code> and <code>code_exec</code>. The labels come from code and config evidence, tool annotations and descriptions, and a list of well-known servers. Components that can be active in the same agent session are grouped, and dangerous combinations are reported as a path.</p>
