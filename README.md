@@ -91,7 +91,7 @@ The action is offline by default. `check-hijackable: true` adds the `--check-hij
 
 ## Project layout
 
-`src/agentguard/core` is the pure engine (runs under Pyodide) and `webscan.py` its browser entry points; `io`, `net`, `judge` and `cli` are host-side. Rules are data in `rules/`, standards crosswalk in `mappings/`, fixtures in `fixtures/rules/`, benchmark in `bench/`, website and browser scanner in `site/` (deployed to Vercel with `vercel.json`), the Agent Guard Web server in `web/`, and a one-instance AWS deployment for it in `deploy/aws/` (connecting the site takes an `/api/*` rewrite, described there). Design and threat model: `docs/`.
+`src/agentguard/core` is the pure engine (runs under Pyodide) and `webscan.py` its browser entry points; `io`, `net`, `judge` and `cli` are host-side. Rules are data in `rules/`, standards crosswalk in `mappings/`, fixtures in `fixtures/rules/`, benchmark in `bench/`, website and browser scanner in `site/` (deployed to Vercel with `vercel.json`), and the Agent Guard Web server in `web/` (connecting the site takes an `/api/*` rewrite, described in `web/README.md`). Design and threat model: `docs/`.
 
 ## License
 
