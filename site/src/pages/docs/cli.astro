@@ -11,7 +11,7 @@ const frontmatter = { title: "CLI reference", description: "Every agentguard com
       <h2 id={c.name.replace(/ /g, "-")}><code>agentguard {c.name}</code></h2>
       <p>{c.help}</p>
       {c.params.length > 0 && (
-        <div class="table-scroll">
+        <div class="corners"><div class="table-scroll">
           <table>
             <thead><tr><th scope="col">Argument / option</th><th scope="col">Description</th><th scope="col">Default</th></tr></thead>
             <tbody>
@@ -24,7 +24,7 @@ const frontmatter = { title: "CLI reference", description: "Every agentguard com
               ))}
             </tbody>
           </table>
-        </div>
+        </div></div>
       )}
     </section>
   ))}
