@@ -1,0 +1,101 @@
+---
+// One engine, three hosts: each host does its own input and output and runs the
+// same pure core (the "Architecture" section of How it works).
+import Figure from "./Figure.astro";
+import Node from "./Node.astro";
+import { PAD, monoW, nodeW } from "./measure.js";
+const lanes = [
+  {
+    tab: "CLI · GITHUB ACTION",
+    in: { eyebrow: "Input", name: "Machine or repo", role: "configs, skills, PR diff" },
+    host: { eyebrow: "Host", name: "agentguard", role: "safe load, lock, opt-ins" },
+    out: { eyebrow: "Output", name: "Terminal, SARIF", role: "JSON, HTML, CycloneDX" },
+    narrow: { name: "agentguard", role: "machine or repo → terminal, SARIF" },
+  },
+  {
+    tab: "BROWSER · /SCAN",
+    in: { eyebrow: "Input", name: "Paste or drop", role: "text, folders, .zip" },
+    host: { eyebrow: "Host", name: "Web Worker", role: "Pyodide, zero requests" },
+    out: { eyebrow: "Output", name: "Report on the page", role: "never uploaded" },
+    narrow: { name: "Web Worker (Pyodide)", role: "paste or drop → report, no upload" },
+  },
+  {
+    tab: "AGENT GUARD WEB SERVER",
+    in: { eyebrow: "Link in", name: "Dispatcher", role: "pins, allowlisted fetch" },
+    host: { eyebrow: "Host", name: "Scanner container", role: "no network, read-only" },
+    out: { eyebrow: "Output", name: "Stored report", role: "permalink, downloads" },
+    narrow: { name: "Scanner container", role: "pinned link → stored report" },
+  },
+];
+const engine = { eyebrow: "agentguard.core", name: "Engine", role: "pure, deterministic" };
+const parts = ["rule pack", "analyzers", "correlation", "scoring", "renderers"];
+const right = (x, y) => `M${x - 6},${y - 4}L${x},${y}L${x - 6},${y + 4}`;
+
+// wide: one dashed frame per host, input → host → engine → output; the engine is one
+// tall card laid over all three frames, because every host runs the same core
+const H = 74, nw = Math.max(...lanes.flatMap((l) => [l.in, l.host, l.out].map(nodeW)));
+const ew = Math.max(nodeW(engine), 170), inset = 22, g1 = 48, g2 = 52;
+const FH = 120, FG = 24, top = 10;
+const x = { in: inset, host: inset + nw + g1 };
+x.engine = x.host + nw + g2;
+x.out = x.engine + ew + g2;
+const W = x.out + nw + inset;
+const frameY = (i) => top + i * (FH + FG);
+const nodeY = (i) => frameY(i) + 26;
+const mid = (i) => nodeY(i) + H / 2;
+const ey = nodeY(0), eh = nodeY(lanes.length - 1) + H - ey, ec = x.engine + ew / 2;
+const WH = frameY(lanes.length - 1) + FH + 4;
+const wires = (i) => [
+  [x.in + nw + 3, x.host - 4],
+  [x.host + nw + 3, x.engine - 4],
+  [x.engine + ew + 3, x.out - 4],
+].map(([a, b]) => ({ d: `M${a},${mid(i)}H${b}`, h: right(b, mid(i)) }));
+const partsTop = ey + eh / 2 - ((parts.length - 1) * 26) / 2 + 18;
+
+// narrow (360 wide): the engine on top, a trunk down the left into each host
+const NW = 360, nx = 40, nh = 74, ng = 20, n0 = nh + 30;
+const ny = (i) => n0 + i * (nh + ng);
+const NH = ny(lanes.length - 1) + nh;
+---
+<Figure id="architecture" title="One engine, three hosts"
+  note="Each host handles its own input and output and runs the same pure core: a file tree in, a report out. schemas/report.v1.json is the only contract between the engine and every interface.">
+  <svg class="v-wide xl" viewBox={`0 0 ${W} ${WH}`} role="img" aria-labelledby="architecture-w-d">
+    <desc id="architecture-w-d">Three hosts run the same engine. CLI and GitHub Action: a machine or repository goes into agentguard, then the engine, then terminal or SARIF output. Browser: pasted or dropped input goes into a Web Worker running Pyodide, then the engine, then a report on the page that is never uploaded. Web server: the dispatcher pins a link and fetches it through an allowlist, a scanner container with no network runs the engine, and the report is stored with a permalink. The engine holds the rule pack, analyzers, correlation, scoring and renderers.</desc>
+    {lanes.map((l, i) => {
+      const y = frameY(i), tabW = Math.ceil(monoW(l.tab)) + 16;
+      return (
+        <g>
+          <rect class="d-frame" x="0.5" y={y} width={W - 1} height={FH} rx="14" />
+          <rect class="frame-tab" x="12" y={y - 8} width={tabW} height="16" />
+          <text class="frame-label" x="20" y={y + 3.5}>{l.tab}</text>
+          {wires(i).map((w) => <g><path class="wire" d={w.d} /><path class="wire-head" d={w.h} /></g>)}
+          <Node x={x.in} y={nodeY(i)} w={nw} h={H} {...l.in} />
+          <Node x={x.host} y={nodeY(i)} w={nw} h={H} {...l.host} tone="hot" />
+          <Node x={x.out} y={nodeY(i)} w={nw} h={H} {...l.out} />
+        </g>
+      );
+    })}
+    <g class="node node-solid">
+      <rect class="node-card" x={x.engine} y={ey} width={ew} height={eh} rx="10" />
+      <line class="node-sheen" x1={x.engine + 10} x2={x.engine + ew - 10} y1={ey + 0.75} y2={ey + 0.75} />
+      <text class="node-eyebrow" x={ec} y={ey + 30} text-anchor="middle">{engine.eyebrow.toUpperCase()}</text>
+      <text class="node-name" x={ec} y={ey + 52} text-anchor="middle">{engine.name}</text>
+      <text class="node-role" x={ec} y={ey + 70} text-anchor="middle">{engine.role}</text>
+      <line class="node-sheen" x1={x.engine + PAD} x2={x.engine + ew - PAD} y1={ey + 96} y2={ey + 96} />
+      {parts.map((p, i) => <text class="node-role" x={ec} y={partsTop + i * 26} text-anchor="middle">{p}</text>)}
+      <line class="node-sheen" x1={x.engine + PAD} x2={x.engine + ew - PAD} y1={ey + eh - 52} y2={ey + eh - 52} />
+      <text class="node-eyebrow" x={ec} y={ey + eh - 26} text-anchor="middle">REPORT.V1.JSON</text>
+    </g>
+  </svg>
+  <svg class="v-narrow xl" viewBox={`0 0 ${NW} ${NH}`} role="img" aria-labelledby="architecture-n-d">
+    <desc id="architecture-n-d">The engine (rule pack, analyzers, scoring) runs inside three hosts: agentguard, from a machine or repository to the terminal or SARIF; a Web Worker running Pyodide, from pasted or dropped input to a report that is never uploaded; and a scanner container on the web server, from a pinned link to a stored report.</desc>
+    <Node x={0} y={0} w={NW} h={nh} eyebrow={engine.eyebrow} name={engine.name} role="rule pack · analyzers · scoring" tone="solid" />
+    <path class="wire" d={`M12,${nh + 2}V${ny(lanes.length - 1) + nh / 2}`} />
+    {lanes.map((l, i) => (
+      <g>
+        <path class="wire" d={`M12,${ny(i) + nh / 2}H${nx - 4}`} /><path class="wire-head" d={right(nx - 4, ny(i) + nh / 2)} />
+        <Node x={nx} y={ny(i)} w={NW - nx} h={nh} eyebrow={l.tab} name={l.narrow.name} role={l.narrow.role} tone="hot" align="start" />
+      </g>
+    ))}
+  </svg>
+</Figure>
