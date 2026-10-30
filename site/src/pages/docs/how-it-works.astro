@@ -5,11 +5,11 @@ import Trifecta from "../../components/charts/Trifecta.astro";
 import FlowPath from "../../components/charts/FlowPath.astro";
 import LockVerify from "../../components/charts/LockVerify.astro";
 import Architecture from "../../components/charts/Architecture.astro";
-const frontmatter = { title: "How it works", description: "Why Agent Guard exists, the gaps it closes, the scan pipeline, the architecture, toxic flows and rug-pull detection." };
+const frontmatter = { title: "How it works", description: "Why Agent Guard exists, the gaps it closes, the scan pipeline, the architecture, the code and its algorithms, toxic flows and rug-pull detection." };
 ---
 <Doc frontmatter={frontmatter}>
   <h1>How it works</h1>
-  <p>Why Agent Guard exists, what other scanners leave open, and how a scan works from input to report.</p>
+  <p>Why Agent Guard exists, what other scanners leave open, how a scan works from input to report, and the code and algorithms behind it.</p>
 
   <h2>The problem</h2>
   <p>Coding agents now install skills (<code>SKILL.md</code> bundles), follow instruction files (<code>AGENTS.md</code>, <code>CLAUDE.md</code>, Cursor rules) and connect to MCP servers. Each one runs with the agent's access: your files, your shell, your credentials and the network. The model reads their text as instructions, and some of it runs before the model sees it (Claude Code's <code>!</code> commands and skill hooks).</p>
@@ -50,15 +50,15 @@ const frontmatter = { title: "How it works", description: "Why Agent Guard exist
   </div>
 
   <h2>Objectives</h2>
-  <ol>
-    <li><strong>Answer before install:</strong> whether a skill, instruction file or MCP server is risky, why (evidence at file and line), and how to fix it.</li>
-    <li><strong>Never execute what is scanned</strong>, on a laptop, in CI or on a server.</li>
-    <li><strong>Private by default:</strong> offline, no account, no telemetry.</li>
-    <li><strong>One engine everywhere:</strong> the CLI, the GitHub Action, the browser and the web server produce the same report from the same input.</li>
-    <li><strong>Honest and repeatable:</strong> never "safe"; same input and rule pack give a byte-identical report.</li>
-    <li><strong>Measured accuracy:</strong> CRITICAL precision of at least 0.95, a benign false-positive rate of at most 0.02 at HIGH, and 100 skills plus 20 server configs in under 10 seconds, all published on the <a href="../../benchmarks/">benchmarks</a> page.</li>
-    <li><strong>Standards-aligned:</strong> every rule maps to the OWASP Top 10 for Agentic Applications, OWASP MCP Top 10, OWASP Agentic Skills Top 10, OWASP LLM Top 10, the NSA MCP guidance and CWE, with an AIVSS score.</li>
-  </ol>
+  <div class="advice cells corners">
+    <div><h3 class="cell-h">Answer before install</h3><p>Whether a skill, instruction file or MCP server is risky, why (evidence at file and line), and how to fix it.</p></div>
+    <div><h3 class="cell-h">Never execute what is scanned</h3><p>On a laptop, in CI or on a server.</p></div>
+    <div><h3 class="cell-h">Private by default</h3><p>Offline, no account, no telemetry.</p></div>
+    <div><h3 class="cell-h">One engine everywhere</h3><p>The CLI, the GitHub Action, the browser and the web server produce the same report from the same input.</p></div>
+    <div><h3 class="cell-h">Honest and repeatable</h3><p>Never "safe"; the same input and rule pack give a byte-identical report.</p></div>
+    <div><h3 class="cell-h">Measured accuracy</h3><p>CRITICAL precision of at least 0.95, a benign false-positive rate of at most 0.02 at HIGH, and 100 skills plus 20 server configs in under 10 seconds, all published on the <a href="../../benchmarks/">benchmarks</a> page.</p></div>
+    <div><h3 class="cell-h">Standards-aligned</h3><p>Every rule maps to the OWASP Top 10 for Agentic Applications, OWASP MCP Top 10, OWASP Agentic Skills Top 10, OWASP LLM Top 10, the NSA MCP guidance and CWE, with an AIVSS score.</p></div>
+  </div>
 
   <h2>Methodology</h2>
   <p>Every scan runs the same seven stages.</p>
@@ -78,19 +78,19 @@ const frontmatter = { title: "How it works", description: "Why Agent Guard exist
   <p>The engine is a pure function of its inputs: <code>scan(tree, options) → report</code>. It never touches the filesystem or network itself, so the same input and rule pack always produce the same report, and the same engine runs in the browser under Pyodide.</p>
 
   <h3>How rules are built and checked</h3>
-  <ul>
-    <li><strong>Rules are data.</strong> Each rule is YAML in the rule pack with an unsafe and a safe fixture; CI runs every fixture, so a rule that stops firing, or starts firing on its safe example, fails the build.</li>
-    <li><strong>A benchmark with held-out rounds.</strong> 123 synthetic items (76 attacks, 47 benign look-alikes) and 163 real benign skills and servers from eight vendor repositories at pinned commits. Each tuning round is first measured on items the rules have not seen. CI fails if the committed results are stale or a change makes any item worse.</li>
-    <li><strong>Primary sources, dated.</strong> Specs, client config paths and attack techniques are checked against vendor documentation or the original research, and each check is recorded with its date in <code>docs/sources.md</code>.</li>
-    <li><strong>Safety and determinism tests.</strong> No process may start across the whole fixture corpus; the same input must give byte-identical output; the browser scanner must make zero requests for pasted input.</li>
-  </ul>
+  <div class="advice cells corners">
+    <div><h4 class="cell-h">Rules are data</h4><p>Each rule is YAML in the rule pack with an unsafe and a safe fixture. CI runs every fixture, so a rule that stops firing, or starts firing on its safe example, fails the build.</p></div>
+    <div><h4 class="cell-h">A benchmark with held-out rounds</h4><p>123 synthetic items (76 attacks, 47 benign look-alikes) and 163 real benign skills and servers from eight vendor repositories at pinned commits. Each tuning round is first measured on items the rules have not seen.</p></div>
+    <div><h4 class="cell-h">Primary sources, dated</h4><p>Specs, client config paths and attack techniques are checked against vendor documentation or the original research, and each check is recorded with its date in <code>docs/sources.md</code>.</p></div>
+    <div><h4 class="cell-h">Safety and determinism tests</h4><p>No process may start across the whole fixture corpus; the same input must give byte-identical output; the browser scanner must make zero requests for pasted input.</p></div>
+  </div>
 
   <h3>Severity rules</h3>
-  <ul>
-    <li><strong>CRITICAL requires high confidence</strong> and deterministic evidence; a lower-confidence critical match is reported as high (tagged <code>capped-by-confidence</code>).</li>
-    <li>Matches inside hidden or encoded content are escalated one level (tagged <code>hidden</code>).</li>
-    <li>Results from the optional LLM judge can never be critical.</li>
-  </ul>
+  <div class="advice cells three corners">
+    <div><h4 class="cell-h">CRITICAL needs proof</h4><p>High confidence and deterministic evidence; a lower-confidence critical match is reported as high (tagged <code>capped-by-confidence</code>).</p></div>
+    <div><h4 class="cell-h">Hidden means worse</h4><p>Matches inside hidden or encoded content are raised one level (tagged <code>hidden</code>).</p></div>
+    <div><h4 class="cell-h">The judge is capped</h4><p>Results from the optional LLM judge can never be critical.</p></div>
+  </div>
 
   <h2>Architecture</h2>
   <p>One pure-Python engine, wrapped by three hosts. The hosts do the I/O; the engine only turns a file tree into a report.</p>
@@ -106,6 +106,62 @@ const frontmatter = { title: "How it works", description: "Why Agent Guard exist
       <tr><td>Shared data</td><td>Rule pack (<code>rules/</code>), standards crosswalk (<code>mappings/</code>), signed IOC feed (<code>intel/</code>) and the benchmark corpus (<code>bench/</code>).</td></tr>
     </tbody>
   </table></div></div>
+
+  <h2>The code</h2>
+  <p>Agent Guard is mostly Python, and much of its detection logic is data. The engine's own code is pure Python and needs only Pydantic, <code>regex</code> and PyYAML, all of which have WebAssembly builds, so it runs unchanged in the browser. Line counts are from October 2026.</p>
+  <div class="facts corners"><dl class="report-facts">
+    <div><dt>Engine, CLI, network</dt><dd><span class="v">15,000</span><span class="sub">lines of Python in <code>src/agentguard</code></span></dd></div>
+    <div><dt>Web server</dt><dd><span class="v">2,800</span><span class="sub">lines of Python in <code>web/</code></span></dd></div>
+    <div><dt>Rule pack</dt><dd><span class="v">2,500</span><span class="sub">lines of YAML for 173 rules</span></dd></div>
+    <div><dt>Tests</dt><dd><span class="v">206</span><span class="sub">Python test functions, plus two fixtures per rule</span></dd></div>
+  </dl></div>
+
+  <h3>Languages and libraries</h3>
+  <div class="corners"><div class="table-scroll"><table class="code-table">
+    <thead><tr><th>Language</th><th>Where</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td>Python 3.12+</td><td><code>src/agentguard</code>, <code>web/</code></td><td>The engine, CLI, opt-in network checks, LLM judge and web server. Five runtime dependencies: Pydantic (data model and JSON Schemas), <code>regex</code> (matching with timeouts), PyYAML (safe loading), Typer and Rich (CLI). Optional: tree-sitter, <code>yara-python</code>, the Anthropic SDK. The server adds FastAPI, Uvicorn, Redis and Postgres.</td></tr>
+      <tr><td>YAML</td><td><code>rules/</code>, <code>mappings/</code></td><td>The rule pack as data: what each rule matches, its severity and confidence, standards mappings and remediation. 17 files.</td></tr>
+      <tr><td>YARA</td><td><code>rules/yara/</code></td><td>Byte-level patterns for bundled binaries (optional analyzer).</td></tr>
+      <tr><td>Python in WebAssembly</td><td>the <code>/scan</code> page</td><td>Pyodide runs the same engine in a Web Worker, so pasted and dropped files never leave the device.</td></tr>
+      <tr><td>Astro, HTML, CSS</td><td><code>site/</code></td><td>The static website. Charts are SVG computed at build time; the Markdown pages pass through a small build step that frames tables and code. No inline scripts or styles, so a strict Content-Security-Policy holds.</td></tr>
+      <tr><td>JavaScript</td><td><code>site/public/js</code>, <code>site/scripts</code></td><td>The scan page and its Web Workers, the proof-of-work solver, the rotating globe (Canvas 2D, no libraries) and build scripts.</td></tr>
+      <tr><td>Dockerfiles, GitHub Actions</td><td><code>web/docker</code>, <code>.github/</code></td><td>The scanner sandbox image (non-root, no network) and CI.</td></tr>
+    </tbody>
+  </table></div></div>
+
+  <h3>Algorithms</h3>
+  <p>Paths are under <code>src/agentguard/core/</code> unless shown otherwise.</p>
+  <div class="corners"><div class="table-scroll"><table class="code-table">
+    <thead><tr><th scope="col">Algorithm</th><th scope="col">What it does here</th><th scope="col">Code</th></tr></thead>
+    <tbody>
+      <tr><td>NFKC + confusable folding</td><td>Normalizes Unicode and folds look-alike letters (Cyrillic "а" to Latin "a"), keeping an offset map so findings still point at the original line and column</td><td><code>normalize/unicode.py</code></td></tr>
+      <tr><td>Recursive decoding</td><td>Decodes base64, hex, percent, <code>\x</code> escapes and gzip inside base64, up to three layers deep, and scans what it finds again</td><td><code>normalize/decode.py</code></td></tr>
+      <tr><td>Regex with timeouts</td><td>Runs the data-defined pattern rules with a 0.5 s limit per match, so no pattern can hang a scan</td><td><code>analyzers/regex_rules.py</code></td></tr>
+      <tr><td>AST taint analysis</td><td>Follows Python tool parameters through assignments, f-strings, formatting and string methods, and into helper functions up to three deep, to a shell, process arguments, <code>eval</code>, deserialization, file paths, URLs, SQL or templates</td><td><code>analyzers/pytaint.py</code></td></tr>
+      <tr><td>Tree-sitter taint</td><td>The same for JavaScript/TypeScript handlers and shell scripts (optional), capped at 1 MB per file and 200,000 nodes per walk</td><td><code>analyzers/treesitter.py</code></td></tr>
+      <tr><td>Breadth-first link search</td><td>Links a skill's files (a path one writes and another reads, one script running another, imports) and searches up to three hops, so a credential read and a network send in different files are joined</td><td><code>correlate/links.py</code></td></tr>
+      <tr><td>Capability graph</td><td>Labels every component, groups them by agent session and reports dangerous combinations, such as the lethal trifecta, as a path</td><td><code>correlate/flows.py</code></td></tr>
+      <tr><td>Damerau–Levenshtein distance</td><td>Optimal string alignment with early exit, to spot typosquatted skill names and near-identical tool names</td><td><code>analyzers/heuristics.py</code></td></tr>
+      <tr><td>Secret patterns + Shannon entropy</td><td>22 patterns (API keys and tokens, private keys, JWTs, bearer tokens, passwords in URLs), plus at least 3.5 bits of entropy per character over 16+ characters in secret-named fields</td><td><code>secrets.py</code></td></tr>
+      <tr><td>Typed redaction</td><td>Every snippet in a report has a type that only redaction can produce: the first 4 characters plus a short hash</td><td><code>redact.py</code></td></tr>
+      <tr><td>Canonical JSON + SHA-256</td><td>Sorted-key JSON (close to RFC 8785), hashed for lockfile entries of tool definitions (rug pulls) and the web server's report cache keys</td><td><code>lock.py</code>, <code>cachekey.py</code></td></tr>
+      <tr><td>Ed25519, pure Python</td><td>RFC 8032 signature check of the IOC feed with no crypto library, so it also works under Pyodide</td><td><code>intel/ed25519.py</code></td></tr>
+      <tr><td>AIVSS v0.8 score</td><td>AARS = (10 − CVSS) × (factors ÷ 10) × threat, then AIVSS = (CVSS + AARS) × mitigation, for every finding</td><td><code>scoring/aivss.py</code></td></tr>
+      <tr><td>Bounded archive streaming</td><td>Extracts zip and tar in memory with compression-ratio and size caps, dropping links and path escapes</td><td><code>archive.py</code></td></tr>
+      <tr><td>Process audit hook</td><td>A process-wide Python audit hook refuses to start any process, so nothing scanned can run</td><td><code>src/agentguard/io/guard.py</code></td></tr>
+      <tr><td>SSRF-hardened HTTP</td><td>Resolves DNS first, allows only globally routable addresses, pins the IP and re-checks every redirect, for the opt-in checks and the web server's fetcher</td><td><code>src/agentguard/net/safe_http.py</code></td></tr>
+      <tr><td>Proof of work</td><td>The browser finds a nonce whose SHA-256 starts with N zero bits for an HMAC-signed, single-use challenge: bot protection with no CAPTCHA</td><td><code>web/…/pow.py</code>, <code>site/public/js/pow.js</code></td></tr>
+      <tr><td>Precision, recall, F1</td><td>With the false-positive rate, per category and severity, to measure every rule change on the benchmark</td><td><code>src/agentguard/bench/runner.py</code></td></tr>
+    </tbody>
+  </table></div></div>
+
+  <h3>How the code is tested</h3>
+  <div class="advice cells three corners">
+    <div><h4 class="cell-h">Unit, fixture and safety tests</h4><p>206 Python test functions for the engine and web server, plus an unsafe and a safe fixture for each of the 173 rules. No process may start across the whole fixture corpus.</p></div>
+    <div><h4 class="cell-h">CI matrix</h4><p>Linux, macOS and Windows on Python 3.12 and 3.14; the engine again under Pyodide; the web server's isolation tests against real containers; browser tests with Playwright.</p></div>
+    <div><h4 class="cell-h">Benchmark gate</h4><p>CI fails if the committed benchmark results are stale or a change makes any item worse.</p></div>
+  </div>
 
   <h2>Toxic flows</h2>
   <p>Every skill, server and tool gets capability labels: <code>reads_private_data</code>, <code>ingests_untrusted_content</code>, <code>external_egress</code>, <code>destructive</code> and <code>code_exec</code>. The labels come from code and config evidence, tool annotations and descriptions, and a list of well-known servers. Components that can be active in the same agent session are grouped, and dangerous combinations are reported as a path.</p>
