@@ -858,10 +858,26 @@ footer.site { border-top: 1px dashed var(--line); padding: 32px 0 0; color: var(
 .rule-head .advice p { font-size: 1.06rem; }
 .cell-h { margin: 0 0 10px; font-size: .95rem; font-weight: 500; letter-spacing: 0; line-height: 1.3; color: var(--muted); }
 .advice .fix .cell-h { color: var(--accent); }
-/* rows of gap / answer pairs in the same panel (How it works) */
-.advice.pairs { margin: 20px 0 8px; }
-.pairs > div { padding: 18px 20px 20px; }
-.pairs .cell-h { color: var(--fg); font-size: 1rem; }
+/* How it works: rows of gap / answer pairs, and grids of named cells, in the same panel.
+   Cells run two across (.three: three); a last cell that would leave a hole fills its row. */
+.advice.pairs, .advice.cells { margin: 20px 0 8px; }
+.pairs > div, .cells > div { padding: 18px 20px 20px; }
+.pairs .cell-h, .cells .cell-h { color: var(--fg); font-size: 1rem; }
+.advice.cells > div:last-child:nth-child(odd) { grid-column: 1 / -1; }
+.advice.cells.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.advice.cells.three > div:last-child { grid-column: auto; }
+.advice.cells.three > div:last-child:nth-child(3n + 1) { grid-column: 1 / -1; }
+.advice.cells.three > div:last-child:nth-child(3n + 2) { grid-column: span 2; }
+@media (max-width: 980px) {
+  .advice.cells.three { grid-template-columns: minmax(0, 1fr); }
+  .advice.cells.three > div:last-child { grid-column: auto; }
+}
+/* file paths in the How it works code tables stay whole; the table scrolls instead */
+.code-table { min-width: 640px; }
+.code-table code { white-space: nowrap; overflow-wrap: normal; }
+/* a row of figures: the report page's facts row in its own frame */
+.facts { margin: 20px 0 8px; border: 1px solid var(--line); }
+.facts .report-facts { border-top: 0; }
 .examples { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 480px), 1fr)); gap: 14px; align-items: start; margin-top: 18px; }
 .examples .evidence { margin: 0; }
 .examples pre { max-height: 480px; }
