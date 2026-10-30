@@ -274,7 +274,7 @@ tbody tr:hover { background: var(--surface); }
 .rules-table td:last-child { font-size: .88rem; }
 .h-count { margin-left: 12px; font-size: .95rem; font-weight: 400; letter-spacing: 0; color: var(--muted); white-space: nowrap; }
 .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; margin: 18px 0; }
-.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 20px; }
 .card h2, .card h3 { margin-top: 0; }
 .card h2 { font-size: 1.15rem; font-weight: 600; letter-spacing: -0.01em; }
 /* Severity badge: a soft tint of the severity color, a hairline border in it,
@@ -306,16 +306,16 @@ a.pill:hover { border-color: var(--accent); color: var(--accent); }
 /* ---- docs ------------------------------------------------------------------ */
 .doc-layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 40px; }
 .doc-nav ul { list-style: none; margin: 0; padding: 0; position: sticky; top: 100px; }
-.doc-nav a { display: block; padding: 5px 10px; border-radius: 8px; color: var(--muted); text-decoration: none; font-size: .95rem; }
+.doc-nav a { display: block; padding: 4px 9px; border: 1px solid transparent; border-radius: 6px; color: var(--muted); text-decoration: none; font-size: .95rem; }
 .doc-nav a:hover { color: var(--fg); }
-.doc-nav a[aria-current="page"] { color: var(--fg); background: var(--surface-2); }
+/* the current page looks like a highlighted header menu item */
+.doc-nav a[aria-current="page"] { color: var(--fg); background: #1c1a17; border-color: #34302c; }
 .doc h1 { font-size: clamp(2rem, 3.6vw, 2.6rem); }
 .doc h1 + p { font-size: 1.05rem; color: var(--muted); }
 .doc :not(pre) > code { overflow-wrap: anywhere; }
 @media (max-width: 860px) {
   .doc-layout { grid-template-columns: minmax(0, 1fr); gap: 12px; }
   .doc-nav ul { position: static; display: flex; flex-wrap: wrap; gap: 4px; }
-  .doc > table { display: block; overflow-x: auto; }
 }
 
 /* ---- footer ------------------------------------------------------------------ */
@@ -778,6 +778,9 @@ footer.site { border-top: 1px dashed var(--line); padding: 32px 0 0; color: var(
 .evidence .ev-cap code { background: none; border: 0; padding: 0; color: var(--fg-2); }
 .evidence .ev-cap .pill { margin: 0; }
 .evidence pre { margin: 0; border: 0; border-radius: 0; background: #000; padding: 14px 16px; font-size: .84rem; max-height: 240px; white-space: pre-wrap; overflow-wrap: anywhere; }
+/* docs code blocks in the same window (scripts/markdown-frames.mjs): full height, scrolled, not wrapped */
+.code-window { margin: 16px 0 22px; }
+.code-window pre { max-height: none; white-space: pre; overflow-wrap: normal; overflow-x: auto; font-size: .86rem; }
 /* why it matters, and the fix in an orange-tinted cell (the reference's "Paid" column) */
 .advice { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; margin-top: 24px; background: var(--line); border: 1px solid var(--line); }
 .advice > div { padding: 16px 18px 18px; background: var(--bg); }

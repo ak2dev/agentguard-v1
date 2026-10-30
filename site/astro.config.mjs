@@ -2,6 +2,8 @@
 // Stylesheets are emitted as files (never inlined) so the CSP can forbid
 // inline styles; the only script is a same-origin progressive enhancement.
 import { defineConfig } from "astro/config";
+import { satteri } from "@astrojs/markdown-satteri";
+import frames from "./scripts/markdown-frames.mjs";
 
 export default defineConfig({
   site: process.env.AG_SITE_URL ?? "https://agentguard-ak2dev.vercel.app",
@@ -17,5 +19,7 @@ export default defineConfig({
   vite: { build: { assetsInlineLimit: 0 } },
   markdown: {
     syntaxHighlight: false,
+    // tables and code blocks in the redesign's frames (scripts/markdown-frames.mjs)
+    processor: satteri({ hastPlugins: [frames] }),
   },
 });
