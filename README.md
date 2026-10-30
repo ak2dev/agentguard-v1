@@ -9,6 +9,40 @@ Agent Guard is an open-source, offline-first security scanner for AI agent skill
 - **Honest results.** A clean scan says "No findings from N rules (rule pack vX)", never "safe". Anything not scanned is reported.
 - **Deterministic.** Same input + same rule pack → byte-identical report.
 
+Website and docs: https://agentguard-ak2dev.vercel.app
+
+## Why Agent Guard
+
+**The problem.** Coding agents install skills, follow instruction files and connect to MCP servers, and each one runs with the agent's access: files, shell, credentials, network. The model reads their text as instructions, and some of it runs before the model sees it (Claude Code's `!` commands and skill hooks). A skill can tell the agent to "install a prerequisite" that is malware, hide instructions in invisible Unicode, or read `~/.ssh` and post it to a webhook, often in plain language that no antivirus signature matches. A server can change its tools after you approve it (a rug pull), and a skill can depend on a GitHub account, package or domain anyone can now claim (SkillJacking).
+
+**Gaps in current tools** (checked against each project's own docs on 2026-10-30; sources in [docs/sources.md](docs/sources.md)):
+
+| Tool | Covers | Leaves open |
+|---|---|---|
+| [Snyk Agent Scan](https://github.com/snyk/agent-scan) | MCP servers, skills, agent configs | Starts stdio servers by running the commands in your config (with consent; `--dangerously-run-mcp-servers` in CI); sends configs, tool descriptions and skill files to the Snyk API and needs a token; no pinning of tool definitions described |
+| [Cisco skill-scanner](https://github.com/cisco-ai-defense/skill-scanner) | Skills, with local static, bytecode and dataflow analyzers | Skills only; LLM, VirusTotal and AI Defense analyzers need API keys |
+| [Cisco mcp-scanner](https://github.com/cisco-ai-defense/mcp-scanner) | MCP servers, tools, prompts, resources | MCP only; connects to live servers and launches stdio servers; LLM and AI Defense engines need keys |
+| [ClawHub + VirusTotal](https://www.openclaw.ai/blog/virustotal-partnership) | Skills published to ClawHub, at publish and daily | One registry; uploads bundles to VirusTotal; by OpenClaw's own account, natural-language instructions won't trigger a virus signature |
+
+Published bypasses got malicious skills past ClawHub, the skills.sh scanners and Cisco's skill-scanner ([Trail of Bits, June 2026](https://blog.trailofbits.com/2026/06/03/the-sorry-state-of-skill-distribution/)), and obfuscation and split payloads degraded commercial scanners ([Cloud Security Alliance](https://labs.cloudsecurityalliance.org/research/csa-research-note-ai-agent-skill-scanner-bypass-20260610-csa/)).
+
+**How Agent Guard closes them.**
+
+| Gap | Agent Guard |
+|---|---|
+| Scanning by running | Parse-only; process creation is blocked. Tool definitions come from manifests, `server.json` and source; listing a live server is opt-in, read-only and remote only |
+| Setup leaves the machine | Offline, no account, no telemetry; pasted input in the browser never leaves the device |
+| Split coverage | One engine for skills, instruction files, client configs, tool metadata and server code, across ten agent clients |
+| Signatures miss language | Instruction-layer and hidden-content rules, decoding and rescanning, an optional LLM judge capped below CRITICAL |
+| Known bypasses | Reproduced inertly in the benchmark and covered; what is still missed is listed under Limitations |
+| Per-component view | Toxic flows across everything active in one agent session |
+| One point in time | `lock` / `verify` diffs, `--check-hijackable`, a signed IOC feed |
+| False assurance | Never "safe"; skipped analyzers and content are listed; an analyzer error exits 2 |
+
+**Objectives.** Answer before install whether something is risky, why (file and line) and how to fix it; never execute what is scanned; stay private by default; give the same report from the CLI, the Action, the browser and the server; never say "safe"; meet published accuracy targets (CRITICAL precision ≥ 0.95, benign FPR at HIGH ≤ 0.02, 100 skills + 20 configs in under 10 s); map every rule to OWASP, NSA and CWE.
+
+Full write-up: [How it works](https://agentguard-ak2dev.vercel.app/docs/how-it-works/).
+
 ## Install
 
 ```bash
@@ -50,6 +84,12 @@ The HTML report is one self-contained file you can attach or archive. It has no 
 
 173 rules in rule pack 0.1.0, each with an unsafe and a safe fixture, mapped to the OWASP Top 10 for Agentic Applications (ASI), OWASP MCP Top 10, OWASP Agentic Skills Top 10 (AST), OWASP LLM Top 10, the NSA MCP security guidance (May 2026) and CWE, with an AIVSS score. The website shows the full catalog and a coverage matrix that lists gaps.
 
+## How it works
+
+Every scan runs seven stages: **discover** agent configuration, skills and instruction files; **load** under size, depth and archive limits, refusing symlinks and path escapes; **normalize** Unicode, fold look-alikes, and decode blobs (to depth 3) and hidden Markdown for rescanning; **analyze** with independent analyzers (skill structure, hidden content, pattern rules, MCP config and metadata, code taint, supply chain, policy); **correlate** findings and build the capability graph for toxic flows; **score** with AIVSS and apply suppressions, baselines and policy; **report**. CRITICAL needs high confidence and deterministic evidence, and matches inside hidden content are raised one level.
+
+How rules are built and checked: rules are YAML data with an unsafe and a safe fixture that CI runs; the benchmark below measures each tuning round on items the rules have not seen first; specs, client paths and attack techniques are checked against primary sources, dated in [docs/sources.md](docs/sources.md); safety tests assert that no process starts across the fixture corpus and that output is byte-identical.
+
 ## In the browser
 
 The website's `/scan` page runs the same engine in your browser (Pyodide). You can paste a `SKILL.md` or MCP config, or drop a folder or `.zip`; pasted and dropped input never leaves your device (a CI test asserts zero network requests).
@@ -89,9 +129,39 @@ The action is offline by default. `check-hijackable: true` adds the `--check-hij
 - **NSA MCP guidance mappings use section names:** the CSI does not number its sections, so rules map to its own headings; it covers MCP only, so skill rules have none.
 - **Four client config paths are unverified** because the vendor does not document them (Claude Desktop on Linux, Claude Code's plugin folder, legacy Windsurf and `~/.codex/skills`); `agentguard discover` labels them and says why.
 
-## Project layout
+## Next mile
 
-`src/agentguard/core` is the pure engine (runs under Pyodide) and `webscan.py` its browser entry points; `io`, `net`, `judge` and `cli` are host-side. Rules are data in `rules/`, standards crosswalk in `mappings/`, fixtures in `fixtures/rules/`, benchmark in `bench/`, website and browser scanner in `site/` (deployed to Vercel with `vercel.json`), and the Agent Guard Web server in `web/` (connecting the site takes an `/api/*` rewrite, described in `web/README.md`). Design and threat model: `docs/`.
+1. **Host the scan server** on a public host that can run Docker with `--network none` (ideally gVisor). Until then it runs locally with `docker compose up`, and the public site scans GitHub links in the browser.
+2. **First release:** 0.1.0 on PyPI and a tagged Action, Sigstore-signed with a CycloneDX SBOM (the release workflow is in place).
+3. **Sandboxed dynamic analysis:** run servers and skill scripts in an isolated, credential-free sandbox and record processes, files and connections.
+4. **Runtime enforcement:** a gateway that checks tool definitions against `agentguard.lock` on every connection, so a rug pull is blocked rather than found later.
+5. **Independent malicious samples,** written by other people, and less MEDIUM noise on real code.
+6. **Known detection gaps:** `path.join` credential paths, byte transforms without a recognizable decoder, JS/TS taint through default exports, re-exports and class methods, tree-sitter taint across functions.
+7. **Supply-chain depth:** full Sigstore chain verification; CycloneDX 1.7.
+8. **Standards:** AIVSS v1.0 when published; rules for the NSA MCP items with none yet (audit logs, denial of service, logging and detection).
+9. **Policy as code:** Rego and CEL adapters.
+
+## Architecture
+
+```
+                 ┌──────────────────────────────────────┐
+                 │  Engine (agentguard.core)            │
+                 │  rule pack · analyzers · correlation │
+                 │  scoring · renderers                 │
+                 └──────────────────┬───────────────────┘
+        ┌───────────────────────────┼────────────────────────────┐
+  CLI + GitHub Action       Browser /scan page          Agent Guard Web server
+  discover · load · lock    Pyodide in a Web Worker     API → dispatcher → fetcher
+  opt-in network, judge     input stays on device       → no-network container
+  SARIF to code scanning    GitHub links pinned         → stored report
+```
+
+`src/agentguard/core` is the pure engine: no filesystem, network or clock, `scan(tree, options) → report`, and it runs under Pyodide; `webscan.py` holds its browser entry points, and `io`, `net`, `judge` and `cli` are host-side. `schemas/report.v1.json` is the only contract between the engine and every UI. Rules are data in `rules/`, standards crosswalk in `mappings/`, fixtures in `fixtures/rules/`, benchmark in `bench/`, signed IOC feed in `intel/`, website and browser scanner in `site/` (deployed to Vercel with `vercel.json`), and the Agent Guard Web server in `web/` (connecting the site takes an `/api/*` rewrite, described in `web/README.md`).
+
+## Documentation
+
+- Website docs: [install](https://agentguard-ak2dev.vercel.app/docs/install/), [quickstart](https://agentguard-ak2dev.vercel.app/docs/quickstart/), [how it works](https://agentguard-ak2dev.vercel.app/docs/how-it-works/), [CLI reference](https://agentguard-ak2dev.vercel.app/docs/cli/), [limitations and next mile](https://agentguard-ak2dev.vercel.app/docs/limitations/), [rule catalog](https://agentguard-ak2dev.vercel.app/rules/), [standards coverage](https://agentguard-ak2dev.vercel.app/coverage/), [benchmarks](https://agentguard-ak2dev.vercel.app/benchmarks/).
+- In this repository: [threat model](docs/threat-model.md), [v1 design](docs/design/v1-design.md), [benchmark rounds](docs/benchmark.md), [sources](docs/sources.md), [example PR workflow](docs/examples/agentguard-pr.yml), [web server](web/README.md).
 
 ## License
 
