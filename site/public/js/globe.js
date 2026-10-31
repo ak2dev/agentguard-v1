@@ -1,20 +1,20 @@
 // "See the whole session": a slowly turning Earth drawn in orange land dots, with the
 // toxic-flow nodes pinned to it and each callout following its node. Canvas 2D, no
 // libraries; the land mask is data/globe-land.bin, built by scripts/make-globe-land.mjs.
-// Without JavaScript only the callouts show (see .graph in global.css).
+// Without JavaScript only the callouts show (see .graph in global.css). It turns even
+// when the system asks for reduced motion: classroom boards and other Windows PCs set to
+// "best performance" ask for it, and there the globe would otherwise stand still.
 (function () {
   const host = document.querySelector("[data-globe]");
   const canvas = host && host.querySelector("canvas");
   if (!canvas || !canvas.getContext || !window.Path2D) return;
   const ctx = canvas.getContext("2d");
   const landUrl = new URL("../data/globe-land.bin", document.currentScript.src);
-  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const DEG = Math.PI / 180;
   const TILT = 14 * DEG;           // latitude at the centre of the view
   const SPEED = 2.4 * DEG;         // per second, west to east as the Earth turns
   const START = -66 * DEG;         // centre longitude when it starts turning
-  const REST = -78 * DEG;          // centre longitude with reduced motion
   const STEP = 1.1;                // degrees between land dots
   const ACCENT = "255,122,51", DOTS = "248,98,24";
   const LIGHT = norm([0.55, 0.35, 0.76]);
@@ -47,7 +47,7 @@
   const grid = graticule();
 
   let W = 0, H = 0, R = 0, cx = 0, cy = 0, pin = 0, dpr = 1, room = [0, 0];
-  let land = null, landAt = 0, t = still ? 99 : 0, last = 0, raf = 0, visible = false;
+  let land = null, landAt = 0, t = 0, last = 0, raf = 0, visible = false;
 
   function unit(lat, lon) {
     const p = lat * DEG, l = lon * DEG;
@@ -87,7 +87,7 @@
   }
 
   function draw() {
-    const lon = still ? REST : START - SPEED * t;
+    const lon = START - SPEED * t;
     const ca = Math.cos(-lon), sa = Math.sin(-lon), ct = Math.cos(TILT), st = Math.sin(TILT);
     const view = (v) => {
       const x = v[0] * ca + v[2] * sa, z = -v[0] * sa + v[2] * ca;
@@ -183,14 +183,12 @@
       const r = pin * (0.75 + 0.25 * pop) * (n.active ? 1.35 : 1);
       ctx.globalAlpha = n.o;
       if (n.active) {
-        if (!still) {
-          const q = (t % 2.4) / 2.4;
-          ctx.strokeStyle = `rgba(${ACCENT},${(0.55 * (1 - q)).toFixed(3)})`;
-          ctx.lineWidth = 1.5;
-          ctx.beginPath();
-          ctx.arc(n.x, n.y, r * (1 + 0.9 * q), 0, 2 * Math.PI);
-          ctx.stroke();
-        }
+        const q = (t % 2.4) / 2.4;
+        ctx.strokeStyle = `rgba(${ACCENT},${(0.55 * (1 - q)).toFixed(3)})`;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, r * (1 + 0.9 * q), 0, 2 * Math.PI);
+        ctx.stroke();
         ctx.save();
         ctx.shadowColor = "rgba(248,98,24,0.8)";
         ctx.shadowBlur = r * 1.4;
@@ -267,8 +265,7 @@
   new ResizeObserver(resize).observe(host);
   new IntersectionObserver(([e]) => {
     visible = e.isIntersecting;
-    if (still) draw();
-    else if (visible && !raf) { last = 0; raf = requestAnimationFrame(loop); }
+    if (visible && !raf) { last = 0; raf = requestAnimationFrame(loop); }
   }, { threshold: 0.15 }).observe(host);
 
   fetch(landUrl)
@@ -284,7 +281,7 @@
         }
       }
       land = new Float32Array(pts);
-      landAt = still ? 0 : t;
+      landAt = t;
       draw();
     })
     .catch(() => {});
